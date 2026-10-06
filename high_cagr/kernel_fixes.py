@@ -20,10 +20,10 @@ def equity(balance,p,marks):
  return out
 
 @njit(cache=True,nogil=True)
-def close_symbol(s,raw,ts,reason,p,t,balance,daily,nd):
+def close_symbol(slip,s,raw,ts,reason,p,t,balance,daily,nd):
  for leg in range(2):
   if not p[s,leg,0]:continue
-  sign,entry,qty=p[s,leg,0],p[s,leg,1],p[s,leg,2];exit_price=raw*(1-sign*.0002);k=int(p[s,leg,5])
+  sign,entry,qty=p[s,leg,0],p[s,leg,1],p[s,leg,2];exit_price=raw*(1-sign*slip);k=int(p[s,leg,5])
   gross=sign*(exit_price-entry)*qty;fee=(entry+exit_price)*qty*.0006
   t[k,2]=ts;t[k,8]=exit_price;t[k,9]=gross;t[k,10]=fee;t[k,12]+=gross-fee;t[k,13]=reason
   balance+=gross-fee;daily[nd,0]=ts;daily[nd,1]=gross-fee;nd+=1;p[s,leg,:]=0
@@ -34,7 +34,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              pyramid=False,close_only=False,reverse=False,proxy=.0001,
              engaged=.60,sizing_slip=.0004,legacy_cap=0.,
              same_side_cap=0,max_new_per_bar=0,stale_bars=0,stale_mfe=.40,stale_cols=4,
-             floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False):
+             floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,2,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
@@ -57,7 +57,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
   eq=equity(balance,p,marks);peak=max(peak,eq);dd=max(dd,(peak-eq)/peak)
   for s in range(ns):
    if p[s,0,0] and p[s,0,0]*(marks[s]-p[s,0,3])<=0:
-    balance,nd=close_symbol(s,marks[s],ts,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
+    balance,nd=close_symbol(slip,s,marks[s],ts,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
   if ts%(entry_minutes*60000)==0:
    b=i//entry_minutes
    for s in range(ns):
@@ -66,13 +66,13 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if stale_bars>0 and (ts-opened[s])//(entry_minutes*60000)>=stale_bars and mfe[s]<stale_mfe:
      line=bars[s,b,stale_cols] if sign==1 else bars[s,b,stale_cols+1];stale_events+=1;trades[int(p[s,0,5]),20]+=1
     if sign*(bars[s,b,2]-line)<0:
-     balance,nd=close_symbol(s,marks[s],ts+3000,7,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
+     balance,nd=close_symbol(slip,s,marks[s],ts+3000,7,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
     elif not close_only:
      stop=max(p[s,0,3],line) if sign==1 else min(p[s,0,3],line)
      for leg in range(2):
       if p[s,leg,0]:p[s,leg,3]=stop
      if sign*(marks[s]-stop)<=0:
-      balance,nd=close_symbol(s,marks[s],ts+3000,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
+      balance,nd=close_symbol(slip,s,marks[s],ts+3000,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
    order=np.argsort(-signals[:,b,3],kind='mergesort');newcount=0
    while first_daily<nd and daily[first_daily,0]<ts+3000-86400000:first_daily+=1
    dailypnl=0.
@@ -106,13 +106,13 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if legacy_cap>0:cap=eq*legacy_cap
     else:cap=eq*engaged/slots*5
     planned=math.floor(min(eq*unit_risk/(dist+trigger*(.0012+sizing_slip)),cap/trigger)*10000+1e-9)/10000
-    entry=marks[s]*(1+sign*.0002);dist=sign*(entry-stop)
+    entry=marks[s]*(1+sign*slip);dist=sign*(entry-stop)
     if dist<=0 or dist/entry<.012:rejects+=1;continue
     available=max(0.,eq*(1. if legacy_cap>0 else engaged)-reserved)*5
     qty=math.floor(min(planned,eq*unit_risk/(dist+entry*(.0012+sizing_slip)),cap/entry,available/entry)*10000+1e-9)/10000
     if qty<.0001 or qty*entry<5:marginreject+=1;continue
     if scale and pyr_safe:
-     x=stop*(1-sign*.0002);combined=sign*p[s,0,2]*(x-p[s,0,1])-.0006*p[s,0,2]*(p[s,0,1]+x)+sign*qty*(x-entry)-.0006*qty*(entry+x)
+     x=stop*(1-sign*slip);combined=sign*p[s,0,2]*(x-p[s,0,1])-.0006*p[s,0,2]*(p[s,0,1]+x)+sign*qty*(x-entry)-.0006*qty*(entry+x)
      if combined<0:pyr_safe_rejects+=1;continue
     p[s,leg,0]=sign;p[s,leg,1]=entry;p[s,leg,2]=qty;p[s,leg,3]=stop;p[s,leg,4]=dist;p[s,leg,5]=nt;p[s,leg,6]=entry*qty/5
     trades[nt,0]=s;trades[nt,1]=ts+3000;trades[nt,3]=sign;trades[nt,4]=entry;trades[nt,5]=qty;trades[nt,6]=stop;trades[nt,7]=dist;trades[nt,14]=eq;trades[nt,15]=(dist+entry*(.0012+sizing_slip))*qty
@@ -137,7 +137,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
      before=0 if phase==0 else (20000 if phase==1 else 40000)
      fillts=int(ts+before+(endoffset-before)*fraction)
      marks[s]=sl;eq=equity(balance,p,marks);peak=max(peak,eq);dd=max(dd,(peak-eq)/peak)
-     balance,nd=close_symbol(s,sl,fillts,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
+     balance,nd=close_symbol(slip,s,sl,fillts,3,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0
     marks[s]=last
     if p[s,0,0]:
      favourable=p[s,0,0]*(last-p[s,0,1])/p[s,0,4]
@@ -160,6 +160,6 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
   if (i-begin+1)%60==0:
    row=(i-begin+1)//60;curve[row,0]=ts+59999;curve[row,1]=eq;curve[row,2]=balance
  for s in range(ns):
-  if p[s,0,0]:balance,nd=close_symbol(s,prices[s,end-1,3],start+end*60000-1,8,p,trades,balance,daily,nd)
+  if p[s,0,0]:balance,nd=close_symbol(slip,s,prices[s,end-1,3],start+end*60000-1,8,p,trades,balance,daily,nd)
  peak=max(peak,balance);dd=max(dd,(peak-balance)/peak);curve[-1]=np.array([start+end*60000-1,balance,balance])
  return np.array([balance,dd,rejects,slotreject,marginreject,proxies,maxopen,maxmargin,maxgross,adds,ratio_sum/(end-begin),active_ratio/max(1,active_count),position_sum/(end-begin),cap_rejects,stale_events,pyr_safe_rejects,floor_events]),trades[:nt],curve
