@@ -9,7 +9,7 @@ def main():
  files.append(ROOT/'optimization/features.npz');temporary=output/'inputs_and_ledgers.zip.tmp'
  with zipfile.ZipFile(temporary,'w',zipfile.ZIP_STORED,allowZip64=True) as z:
   for p in sorted(files):z.write(p,p.relative_to(ROOT))
- parts=[];whole=hashlib.sha256();chunk_size=24*1024*1024
+ parts=[];whole=hashlib.sha256();chunk_size=8*1024*1024
  with temporary.open('rb') as f:
   i=0
   while chunk:=f.read(chunk_size):
