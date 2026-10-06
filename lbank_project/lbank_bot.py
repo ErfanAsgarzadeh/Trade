@@ -41,6 +41,7 @@ SCHEMA = {
     "bot_control": {"auto_trade_enabled": bool, "dry_run_mode": bool, "check_interval_seconds": int},
     "strategy_mode": {"mode": str, "htf_trend_timeframe": str, "ltf_entry_timeframe": str, "single_timeframe": str},
     "symbols": list,
+    "portfolio_risk": {"rank_by": str, "enforce_shared_margin": bool},
     "ichimoku_params": {"tenkan": int, "kijun": int, "senkou_b": int, "displacement": int, "candle_fetch_limit": int},
     "filters_and_triggers": {"rsi_period": int, "long_rsi_min": float, "long_rsi_max": float,
         "short_rsi_min": float, "short_rsi_max": float, "atr_period": int,
@@ -106,6 +107,7 @@ def validate_config(c: dict) -> dict:
     if not isinstance(c, dict):
         raise ConfigError("Configuration must be a JSON object")
     c = copy.deepcopy(c)
+    c.setdefault("portfolio_risk", {"rank_by": "LEGACY_RSI", "enforce_shared_margin": False})
     c.setdefault("archetype_strategy", copy.deepcopy(archetypes.DEFAULTS))
     c.setdefault("structural_filters", {"enable_htf_slope_filter": False,
                                        "adx_period": 14, "min_htf_adx": 0.0})
@@ -130,6 +132,10 @@ def validate_config(c: dict) -> dict:
                     ok = isinstance(actual, value)
                 if not ok:
                     raise ConfigError(f"Invalid type/value: {section}.{key}")
+    if c["portfolio_risk"]["rank_by"] not in ("LEGACY_RSI", "BREAKOUT_DISTANCE"):
+        raise ConfigError("Invalid portfolio ranking")
+    if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" and c["archetype_strategy"]["family"] != "DONCHIAN":
+        raise ConfigError("Breakout ranking requires DONCHIAN")
     syms = c["symbols"]
     if (not isinstance(syms, list) or not syms
             or not all(isinstance(s, str) and re.fullmatch(r"[A-Z0-9]+/USDT:USDT", s) for s in syms)
@@ -608,7 +614,8 @@ class MarketData:
 
 
 def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
-                  equity: float, c: dict, timeframe: str, structural_bar: pd.Series | None = None) -> dict | None:
+                  equity: float, c: dict, timeframe: str, structural_bar: pd.Series | None = None,
+                  available_notional: float | None = None) -> dict | None:
     r, a = c["risk_and_exit"], c["al_brooks_filters"]
     sign = 1 if side == "long" else -1
     entry = (bar.high + a["stop_entry_atr_buffer"] * bar.atr if side == "long" else
@@ -637,6 +644,8 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
     cs = float(data.market(symbol).get("contractSize") or 1)
     risk = equity * r["risk_per_trade_pct"]
     cap = equity * r["max_margin_per_position_pct"] * r["default_isolated_leverage"]
+    if available_notional is not None:
+        cap = min(cap, max(0.0, available_notional))
     # CCXT contract quantity is contracts, not necessarily base units.
     qty = data.precision(symbol, min(risk / (distance + entry * r["lbank_round_trip_fee"]), cap / entry) / cs)
     if not data.tradable(symbol, qty, entry):
@@ -704,6 +713,17 @@ class Engine:
                 unrealized += net_pnl(p, self.data.price(p["symbol"], cached=True), p["qty"])
         return max(0.0, self.paper_seed + realized + unrealized)
 
+    def available_notional(self, equity: float, c: dict, exclude_symbol: str | None = None) -> float:
+        leverage = c["risk_and_exit"]["default_isolated_leverage"]
+        reserved = 0.0
+        for p in self.db.positions():
+            if p["symbol"] == exclude_symbol:
+                continue
+            frozen = json.loads(p.get("strategy_config", "{}"))
+            used_leverage = frozen.get("risk_and_exit", {}).get("default_isolated_leverage", leverage)
+            reserved += p["qty"] * p["entry_price"] * p["contract_size"] / used_leverage
+        return max(0.0, equity - reserved) * leverage
+
     def _insert(self, p: dict):
         keys = list(p)
         with self.db.connect() as db:
@@ -730,6 +750,12 @@ class Engine:
                 with self.db.connect() as db:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
+        current = self.config.read()
+        if current["portfolio_risk"]["enforce_shared_margin"]:
+            equity = self.paper_equity()
+            p["risk_budget"] = min(p["risk_budget"], equity * current["risk_and_exit"]["risk_per_trade_pct"])
+            p["max_notional"] = min(p["max_notional"], self.available_notional(equity, current, p["symbol"]),
+                                     equity * current["risk_and_exit"]["max_margin_per_position_pct"] * current["risk_and_exit"]["default_isolated_leverage"])
         # Re-size at the simulated fill after a gap, so risk isn't based on an old trigger.
         cap = min(p["qty"], p["risk_budget"] / (distance + price * p["fee_rate"]) / p["contract_size"],
                   p["max_notional"] / price / p["contract_size"])
@@ -967,7 +993,9 @@ class Engine:
                 if c["archetype_strategy"]["family"] == "DONCHIAN" and (stamp + TIMEFRAMES[ltf] * 1000) % (4 * 3600 * 1000):
                     continue
                 if side and (entry_signal(low, side, c) if c["archetype_strategy"]["family"] == "LEGACY" else entry_signal(low, side, c, high)):
-                    score = abs(low.iloc[-1].rsi - (55 if side == "long" else 45))
+                    score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])
+                             if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else
+                             abs(low.iloc[-1].rsi - (55 if side == "long" else 45)))
                     candidates.append((float(score), symbol, side, low.iloc[-1], high.iloc[-1] if c["archetype_strategy"]["family"] == "DONCHIAN" else None))
             except Exception as exc:
                 failed = True
@@ -981,7 +1009,8 @@ class Engine:
             daily, _ = self.db.history_summary(now)
             blocked = equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]
             available = max(0, c["risk_and_exit"]["max_open_positions"] - len(self.db.positions()))
-            for _, symbol, side, bar, structural in sorted(candidates, key=lambda item: (item[0], item[1])):
+            ordering = (lambda item: (-item[0], c["symbols"].index(item[1]))) if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else (lambda item: (item[0], item[1]))
+            for _, symbol, side, bar, structural in sorted(candidates, key=ordering):
                 if blocked or available <= 0:
                     break
                 if self.db.position(symbol):
@@ -990,7 +1019,13 @@ class Engine:
                     prior = db.execute("SELECT candle_ts FROM scanned_candles WHERE symbol=? AND timeframe=?", (symbol, ltf)).fetchone()
                 if prior and prior[0] >= int(bar.timestamp):
                     continue
-                p = size_position(self.data, symbol, side, bar, equity, c, ltf, structural)
+                capacity = None
+                if c["portfolio_risk"]["enforce_shared_margin"]:
+                    equity = self.paper_equity()
+                    if equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]:
+                        break
+                    capacity = self.available_notional(equity, c)
+                p = size_position(self.data, symbol, side, bar, equity, c, ltf, structural, capacity)
                 if p is None:
                     continue
                 price = None

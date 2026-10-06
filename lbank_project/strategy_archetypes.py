@@ -96,3 +96,8 @@ def trail_line(bar,side,source):
     if source=='EMA20':return float(bar.ema20)
     if source=='DONCHIAN10':return float(bar.opposite_low_10 if side=='long' else bar.opposite_high_10)
     return float(bar.kijun)
+
+
+def breakout_strength(bar,side,lookback=20):
+    if side=='long':return (float(bar.close)-max(float(bar[f'donchian_high_{lookback}']),float(bar.kumo_top)))/float(bar.close)
+    return (min(float(bar[f'donchian_low_{lookback}']),float(bar.kumo_bottom))-float(bar.close))/float(bar.close)

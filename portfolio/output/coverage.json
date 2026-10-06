@@ -1,0 +1,38 @@
+[
+  {
+    "symbol": "BTCUSDT",
+    "minutes": 2629440,
+    "warmup_minutes": 93600,
+    "observed_funding_events": 5466,
+    "parity_windows": {
+      "standard": 10,
+      "crypto": 10
+    },
+    "prices_sha256": "d213641cb009eabdb44726d3ff4493c52c5330f7dfca5fe9eea4f9df3b724f9e",
+    "unknown_funding_from": "2026-10-01T00:00:00Z"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "minutes": 2629440,
+    "warmup_minutes": 93600,
+    "observed_funding_events": 5466,
+    "parity_windows": {
+      "standard": 10,
+      "crypto": 10
+    },
+    "prices_sha256": "b1253c7ec1b2ed90de02b70cbe3a88c28be066a9a5bd98114de755eb6acd1eb3",
+    "unknown_funding_from": "2026-10-01T00:00:00Z"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "minutes": 2629440,
+    "warmup_minutes": 93600,
+    "observed_funding_events": 5466,
+    "parity_windows": {
+      "standard": 10,
+      "crypto": 10
+    },
+    "prices_sha256": "9771ea6adaaf8eeae54b9b88197ca136642d7db821cdcbc1467930aad3dd1d3f",
+    "unknown_funding_from": "2026-10-01T00:00:00Z"
+  }
+]
