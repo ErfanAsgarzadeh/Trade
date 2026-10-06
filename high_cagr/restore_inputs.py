@@ -10,8 +10,14 @@ def fetch(url):
    if attempt==3:raise
    time.sleep(attempt+1)
 def main():
+ CACHE.mkdir(parents=True,exist_ok=True);(ROOT/'high_cagr/output').mkdir(parents=True,exist_ok=True)
  manifest=json.loads(fetch(BASE+'data_parts/manifest.json'));(ROOT/'high_cagr/output/input_parts_manifest.json').write_text(json.dumps(manifest))
- rows=json.loads((ROOT/'archive_index.json').read_text())
+ last_index=len(manifest['parts'])-1;last_path=CACHE/f'part{last_index:03d}';meta=manifest['parts'][last_index]
+ if not last_path.exists() or hashlib.sha256(last_path.read_bytes()).hexdigest()!=meta['sha256']:
+  data=fetch(BASE+'data_parts/'+meta['name']);assert hashlib.sha256(data).hexdigest()==meta['sha256'];last_path.write_bytes(data)
+ data=last_path.read_bytes();e=data.rfind(b'PK\x05\x06');count=struct.unpack_from('<H',data,e+10)[0];p=struct.unpack_from('<I',data,e+16)[0]-last_index*CHUNK;rows=[]
+ for _ in range(count):
+  assert data[p:p+4]==b'PK\x01\x02';crc,size=struct.unpack_from('<II',data,p+16);nl,el,cl=struct.unpack_from('<HHH',data,p+28);loc=struct.unpack_from('<I',data,p+42)[0];name=data[p+46:p+46+nl].decode();rows.append(dict(path=name,crc=crc,size=size,offset=loc));p+=46+nl+el+cl
  selected=[r for r in rows if (r['path'].startswith('btc_backtest/cache/') or r['path'].startswith('portfolio/cache/')) and 'BNBUSDT' not in r['path']]
  parts=set()
  for r in selected:parts.update(range(r['offset']//CHUNK,(r['offset']+30+len(r['path'])+100+r['size'])//CHUNK+1))

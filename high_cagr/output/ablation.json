@@ -1,0 +1,1454 @@
+{
+  "group_summary": {
+    "universe": {
+      "FIVE": {
+        "cases": 192,
+        "eligible": 11,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "ALTS": {
+        "cases": 192,
+        "eligible": 16,
+        "best_cagr": 43.29021797886834,
+        "best_eligible_cagr": 27.815335337344017
+      }
+    },
+    "entry_timeframe": {
+      "4h": {
+        "cases": 192,
+        "eligible": 27,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "1h": {
+        "cases": 192,
+        "eligible": 0,
+        "best_cagr": 21.71698481478486,
+        "best_eligible_cagr": null
+      }
+    },
+    "trail": {
+      "DONCHIAN10": {
+        "cases": 192,
+        "eligible": 17,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "KIJUN": {
+        "cases": 192,
+        "eligible": 10,
+        "best_cagr": 33.66240120896315,
+        "best_eligible_cagr": 22.4456890836231
+      }
+    },
+    "pyramid": {
+      "True": {
+        "cases": 192,
+        "eligible": 12,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "False": {
+        "cases": 192,
+        "eligible": 15,
+        "best_cagr": 50.22813727162865,
+        "best_eligible_cagr": 30.14873068720152
+      }
+    },
+    "risk": {
+      "0.0125": {
+        "cases": 128,
+        "eligible": 0,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": null
+      },
+      "0.01": {
+        "cases": 128,
+        "eligible": 1,
+        "best_cagr": 40.91447460463493,
+        "best_eligible_cagr": 30.132463500669783
+      },
+      "0.0075": {
+        "cases": 128,
+        "eligible": 26,
+        "best_cagr": 32.23506435779384,
+        "best_eligible_cagr": 32.23506435779384
+      }
+    },
+    "max_open_positions": {
+      "4": {
+        "cases": 192,
+        "eligible": 17,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "5": {
+        "cases": 192,
+        "eligible": 10,
+        "best_cagr": 44.17454322112331,
+        "best_eligible_cagr": 27.815335337344017
+      }
+    },
+    "preset": {
+      "standard": {
+        "cases": 192,
+        "eligible": 6,
+        "best_cagr": 53.15739390895165,
+        "best_eligible_cagr": 32.23506435779384
+      },
+      "crypto": {
+        "cases": 192,
+        "eligible": 21,
+        "best_cagr": 39.65240520969508,
+        "best_eligible_cagr": 30.132463500669783
+      }
+    }
+  },
+  "pyramid_pairs": [
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 2.9292566373230002,
+      "full_dd_delta": 0.46335078334823976,
+      "adds": 152
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.5502293214581613,
+      "full_dd_delta": 1.6861435273239707,
+      "adds": 165
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 2.016865490618372,
+      "full_dd_delta": 0.9382865672331704,
+      "adds": 138
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.005315867276792,
+      "full_dd_delta": 0.9384542896691315,
+      "adds": 138
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 3.3699256126825006,
+      "full_dd_delta": 1.0076711221320949,
+      "adds": 167
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 2.41837100421494,
+      "full_dd_delta": 0.311816654320225,
+      "adds": 154
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.9028799300038841,
+      "full_dd_delta": 1.214535686069759,
+      "adds": 123
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 1.8903484038262874,
+      "full_dd_delta": 1.2145840386098428,
+      "adds": 123
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 3.229076889460522,
+      "full_dd_delta": 1.448289521175603,
+      "adds": 136
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 2.5915806191454607,
+      "full_dd_delta": 1.2545757045377144,
+      "adds": 171
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.155785407015486,
+      "full_dd_delta": 0.7830822016150591,
+      "adds": 156
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 1.762721872713115,
+      "full_dd_delta": 1.46146527437962,
+      "adds": 161
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.071446244795382,
+      "full_dd_delta": 1.9128929011742741,
+      "adds": 183
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 1.7589704546661977,
+      "full_dd_delta": 1.461465872933104,
+      "adds": 161
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 2.043450800998947,
+      "full_dd_delta": 1.5744986802843002,
+      "adds": 170
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 1.1495516868063334,
+      "full_dd_delta": 0.7833604431443035,
+      "adds": 156
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.7589393967357694,
+      "full_dd_delta": 1.7562120674882067,
+      "adds": 140
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.8681237491977853,
+      "full_dd_delta": 1.4215657813615863,
+      "adds": 146
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 2.0702924377024274,
+      "full_dd_delta": 1.4731570325026837,
+      "adds": 152
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 1.7476838905862095,
+      "full_dd_delta": 1.7563179958526405,
+      "adds": 140
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 1.6044583599982687,
+      "full_dd_delta": 1.143829829882847,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 1.6011223053099712,
+      "full_dd_delta": 1.1438711994799604,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": 3.6254212549317018,
+      "full_dd_delta": 1.6964336724879772,
+      "adds": 153
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 1.5683635887098433,
+      "full_dd_delta": 1.5472342867863702,
+      "adds": 189
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 0.7837819822774819,
+      "full_dd_delta": 1.004285681575702,
+      "adds": 205
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 2.539299891608728,
+      "full_dd_delta": 1.353140828507584,
+      "adds": 139
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 2.6497904206085288,
+      "full_dd_delta": 1.5458482104868239,
+      "adds": 159
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.2101889077151355,
+      "full_dd_delta": 0.6773109194256577,
+      "adds": 177
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 1.3386492530993195,
+      "full_dd_delta": 1.1408016413972675,
+      "adds": 209
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 2.0863336705923174,
+      "full_dd_delta": 0.7068184790464045,
+      "adds": 181
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 2.09895789743544,
+      "full_dd_delta": 2.0197953236314063,
+      "adds": 171
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.867640011185113,
+      "full_dd_delta": 1.8060036900023562,
+      "adds": 163
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.795451761904765,
+      "full_dd_delta": 0.45406775434680213,
+      "adds": 160
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 1.4743424615532028,
+      "full_dd_delta": 1.367284815999966,
+      "adds": 125
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 1.4729503323337667,
+      "full_dd_delta": 1.3672086412295954,
+      "adds": 125
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 1.6699553087861077,
+      "full_dd_delta": 1.5866859610323516,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 1.6682823655681744,
+      "full_dd_delta": 1.5866030255359789,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 1.3017831320717193,
+      "full_dd_delta": 0.6808481371281445,
+      "adds": 180
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.5545329004476685,
+      "full_dd_delta": 1.8233253632390998,
+      "adds": 196
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.3952197571659006,
+      "full_dd_delta": 1.5412270875806229,
+      "adds": 174
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.6433134949160433,
+      "full_dd_delta": 0.00015251835855423224,
+      "adds": 220
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.506786734173481,
+      "full_dd_delta": 1.2212713830246997,
+      "adds": 162
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.506786734173481,
+      "full_dd_delta": 1.2212713830246997,
+      "adds": 162
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.6380510394518026,
+      "full_dd_delta": 0.6183736811233018,
+      "adds": 153
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.3804248230340193,
+      "full_dd_delta": 1.1361045819674729,
+      "adds": 143
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.3804248230340193,
+      "full_dd_delta": 1.1361045819674729,
+      "adds": 143
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 0.2719258542911227,
+      "full_dd_delta": 0.19107077154663443,
+      "adds": 191
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.178148896367027,
+      "full_dd_delta": 1.0303087431971178,
+      "adds": 239
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.2718236187727605,
+      "full_dd_delta": 0.1911401248326996,
+      "adds": 191
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.7113979259917969,
+      "full_dd_delta": 0.268471929952085,
+      "adds": 187
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.7099298742413254,
+      "full_dd_delta": 0.2684673583210966,
+      "adds": 187
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 0.5866149579348843,
+      "full_dd_delta": 0.6680889857354373,
+      "adds": 194
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.852001377965351,
+      "full_dd_delta": 0.5366388086931693,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.97676570080354,
+      "full_dd_delta": 0.6975075941646125,
+      "adds": 193
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.731527196056092,
+      "full_dd_delta": 1.8671539720293175,
+      "adds": 174
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.1832250758163383,
+      "full_dd_delta": 0.7588237183795954,
+      "adds": 222
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 2.13791255005642,
+      "full_dd_delta": 1.4541835775909426,
+      "adds": 161
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.6217571318644097,
+      "full_dd_delta": 0.7939566492756001,
+      "adds": 225
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.6012181791327471,
+      "full_dd_delta": -0.18046195860618752,
+      "adds": 166
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 2.926806057144816,
+      "full_dd_delta": 2.4129665582138173,
+      "adds": 145
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.5992536272280802,
+      "full_dd_delta": -0.1804785434556706,
+      "adds": 166
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.924833289693396,
+      "full_dd_delta": 2.4131201002472125,
+      "adds": 145
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.8386084029727208,
+      "full_dd_delta": 1.3411670306146206,
+      "adds": 130
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 1.8377503734541953,
+      "full_dd_delta": 1.3412022782296376,
+      "adds": 130
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 2.452208750190721,
+      "full_dd_delta": 2.2354355214705564,
+      "adds": 171
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.19604026891140336,
+      "full_dd_delta": 2.3837348981987105,
+      "adds": 212
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.3608781671648593,
+      "full_dd_delta": 2.4510301939346846,
+      "adds": 176
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 1.5042097557547827,
+      "full_dd_delta": 2.3506886214099723,
+      "adds": 136
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 1.5028194727127335,
+      "full_dd_delta": 2.350582169781255,
+      "adds": 136
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.2550963255828052,
+      "full_dd_delta": 0.9815768572891557,
+      "adds": 125
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.2550963255828052,
+      "full_dd_delta": 0.9815768572891557,
+      "adds": 125
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.3771062977232056,
+      "full_dd_delta": 0.4639309263906597,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.3771062977232056,
+      "full_dd_delta": 0.4639309263906597,
+      "adds": 142
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.7327034546846356,
+      "full_dd_delta": 1.036824123881921,
+      "adds": 198
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 2.493390302578092,
+      "full_dd_delta": 2.4646249389807267,
+      "adds": 151
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 2.6662841180695764,
+      "full_dd_delta": 2.289633648646543,
+      "adds": 164
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -0.5729691391415983,
+      "full_dd_delta": 0.3695844045640513,
+      "adds": 170
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 2.490957775847466,
+      "full_dd_delta": 2.464656954700814,
+      "adds": 151
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": -0.5723943345368845,
+      "full_dd_delta": 0.3696824703815196,
+      "adds": 170
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 2.4139060177005973,
+      "full_dd_delta": 2.662256221100108,
+      "adds": 187
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 2.016648901853511,
+      "full_dd_delta": 2.483674197650494,
+      "adds": 194
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.5246387923645557,
+      "full_dd_delta": 1.9884499151920636,
+      "adds": 138
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 1.5246387923645557,
+      "full_dd_delta": 1.9884499151920636,
+      "adds": 138
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 1.6347116945198295,
+      "full_dd_delta": 2.2700264974633058,
+      "adds": 169
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 1.437374144868663,
+      "full_dd_delta": 1.7614794999236665,
+      "adds": 160
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 2.182941262202686,
+      "full_dd_delta": 2.1257323589387482,
+      "adds": 176
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 1.5401738171593635,
+      "full_dd_delta": 2.0870855682065326,
+      "adds": 155
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 2.191039408387031,
+      "full_dd_delta": 2.2820679462513525,
+      "adds": 154
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 2.191039408387031,
+      "full_dd_delta": 2.2820679462513525,
+      "adds": 154
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.9383154045906643,
+      "full_dd_delta": 3.974346749954954,
+      "adds": 224
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.5199639516332972,
+      "full_dd_delta": 2.748914140144251,
+      "adds": 180
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 1.0910133087507887,
+      "full_dd_delta": 2.3248378597732824,
+      "adds": 165
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 0.4744855357951181,
+      "full_dd_delta": 3.0119678767025206,
+      "adds": 231
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.12428610456294464,
+      "full_dd_delta": 0.17599973250960232,
+      "adds": 192
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.12428610456294464,
+      "full_dd_delta": 0.17599973250960232,
+      "adds": 192
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.5532510431303308,
+      "full_dd_delta": 2.1066909675757515,
+      "adds": 150
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": -0.049629762028182256,
+      "full_dd_delta": 0.09916421011232757,
+      "adds": 170
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": -0.049629762028182256,
+      "full_dd_delta": 0.09916421011232757,
+      "adds": 170
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.560244463455593,
+      "full_dd_delta": 3.7259544843974766,
+      "adds": 207
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -2.5036777305327718,
+      "full_dd_delta": 6.626315719903502,
+      "adds": 272
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": -0.0029775008679315818,
+      "full_dd_delta": 3.6609208550553944,
+      "adds": 212
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.29352970845961757,
+      "full_dd_delta": 3.129035831110599,
+      "adds": 237
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 0.10087822097648491,
+      "full_dd_delta": 3.4237452829205495,
+      "adds": 211
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 0.14341203863361685,
+      "full_dd_delta": 2.6354531298280506,
+      "adds": 244
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -2.0914301168086347,
+      "full_dd_delta": 2.022832290878327,
+      "adds": 259
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.0391898787454501,
+      "full_dd_delta": 3.424074377398213,
+      "adds": 249
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 0.20437217110007566,
+      "full_dd_delta": 3.371692879269176,
+      "adds": 207
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.5747690439361417,
+      "full_dd_delta": 6.497505166971848,
+      "adds": 274
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -2.5096251274514962,
+      "full_dd_delta": 2.7964264947418798,
+      "adds": 280
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": -1.2023609744675543,
+      "full_dd_delta": 2.8904859739373734,
+      "adds": 296
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.2218875353526606,
+      "full_dd_delta": 3.2173202727222048,
+      "adds": 215
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.2218875353526606,
+      "full_dd_delta": 3.2173202727222048,
+      "adds": 215
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": -0.9661211148459543,
+      "full_dd_delta": 2.3401317375633823,
+      "adds": 271
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": -1.0183538827266414,
+      "full_dd_delta": 2.3093441947702757,
+      "adds": 271
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -0.7795436553696291,
+      "full_dd_delta": 5.8214394465924,
+      "adds": 279
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.2290216155703249,
+      "full_dd_delta": 4.231389331861642,
+      "adds": 236
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -1.9661446497344812,
+      "full_dd_delta": 5.999073298100299,
+      "adds": 284
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.3874499134160168,
+      "full_dd_delta": 1.9632472767777216,
+      "adds": 259
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": -0.836038384767047,
+      "full_dd_delta": 5.97808289843092,
+      "adds": 280
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": -0.7626153725200258,
+      "full_dd_delta": 3.346183592987458,
+      "adds": 302
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": -1.2179887995092944,
+      "full_dd_delta": 5.35438099515725,
+      "adds": 316
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -2.8401336284042493,
+      "full_dd_delta": 3.0410232467175007,
+      "adds": 299
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.28322472581168157,
+      "full_dd_delta": 4.08646422378073,
+      "adds": 235
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": -2.303775783061602,
+      "full_dd_delta": 3.368144590947736,
+      "adds": 311
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": -0.7774866101627032,
+      "full_dd_delta": 2.55844906261526,
+      "adds": 277
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": -0.7774866101627032,
+      "full_dd_delta": 2.55844906261526,
+      "adds": 277
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": -1.0056864819067535,
+      "full_dd_delta": 2.7573605844483424,
+      "adds": 317
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 0.253547747972549,
+      "full_dd_delta": 3.722131035083464,
+      "adds": 233
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": -1.14986000566204,
+      "full_dd_delta": 6.876075801727708,
+      "adds": 288
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": -1.14986000566204,
+      "full_dd_delta": 6.876075801727708,
+      "adds": 288
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": -1.1137086346556968,
+      "full_dd_delta": 6.832888037854026,
+      "adds": 325
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.4835468608556326,
+      "full_dd_delta": 0.23779422370680692,
+      "adds": 212
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -1.1410918816655347,
+      "full_dd_delta": 5.842568354031144,
+      "adds": 302
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.41989629094818515,
+      "full_dd_delta": 3.955934060995247,
+      "adds": 239
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.41989629094818515,
+      "full_dd_delta": 3.955934060995247,
+      "adds": 239
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.738791625333591,
+      "full_dd_delta": 5.824347461390417,
+      "adds": 299
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.263435943882806,
+      "full_dd_delta": 0.25824907544881626,
+      "adds": 222
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.63744532917549,
+      "full_dd_delta": 2.930289154588614,
+      "adds": 263
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.4222543391974032,
+      "full_dd_delta": 3.3374448271179062,
+      "adds": 335
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.4099894677187743,
+      "full_dd_delta": 2.7594011268013148,
+      "adds": 190
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.4099894677187743,
+      "full_dd_delta": 2.7594011268013148,
+      "adds": 190
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": -1.5270194432537965,
+      "full_dd_delta": 5.797986229319179,
+      "adds": 314
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.6493822233688107,
+      "full_dd_delta": 3.7668236638217536,
+      "adds": 374
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -1.7876506995184505,
+      "full_dd_delta": 3.586001541143048,
+      "adds": 321
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 0.41882257077365814,
+      "full_dd_delta": 2.728209840632786,
+      "adds": 186
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": -0.12404123860363381,
+      "full_dd_delta": 3.7097214953921736,
+      "adds": 280
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.06918195167138208,
+      "full_dd_delta": 4.092575305389033,
+      "adds": 347
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.06918195167138208,
+      "full_dd_delta": 4.092575305389033,
+      "adds": 347
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.1463568711120411,
+      "full_dd_delta": 4.350237919204147,
+      "adds": 396
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 0.33046402137291153,
+      "full_dd_delta": 2.7028213907370855,
+      "adds": 185
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.09640131568000587,
+      "full_dd_delta": 1.9805175537384514,
+      "adds": 247
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.09640131568000587,
+      "full_dd_delta": 1.9805175537384514,
+      "adds": 247
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.05945682764403326,
+      "full_dd_delta": 2.95523771958446,
+      "adds": 179
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P4",
+      "full_cagr_delta": -0.30366634212308785,
+      "full_dd_delta": 2.4211776028647307,
+      "adds": 275
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P5",
+      "full_cagr_delta": -0.30507099350032263,
+      "full_dd_delta": 2.2495336683727274,
+      "adds": 286
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 0.41998230875587295,
+      "full_dd_delta": 0.9943526415949577,
+      "adds": 201
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 0.11535434129650302,
+      "full_dd_delta": 3.2727563085021174,
+      "adds": 247
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.9618801823467749,
+      "full_dd_delta": 3.5845443514974846,
+      "adds": 324
+    },
+    {
+      "with_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -0.38997517002844484,
+      "full_dd_delta": 3.7404472714040935,
+      "adds": 335
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.9208930913873759,
+      "full_dd_delta": 2.7972357613791274,
+      "adds": 303
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.9208930913873759,
+      "full_dd_delta": 2.7972357613791274,
+      "adds": 303
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.4851234905916435,
+      "full_dd_delta": 2.86678737752154,
+      "adds": 196
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 0.3946547053802374,
+      "full_dd_delta": 0.4497302560387837,
+      "adds": 212
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": -0.6011169134599537,
+      "full_dd_delta": 2.291008965184858,
+      "adds": 263
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.3769257091862266,
+      "full_dd_delta": 3.894130261020379,
+      "adds": 223
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.1639374234297164,
+      "full_dd_delta": 3.010544133764654,
+      "adds": 380
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": 0.03817352513564298,
+      "full_dd_delta": 3.822572520432942,
+      "adds": 262
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -3.692180298081005,
+      "full_dd_delta": 7.88369983095771,
+      "adds": 218
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": 0.15965501741909138,
+      "full_dd_delta": 1.3141310493990517,
+      "adds": 236
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": 0.0106388218598652,
+      "full_dd_delta": 3.676616299389181,
+      "adds": 359
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P5",
+      "full_cagr_delta": -0.9887590439147553,
+      "full_dd_delta": 2.5255299224547088,
+      "adds": 274
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": 0.2794235685657953,
+      "full_dd_delta": 2.8116326624693784,
+      "adds": 179
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0075__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0075__P5",
+      "full_cagr_delta": 0.7907745571251175,
+      "full_dd_delta": 1.6235535623190032,
+      "adds": 357
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0075__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0075__P4",
+      "full_cagr_delta": 0.8652049030612234,
+      "full_dd_delta": 1.5659170527957826,
+      "adds": 337
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.413660687224516,
+      "full_dd_delta": 3.5031158583438327,
+      "adds": 358
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P4",
+      "full_cagr_delta": 0.18871519862295738,
+      "full_dd_delta": 1.200914919378775,
+      "adds": 234
+    },
+    {
+      "with_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -2.1117724679734606,
+      "full_dd_delta": 3.839952366025628,
+      "adds": 333
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -1.5171471351987487,
+      "full_dd_delta": 2.0711340126428865,
+      "adds": 261
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -1.576987508426031,
+      "full_dd_delta": 2.1850829863514747,
+      "adds": 244
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.03138743531835342,
+      "full_dd_delta": 1.3225123258797282,
+      "adds": 226
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P5",
+      "full_cagr_delta": -0.3332896250987538,
+      "full_dd_delta": 3.1942223521878788,
+      "adds": 203
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": -2.722907725344138,
+      "full_dd_delta": 2.7658254041438823,
+      "adds": 291
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -2.841096347816097,
+      "full_dd_delta": 2.437938099603514,
+      "adds": 291
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P4",
+      "full_cagr_delta": -0.9655208822166639,
+      "full_dd_delta": 1.5287504548849569,
+      "adds": 223
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": -5.154231091256145,
+      "full_dd_delta": 7.715438056712372,
+      "adds": 232
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.01__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.01__P4",
+      "full_cagr_delta": -3.629271534907863,
+      "full_dd_delta": 2.5453887470550995,
+      "adds": 312
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 2.841293266160683,
+      "full_dd_delta": 0.0174607107775131,
+      "adds": 274
+    },
+    {
+      "with_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 3.2430718096882565,
+      "full_dd_delta": -0.36117204600220987,
+      "adds": 269
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.01__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.01__P5",
+      "full_cagr_delta": -3.050855235319194,
+      "full_dd_delta": 2.619753190437592,
+      "adds": 324
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": -4.552293279746065,
+      "full_dd_delta": 6.768124102207466,
+      "adds": 249
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0125__P4",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0125__P4",
+      "full_cagr_delta": 1.007498221091108,
+      "full_dd_delta": -0.28801377717800847,
+      "adds": 295
+    },
+    {
+      "with_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0125__P5",
+      "without_pyramid": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0125__P5",
+      "full_cagr_delta": 0.2549992364709972,
+      "full_dd_delta": 0.2664414812168445,
+      "adds": 312
+    }
+  ]
+}

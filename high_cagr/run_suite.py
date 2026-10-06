@@ -1,6 +1,6 @@
 """384 predeclared configurations, 3 independent periods, atomic resumable results."""
 from pathlib import Path
-import sys,json,itertools,time,concurrent.futures,threading
+import sys,json,itertools,time,concurrent.futures,threading,os,zipfile
 import numpy as np,pandas as pd
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from high_cagr.kernel import simulate
@@ -8,7 +8,10 @@ START=int(pd.Timestamp('2021-10-05',tz='UTC').timestamp()*1000);END=int(pd.Times
 SYMBOLS=['BTCUSDT','ETHUSDT','SOLUSDT','XRPUSDT','ADAUSDT'];PERIODS={'full':(0,(END-START)//60000),'train':(0,(SPLIT-START)//60000),'oos':((SPLIT-START)//60000,(END-START)//60000)}
 OUT=ROOT/'high_cagr/output';LOCK=threading.Lock()
 def atomic(p,obj):
- temp=p.with_suffix('.tmp');temp.write_text(json.dumps(obj,indent=2,allow_nan=False));temp.replace(p)
+ temp=p.with_suffix('.tmp');data=json.dumps(obj,indent=2,allow_nan=False)
+ with temp.open('w') as f:f.write(data);f.flush();os.fsync(f.fileno())
+ temp.replace(p)
+ assert p.read_text()==data, 'Checkpoint read-back mismatch: '+str(p)
 def grid():
  cases=[]
  for universe,preset,entry,trail,pyramid,risk,slots in itertools.product(['FIVE','ALTS'],['standard','crypto'],[('4h',10),('4h',15),('1h',20),('1h',40)],['DONCHIAN10','KIJUN'],[False,True],[.0075,.01,.0125],[4,5]):
@@ -70,7 +73,11 @@ def run_case(case,prices,funding,frames):
   a,t,curve=simulate(pp,ff,ss,bb,START,begin,end,case['risk'],case['max_open_positions'],step,case['pyramid'])
   row[period]=summarize(a,t,curve,begin,end,case['symbols']);assert a[6]<=case['max_open_positions'] and a[7]<=.6+1e-8
   # Persist every unit's ledger for audit, without unused preallocated capacity.
-  np.savez_compressed(OUT/(case['id']+'__'+period+'.npz'),trades=t,equity=curve,stats=a);atomic(p,row)
+  dest=OUT/(case['id']+'__'+period+'.npz');temp=dest.with_suffix('.tmp.npz')
+  with temp.open('wb') as f:
+   np.savez_compressed(f,trades=t,equity=curve,stats=a);f.flush();os.fsync(f.fileno())
+  with zipfile.ZipFile(temp) as z:assert z.testzip() is None
+  temp.replace(dest);atomic(p,row)
  row['positive_periods']=row['train']['net_profit']>0 and row['oos']['net_profit']>0
  row['worst_period_dd_pct']=max(row[k]['max_dd_pct'] for k in PERIODS)
  row['dd_tier']=next((limit for limit in [25,30,35] if row['worst_period_dd_pct']<=limit),None)
