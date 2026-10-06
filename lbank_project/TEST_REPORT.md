@@ -84,3 +84,23 @@ Subprocess integration also passed with the deployed winning config, in addition
 Nineteen additional tests cover clean RSI pullback ranges, strict momentum RSI and fresh Kumo cross, prior-bar Donchian extremes without including the current bar, mechanical H2/L2 second attempts, full hard-target exits, close-through exits that ignore intrabar line wicks, pending regime invalidation before fill, directional opposite-channel trail, and actual market-gap micro-stop rejection. An OHLC/RSI counterexample verifies that wick contact with Kijun and RSI>=50 can coexist.
 
 The benchmark and runtime share strategy_archetypes.py. All 112 definitions were checked in 1,120 actual windows for feature, regime and entry parity. The minute cost kernel reproduced the original 241-trade baseline net, fees, funding and DD exactly. The selected 288-trade result was replayed with reversed intraminute High/Low order and doubled missing funding cost. See archetypes/TEST_RESULTS.md in the full benchmark bundle.
+
+## Capital / leverage / TP upgrade — 2026-10-06
+
+- 150 Python tests passed (9.33 s), including 36 new capital-management cases.
+- Node DOM test passed: percentage conversion, margin cards, leverage/exit
+  selection, hard TP, breakeven, ETag save and panic control.
+- Frozen benchmark signal/Ichimoku/archetype settings remain unchanged by
+  default; BNB removal and risk controls are explicit deployment overrides.
+- Both sides: ATR2 stop rebased to actual fill; fixed-risk sizing includes
+  0.12% fee + 0.04% slippage allowance; rounding/caps never raise modeled risk.
+- Shared margin uses saved actual leverage, reserves pending orders, rechecks
+  equity/slot/risk/daily-loss gates at activation and blocks over-budget entries.
+- Exit coverage: full hard target, optional 2R breakeven, disabled BE/TP,
+  closed-4h Kijun exit, monotonic Donchian10 stop, frozen open-position rules.
+- Invalid presets/modes/nonfinite values, unsafe stop policies and insufficient
+  minimum stop distances are rejected. Existing database/schema compatibility
+  and prior process/API/state-machine tests continue to pass.
+- Existing dependency warning: Starlette TestClient/httpx deprecation only.
+- No new five-year benchmark was run; archived portfolio statistics are frozen.
+  Futures live execution remains unavailable in the pinned LBank adapter.

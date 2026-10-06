@@ -13,7 +13,6 @@
   "symbols": [
     "BTC/USDT:USDT",
     "ETH/USDT:USDT",
-    "BNB/USDT:USDT",
     "SOL/USDT:USDT",
     "XRP/USDT:USDT",
     "ADA/USDT:USDT"
@@ -47,7 +46,7 @@
     "h2_l2_lookback_bars": 8
   },
   "risk_and_exit": {
-    "risk_per_trade_pct": 0.00375,
+    "risk_per_trade_pct": 0.005,
     "max_open_positions": 4,
     "max_margin_per_position_pct": 0.25,
     "default_isolated_leverage": 5,
@@ -60,10 +59,12 @@
     "min_stop_policy": "REJECT",
     "exit_scheme": "PURE_KIJUN",
     "breakeven_policy": "NONE",
-    "breakeven_trigger_rr": 2.0,
+    "breakeven_trigger_rr": 0.0,
     "trail_atr_buffer": 0.0,
     "trail_timeframe": "ENTRY",
-    "hard_tp_rr": 0.0
+    "hard_tp_rr": 0.0,
+    "engaged_capital_pct": 0.6,
+    "leverage_mode": "DYNAMIC_MARGIN"
   },
   "structural_filters": {
     "enable_htf_slope_filter": false,
@@ -83,5 +84,14 @@
   "portfolio_risk": {
     "rank_by": "BREAKOUT_DISTANCE",
     "enforce_shared_margin": true
+  },
+  "strategy_settings": {
+    "ichimoku_preset": "crypto",
+    "donchian_entry_period": 20,
+    "initial_stop_mode": "ATR2",
+    "exit_tp_mode": "CLOSE_TRAIL_KIJUN",
+    "hybrid_trail_mode": "CLOSE_TRAIL_KIJUN",
+    "hard_tp_rr": 0.0,
+    "breakeven_trigger_rr": 0.0
   }
 }

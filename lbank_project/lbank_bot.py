@@ -51,6 +51,7 @@ SCHEMA = {
         "require_signal_bar_breakout": bool, "stop_entry_atr_buffer": float,
         "pending_order_expiry_bars": int, "require_h2_l2_pullback": bool, "h2_l2_lookback_bars": int},
     "risk_and_exit": {"risk_per_trade_pct": float, "max_open_positions": int,
+        "engaged_capital_pct": float, "leverage_mode": str,
         "max_margin_per_position_pct": float, "default_isolated_leverage": int,
         "sl_atr_buffer": float, "tp1_rr_ratio": float, "tp1_close_pct": float,
         "daily_max_loss_pct": float, "lbank_round_trip_fee": float,
@@ -59,13 +60,21 @@ SCHEMA = {
         "trail_atr_buffer": float, "trail_timeframe": str, "hard_tp_rr": float},
     "structural_filters": {"enable_htf_slope_filter": bool, "adx_period": int,
                            "min_htf_adx": float},
+    "strategy_settings": {"ichimoku_preset": str, "donchian_entry_period": int,
+        "initial_stop_mode": str, "exit_tp_mode": str, "hybrid_trail_mode": str,
+        "hard_tp_rr": float, "breakeven_trigger_rr": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
-    "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0}
+    "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0,
+    "engaged_capital_pct": 1.0, "leverage_mode": "FIXED_LEVERAGE"}
 POSITION_EXTENSIONS = {
+    "isolated_leverage": "INTEGER NOT NULL DEFAULT 0",
+    "slot_margin_usd": "REAL NOT NULL DEFAULT 0",
+    "sizing_slippage_pct": "REAL NOT NULL DEFAULT 0",
+    "stop_atr_distance": "REAL NOT NULL DEFAULT 0",
     "exit_scheme": "TEXT NOT NULL DEFAULT 'LEGACY'",
     "be_policy": "TEXT NOT NULL DEFAULT 'ENTRY'",
     "be_confirmed": "INTEGER NOT NULL DEFAULT 1",
@@ -114,9 +123,13 @@ def validate_config(c: dict) -> dict:
     if isinstance(c.get("risk_and_exit"), dict):
         for key, value in LEGACY_RISK_DEFAULTS.items():
             c["risk_and_exit"].setdefault(key, value)
-    if set(c) != set(SCHEMA):
+    if "strategy_settings" in c and isinstance(c["strategy_settings"], dict):
+        c["strategy_settings"].setdefault("hybrid_trail_mode", "CLOSE_TRAIL_KIJUN")
+    if set(c) not in (set(SCHEMA), set(SCHEMA) - {"strategy_settings"}):
         raise ConfigError("Configuration must use the supplied top-level schema")
     for section, template in SCHEMA.items():
+        if section == "strategy_settings" and section not in c:
+            continue
         if isinstance(template, dict):
             if not isinstance(c[section], dict) or set(c[section]) != set(template):
                 raise ConfigError(f"Invalid keys in {section}")
@@ -132,6 +145,26 @@ def validate_config(c: dict) -> dict:
                     ok = isinstance(actual, value)
                 if not ok:
                     raise ConfigError(f"Invalid type/value: {section}.{key}")
+    if "strategy_settings" in c:
+        settings = c["strategy_settings"]
+        trails = ("STOP_TRAIL_DONCHIAN10", "CLOSE_TRAIL_KIJUN")
+        if (settings["ichimoku_preset"] not in archetypes.ICHIMOKU_PRESETS
+                or settings["donchian_entry_period"] not in (10, 20)
+                or settings["initial_stop_mode"] not in ("ATR2", "KIJUN")
+                or settings["exit_tp_mode"] not in (*trails, "HYBRID_TRAIL_AND_HARD_TP")
+                or settings["hybrid_trail_mode"] not in trails
+                or not 0 <= settings["hard_tp_rr"] <= 100
+                or not 0 <= settings["breakeven_trigger_rr"] <= 20):
+            raise ConfigError("Invalid strategy_settings")
+        if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
+            raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
+        modes = c["strategy_mode"]
+        if modes["mode"] != "SINGLE" or modes["single_timeframe"] != "4h":
+            raise ConfigError("Donchian strategy_settings require SINGLE 4h")
+        if c["risk_and_exit"]["min_stop_policy"] != "REJECT" or c["risk_and_exit"]["min_stop_distance_pct"] < 0.012:
+            raise ConfigError("Donchian requires REJECT and a minimum 1.2% stop")
+        archetypes.apply_strategy_settings(c)
+        c["portfolio_risk"]["enforce_shared_margin"] = True
     if c["portfolio_risk"]["rank_by"] not in ("LEGACY_RSI", "BREAKOUT_DISTANCE"):
         raise ConfigError("Invalid portfolio ranking")
     if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" and c["archetype_strategy"]["family"] != "DONCHIAN":
@@ -171,6 +204,8 @@ def validate_config(c: dict) -> dict:
             0 <= a["barb_wire_doji_body_ratio"] <= 1 and 0 <= a["stop_entry_atr_buffer"] <= 5):
         raise ConfigError("Invalid price-action thresholds")
     if not (0.001 <= r["risk_per_trade_pct"] <= 0.05 and 1 <= r["max_open_positions"] <= 100
+            and 0 < r["engaged_capital_pct"] <= 1
+            and r["leverage_mode"] in ("DYNAMIC_MARGIN", "FIXED_LEVERAGE")
             and 0 < r["max_margin_per_position_pct"] <= 1
             and 1 <= r["default_isolated_leverage"] <= 125
             and 0 < r["daily_max_loss_pct"] <= 1
@@ -183,7 +218,7 @@ def validate_config(c: dict) -> dict:
     if not (0 <= r["min_stop_distance_pct"] <= 0.10 and r["min_stop_policy"] in ("NONE", "WIDEN", "REJECT")
             and r["exit_scheme"] in ("LEGACY", "DELAYED_PARTIAL", "PURE_RUNNER", "PURE_KIJUN", "HARD_TARGET")
             and r["breakeven_policy"] in ("ENTRY", "QUARTER_R", "CLOSE_CONFIRM", "MILESTONE", "NONE")
-            and 0 < r["breakeven_trigger_rr"] <= 20 and 0 <= r["trail_atr_buffer"] <= 5
+            and 0 <= r["breakeven_trigger_rr"] <= 20 and 0 <= r["trail_atr_buffer"] <= 5
             and r["trail_timeframe"] in ("ENTRY", "HTF") and 0 <= r["hard_tp_rr"] <= 100):
         raise ConfigError("Invalid structural risk configuration")
     expected_policies = {"LEGACY": {"ENTRY"}, "DELAYED_PARTIAL": {"QUARTER_R", "CLOSE_CONFIRM"},
@@ -613,6 +648,42 @@ class MarketData:
                 notional <= (cost.get("max") or math.inf))
 
 
+def entry_budget(equity: float, stop_pct: float, c: dict,
+                 available_notional: float | None = None) -> dict:
+    """Risk fixes notional; leverage changes only reserved isolated margin.
+
+    The total stop allowance includes 0.04% slippage in the new sizing model.
+    Caps/quantity rounding can reduce risk; they must never increase it.
+    """
+    r = c["risk_and_exit"]
+    modern = "strategy_settings" in c
+    slippage = 0.0004 if modern else 0.0
+    risk = equity * r["risk_per_trade_pct"]
+    slot = equity * (r["engaged_capital_pct"] / r["max_open_positions"] if modern
+                     else r["max_margin_per_position_pct"])
+    maximum = r["default_isolated_leverage"]
+    target = risk / (stop_pct + r["lbank_round_trip_fee"] + slippage)
+    leverage = (max(1, min(maximum, math.ceil(target / slot)))
+                if r["leverage_mode"] == "DYNAMIC_MARGIN" else maximum)
+    cap = slot * maximum
+    if available_notional is not None:
+        # available_notional expresses free margin at the maximum leverage.
+        cap = min(cap, max(0.0, available_notional) / maximum * leverage)
+    return dict(risk_budget=risk, slot_margin_usd=slot, isolated_leverage=leverage,
+                max_notional=cap, final_notional=min(target, cap), sizing_slippage_pct=slippage)
+
+
+def position_leverage(p: dict, default: int = 5) -> int:
+    if p.get("isolated_leverage", 0) > 0:
+        return int(p["isolated_leverage"])
+    frozen = json.loads(p.get("strategy_config", "{}"))
+    return frozen.get("risk_and_exit", {}).get("default_isolated_leverage", default)
+
+
+def position_margin(p: dict, default: int = 5) -> float:
+    return p["qty"] * p["entry_price"] * p["contract_size"] / position_leverage(p, default)
+
+
 def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
                   equity: float, c: dict, timeframe: str, structural_bar: pd.Series | None = None,
                   available_notional: float | None = None) -> dict | None:
@@ -642,12 +713,10 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
     if equity <= 0 or stop <= 0 or entry <= 0 or distance <= 0:
         return None
     cs = float(data.market(symbol).get("contractSize") or 1)
-    risk = equity * r["risk_per_trade_pct"]
-    cap = equity * r["max_margin_per_position_pct"] * r["default_isolated_leverage"]
-    if available_notional is not None:
-        cap = min(cap, max(0.0, available_notional))
+    budget = entry_budget(equity, distance / entry, c, available_notional)
+    risk, cap = budget["risk_budget"], budget["max_notional"]
     # CCXT contract quantity is contracts, not necessarily base units.
-    qty = data.precision(symbol, min(risk / (distance + entry * r["lbank_round_trip_fee"]), cap / entry) / cs)
+    qty = data.precision(symbol, budget["final_notional"] / entry / cs)
     if not data.tradable(symbol, qty, entry):
         return None
     scheme = r.get("exit_scheme", "LEGACY")
@@ -669,6 +738,9 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
         hard_tp_price=float(entry + sign * hard_rr * distance) if hard_rr else 0.0,
         hard_tp_rr=hard_rr, initial_r_distance=float(distance),
         be_trigger_rr=r.get("breakeven_trigger_rr", 2.0),
+        isolated_leverage=budget["isolated_leverage"], slot_margin_usd=budget["slot_margin_usd"],
+        sizing_slippage_pct=budget["sizing_slippage_pct"],
+        stop_atr_distance=float(distance) if "strategy_settings" in c and spec["stop_source"] == "ATR2" else 0.0,
         archetype_family=spec["family"], trail_source=spec["trail_source"],
         trail_close_only=int(spec["trail_close_only"]), pending_policy=spec["pending_policy"],
         strategy_config=json.dumps(c) if spec["family"] != "LEGACY" else "{}")
@@ -719,10 +791,8 @@ class Engine:
         for p in self.db.positions():
             if p["symbol"] == exclude_symbol:
                 continue
-            frozen = json.loads(p.get("strategy_config", "{}"))
-            used_leverage = frozen.get("risk_and_exit", {}).get("default_isolated_leverage", leverage)
-            reserved += p["qty"] * p["entry_price"] * p["contract_size"] / used_leverage
-        return max(0.0, equity - reserved) * leverage
+            reserved += position_margin(p, leverage)
+        return max(0.0, equity * c["risk_and_exit"]["engaged_capital_pct"] - reserved) * leverage
 
     def _insert(self, p: dict):
         keys = list(p)
@@ -738,8 +808,12 @@ class Engine:
     def _activate(self, p: dict, price: float, now: float | None = None) -> bool:
         self.assert_paper(p)
         direction = 1 if p["side"] == "long" else -1
+        current = self.config.read()
+        modern = "strategy_settings" in current
+        if p.get("stop_atr_distance", 0) > 0:
+            p["initial_sl"] = price - direction * p["stop_atr_distance"]
         distance = direction * (price - p["initial_sl"])
-        if distance <= 0:
+        if distance <= 0 or p["initial_sl"] <= 0:
             with self.db.connect() as db:
                 db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
             return False
@@ -750,14 +824,28 @@ class Engine:
                 with self.db.connect() as db:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
-        current = self.config.read()
-        if current["portfolio_risk"]["enforce_shared_margin"]:
+        if modern:
+            equity = self.paper_equity()
+            daily, _ = self.db.history_summary(now if now is not None else time.time())
+            others = [x for x in self.db.positions() if x["symbol"] != p["symbol"]]
+            if (equity <= 0 or daily <= -equity * current["risk_and_exit"]["daily_max_loss_pct"]
+                    or len(others) >= current["risk_and_exit"]["max_open_positions"]
+                    or distance / price < current["risk_and_exit"]["min_stop_distance_pct"]):
+                with self.db.connect() as db:
+                    db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
+                return False
+            budget = entry_budget(equity, distance / price, current,
+                                  self.available_notional(equity, current, p["symbol"]))
+            p["fee_rate"] = current["risk_and_exit"]["lbank_round_trip_fee"]
+            p.update({k: v for k, v in budget.items() if k != "final_notional"})
+            p["qty"] = budget["final_notional"] / price / p["contract_size"]
+        elif current["portfolio_risk"]["enforce_shared_margin"]:
             equity = self.paper_equity()
             p["risk_budget"] = min(p["risk_budget"], equity * current["risk_and_exit"]["risk_per_trade_pct"])
             p["max_notional"] = min(p["max_notional"], self.available_notional(equity, current, p["symbol"]),
                                      equity * current["risk_and_exit"]["max_margin_per_position_pct"] * current["risk_and_exit"]["default_isolated_leverage"])
         # Re-size at the simulated fill after a gap, so risk isn't based on an old trigger.
-        cap = min(p["qty"], p["risk_budget"] / (distance + price * p["fee_rate"]) / p["contract_size"],
+        cap = min(p["qty"], p["risk_budget"] / (distance + price * (p["fee_rate"] + p.get("sizing_slippage_pct", 0))) / p["contract_size"],
                   p["max_notional"] / price / p["contract_size"])
         qty = self.data.precision(p["symbol"], cap)
         if not self.data.tradable(p["symbol"], qty, price):
@@ -767,12 +855,14 @@ class Engine:
         with self.db.connect() as db:
             scheme = p.get("exit_scheme", "LEGACY")
             hard_rr = p.get("hard_tp_rr", 0.0)
-            db.execute("UPDATE positions SET state=?,entry_price=?,qty=?,tp1_price=?,initial_r_distance=?,hard_tp_price=?,trail_last_candle_ts=? "
+            db.execute("UPDATE positions SET state=?,entry_price=?,qty=?,tp1_price=?,initial_r_distance=?,hard_tp_price=?,trail_last_candle_ts=?,initial_sl=?,active_sl=?,isolated_leverage=?,slot_margin_usd=?,sizing_slippage_pct=?,risk_budget=?,max_notional=?,fee_rate=? "
                 "WHERE symbol=? AND state=?",
                 (TRAILING if scheme == "PURE_KIJUN" else INITIAL, price, qty,
                  price + direction * p["tp1_rr"] * distance, distance,
                  price + direction * hard_rr * distance if hard_rr else 0.0,
-                 self.trail_marker(p, now if now is not None else time.time()) if scheme == "PURE_KIJUN" else 0, p["symbol"], PENDING))
+                 self.trail_marker(p, now if now is not None else time.time()) if scheme == "PURE_KIJUN" else 0,
+                 p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
+                 p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], p["symbol"], PENDING))
         return True
 
     @staticmethod
@@ -891,6 +981,12 @@ class Engine:
                         self._close(p, price, p["qty"], "stop", now)
                     elif p.get("hard_tp_price", 0) > 0 and sign * (price - p["hard_tp_price"]) >= 0:
                         self._close(p, price, p["qty"], "hard_tp", now)
+                    elif (p.get("sizing_slippage_pct", 0) > 0 and p.get("be_trigger_rr", 0) > 0
+                          and sign * (p["active_sl"] - p["entry_price"]) < 0
+                          and sign * (price - p["entry_price"]) >= p["be_trigger_rr"] * p["initial_r_distance"]):
+                        with self.db.connect() as db:
+                            db.execute("UPDATE positions SET active_sl=?,be_confirmed=1 WHERE symbol=?",
+                                       (p["entry_price"], p["symbol"]))
                     elif p["state"] == INITIAL and p.get("exit_scheme") != "HARD_TARGET" and sign * (price - p["tp1_price"]) >= 0:
                         if p.get("exit_scheme", "LEGACY") == "PURE_RUNNER":
                             with self.db.connect() as db:
