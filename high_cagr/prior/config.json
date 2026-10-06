@@ -18,10 +18,10 @@
     "ADA/USDT:USDT"
   ],
   "ichimoku_params": {
-    "tenkan": 9,
-    "kijun": 26,
-    "senkou_b": 52,
-    "displacement": 26,
+    "tenkan": 20,
+    "kijun": 60,
+    "senkou_b": 120,
+    "displacement": 30,
     "candle_fetch_limit": 200
   },
   "filters_and_triggers": {
@@ -46,7 +46,7 @@
     "h2_l2_lookback_bars": 8
   },
   "risk_and_exit": {
-    "risk_per_trade_pct": 0.0075,
+    "risk_per_trade_pct": 0.005,
     "max_open_positions": 4,
     "max_margin_per_position_pct": 0.25,
     "default_isolated_leverage": 5,
@@ -64,7 +64,7 @@
     "trail_timeframe": "ENTRY",
     "hard_tp_rr": 0.0,
     "engaged_capital_pct": 0.6,
-    "leverage_mode": "FIXED_LEVERAGE"
+    "leverage_mode": "DYNAMIC_MARGIN"
   },
   "structural_filters": {
     "enable_htf_slope_filter": false,
@@ -74,11 +74,11 @@
   "archetype_strategy": {
     "family": "DONCHIAN",
     "entry_variant": "MARKET",
-    "donchian_lookback": 10,
+    "donchian_lookback": 20,
     "stop_source": "ATR2",
-    "trail_source": "DONCHIAN10",
+    "trail_source": "KIJUN",
     "require_h2_l2": false,
-    "trail_close_only": false,
+    "trail_close_only": true,
     "pending_policy": "GTC_REGIME"
   },
   "portfolio_risk": {
@@ -86,14 +86,12 @@
     "enforce_shared_margin": true
   },
   "strategy_settings": {
-    "ichimoku_preset": "standard",
-    "donchian_entry_period": 10,
+    "ichimoku_preset": "crypto",
+    "donchian_entry_period": 20,
     "initial_stop_mode": "ATR2",
-    "exit_tp_mode": "STOP_TRAIL_DONCHIAN10",
+    "exit_tp_mode": "CLOSE_TRAIL_KIJUN",
     "hybrid_trail_mode": "CLOSE_TRAIL_KIJUN",
     "hard_tp_rr": 0.0,
-    "breakeven_trigger_rr": 0.0,
-    "pyramid_enabled": true,
-    "initial_stop_anchor": "SIGNAL"
+    "breakeven_trigger_rr": 0.0
   }
 }

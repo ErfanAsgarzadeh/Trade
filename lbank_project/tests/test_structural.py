@@ -84,6 +84,17 @@ def test_adx_initialization_and_known_trends(kind):
 def test_deployed_config_matches_eligible_winner():
     root=Path(__file__).parents[2]
     c=lb.validate_config(json.loads((root/'lbank_project/config.json').read_text()))
+    if (root/'high_cagr/output/winning_config.json').exists():
+        expected=lb.validate_config(json.loads((root/'high_cagr/output/winning_config.json').read_text()))
+        result=json.loads((root/'high_cagr/output/matrix.json').read_text())['winner']
+        assert c==expected
+        assert result['eligible'] and result['worst_period_dd_pct']<=35
+        assert c['risk_and_exit']['risk_per_trade_pct']==result['risk']
+        assert c['strategy_settings']['pyramid_enabled']==result['pyramid']
+        assert c['strategy_settings']['donchian_entry_period']==result['lookback']
+        assert c['risk_and_exit']['min_stop_policy']=='REJECT'
+        assert c['risk_and_exit']['min_stop_distance_pct']==.012
+        return
     output=root/'portfolio/output' if (root/'portfolio/output/winning_config.json').exists() else root/'archetypes/output'
     expected=lb.validate_config(json.loads((output/'winning_config.json').read_text()))
     result=json.loads((output/'matrix.json').read_text())['winner']

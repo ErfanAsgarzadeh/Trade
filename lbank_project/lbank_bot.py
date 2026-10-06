@@ -62,7 +62,8 @@ SCHEMA = {
                            "min_htf_adx": float},
     "strategy_settings": {"ichimoku_preset": str, "donchian_entry_period": int,
         "initial_stop_mode": str, "exit_tp_mode": str, "hybrid_trail_mode": str,
-        "hard_tp_rr": float, "breakeven_trigger_rr": float},
+        "hard_tp_rr": float, "breakeven_trigger_rr": float,
+        "pyramid_enabled": bool, "initial_stop_anchor": str},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -71,6 +72,10 @@ LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0,
     "engaged_capital_pct": 1.0, "leverage_mode": "FIXED_LEVERAGE"}
 POSITION_EXTENSIONS = {
+    "root_entry_price": "REAL NOT NULL DEFAULT 0",
+    "root_r_distance": "REAL NOT NULL DEFAULT 0",
+    "pyramid_added": "INTEGER NOT NULL DEFAULT 0",
+    "pyramid_eligible_ts": "REAL NOT NULL DEFAULT 0",
     "isolated_leverage": "INTEGER NOT NULL DEFAULT 0",
     "slot_margin_usd": "REAL NOT NULL DEFAULT 0",
     "sizing_slippage_pct": "REAL NOT NULL DEFAULT 0",
@@ -125,6 +130,8 @@ def validate_config(c: dict) -> dict:
             c["risk_and_exit"].setdefault(key, value)
     if "strategy_settings" in c and isinstance(c["strategy_settings"], dict):
         c["strategy_settings"].setdefault("hybrid_trail_mode", "CLOSE_TRAIL_KIJUN")
+        c["strategy_settings"].setdefault("pyramid_enabled", False)
+        c["strategy_settings"].setdefault("initial_stop_anchor", "ENTRY")
     if set(c) not in (set(SCHEMA), set(SCHEMA) - {"strategy_settings"}):
         raise ConfigError("Configuration must use the supplied top-level schema")
     for section, template in SCHEMA.items():
@@ -151,6 +158,7 @@ def validate_config(c: dict) -> dict:
         if (settings["ichimoku_preset"] not in archetypes.ICHIMOKU_PRESETS
                 or settings["donchian_entry_period"] not in (10, 20)
                 or settings["initial_stop_mode"] not in ("ATR2", "KIJUN")
+                or settings["initial_stop_anchor"] not in ("ENTRY", "SIGNAL")
                 or settings["exit_tp_mode"] not in (*trails, "HYBRID_TRAIL_AND_HARD_TP")
                 or settings["hybrid_trail_mode"] not in trails
                 or not 0 <= settings["hard_tp_rr"] <= 100
@@ -158,6 +166,10 @@ def validate_config(c: dict) -> dict:
             raise ConfigError("Invalid strategy_settings")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
+        if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"
+                or settings["hard_tp_rr"] != 0 or settings["breakeven_trigger_rr"] != 0
+                or c["risk_and_exit"]["leverage_mode"] != "FIXED_LEVERAGE"):
+            raise ConfigError("Pyramiding requires fixed leverage and an unlimited Donchian stop trail")
         modes = c["strategy_mode"]
         if modes["mode"] != "SINGLE" or modes["single_timeframe"] != "4h":
             raise ConfigError("Donchian strategy_settings require SINGLE 4h")
@@ -325,6 +337,12 @@ class Database:
               PRIMARY KEY(symbol,timeframe));
             CREATE TABLE IF NOT EXISTS runtime (
               key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS scale_in_history (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL,
+              root_signal_ts INTEGER NOT NULL, added_at REAL NOT NULL,
+              entry_price REAL NOT NULL, qty REAL NOT NULL, shared_stop REAL NOT NULL,
+              modeled_risk_usd REAL NOT NULL, root_entry_price REAL NOT NULL,
+              root_r_distance REAL NOT NULL);
             """)
             existing = {row[1] for row in db.execute("PRAGMA table_info(positions)")}
             for name, definition in POSITION_EXTENSIONS.items():
@@ -740,7 +758,8 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
         be_trigger_rr=r.get("breakeven_trigger_rr", 2.0),
         isolated_leverage=budget["isolated_leverage"], slot_margin_usd=budget["slot_margin_usd"],
         sizing_slippage_pct=budget["sizing_slippage_pct"],
-        stop_atr_distance=float(distance) if "strategy_settings" in c and spec["stop_source"] == "ATR2" else 0.0,
+        stop_atr_distance=float(distance) if "strategy_settings" in c and spec["stop_source"] == "ATR2" and c["strategy_settings"]["initial_stop_anchor"] == "ENTRY" else 0.0,
+        root_entry_price=float(entry), root_r_distance=float(distance),
         archetype_family=spec["family"], trail_source=spec["trail_source"],
         trail_close_only=int(spec["trail_close_only"]), pending_policy=spec["pending_policy"],
         strategy_config=json.dumps(c) if spec["family"] != "LEGACY" else "{}")
@@ -855,14 +874,14 @@ class Engine:
         with self.db.connect() as db:
             scheme = p.get("exit_scheme", "LEGACY")
             hard_rr = p.get("hard_tp_rr", 0.0)
-            db.execute("UPDATE positions SET state=?,entry_price=?,qty=?,tp1_price=?,initial_r_distance=?,hard_tp_price=?,trail_last_candle_ts=?,initial_sl=?,active_sl=?,isolated_leverage=?,slot_margin_usd=?,sizing_slippage_pct=?,risk_budget=?,max_notional=?,fee_rate=? "
+            db.execute("UPDATE positions SET state=?,entry_price=?,qty=?,tp1_price=?,initial_r_distance=?,hard_tp_price=?,trail_last_candle_ts=?,initial_sl=?,active_sl=?,isolated_leverage=?,slot_margin_usd=?,sizing_slippage_pct=?,risk_budget=?,max_notional=?,fee_rate=?,root_entry_price=?,root_r_distance=? "
                 "WHERE symbol=? AND state=?",
                 (TRAILING if scheme == "PURE_KIJUN" else INITIAL, price, qty,
                  price + direction * p["tp1_rr"] * distance, distance,
                  price + direction * hard_rr * distance if hard_rr else 0.0,
                  self.trail_marker(p, now if now is not None else time.time()) if scheme == "PURE_KIJUN" else 0,
                  p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
-                 p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], p["symbol"], PENDING))
+                 p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], price, distance, p["symbol"], PENDING))
         return True
 
     @staticmethod
@@ -891,6 +910,73 @@ class Engine:
                     (remaining, stop, TRAILING if transition else p["state"], confirmed,
                      self.trail_marker(p, now) if transition else p.get("trail_last_candle_ts", 0), p["symbol"]))
         return {"symbol": p["symbol"], "result": "closed", "qty": qty, "pnl_usd": pnl, "dry_run": True}
+
+    def arm_pyramid(self, p: dict, price: float, now: float):
+        """Arm only after the root is 2R profitable and its stop covers costs."""
+        frozen = json.loads(p.get("strategy_config", "{}"))
+        if (not frozen.get("strategy_settings", {}).get("pyramid_enabled", False)
+                or p.get("pyramid_added") or p.get("pyramid_eligible_ts") or p["state"] == PENDING):
+            return
+        sign = 1 if p["side"] == "long" else -1
+        entry, distance = p.get("root_entry_price", 0), p.get("root_r_distance", 0)
+        costs = p["fee_rate"] + p.get("sizing_slippage_pct", 0)
+        if (entry > 0 and distance > 0 and sign * (price - entry) >= 2 * distance
+                and sign * (p["active_sl"] - entry) >= entry * costs):
+            with self.db.connect() as db:
+                db.execute("UPDATE positions SET pyramid_eligible_ts=? WHERE symbol=?", (now, p["symbol"]))
+            p["pyramid_eligible_ts"] = now
+
+    def _pyramid_add(self, p: dict, side: str, bar: pd.Series, c: dict, now: float) -> bool:
+        """One half-risk unit; same symbol slot/stop, persisted atomically.
+
+        The paper position stores the weighted entry; costs/PnL remain linear.
+        Root entry/R and the scale-in ledger remain separate for audit/restarts.
+        """
+        frozen = json.loads(p.get("strategy_config", "{}"))
+        settings = frozen.get("strategy_settings", {})
+        if (not settings.get("pyramid_enabled", False) or p["state"] != TRAILING
+                or p.get("pyramid_added") or side != p["side"]
+                or settings != c.get("strategy_settings")
+                or position_leverage(p) != c["risk_and_exit"]["default_isolated_leverage"]
+                or p["fee_rate"] != c["risk_and_exit"]["lbank_round_trip_fee"]):
+            return False
+        close_time = float(bar.timestamp) / 1000 + TIMEFRAMES[p["timeframe"]]
+        if not 0 < p.get("pyramid_eligible_ts", 0) < close_time:
+            return False
+        self.assert_paper(p)
+        price = self.data.price(p["symbol"])
+        sign = 1 if side == "long" else -1
+        distance = sign * (price - p["active_sl"])
+        root = p["root_entry_price"]
+        if (sign * (price - root) < 2 * p["root_r_distance"]
+                or sign * (p["active_sl"] - root) < root * (p["fee_rate"] + .0004)
+                or distance <= 0 or distance / price < .012
+                or sign * (bar.close - p["active_sl"]) / bar.close < .012):
+            return False
+        equity = self.paper_equity()
+        daily, _ = self.db.history_summary(now)
+        if equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]:
+            return False
+        unit = copy.deepcopy(c)
+        unit["risk_and_exit"]["risk_per_trade_pct"] *= .5
+        available = self.available_notional(equity, c)
+        planned = entry_budget(equity, sign * (bar.close - p["active_sl"]) / bar.close, unit, available)
+        budget = entry_budget(equity, distance / price, unit, available)
+        cap = min(planned["final_notional"] / bar.close, budget["final_notional"] / price) / p["contract_size"]
+        qty = self.data.precision(p["symbol"], cap)
+        if not self.data.tradable(p["symbol"], qty, price):
+            return False
+        total = p["qty"] + qty
+        average = (p["entry_price"] * p["qty"] + price * qty) / total
+        modeled_risk = qty * p["contract_size"] * (distance + price * (p["fee_rate"] + .0004))
+        with self.db.connect() as db:
+            cursor = db.execute("UPDATE positions SET qty=?,entry_price=?,pyramid_added=1 WHERE symbol=? AND pyramid_added=0 AND state=?",
+                                (total, average, p["symbol"], TRAILING))
+            if not cursor.rowcount:
+                return False
+            db.execute("INSERT INTO scale_in_history(symbol,root_signal_ts,added_at,entry_price,qty,shared_stop,modeled_risk_usd,root_entry_price,root_r_distance) VALUES(?,?,?,?,?,?,?,?,?)",
+                       (p["symbol"], p["signal_ts"], now, price, qty, p["active_sl"], modeled_risk, root, p["root_r_distance"]))
+        return True
 
     def close_symbol(self, symbol: str, now: float | None = None) -> dict:
         with file_lock(self.db.trade_lock):
@@ -961,6 +1047,7 @@ class Engine:
                             continue
                     price = self.data.price(p["symbol"])
                     sign = 1 if p["side"] == "long" else -1
+                    self.arm_pyramid(p, price, now)
                     if p["state"] == PENDING:
                         if sign * (price - p["cancel_price"]) <= 0:
                             with self.db.connect() as db:
@@ -1107,9 +1194,13 @@ class Engine:
             available = max(0, c["risk_and_exit"]["max_open_positions"] - len(self.db.positions()))
             ordering = (lambda item: (-item[0], c["symbols"].index(item[1]))) if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else (lambda item: (item[0], item[1]))
             for _, symbol, side, bar, structural in sorted(candidates, key=ordering):
-                if blocked or available <= 0:
+                if blocked:
                     break
-                if self.db.position(symbol):
+                existing = self.db.position(symbol)
+                if existing:
+                    self._pyramid_add(existing, side, structural if structural is not None else bar, c, now)
+                    continue
+                if available <= 0:
                     continue
                 with self.db.connect() as db:
                     prior = db.execute("SELECT candle_ts FROM scanned_candles WHERE symbol=? AND timeframe=?", (symbol, ltf)).fetchone()

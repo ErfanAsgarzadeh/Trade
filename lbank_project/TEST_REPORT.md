@@ -104,3 +104,15 @@ The benchmark and runtime share strategy_archetypes.py. All 112 definitions were
 - Existing dependency warning: Starlette TestClient/httpx deprecation only.
 - No new five-year benchmark was run; archived portfolio statistics are frozen.
   Futures live execution remains unavailable in the pinned LBank adapter.
+
+## High-CAGR deployment — 2026-10-06
+
+168 Python tests pass (13.00 s), including frozen-kernel parity, both-side
+pyramid execution, shared equity and costs, actual-stop REJECT, next-breakout
+eligibility, half-risk sizing, weighted-entry PnL/margin preservation, one-add
+restart state, budget/wrong-side/timing gates, and all prior regressions.
+Dashboard Node DOM tests pass, including pyramid toggling and config updates.
+The deployment matches the eligible 384-case suite winner under 35% DD.
+All 1152 period ledgers audited. Winner replay and reversed minute path agree;
+doubled unknown funding gives 32.2274% CAGR versus 32.2351% original.
+No untouched forward validation or live execution is claimed.
