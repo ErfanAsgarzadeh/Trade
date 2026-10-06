@@ -66,13 +66,18 @@ SCHEMA = {
         "hard_tp_rr": float, "breakeven_trigger_rr": float,
         "pyramid_enabled": bool, "initial_stop_anchor": str,
         "profit_floor_enabled": bool, "profit_floor_trigger_r": float, "profit_floor_lock_r": float,
-        "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float},
+        "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float,
+        "stop_width_filter_enabled": bool, "stop_width_skip_pct": float,
+        "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
 # Verified ablation fix #4B (see high_cagr/output/ablation_fixes.json). Old configs keep legacy behaviour.
 PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r": 2.0,
-    "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5}
+    "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5,
+    # Candidate "V2" (high_cagr/output/vol_throttle_results.json): in-sample evidence only, so it ships OFF.
+    "stop_width_filter_enabled": False, "stop_width_skip_pct": 0.056,
+    "stop_width_mid_pct": 0.045, "stop_width_mid_risk_fraction": 0.5}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -100,6 +105,7 @@ POSITION_EXTENSIONS = {
     "archetype_family": "TEXT NOT NULL DEFAULT 'LEGACY'",
     "trail_source": "TEXT NOT NULL DEFAULT 'KIJUN'",
     "trail_close_only": "INTEGER NOT NULL DEFAULT 0",
+    "risk_mult": "REAL NOT NULL DEFAULT 1",
     "pending_policy": "TEXT NOT NULL DEFAULT 'ONE_BAR'",
     "strategy_config": "TEXT NOT NULL DEFAULT '{}'"}
 
@@ -177,6 +183,9 @@ def validate_config(c: dict) -> dict:
                 and 0 <= settings["profit_floor_lock_r"] < settings["profit_floor_trigger_r"]
                 and 0.05 <= settings["pyramid_risk_fraction"] <= 1):
             raise ConfigError("Invalid profit floor / pyramid risk settings")
+        if not (0.012 <= settings["stop_width_mid_pct"] < settings["stop_width_skip_pct"] <= 0.5
+                and 0.05 <= settings["stop_width_mid_risk_fraction"] <= 1):
+            raise ConfigError("Invalid stop-width filter settings")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
         if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"
@@ -799,7 +808,19 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
     if equity <= 0 or stop <= 0 or entry <= 0 or distance <= 0:
         return None
     cs = float(data.market(symbol).get("contractSize") or 1)
-    budget = entry_budget(equity, distance / entry, c, available_notional)
+    # Optional stop-width filter: very wide 2*ATR stops (exhaustion breakouts) are skipped, wide ones sized down.
+    risk_mult, settings = 1.0, c.get("strategy_settings", {})
+    if settings.get("stop_width_filter_enabled", False):
+        width = distance / entry
+        if width > settings["stop_width_skip_pct"]:
+            return None
+        if width > settings["stop_width_mid_pct"]:
+            risk_mult = settings["stop_width_mid_risk_fraction"]
+    sized = c
+    if risk_mult != 1.0:
+        sized = copy.deepcopy(c)
+        sized["risk_and_exit"]["risk_per_trade_pct"] *= risk_mult
+    budget = entry_budget(equity, distance / entry, sized, available_notional)
     risk, cap = budget["risk_budget"], budget["max_notional"]
     # CCXT contract quantity is contracts, not necessarily base units.
     qty = data.precision(symbol, budget["final_notional"] / entry / cs)
@@ -827,7 +848,7 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
         isolated_leverage=budget["isolated_leverage"], slot_margin_usd=budget["slot_margin_usd"],
         sizing_slippage_pct=budget["sizing_slippage_pct"],
         stop_atr_distance=float(distance) if "strategy_settings" in c and spec["stop_source"] == "ATR2" and c["strategy_settings"]["initial_stop_anchor"] == "ENTRY" else 0.0,
-        root_entry_price=float(entry), root_r_distance=float(distance),
+        root_entry_price=float(entry), root_r_distance=float(distance), risk_mult=float(risk_mult),
         archetype_family=spec["family"], trail_source=spec["trail_source"],
         trail_close_only=int(spec["trail_close_only"]), pending_policy=spec["pending_policy"],
         strategy_config=json.dumps(c) if spec["family"] != "LEGACY" else "{}")
@@ -947,7 +968,11 @@ class Engine:
                 with self.db.connect() as db:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
-            budget = entry_budget(equity, distance / price, current,
+            sized = current
+            if p.get("risk_mult", 1.0) != 1.0:  # the signal-time width filter halved this position's risk
+                sized = copy.deepcopy(current)
+                sized["risk_and_exit"]["risk_per_trade_pct"] *= p["risk_mult"]
+            budget = entry_budget(equity, distance / price, sized,
                                   self.available_notional(equity, current, p["symbol"]))
             p["fee_rate"] = current["risk_and_exit"]["lbank_round_trip_fee"]
             p.update({k: v for k, v in budget.items() if k != "final_notional"})
