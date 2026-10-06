@@ -87,6 +87,12 @@ def test_deployed_config_matches_eligible_winner():
     if (root/'high_cagr/output/winning_config.json').exists():
         expected=lb.validate_config(json.loads((root/'high_cagr/output/winning_config.json').read_text()))
         result=json.loads((root/'high_cagr/output/matrix.json').read_text())['winner']
+        # The deployed config is the audited winner plus ONLY the overrides that passed the ablation decision gate.
+        fixes=json.loads((root/'high_cagr/output/verified_fixes.json').read_text()) if (root/'high_cagr/output/verified_fixes.json').exists() else None
+        if fixes and fixes['final_subset']!='0_BASELINE':
+            ablation=json.loads((root/'high_cagr/output/ablation_fixes.json').read_text())
+            assert ablation['verdicts']['0.0075'][fixes['final_subset']]['verdict']=='ACCEPTED'
+            expected['strategy_settings'].update(fixes['config_overrides']['strategy_settings'])
         assert c==expected
         assert result['eligible'] and result['worst_period_dd_pct']<=35
         assert c['risk_and_exit']['risk_per_trade_pct']==result['risk']

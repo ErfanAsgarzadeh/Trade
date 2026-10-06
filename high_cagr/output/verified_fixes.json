@@ -1,0 +1,88 @@
+{
+ "risk_level": 0.0075,
+ "baseline": {
+  "trades": 1763,
+  "root_entries": 1582,
+  "pyramid_adds": 181,
+  "net_profit": 30425.006405863,
+  "return_pct": 304.25006405863,
+  "cagr_pct": 32.23506435779384,
+  "profit_factor": 1.2582804039756836,
+  "max_dd_pct": 34.56334787321518,
+  "fees": 8031.916983299035,
+  "funding_pnl": -2195.597883990281,
+  "win_rate_pct": 33.522404991491776,
+  "min_stop_rejections": 9,
+  "slot_rejections": 477,
+  "margin_rejections": 0,
+  "missing_funding_proxy_events": 16,
+  "maximum_open_positions": 4,
+  "maximum_entry_margin_pct": 31.291363248860783,
+  "avg_margin_pct": 8.960016998204306,
+  "avg_margin_active_pct": 10.431575093394867,
+  "avg_open_positions": 2.314342597663381,
+  "per_symbol": {
+   "BTCUSDT": {
+    "trades": 340,
+    "net_profit": 1527.3396523387373,
+    "fees": 2218.2128519122225,
+    "funding_pnl": -363.7845691275796
+   },
+   "ETHUSDT": {
+    "trades": 376,
+    "net_profit": 6785.6840851617235,
+    "fees": 1735.2760525325448,
+    "funding_pnl": -452.563318852415
+   },
+   "SOLUSDT": {
+    "trades": 368,
+    "net_profit": 8663.754020686596,
+    "fees": 1335.990524082661,
+    "funding_pnl": -610.4694426794981
+   },
+   "XRPUSDT": {
+    "trades": 325,
+    "net_profit": 9192.723466369262,
+    "fees": 1466.7614820629178,
+    "funding_pnl": -414.1567807354036
+   },
+   "ADAUSDT": {
+    "trades": 354,
+    "net_profit": 4255.505181306671,
+    "fees": 1275.6760727086887,
+    "funding_pnl": -354.62377259538465
+   }
+  },
+  "calmar": 0.9326372108407461,
+  "cap_rejects": 0,
+  "stale_tightened_bar_events": 0,
+  "pyramid_safe_rejects": 0,
+  "floor_events": 0
+ },
+ "accepted_at_0075": [
+  "4B",
+  "2B+4B"
+ ],
+ "accepted_at_01": [
+  "4B",
+  "2B+4B"
+ ],
+ "usable_isolated_fixes": {
+  "1": [],
+  "2": [],
+  "4": [
+   "4B"
+  ]
+ },
+ "final_subset": "4B",
+ "config_overrides": {
+  "strategy_settings": {
+   "profit_floor_enabled": true,
+   "profit_floor_trigger_r": 2.0,
+   "profit_floor_lock_r": 0.25,
+   "safe_pyramid_enabled": true,
+   "pyramid_risk_fraction": 0.35
+  }
+ },
+ "note": "Rules #1 and #2 are not implemented in the live bot because no isolated variant of either was accepted."
+}
