@@ -63,10 +63,15 @@ SCHEMA = {
     "strategy_settings": {"ichimoku_preset": str, "donchian_entry_period": int,
         "initial_stop_mode": str, "exit_tp_mode": str, "hybrid_trail_mode": str,
         "hard_tp_rr": float, "breakeven_trigger_rr": float,
-        "pyramid_enabled": bool, "initial_stop_anchor": str},
+        "pyramid_enabled": bool, "initial_stop_anchor": str,
+        "profit_floor_enabled": bool, "profit_floor_trigger_r": float, "profit_floor_lock_r": float,
+        "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
+# Verified ablation fix #4B (see high_cagr/output/ablation_fixes.json). Old configs keep legacy behaviour.
+PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r": 2.0,
+    "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5}
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
     "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0,
@@ -132,6 +137,8 @@ def validate_config(c: dict) -> dict:
         c["strategy_settings"].setdefault("hybrid_trail_mode", "CLOSE_TRAIL_KIJUN")
         c["strategy_settings"].setdefault("pyramid_enabled", False)
         c["strategy_settings"].setdefault("initial_stop_anchor", "ENTRY")
+        for key, value in PROFIT_FLOOR_DEFAULTS.items():
+            c["strategy_settings"].setdefault(key, value)
     if set(c) not in (set(SCHEMA), set(SCHEMA) - {"strategy_settings"}):
         raise ConfigError("Configuration must use the supplied top-level schema")
     for section, template in SCHEMA.items():
@@ -164,6 +171,10 @@ def validate_config(c: dict) -> dict:
                 or not 0 <= settings["hard_tp_rr"] <= 100
                 or not 0 <= settings["breakeven_trigger_rr"] <= 20):
             raise ConfigError("Invalid strategy_settings")
+        if not (0 < settings["profit_floor_trigger_r"] <= 20
+                and 0 <= settings["profit_floor_lock_r"] < settings["profit_floor_trigger_r"]
+                and 0.05 <= settings["pyramid_risk_fraction"] <= 1):
+            raise ConfigError("Invalid profit floor / pyramid risk settings")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
         if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"
@@ -911,6 +922,26 @@ class Engine:
                      self.trail_marker(p, now) if transition else p.get("trail_last_candle_ts", 0), p["symbol"]))
         return {"symbol": p["symbol"], "result": "closed", "qty": qty, "pnl_usd": pnl, "dry_run": True}
 
+    def apply_profit_floor(self, p: dict, price: float):
+        """Once the root unit has reached trigger R, never let the shared stop sit below entry +/- lock R.
+
+        Idempotent and ratchet-only, so the persisted active_sl is the whole state: no extra column needed.
+        """
+        settings = json.loads(p.get("strategy_config", "{}")).get("strategy_settings", {})
+        entry, distance = p.get("root_entry_price", 0), p.get("root_r_distance", 0)
+        # Verified only with the unlimited Donchian10 stop trail; other exit modes keep their own stop logic.
+        if (not settings.get("profit_floor_enabled", False) or settings.get("exit_tp_mode") != "STOP_TRAIL_DONCHIAN10"
+                or p["state"] == PENDING or entry <= 0 or distance <= 0):
+            return
+        sign = 1 if p["side"] == "long" else -1
+        if sign * (price - entry) < settings["profit_floor_trigger_r"] * distance:
+            return
+        floor = entry + sign * settings["profit_floor_lock_r"] * distance
+        if sign * (floor - p["active_sl"]) > 0:
+            with self.db.connect() as db:
+                db.execute("UPDATE positions SET active_sl=? WHERE symbol=?", (float(floor), p["symbol"]))
+            p["active_sl"] = float(floor)
+
     def arm_pyramid(self, p: dict, price: float, now: float):
         """Arm only after the root is 2R profitable and its stop covers costs."""
         frozen = json.loads(p.get("strategy_config", "{}"))
@@ -958,7 +989,7 @@ class Engine:
         if equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]:
             return False
         unit = copy.deepcopy(c)
-        unit["risk_and_exit"]["risk_per_trade_pct"] *= .5
+        unit["risk_and_exit"]["risk_per_trade_pct"] *= settings.get("pyramid_risk_fraction", .5)
         available = self.available_notional(equity, c)
         planned = entry_budget(equity, sign * (bar.close - p["active_sl"]) / bar.close, unit, available)
         budget = entry_budget(equity, distance / price, unit, available)
@@ -966,6 +997,17 @@ class Engine:
         qty = self.data.precision(p["symbol"], cap)
         if not self.data.tradable(p["symbol"], qty, price):
             return False
+        if settings.get("safe_pyramid_enabled", False):
+            # Combined stop-out must be net >= 0 after round-trip fees and the benchmark's 2bps adverse
+            # slippage on both entries and the exit; otherwise the add-on could turn a winner into a loser.
+            side_fee, slip, cs = p["fee_rate"] / 2, .0002, p["contract_size"]
+            exit_price = p["active_sl"] * (1 - sign * slip)
+            combined = 0.0
+            for unit_qty, unit_entry in ((p["qty"], p["entry_price"]), (qty, price)):
+                fill = unit_entry * (1 + sign * slip)
+                combined += unit_qty * cs * (sign * (exit_price - fill) - side_fee * (fill + exit_price))
+            if combined < 0:
+                return False
         total = p["qty"] + qty
         average = (p["entry_price"] * p["qty"] + price * qty) / total
         modeled_risk = qty * p["contract_size"] * (distance + price * (p["fee_rate"] + .0004))
@@ -1047,6 +1089,7 @@ class Engine:
                             continue
                     price = self.data.price(p["symbol"])
                     sign = 1 if p["side"] == "long" else -1
+                    self.apply_profit_floor(p, price)
                     self.arm_pyramid(p, price, now)
                     if p["state"] == PENDING:
                         if sign * (price - p["cancel_price"]) <= 0:

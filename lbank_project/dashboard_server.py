@@ -213,7 +213,12 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label class="field">پریست ایچیموکو<select id="preset"><option>crypto</option><option>standard</option></select></label>
 <label class="field">دوره شکست Donchian<select id="donchian_period"><option>20</option><option>10</option></select></label>
 <label class="field">استاپ اولیه<select id="initial_stop"><option>ATR2</option><option>KIJUN</option></select></label>
-<label><input id="pyramid" type="checkbox">افزودن یک‌مرحله‌ای به برنده (نصف ریسک)</label>
+<label><input id="pyramid" type="checkbox">افزودن یک‌مرحله‌ای به برنده</label>
+<label class="field">ریسک واحد افزوده (کسری از ریسک هر معامله)<input id="pyramid_fraction" type="number" min="0.05" max="1" step="0.05"></label>
+<label><input id="safe_pyramid" type="checkbox">افزودن فقط اگر استاپ مشترک، سربه‌سر ترکیبی هر دو واحد (با کارمزد و لغزش) را پوشش دهد</label>
+<label><input id="profit_floor" type="checkbox">کف سود: پس از رسیدن به آستانهٔ R استاپ را به ورود ± ضریب قفل ببر</label>
+<label class="field">آستانهٔ فعال‌سازی کف سود (R)<input id="floor_trigger" type="number" min="0.1" max="20" step="0.1"></label>
+<label class="field">ضریب قفل کف سود (R)<input id="floor_lock" type="number" min="0" max="19.9" step="0.05"></label>
 <label class="field">مبنای استاپ ATR2<select id="stop_anchor"><option>SIGNAL</option><option>ENTRY</option></select></label>
 <label><input id="breakout" type="checkbox">شکست کندل سیگنال</label><label><input id="barb" type="checkbox">فیلتر Barb Wire</label><label><input id="h2" type="checkbox">پولبک H2 / L2</label></div>
 <details><summary>ویرایش کامل JSON</summary><textarea id="editor" aria-label="JSON configuration" spellcheck="false"></textarea></details>
@@ -236,9 +241,10 @@ function fillControls(){if(!cfg)return;$('auto').checked=cfg.bot_control.auto_tr
  $('strategy').value=cfg.strategy_mode.mode;$('risk').value=cfg.risk_and_exit.risk_per_trade_pct*100;
  $('engaged').value=cfg.risk_and_exit.engaged_capital_pct*100;$('leverage').value=cfg.risk_and_exit.leverage_mode;$('max_positions').value=cfg.risk_and_exit.max_open_positions;
  const settings=cfg.strategy_settings;
- for(const id of ['exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor'])$(id).disabled=!settings;
+ for(const id of ['exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock'])$(id).disabled=!settings;
  $('strategy').disabled=!!settings;
- if(settings){$('exit_tp').value=settings.exit_tp_mode;$('hybrid_trail').value=settings.hybrid_trail_mode;$('hard_tp').value=settings.hard_tp_rr;$('breakeven').value=settings.breakeven_trigger_rr;$('preset').value=settings.ichimoku_preset;$('donchian_period').value=settings.donchian_entry_period;$('initial_stop').value=settings.initial_stop_mode;$('pyramid').checked=!!settings.pyramid_enabled;$('stop_anchor').value=settings.initial_stop_anchor;}
+ if(settings){$('exit_tp').value=settings.exit_tp_mode;$('hybrid_trail').value=settings.hybrid_trail_mode;$('hard_tp').value=settings.hard_tp_rr;$('breakeven').value=settings.breakeven_trigger_rr;$('preset').value=settings.ichimoku_preset;$('donchian_period').value=settings.donchian_entry_period;$('initial_stop').value=settings.initial_stop_mode;$('pyramid').checked=!!settings.pyramid_enabled;$('stop_anchor').value=settings.initial_stop_anchor;
+  $('pyramid_fraction').value=settings.pyramid_risk_fraction;$('safe_pyramid').checked=!!settings.safe_pyramid_enabled;$('profit_floor').checked=!!settings.profit_floor_enabled;$('floor_trigger').value=settings.profit_floor_trigger_r;$('floor_lock').value=settings.profit_floor_lock_r;}
  $('breakout').checked=cfg.al_brooks_filters.require_signal_bar_breakout;$('barb').checked=cfg.al_brooks_filters.enable_barb_wire_filter;$('h2').checked=cfg.al_brooks_filters.require_h2_l2_pullback;
 }
 async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
@@ -246,11 +252,12 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
  cfg.bot_control.auto_trade_enabled=$('auto').checked;cfg.strategy_mode.mode=$('strategy').value;cfg.risk_and_exit.risk_per_trade_pct=Number($('risk').value)/100;
  cfg.risk_and_exit.engaged_capital_pct=Number($('engaged').value)/100;cfg.risk_and_exit.leverage_mode=$('leverage').value;cfg.risk_and_exit.max_open_positions=Number($('max_positions').value);
  if(cfg.strategy_settings){Object.assign(cfg.strategy_settings,{exit_tp_mode:$('exit_tp').value,hybrid_trail_mode:$('hybrid_trail').value,hard_tp_rr:Number($('hard_tp').value),breakeven_trigger_rr:Number($('breakeven').value),ichimoku_preset:$('preset').value,donchian_entry_period:Number($('donchian_period').value),initial_stop_mode:$('initial_stop').value});}
- if(cfg.strategy_settings){cfg.strategy_settings.pyramid_enabled=$('pyramid').checked;cfg.strategy_settings.initial_stop_anchor=$('stop_anchor').value;}
+ if(cfg.strategy_settings){cfg.strategy_settings.pyramid_enabled=$('pyramid').checked;cfg.strategy_settings.initial_stop_anchor=$('stop_anchor').value;
+  Object.assign(cfg.strategy_settings,{pyramid_risk_fraction:Number($('pyramid_fraction').value),safe_pyramid_enabled:$('safe_pyramid').checked,profit_floor_enabled:$('profit_floor').checked,profit_floor_trigger_r:Number($('floor_trigger').value),profit_floor_lock_r:Number($('floor_lock').value)});}
  cfg.al_brooks_filters.require_signal_bar_breakout=$('breakout').checked;cfg.al_brooks_filters.enable_barb_wire_filter=$('barb').checked;cfg.al_brooks_filters.require_h2_l2_pullback=$('h2').checked;
  $('editor').value=JSON.stringify(cfg,null,2);$('dirty').textContent='تغییرات ذخیره نشده است.';
 }
-for(const id of ['auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor'])$(id).addEventListener('change',controlsChanged);
+for(const id of ['auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='تغییرات ذخیره نشده است.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('JSON نامعتبر است.',true);}});
 function render(s){$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';

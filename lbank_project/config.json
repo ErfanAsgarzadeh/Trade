@@ -94,6 +94,11 @@
     "hard_tp_rr": 0.0,
     "breakeven_trigger_rr": 0.0,
     "pyramid_enabled": true,
-    "initial_stop_anchor": "SIGNAL"
+    "initial_stop_anchor": "SIGNAL",
+    "profit_floor_enabled": true,
+    "profit_floor_trigger_r": 2.0,
+    "profit_floor_lock_r": 0.25,
+    "safe_pyramid_enabled": true,
+    "pyramid_risk_fraction": 0.35
   }
 }
