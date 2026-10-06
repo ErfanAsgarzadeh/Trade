@@ -1,4 +1,4 @@
-"""Actual-period parity against the frozen five-year six-asset winner ledger."""
+"""Frozen close-only controls and the prior six-symbol study."""
 from pathlib import Path
 import sys,json
 import numpy as np
@@ -15,6 +15,6 @@ def main():
    row[period]=summarize(a,t,curve,begin,end,symbols)
   rows.append(row)
  # The frozen winner itself is a committed control, independent of the new suite.
- old=json.loads((ROOT/'trade_upgrade/portfolio/output/matrix.json').read_text())['winner'];rows.insert(0,dict(id='SIX_FROZEN_WINNER',**{p:old[p] for p in PERIODS}))
+ old=json.loads((ROOT/'portfolio/output/matrix.json').read_text())['winner'];rows.insert(0,dict(id='SIX_FROZEN_WINNER',**{p:old[p] for p in PERIODS}))
  atomic(OUT/'controls.json',rows);print([(r['id'],r['full']['cagr_pct']) for r in rows],flush=True)
 if __name__=='__main__':main()

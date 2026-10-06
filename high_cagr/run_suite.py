@@ -87,7 +87,15 @@ def run_case(case,prices,funding,frames):
  return row
 
 def main():
- declaration=predeclare();prices=np.stack([np.load(ROOT/'high_cagr/prepared'/s/'prices.npy',mmap_mode='r') for s in SYMBOLS]);funding=np.stack([np.load(ROOT/'high_cagr/prepared'/s/'funding.npy',mmap_mode='r') for s in SYMBOLS]);frames=load_frames()
+ declaration=predeclare()
+ # The committed aggregate is also a durable checkpoint on a fresh clone.
+ if (OUT/'matrix.json').exists():
+  saved=json.loads((OUT/'matrix.json').read_text())
+  if saved.get('declaration')==declaration:
+   for row in saved['matrix']:
+    checkpoint=OUT/(row['id']+'.json')
+    if not checkpoint.exists():atomic(checkpoint,row)
+ prices=np.stack([np.load(ROOT/'high_cagr/prepared'/s/'prices.npy',mmap_mode='r') for s in SYMBOLS]);funding=np.stack([np.load(ROOT/'high_cagr/prepared'/s/'funding.npy',mmap_mode='r') for s in SYMBOLS]);frames=load_frames()
  # Compile before threads; --workers lets the checkpointed workload resume.
  case=declaration['cases'][0];ss,bb,step=inputs(case,frames);simulate(prices[:,:2],funding[:,:2],ss,bb,START,0,2,case['risk'],case['max_open_positions'],step)
  workers=int(sys.argv[sys.argv.index('--workers')+1]) if '--workers' in sys.argv else 4
