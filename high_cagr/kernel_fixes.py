@@ -34,11 +34,12 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              pyramid=False,close_only=False,reverse=False,proxy=.0001,
              engaged=.60,sizing_slip=.0004,legacy_cap=0.,
              same_side_cap=0,max_new_per_bar=0,stale_bars=0,stale_mfe=.40,stale_cols=4,
-             floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002):
+             floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002,
+             vol_max_pct=0.,vol_mid_pct=0.,vol_mid_mult=1.,thr_trigger=0.,thr_resume=0.,thr_mult=1.):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,2,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
- mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0
+ mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0;vol_rejects=0;throttled=False;throttled_units=0
  curve=np.full(((end-begin+59)//60+2,3),np.nan)
  balance=10000.;peak=10000.;dd=0.;nt=0;nd=0;first_daily=0
  rejects=0;slotreject=0;marginreject=0;proxies=0;maxopen=0;maxmargin=0.;maxgross=0.;adds=0
@@ -102,7 +103,14 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if eq<=0 or dailypnl<=-eq*.02:continue
     dist=sign*(trigger-stop)
     if stop<=0 or dist<=0 or dist/trigger<.012:rejects+=1;continue
-    unit_risk=risk*pyr_risk_mult if scale else risk
+    if thr_trigger>0:
+     if not throttled and eq<peak*(1-thr_trigger):throttled=True
+     elif throttled and eq>=peak*(1-thr_resume):throttled=False
+    vol_mult=1.
+    if not scale and vol_max_pct>0 and dist/trigger>vol_max_pct:vol_rejects+=1;continue
+    if not scale and vol_mid_pct>0 and dist/trigger>vol_mid_pct:vol_mult=vol_mid_mult
+    unit_risk=(risk*pyr_risk_mult if scale else risk*vol_mult)*(thr_mult if throttled else 1.)
+    if throttled:throttled_units+=1
     if legacy_cap>0:cap=eq*legacy_cap
     else:cap=eq*engaged/slots*5
     planned=math.floor(min(eq*unit_risk/(dist+trigger*(.0012+sizing_slip)),cap/trigger)*10000+1e-9)/10000
@@ -162,4 +170,4 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
  for s in range(ns):
   if p[s,0,0]:balance,nd=close_symbol(slip,s,prices[s,end-1,3],start+end*60000-1,8,p,trades,balance,daily,nd)
  peak=max(peak,balance);dd=max(dd,(peak-balance)/peak);curve[-1]=np.array([start+end*60000-1,balance,balance])
- return np.array([balance,dd,rejects,slotreject,marginreject,proxies,maxopen,maxmargin,maxgross,adds,ratio_sum/(end-begin),active_ratio/max(1,active_count),position_sum/(end-begin),cap_rejects,stale_events,pyr_safe_rejects,floor_events]),trades[:nt],curve
+ return np.array([balance,dd,rejects,slotreject,marginreject,proxies,maxopen,maxmargin,maxgross,adds,ratio_sum/(end-begin),active_ratio/max(1,active_count),position_sum/(end-begin),cap_rejects,stale_events,pyr_safe_rejects,floor_events,vol_rejects,throttled_units]),trades[:nt],curve
