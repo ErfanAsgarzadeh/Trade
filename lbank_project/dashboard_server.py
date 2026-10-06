@@ -121,6 +121,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             "positions": positions, "price_errors": errors,
             "runtime": engine.db.runtime_all(), "live_execution_supported": False,
             "data_mode": getattr(engine.data, "mode", "test-fixture"),
+            "fill_quality": engine.db.fill_quality_summary(),
             "execution_note": LIVE_LIMITATION}
 
     @application.post("/api/positions/close", dependencies=[Depends(authorized)])
@@ -196,7 +197,8 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <div class="kpis"><section class="panel kpi"><p>سود و زیان باز ($)</p><strong id="unrealized">—</strong></section>
 <section class="panel kpi"><p>سود و زیان تحقق‌یافتهٔ ۲۴ ساعت ($)</p><strong id="realized">—</strong><p id="trades">—</p></section>
 <section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated">در انتظار اتصال</p></section>
-<section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section></div>
+<section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
+<section class="panel kpi"><p>لغزش واقعی اندازه‌گیری‌شده با دفتر سفارش LBank (bps، میانه / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
 <section class="panel"><div class="row"><h2>پوزیشن‌ها</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها + توقف ربات</button></div>
 <div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
 <section class="panel"><div class="row"><h2>تنظیمات</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
@@ -260,12 +262,17 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
 for(const id of ['auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='تغییرات ذخیره نشده است.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('JSON نامعتبر است.',true);}});
+function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='هنوز fill ثبت نشده (فقط با PAPER_DATA_MODE=csv-lbank و دفتر سفارش زنده)'+(fq&&fq.last_error?' | خطا: '+fq.last_error:'');return;}
+ const f=x=>x?Number(x.median_bps).toFixed(1)+' / '+Number(x.p90_bps).toFixed(1):'—';main.textContent='ورود '+f(fq.entry)+' | خروج '+f(fq.exit);
+ const worst=Math.max(fq.entry?fq.entry.median_bps:0,fq.exit?fq.exit.median_bps:0);main.className=worst>fq.assumed_bps_per_fill*2.5?'bad':'';
+ detail.textContent='بک‌تست '+fq.assumed_bps_per_fill+' bps فرض کرده؛ '+fq.total+' fill'+(fq.last_error?' | خطا: '+fq.last_error:'');}
 function render(s){$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';
  $('unrealized').textContent=number(s.total_unrealized_pnl);$('realized').textContent=number(s.daily_realized_pnl);$('realized').className=s.daily_realized_pnl<0?'bad':'good';
  $('trades').textContent=s.daily_trades_count+' خروج ثبت‌شده در ۲۴ ساعت';$('slots').textContent=s.open_positions_count+' / '+s.max_open_positions;
  $('margin').textContent=number(s.engaged_margin_usd)+' / '+number(s.allowed_margin_usd);
  $('margin_pct').textContent=number(s.engaged_margin_pct)+'٪ از حساب / '+number(s.allowed_margin_pct)+'٪ مجاز؛ '+number(s.margin_budget_utilization_pct)+'٪ مصرف بودجه';
  $('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار: $'+number(s.reserved_pending_margin_usd);
+ renderFillQuality(s.fill_quality);
  $('updated').textContent='آخرین دریافت: '+new Date().toLocaleTimeString('fa-IR');const rows=$('positions');rows.replaceChildren();
  if(!s.positions.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=10;td.textContent='پوزیشن بازی وجود ندارد.';tr.append(td);rows.append(tr);}
  for(const p of s.positions){const tr=document.createElement('tr');const values=[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(p.unrealized_pnl_usd)];

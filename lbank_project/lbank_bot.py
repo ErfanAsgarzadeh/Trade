@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import signal
 import sqlite3
+import sys
 import tempfile
 import threading
 import time
@@ -72,6 +73,7 @@ SCHEMA = {
 # Verified ablation fix #4B (see high_cagr/output/ablation_fixes.json). Old configs keep legacy behaviour.
 PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r": 2.0,
     "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5}
+ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
     "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0,
@@ -354,6 +356,14 @@ class Database:
               entry_price REAL NOT NULL, qty REAL NOT NULL, shared_stop REAL NOT NULL,
               modeled_risk_usd REAL NOT NULL, root_entry_price REAL NOT NULL,
               root_r_distance REAL NOT NULL);
+            CREATE TABLE IF NOT EXISTS fill_quality (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, ts REAL NOT NULL, symbol TEXT NOT NULL,
+              kind TEXT NOT NULL, reason TEXT NOT NULL DEFAULT '', side TEXT NOT NULL,
+              ref_price REAL NOT NULL, mid REAL NOT NULL, vwap REAL NOT NULL,
+              qty REAL NOT NULL, notional_usd REAL NOT NULL,
+              slip_ref_bps REAL NOT NULL, slip_mid_bps REAL NOT NULL,
+              spread_bps REAL NOT NULL, filled_fraction REAL NOT NULL);
+            CREATE INDEX IF NOT EXISTS fill_quality_ts ON fill_quality(ts);
             """)
             existing = {row[1] for row in db.execute("PRAGMA table_info(positions)")}
             for name, definition in POSITION_EXTENSIONS.items():
@@ -392,6 +402,23 @@ class Database:
             row = db.execute("SELECT COALESCE(SUM(pnl_usd),0),COUNT(*) FROM trade_history "
                              "WHERE closed_at>=?", (now - 86400,)).fetchone()
             return float(row[0]), int(row[1])
+
+    def fill_quality_summary(self, limit: int = 2000) -> dict:
+        """Measured order-book slippage (positive = worse than the paper fill price), per direction."""
+        with self.connect() as db:
+            rows = [dict(r) for r in db.execute("SELECT * FROM fill_quality ORDER BY id DESC LIMIT ?", (limit,))]
+        def stats(group: list[dict]) -> dict | None:
+            if not group:
+                return None
+            slip = np.array([r["slip_ref_bps"] for r in group])
+            return {"n": len(group), "mean_bps": float(slip.mean()), "median_bps": float(np.median(slip)),
+                    "p90_bps": float(np.percentile(slip, 90)), "worst_bps": float(slip.max()),
+                    "mean_spread_bps": float(np.mean([r["spread_bps"] for r in group])),
+                    "thin_book_fills": int(sum(r["filled_fraction"] < 0.999 for r in group))}
+        return {"total": len(rows), "assumed_bps_per_fill": ASSUMED_SLIPPAGE_BPS,
+                "entry": stats([r for r in rows if r["kind"] in ("entry", "add")]),
+                "exit": stats([r for r in rows if r["kind"] == "exit"]),
+                "last_error": self.runtime_all().get("fill_quality_error")}
 
     def runtime_set(self, key: str, value: Any):
         with self.connect() as db:
@@ -646,6 +673,36 @@ class MarketData:
             # Atomic replacement of the CSV by its producer avoids partial reads.
             return df.tail(limit).to_numpy().tolist()
 
+    def book_fill(self, symbol: str, buy: bool, contracts: float) -> dict | None:
+        """Average price a market order of `contracts` would get by walking the live order book.
+
+        Measurement only: returns None in demo mode (synthetic prices have no book) or if the book is unusable.
+        """
+        if self.mode == "demo" or contracts <= 0:
+            return None
+        with self.lock:
+            self.market(symbol)
+            book = self.exchange.fetch_order_book(symbol, 50)
+        def clean(levels):
+            out = [(float(x[0]), float(x[1])) for x in levels or [] if len(x) >= 2]
+            return [(p, a) for p, a in out if math.isfinite(p) and math.isfinite(a) and p > 0 and a > 0]
+        bids, asks = clean(book.get("bids")), clean(book.get("asks"))
+        if not bids or not asks or bids[0][0] >= asks[0][0]:
+            return None
+        mid = (bids[0][0] + asks[0][0]) / 2
+        remaining, cost, filled = contracts, 0.0, 0.0
+        for price, amount in (asks if buy else bids):
+            take = min(amount, remaining)
+            cost += take * price
+            filled += take
+            remaining -= take
+            if remaining <= 1e-12:
+                break
+        if filled <= 0:
+            return None
+        return {"mid": mid, "vwap": cost / filled, "filled_fraction": filled / contracts,
+                "spread_bps": (asks[0][0] - bids[0][0]) / mid * 1e4}
+
     def precision(self, symbol: str, quantity: float) -> float:
         with self.lock:
             self.market(symbol)
@@ -824,6 +881,32 @@ class Engine:
             reserved += position_margin(p, leverage)
         return max(0.0, equity * c["risk_and_exit"]["engaged_capital_pct"] - reserved) * leverage
 
+    def _record_fill(self, kind: str, p: dict, price: float, qty: float, reason: str = ""):
+        """Log what this paper fill would have cost against the real book. Never raises, never moves PnL."""
+        if os.getenv("FILL_QUALITY", "on") == "off" or not hasattr(self.data, "book_fill"):
+            return
+        try:
+            buy = (p["side"] == "long") if kind in ("entry", "add") else (p["side"] == "short")
+            info = self.data.book_fill(p["symbol"], buy, qty)
+            if info is None:
+                return
+            sign = 1 if buy else -1  # paying more / receiving less than the reference is adverse
+            slip_ref = sign * (info["vwap"] - price) / price * 1e4
+            slip_mid = sign * (info["vwap"] - info["mid"]) / info["mid"] * 1e4
+            with self.db.connect() as db:
+                db.execute("INSERT INTO fill_quality(ts,symbol,kind,reason,side,ref_price,mid,vwap,qty,notional_usd,"
+                           "slip_ref_bps,slip_mid_bps,spread_bps,filled_fraction) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                           (time.time(), p["symbol"], kind, reason, "buy" if buy else "sell", price, info["mid"],
+                            info["vwap"], qty, qty * p.get("contract_size", 1) * info["vwap"], slip_ref, slip_mid,
+                            info["spread_bps"], info["filled_fraction"]))
+            self.db.runtime_set("fill_quality_error", None)
+        except Exception as exc:
+            LOG.warning("Fill-quality measurement failed for %s: %s", p.get("symbol"), exc)
+            try:
+                self.db.runtime_set("fill_quality_error", f"{p.get('symbol')}: {exc}"[:300])
+            except Exception:
+                pass
+
     def _insert(self, p: dict):
         keys = list(p)
         with self.db.connect() as db:
@@ -893,6 +976,7 @@ class Engine:
                  self.trail_marker(p, now if now is not None else time.time()) if scheme == "PURE_KIJUN" else 0,
                  p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
                  p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], price, distance, p["symbol"], PENDING))
+        self._record_fill("entry", p, price, qty)
         return True
 
     @staticmethod
@@ -920,6 +1004,8 @@ class Engine:
                 db.execute("UPDATE positions SET qty=?,active_sl=?,state=?,be_confirmed=?,trail_last_candle_ts=? WHERE symbol=?",
                     (remaining, stop, TRAILING if transition else p["state"], confirmed,
                      self.trail_marker(p, now) if transition else p.get("trail_last_candle_ts", 0), p["symbol"]))
+        if reason != "panic":  # never delay an emergency close with a network call
+            self._record_fill("exit", p, price, qty, reason)
         return {"symbol": p["symbol"], "result": "closed", "qty": qty, "pnl_usd": pnl, "dry_run": True}
 
     def apply_profit_floor(self, p: dict, price: float):
@@ -1018,6 +1104,7 @@ class Engine:
                 return False
             db.execute("INSERT INTO scale_in_history(symbol,root_signal_ts,added_at,entry_price,qty,shared_stop,modeled_risk_usd,root_entry_price,root_r_distance) VALUES(?,?,?,?,?,?,?,?,?)",
                        (p["symbol"], p["signal_ts"], now, price, qty, p["active_sl"], modeled_risk, root, p["root_r_distance"]))
+        self._record_fill("add", p, price, qty)
         return True
 
     def close_symbol(self, symbol: str, now: float | None = None) -> dict:
@@ -1333,5 +1420,17 @@ def run():
     thread.join(timeout=12)
 
 
+def probe_book(symbol: str, contracts: float):
+    """`python lbank_bot.py --probe-book BTC/USDT:USDT 0.01`: check that live order-book measurement works."""
+    data = MarketData()
+    if data.mode == "demo":
+        sys.exit("Set PAPER_DATA_MODE=csv-lbank first: demo mode has no order book.")
+    for buy in (True, False):
+        print("BUY " if buy else "SELL", json.dumps(data.book_fill(symbol, buy, contracts)))
+
+
 if __name__ == "__main__":
-    run()
+    if len(sys.argv) == 4 and sys.argv[1] == "--probe-book":
+        probe_book(sys.argv[2], float(sys.argv[3]))
+    else:
+        run()
