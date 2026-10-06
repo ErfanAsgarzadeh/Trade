@@ -1,0 +1,9 @@
+{
+  "deployed_id": "SINGLE__B_runner_hard4__reject__slope_ADX25",
+  "tie_ids": [
+    "SINGLE__B_runner_hard4__none__slope_ADX25",
+    "SINGLE__B_runner_hard4__widen__slope_ADX25",
+    "SINGLE__B_runner_hard4__reject__slope_ADX25"
+  ],
+  "slippage_cost_at_fixed_fills": 3.3088727094873884
+}

@@ -1,0 +1,205 @@
+{
+  "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P4",
+  "strategy": {
+    "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+    "family": "DONCHIAN",
+    "mode": "SINGLE",
+    "setting": "standard",
+    "entry": "MARKET",
+    "exit": "STOP_TRAIL",
+    "stop": "KIJUN",
+    "trail": "DONCHIAN10",
+    "h2": false,
+    "lookback": 10
+  },
+  "kind": "PORTFOLIO",
+  "risk": 0.0075,
+  "notional_cap": 1.25,
+  "max_open_positions": 4,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT"
+  ],
+  "full": {
+    "trades": 1653,
+    "net_profit": 20976.787991032896,
+    "return_pct": 209.76787991032896,
+    "cagr_pct": 25.377822328971078,
+    "profit_factor": 1.188838851189359,
+    "max_dd_pct": 39.86011248400446,
+    "fees": 8438.901403697235,
+    "funding_pnl": -1841.238798473546,
+    "gross_pnl": 31256.92819320369,
+    "win_rate_pct": 32.062915910465826,
+    "avg_win": 249.16943013156228,
+    "avg_loss": -98.91630452243554,
+    "min_stop_rejections": 372,
+    "slot_rejections": 947,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 15,
+    "maximum_open_positions": 4,
+    "maximum_entry_margin_pct": 37.84221105214588,
+    "maximum_entry_notional_pct": 189.09546425250184,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 249,
+        "net_profit": 2165.4553084333725,
+        "fees": 1561.9550961663338,
+        "funding_pnl": -271.34743240185395
+      },
+      "ETHUSDT": {
+        "trades": 293,
+        "net_profit": 3731.8954741494695,
+        "fees": 1455.8750933972274,
+        "funding_pnl": -384.29309686004746
+      },
+      "BNBUSDT": {
+        "trades": 253,
+        "net_profit": -724.0602547665558,
+        "fees": 1497.4525121432937,
+        "funding_pnl": -29.294403168713004
+      },
+      "SOLUSDT": {
+        "trades": 318,
+        "net_profit": 2500.0236204826833,
+        "fees": 1406.0453148505671,
+        "funding_pnl": -509.13470449450773
+      },
+      "XRPUSDT": {
+        "trades": 256,
+        "net_profit": 6434.67293669554,
+        "fees": 1277.846437941153,
+        "funding_pnl": -342.4963473877262
+      },
+      "ADAUSDT": {
+        "trades": 284,
+        "net_profit": 6868.800906038399,
+        "fees": 1239.7269491986603,
+        "funding_pnl": -304.6728141606978
+      }
+    }
+  },
+  "train": {
+    "trades": 1055,
+    "net_profit": 11780.192165031469,
+    "return_pct": 117.80192165031468,
+    "cagr_pct": 27.14170739801345,
+    "profit_factor": 1.2583007933647035,
+    "max_dd_pct": 27.21863088836267,
+    "fees": 3402.4799175887633,
+    "funding_pnl": -996.8722820771156,
+    "gross_pnl": 16179.544364697333,
+    "win_rate_pct": 33.08056872037915,
+    "avg_win": 164.43174978874265,
+    "avg_loss": -64.59842565331407,
+    "min_stop_rejections": 201,
+    "slot_rejections": 560,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 0,
+    "maximum_open_positions": 4,
+    "maximum_entry_margin_pct": 37.84221105214588,
+    "maximum_entry_notional_pct": 189.09546425250184,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 162,
+        "net_profit": 2584.7752401823036,
+        "fees": 644.2945766158571,
+        "funding_pnl": -248.65386813036278
+      },
+      "ETHUSDT": {
+        "trades": 193,
+        "net_profit": 238.4903088083297,
+        "fees": 656.2089048663665,
+        "funding_pnl": -273.3363742323254
+      },
+      "BNBUSDT": {
+        "trades": 165,
+        "net_profit": 196.17162908681544,
+        "fees": 570.5047128504959,
+        "funding_pnl": 88.18541430048704
+      },
+      "SOLUSDT": {
+        "trades": 205,
+        "net_profit": 704.6743786677725,
+        "fees": 525.7562960137852,
+        "funding_pnl": -235.7001162918761
+      },
+      "XRPUSDT": {
+        "trades": 155,
+        "net_profit": 3787.4282494986624,
+        "fees": 482.5086038850577,
+        "funding_pnl": -146.93830565782122
+      },
+      "ADAUSDT": {
+        "trades": 175,
+        "net_profit": 4268.652358787572,
+        "fees": 523.2068233572006,
+        "funding_pnl": -180.42903206521711
+      }
+    }
+  },
+  "oos": {
+    "trades": 598,
+    "net_profit": 4357.379180601061,
+    "return_pct": 43.57379180601062,
+    "cagr_pct": 22.846850864386425,
+    "profit_factor": 1.1435953331106519,
+    "max_dd_pct": 39.86339457354812,
+    "fees": 2334.040050944168,
+    "funding_pnl": -391.97696376871806,
+    "gross_pnl": 7083.396195313966,
+    "win_rate_pct": 30.267558528428097,
+    "avg_win": 191.72503605024625,
+    "avg_loss": -72.76943008271819,
+    "min_stop_rejections": 171,
+    "slot_rejections": 387,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 15,
+    "maximum_open_positions": 4,
+    "maximum_entry_margin_pct": 34.92839888791263,
+    "maximum_entry_notional_pct": 177.9079328733305,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 87,
+        "net_profit": -194.5914119110572,
+        "fees": 425.04126246426785,
+        "funding_pnl": -10.509148319807004
+      },
+      "ETHUSDT": {
+        "trades": 100,
+        "net_profit": 1619.3565109273961,
+        "fees": 370.63789499039603,
+        "funding_pnl": -51.429575486618624
+      },
+      "BNBUSDT": {
+        "trades": 88,
+        "net_profit": -426.4762800935956,
+        "fees": 429.64544197926705,
+        "funding_pnl": -54.45262425444134
+      },
+      "SOLUSDT": {
+        "trades": 113,
+        "net_profit": 832.1582670355727,
+        "fees": 408.0180855636805,
+        "funding_pnl": -126.73938826265858
+      },
+      "XRPUSDT": {
+        "trades": 101,
+        "net_profit": 1321.7025189764358,
+        "fees": 368.5847198076865,
+        "funding_pnl": -91.25879157036094
+      },
+      "ADAUSDT": {
+        "trades": 109,
+        "net_profit": 1205.2295756663302,
+        "fees": 332.11264613887005,
+        "funding_pnl": -57.58743587483166
+      }
+    }
+  },
+  "eligible": false
+}

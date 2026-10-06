@@ -1,0 +1,206 @@
+{
+  "strategy": {
+    "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+    "family": "DONCHIAN",
+    "mode": "SINGLE",
+    "setting": "standard",
+    "entry": "MARKET",
+    "exit": "STOP_TRAIL",
+    "stop": "KIJUN",
+    "trail": "DONCHIAN10",
+    "h2": false,
+    "lookback": 10
+  },
+  "kind": "PORTFOLIO",
+  "risk": 0.00375,
+  "notional_cap": 1.25,
+  "max_open_positions": 3,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT"
+  ],
+  "supplemental": true,
+  "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P3",
+  "full": {
+    "trades": 1424,
+    "net_profit": 4090.3554745081965,
+    "return_pct": 40.90355474508196,
+    "cagr_pct": 7.099752636711321,
+    "profit_factor": 1.1263451402337659,
+    "max_dd_pct": 20.456398838247623,
+    "fees": 2399.4908714472526,
+    "funding_pnl": -492.7127109966161,
+    "gross_pnl": 6982.559056952079,
+    "win_rate_pct": 30.89887640449438,
+    "avg_win": 82.87457677108398,
+    "avg_loss": -32.900872260943835,
+    "min_stop_rejections": 341,
+    "slot_rejections": 1831,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 15,
+    "maximum_open_positions": 3,
+    "maximum_entry_margin_pct": 13.874910266300692,
+    "maximum_entry_notional_pct": 69.48531636795701,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 219,
+        "net_profit": 722.9827747261207,
+        "fees": 440.1325493974405,
+        "funding_pnl": -88.46009914585512
+      },
+      "ETHUSDT": {
+        "trades": 242,
+        "net_profit": 674.9541785168633,
+        "fees": 417.65105752618985,
+        "funding_pnl": -136.98777402915906
+      },
+      "BNBUSDT": {
+        "trades": 227,
+        "net_profit": -421.7302934267957,
+        "fees": 440.2839577444936,
+        "funding_pnl": 20.349102364482214
+      },
+      "SOLUSDT": {
+        "trades": 285,
+        "net_profit": 1510.3144973389053,
+        "fees": 405.0441761902949,
+        "funding_pnl": -175.25113799906114
+      },
+      "XRPUSDT": {
+        "trades": 214,
+        "net_profit": -244.4387968117657,
+        "fees": 349.41234334607896,
+        "funding_pnl": -60.628419637432714
+      },
+      "ADAUSDT": {
+        "trades": 237,
+        "net_profit": 1848.273114164881,
+        "fees": 346.966787242755,
+        "funding_pnl": -51.734382549590286
+      }
+    }
+  },
+  "train": {
+    "trades": 913,
+    "net_profit": 2760.831580299451,
+    "return_pct": 27.60831580299452,
+    "cagr_pct": 7.810835673975136,
+    "profit_factor": 1.152159183492993,
+    "max_dd_pct": 15.09576480810545,
+    "fees": 1329.3400452066514,
+    "funding_pnl": -312.8235768123748,
+    "gross_pnl": 4402.995202318478,
+    "win_rate_pct": 32.20153340635268,
+    "avg_win": 71.10610672434841,
+    "avg_loss": -29.31238093159771,
+    "min_stop_rejections": 184,
+    "slot_rejections": 1106,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 0,
+    "maximum_open_positions": 3,
+    "maximum_entry_margin_pct": 13.659207836854728,
+    "maximum_entry_notional_pct": 67.2370173718201,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 148,
+        "net_profit": 628.2762354817025,
+        "fees": 251.68245244856945,
+        "funding_pnl": -80.98237346013754
+      },
+      "ETHUSDT": {
+        "trades": 159,
+        "net_profit": 129.21126038051614,
+        "fees": 247.70196571221123,
+        "funding_pnl": -116.14016847837983
+      },
+      "BNBUSDT": {
+        "trades": 150,
+        "net_profit": 16.82455555411846,
+        "fees": 239.49324669851075,
+        "funding_pnl": 43.4498191934194
+      },
+      "SOLUSDT": {
+        "trades": 184,
+        "net_profit": 979.1418361639063,
+        "fees": 207.3633902035849,
+        "funding_pnl": -109.62579790456437
+      },
+      "XRPUSDT": {
+        "trades": 129,
+        "net_profit": -165.80588291143,
+        "fees": 187.28439334770937,
+        "funding_pnl": -24.909750980168937
+      },
+      "ADAUSDT": {
+        "trades": 143,
+        "net_profit": 1173.1835756306382,
+        "fees": 195.8145967960658,
+        "funding_pnl": -24.61530518254358
+      }
+    }
+  },
+  "oos": {
+    "trades": 511,
+    "net_profit": 1091.4527047298234,
+    "return_pct": 10.914527047298229,
+    "cagr_pct": 6.070606961029945,
+    "profit_factor": 1.0974398208348994,
+    "max_dd_pct": 20.46079451136406,
+    "fees": 842.3328566512674,
+    "funding_pnl": -141.91452946604824,
+    "gross_pnl": 2075.7000908471614,
+    "win_rate_pct": 28.57142857142857,
+    "avg_win": 84.19693911819542,
+    "avg_loss": -30.688494264456665,
+    "min_stop_rejections": 157,
+    "slot_rejections": 725,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 15,
+    "maximum_open_positions": 3,
+    "maximum_entry_margin_pct": 13.871442637661499,
+    "maximum_entry_notional_pct": 69.48429109193953,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 71,
+        "net_profit": 73.5209736541832,
+        "fees": 148.29020087260497,
+        "funding_pnl": -5.8953724302175
+      },
+      "ETHUSDT": {
+        "trades": 83,
+        "net_profit": 429.5958388793615,
+        "fees": 133.7803628970367,
+        "funding_pnl": -16.410012949405736
+      },
+      "BNBUSDT": {
+        "trades": 77,
+        "net_profit": -345.2029859594185,
+        "fees": 158.06157246591937,
+        "funding_pnl": -18.184899322303764
+      },
+      "SOLUSDT": {
+        "trades": 101,
+        "net_profit": 418.1515803323342,
+        "fees": 155.61417787561098,
+        "funding_pnl": -51.66023057495943
+      },
+      "XRPUSDT": {
+        "trades": 85,
+        "net_profit": -16.08000084562122,
+        "fees": 127.59928350293481,
+        "funding_pnl": -28.415808802987154
+      },
+      "ADAUSDT": {
+        "trades": 94,
+        "net_profit": 531.4672986690065,
+        "fees": 118.98725903716064,
+        "funding_pnl": -21.348205386174694
+      }
+    }
+  },
+  "eligible": true
+}

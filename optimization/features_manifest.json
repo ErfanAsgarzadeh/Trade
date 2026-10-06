@@ -1,0 +1,7 @@
+{
+  "features_sha256": "a3b9b4f21d16aa96797d038ae06cff5b295ceaa7e14965560ca9773b9e8e902c",
+  "source_manifest_sha256": "6ab51eef17a6ae9b884f3518d67de4638b77ec61d6cac10c53a0603924c7f2bf",
+  "period": "2021-10-05T00:00:00Z / 2026-10-05T00:00:00Z (end exclusive)",
+  "minute_count": 2629440,
+  "indicator_window": 199
+}

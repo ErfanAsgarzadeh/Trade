@@ -1,0 +1,2 @@
+-r ../lbank_project/requirements-dev.txt
+matplotlib==3.10.8

@@ -1,0 +1,12 @@
+# Validation — 2026-10-06
+
+- All 132 Python tests passed (5.04 seconds), including shared-margin reservation, gap re-sizing, actual min-stop rejection, ranking strongest breakout, slot caps, ledger reconciliation, funding-before-fill timing, and closed-bar Kijun exits. Dashboard DOM test passed. One existing Starlette/httpx deprecation warning.
+- All 756 original USD-M archives verified by SHA-256. SOL and XRP monthly files each omitted 7,200 minutes across five dates in 2022; 10 official daily archives recovered those rows with verified checksums. All six aligned test feeds now contain exactly 2,629,440 real minutes, with 93,600 warmup minutes each; no synthetic filling.
+- 120 actual standard/crypto indicator windows match runtime Kijun/Kumo/ATR to 1e-8 absolute / 1e-11 relative tolerance.
+- All four BTC reference cases exactly reproduced trade count, net PnL, fees, funding and Max DD to 1e-7.
+- Original 40 configurations / 120 period runs preserved in requested_matrix.json. All 24 requested portfolios exceeded 25% DD. A separate, registered-before-follow-up 16-case lower-risk study yields 56 cases / 168 period runs total; this extension is adaptive and all validation-period selection is disclosed.
+- All 168 ledgers reconcile gross−fees+funding=net and final balance=$10,000+sum(net). Filled stops >=1.2%, risk and per-position notional budgets respected, open-position count within configured slots, and combined reserved entry margin <=100% of shared MTM equity.
+- Selected portfolio: crypto ATR2 / closed Kijun trail / N20 / 0.375% / 4 slots. 1,027 trades, net $13,708.698310107982, DD22.226574446555365%, CAGR18.84798088960411%. Train net$12,657.433426129315; later-period net$539.4829289056688 (PF1.059006634548617).
+- Winner replay and reversed OHLC path identical in count/PnL/DD. Doubled unknown Oct1–4 funding cost reduces net to$13,706.717954023348. Six proxy exposures are explicitly assumptions, not actual funding.
+- HTML checks: all 56 matrix rows, embedded chart, source syntax. Equity chart visually inspected. Paper bot remains enabled with dry_run_mode=true; no live order was sent.
+- Historical LOT_SIZE/tickSize, mark prices, maintenance-margin tiers and liquidation costs are not modeled; quantity/fee semantics match the proven frozen benchmark. Performance is conditional on these execution assumptions. Later-period data influenced selection and is not untouched out-of-sample evidence.
