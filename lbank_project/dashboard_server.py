@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        LIVE_LIMITATION, LiveUnavailable, MarketData, PENDING,
-                       file_lock, net_pnl)
+                       file_lock, net_pnl, position_margin, position_leverage)
 
 LOG = logging.getLogger("dashboard")
 
@@ -94,13 +94,27 @@ def create_app(engine: Engine | None = None) -> FastAPI:
                 if p["state"] != PENDING:
                     pnl, current_r = None, None
             positions.append({**p, "live_price": price, "current_r": current_r,
+                              "actual_leverage": position_leverage(p, c["risk_and_exit"]["default_isolated_leverage"]),
+                              "margin_usd": position_margin(p, c["risk_and_exit"]["default_isolated_leverage"]),
                               "unrealized_pnl_usd": pnl})
+        with engine.db.connect() as db:
+            realized = db.execute("SELECT COALESCE(SUM(pnl_usd),0) FROM trade_history WHERE dry_run=1").fetchone()[0]
+        equity = max(0.0, engine.paper_seed + realized + total) if not errors else None
+        engaged = sum(p["margin_usd"] for p in positions if p["state"] != PENDING)
+        pending_margin = sum(p["margin_usd"] for p in positions if p["state"] == PENDING)
+        allowed = equity * c["risk_and_exit"]["engaged_capital_pct"] if equity is not None else None
         daily, count = engine.db.history_summary(time.time())
         return {"auto_trade_enabled": c["bot_control"]["auto_trade_enabled"],
             "dry_run_mode": c["bot_control"]["dry_run_mode"],
             "strategy_mode": c["strategy_mode"]["mode"],
             "open_positions_count": len(positions),
             "max_open_positions": c["risk_and_exit"]["max_open_positions"],
+            "equity_usd": equity, "engaged_margin_usd": engaged,
+            "engaged_margin_pct": engaged / equity * 100 if equity else None,
+            "allowed_margin_usd": allowed,
+            "allowed_margin_pct": c["risk_and_exit"]["engaged_capital_pct"] * 100,
+            "margin_budget_utilization_pct": engaged / allowed * 100 if allowed else None,
+            "reserved_pending_margin_usd": pending_margin,
             "total_unrealized_pnl": total if not errors else None,
             "daily_realized_pnl": daily, "daily_trades_count": count,
             "positions": positions, "price_errors": errors,
@@ -180,13 +194,24 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel note">این نسخه معاملات را شبیه‌سازی می‌کند. حالت پیش‌فرض DEMO از قیمت و کندل مصنوعی استفاده می‌کند. ارسال سفارش زندهٔ فیوچرز LBank در اتصال فعلی CCXT پشتیبانی نمی‌شود. سود و زیان با کارمزد تخمینی محاسبه می‌شود.</section>
 <div class="kpis"><section class="panel kpi"><p>سود و زیان باز ($)</p><strong id="unrealized">—</strong></section>
 <section class="panel kpi"><p>سود و زیان تحقق‌یافتهٔ ۲۴ ساعت ($)</p><strong id="realized">—</strong><p id="trades">—</p></section>
-<section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated">در انتظار اتصال</p></section></div>
+<section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated">در انتظار اتصال</p></section>
+<section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section></div>
 <section class="panel"><div class="row"><h2>پوزیشن‌ها</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها + توقف ربات</button></div>
 <div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
 <section class="panel"><div class="row"><h2>تنظیمات</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">ورود خودکار</label><label><input id="dry" type="checkbox" checked disabled>حالت شبیه‌سازی (Dry-run)</label>
 <label class="field">حالت استراتژی<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
 <label class="field">ریسک هر معامله (%)<input id="risk" type="number" min="0.1" max="5" step="0.1"></label>
+<label class="field">درصد سرمایه مجاز درگیر (%)<input id="engaged" type="number" min="0.01" max="100" step="0.01"></label>
+<label class="field">حداکثر پوزیشن هم‌زمان<input id="max_positions" type="number" min="1" max="100" step="1"></label>
+<label class="field">مدل اهرم<select id="leverage"><option>DYNAMIC_MARGIN</option><option>FIXED_LEVERAGE</option></select></label>
+<label class="field">استراتژی خروج و TP<select id="exit_tp"><option>STOP_TRAIL_DONCHIAN10</option><option>CLOSE_TRAIL_KIJUN</option><option>HYBRID_TRAIL_AND_HARD_TP</option></select></label>
+<label class="field">تریل حالت ترکیبی<select id="hybrid_trail"><option>CLOSE_TRAIL_KIJUN</option><option>STOP_TRAIL_DONCHIAN10</option></select></label>
+<label class="field">ضریب حد سود قطعی (R، صفر: غیرفعال)<input id="hard_tp" type="number" min="0" max="100" step="0.1"></label>
+<label class="field">ضریب ریسک‌فری (R، صفر: غیرفعال)<input id="breakeven" type="number" min="0" max="20" step="0.1"></label>
+<label class="field">پریست ایچیموکو<select id="preset"><option>crypto</option><option>standard</option></select></label>
+<label class="field">دوره شکست Donchian<select id="donchian_period"><option>20</option><option>10</option></select></label>
+<label class="field">استاپ اولیه<select id="initial_stop"><option>ATR2</option><option>KIJUN</option></select></label>
 <label><input id="breakout" type="checkbox">شکست کندل سیگنال</label><label><input id="barb" type="checkbox">فیلتر Barb Wire</label><label><input id="h2" type="checkbox">پولبک H2 / L2</label></div>
 <details><summary>ویرایش کامل JSON</summary><textarea id="editor" aria-label="JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="dirty">تنظیمات بارگذاری نشده است.</p><button id="save" disabled>ذخیره تنظیمات</button></div></section>
@@ -206,20 +231,30 @@ async function api(path,method='GET',body=null,match=null){
 }
 function fillControls(){if(!cfg)return;$('auto').checked=cfg.bot_control.auto_trade_enabled;$('dry').checked=cfg.bot_control.dry_run_mode;
  $('strategy').value=cfg.strategy_mode.mode;$('risk').value=cfg.risk_and_exit.risk_per_trade_pct*100;
+ $('engaged').value=cfg.risk_and_exit.engaged_capital_pct*100;$('leverage').value=cfg.risk_and_exit.leverage_mode;$('max_positions').value=cfg.risk_and_exit.max_open_positions;
+ const settings=cfg.strategy_settings;
+ for(const id of ['exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop'])$(id).disabled=!settings;
+ $('strategy').disabled=!!settings;
+ if(settings){$('exit_tp').value=settings.exit_tp_mode;$('hybrid_trail').value=settings.hybrid_trail_mode;$('hard_tp').value=settings.hard_tp_rr;$('breakeven').value=settings.breakeven_trigger_rr;$('preset').value=settings.ichimoku_preset;$('donchian_period').value=settings.donchian_entry_period;$('initial_stop').value=settings.initial_stop_mode;}
  $('breakout').checked=cfg.al_brooks_filters.require_signal_bar_breakout;$('barb').checked=cfg.al_brooks_filters.enable_barb_wire_filter;$('h2').checked=cfg.al_brooks_filters.require_h2_l2_pullback;
 }
 async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
 function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);}catch(e){message('ابتدا JSON را اصلاح کنید.',true);fillControls();return;}
  cfg.bot_control.auto_trade_enabled=$('auto').checked;cfg.strategy_mode.mode=$('strategy').value;cfg.risk_and_exit.risk_per_trade_pct=Number($('risk').value)/100;
+ cfg.risk_and_exit.engaged_capital_pct=Number($('engaged').value)/100;cfg.risk_and_exit.leverage_mode=$('leverage').value;cfg.risk_and_exit.max_open_positions=Number($('max_positions').value);
+ if(cfg.strategy_settings){Object.assign(cfg.strategy_settings,{exit_tp_mode:$('exit_tp').value,hybrid_trail_mode:$('hybrid_trail').value,hard_tp_rr:Number($('hard_tp').value),breakeven_trigger_rr:Number($('breakeven').value),ichimoku_preset:$('preset').value,donchian_entry_period:Number($('donchian_period').value),initial_stop_mode:$('initial_stop').value});}
  cfg.al_brooks_filters.require_signal_bar_breakout=$('breakout').checked;cfg.al_brooks_filters.enable_barb_wire_filter=$('barb').checked;cfg.al_brooks_filters.require_h2_l2_pullback=$('h2').checked;
  $('editor').value=JSON.stringify(cfg,null,2);$('dirty').textContent='تغییرات ذخیره نشده است.';
 }
-for(const id of ['auto','strategy','risk','breakout','barb','h2'])$(id).addEventListener('change',controlsChanged);
+for(const id of ['auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='تغییرات ذخیره نشده است.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('JSON نامعتبر است.',true);}});
 function render(s){$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';
  $('unrealized').textContent=number(s.total_unrealized_pnl);$('realized').textContent=number(s.daily_realized_pnl);$('realized').className=s.daily_realized_pnl<0?'bad':'good';
  $('trades').textContent=s.daily_trades_count+' خروج ثبت‌شده در ۲۴ ساعت';$('slots').textContent=s.open_positions_count+' / '+s.max_open_positions;
+ $('margin').textContent=number(s.engaged_margin_usd)+' / '+number(s.allowed_margin_usd);
+ $('margin_pct').textContent=number(s.engaged_margin_pct)+'٪ از حساب / '+number(s.allowed_margin_pct)+'٪ مجاز؛ '+number(s.margin_budget_utilization_pct)+'٪ مصرف بودجه';
+ $('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار: $'+number(s.reserved_pending_margin_usd);
  $('updated').textContent='آخرین دریافت: '+new Date().toLocaleTimeString('fa-IR');const rows=$('positions');rows.replaceChildren();
  if(!s.positions.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=10;td.textContent='پوزیشن بازی وجود ندارد.';tr.append(td);rows.append(tr);}
  for(const p of s.positions){const tr=document.createElement('tr');const values=[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(p.unrealized_pnl_usd)];

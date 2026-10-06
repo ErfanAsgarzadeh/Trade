@@ -89,12 +89,21 @@ def test_deployed_config_matches_eligible_winner():
     result=json.loads((output/'matrix.json').read_text())['winner']
     if output.parent.name=='portfolio':
         assert all(result[p]['max_dd_pct']<=25 for p in ['full','train','oos'])
-    assert c==expected
+    # Deployment changes only the user-requested universe/risk controls; the
+    # eligible frozen benchmark still anchors the underlying signal and runner.
+    for section in ['strategy_mode','ichimoku_params','filters_and_triggers',
+                    'al_brooks_filters','structural_filters','archetype_strategy','portfolio_risk']:
+        assert c[section]==expected[section]
+    assert c['symbols']==[s for s in expected['symbols'] if s!='BNB/USDT:USDT']
     assert result['full']['trades']>=40
     assert result['train']['net_profit']>0 and result['oos']['net_profit']>0
     assert c['risk_and_exit']['min_stop_policy']=='REJECT'
     assert c['risk_and_exit']['min_stop_distance_pct']==.012
-    assert c['risk_and_exit']['risk_per_trade_pct']==(result['risk'] if output.parent.name=='portfolio' else .005)
+    assert c['risk_and_exit']['risk_per_trade_pct']==.005
+    assert c['risk_and_exit']['engaged_capital_pct']==.60
+    assert c['strategy_settings']['exit_tp_mode']=='CLOSE_TRAIL_KIJUN'
+    assert c['strategy_settings']['breakeven_trigger_rr']==0
+    assert c['strategy_settings']['hard_tp_rr']==0
 
 @pytest.mark.parametrize('side',['long','short'])
 def test_slope_and_adx_thresholds(cfg,side):

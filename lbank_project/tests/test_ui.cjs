@@ -18,6 +18,8 @@ let serverConfig = structuredClone(config), version='"v1"', calls=[];
 const status = {strategy_mode:'MTF',dry_run_mode:true,data_mode:'demo',auto_trade_enabled:true,
  total_unrealized_pnl:5,daily_realized_pnl:-3,daily_trades_count:2,open_positions_count:1,
  max_open_positions:3,price_errors:[],runtime:{watchdog_at:Date.now()/1000},
+ engaged_margin_usd:1200,allowed_margin_usd:6000,engaged_margin_pct:12,
+ allowed_margin_pct:60,margin_budget_utilization_pct:20,reserved_pending_margin_usd:100,
  positions:[{symbol:'BTC/USDT:USDT',side:'long',entry_price:100,trigger_price:100,live_price:105,
  active_sl:90,tp1_price:115,state:'STATE_INITIAL',current_r:.5,unrealized_pnl_usd:5}]};
 async function fakeFetch(url,options){
@@ -40,12 +42,25 @@ vm.runInContext(javascript,context,{timeout:2000});
  assert.equal(ids.get('save').disabled,false);
  assert.match(ids.get('mode').textContent,/DRY-RUN.*demo/);
  assert.equal(ids.get('positions').children.length,1);
+ assert.equal(ids.get('engaged').value,60);
+ assert.match(ids.get('margin').textContent,/1,200.*6,000/);
  assert.equal(vm.runInContext("target({exit_scheme:'PURE_KIJUN',tp1_price:120,hard_tp_price:0})",context),null);
  assert.equal(vm.runInContext("target({exit_scheme:'HARD_TARGET',tp1_price:120,hard_tp_price:140})",context),140);
  assert.equal(vm.runInContext("target({exit_scheme:'PURE_RUNNER',tp1_price:120,hard_tp_price:0})",context),120);
  ids.get('risk').value='1.2';ids.get('risk').events.change();
  assert.equal(JSON.parse(ids.get('editor').value).risk_and_exit.risk_per_trade_pct,.012);
  await ids.get('save').onclick();assert.equal(serverConfig.risk_and_exit.risk_per_trade_pct,.012);
+ ids.get('engaged').value='50';ids.get('engaged').events.change();
+ ids.get('leverage').value='FIXED_LEVERAGE';ids.get('leverage').events.change();
+ ids.get('exit_tp').value='HYBRID_TRAIL_AND_HARD_TP';ids.get('exit_tp').events.change();
+ ids.get('hard_tp').value='4';ids.get('hard_tp').events.change();
+ ids.get('breakeven').value='2';ids.get('breakeven').events.change();
+ await ids.get('save').onclick();
+ assert.equal(serverConfig.risk_and_exit.engaged_capital_pct,.5);
+ assert.equal(serverConfig.risk_and_exit.leverage_mode,'FIXED_LEVERAGE');
+ assert.equal(serverConfig.strategy_settings.exit_tp_mode,'HYBRID_TRAIL_AND_HARD_TP');
+ assert.equal(serverConfig.strategy_settings.hard_tp_rr,4);
+ assert.equal(serverConfig.strategy_settings.breakeven_trigger_rr,2);
  await ids.get('panic').onclick();assert.equal(ids.get('auto').checked,false);
  assert(calls.some(([url])=>url==='/api/positions/close-all'));
  status.total_unrealized_pnl=null;status.positions=[];await vm.runInContext('refresh()',context);

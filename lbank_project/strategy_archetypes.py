@@ -9,6 +9,34 @@ DEFAULTS=dict(family='LEGACY',entry_variant='KUMO_CROSS',donchian_lookback=20,
               stop_source='KIJUN',trail_source='KIJUN',require_h2_l2=False,
               trail_close_only=False,pending_policy='ONE_BAR')
 
+ICHIMOKU_PRESETS = {'crypto': (20, 60, 120, 30), 'standard': (9, 26, 52, 26)}
+
+def apply_strategy_settings(config):
+    """Map the public Donchian settings to the shared benchmark definitions.
+
+    Older benchmark configurations keep their original explicit fields.
+    A hybrid uses hybrid_trail_mode to select the underlying unlimited runner.
+    """
+    settings = config.get('strategy_settings')
+    if settings is None:
+        return
+    periods = ICHIMOKU_PRESETS[settings['ichimoku_preset']]
+    config['ichimoku_params'].update(zip(('tenkan', 'kijun', 'senkou_b', 'displacement'), periods))
+    mode = settings['exit_tp_mode']
+    if mode == 'HYBRID_TRAIL_AND_HARD_TP':
+        mode = settings['hybrid_trail_mode']
+    close_only = mode == 'CLOSE_TRAIL_KIJUN'
+    config['archetype_strategy'].update(family='DONCHIAN', entry_variant='MARKET',
+        donchian_lookback=settings['donchian_entry_period'],
+        stop_source=settings['initial_stop_mode'],
+        trail_source='KIJUN' if close_only else 'DONCHIAN10',
+        trail_close_only=close_only, require_h2_l2=False, pending_policy='GTC_REGIME')
+    config['risk_and_exit'].update(exit_scheme='PURE_KIJUN', tp1_close_pct=0.0,
+        breakeven_policy='NONE', trail_atr_buffer=0.0, trail_timeframe='ENTRY',
+        hard_tp_rr=settings['hard_tp_rr'], breakeven_trigger_rr=settings['breakeven_trigger_rr'])
+    config['al_brooks_filters'].update(require_signal_bar_breakout=False,
+        require_h2_l2_pullback=False, enable_barb_wire_filter=False)
+
 def ema_sma(values,period):
     x=np.asarray(values,dtype=float);out=np.full(len(x),np.nan)
     if len(x)>=period:
