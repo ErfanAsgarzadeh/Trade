@@ -1,0 +1,6749 @@
+{
+  "cases": [
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N10__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__4h__N15__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N20__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__standard__1h__N40__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N10__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__4h__N15__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N20__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "FIVE",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__FIVE__crypto__1h__N40__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N10__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__4h__N15__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N20__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "standard",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__standard__1h__N40__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 10,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N10__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "4h",
+      "lookback": 15,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__4h__N15__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 20,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N20__KIJUN__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "DONCHIAN10",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__DONCHIAN10__PY1__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": false,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY0__R0.0125__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0075__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0075,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0075__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.01__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.01,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.01__P5"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 4,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0125__P4"
+    },
+    {
+      "universe": "ALTS",
+      "preset": "crypto",
+      "entry_timeframe": "1h",
+      "lookback": 40,
+      "trail": "KIJUN",
+      "pyramid": true,
+      "risk": 0.0125,
+      "max_open_positions": 5,
+      "symbols": [
+        "ETHUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "id": "HC__ALTS__crypto__1h__N40__KIJUN__PY1__R0.0125__P5"
+    }
+  ],
+  "periods": {
+    "full": [
+      0,
+      2629440
+    ],
+    "train": [
+      0,
+      1704960
+    ],
+    "oos": [
+      1704960,
+      2629440
+    ]
+  },
+  "start_utc": "2021-10-05T00:00:00Z",
+  "end_exclusive_utc": "2026-10-05T00:00:00Z",
+  "split_utc": "2025-01-01T00:00:00Z",
+  "selection": "Full-period CAGR descending; >=40 root entries, positive Train and OOS net, max DD in ALL three periods <=35%; report stricter 25/30/35 tiers; no winner if none passes",
+  "entry": "Prior N-bar Donchian close breakout on entry timeframe; last fully closed 4h price outside 4h Kumo; ATR2 safety stop; REJECT <1.2% at signal and actual slipped fill",
+  "trail": "Closed entry-timeframe Donchian10 opposite extreme or Kijun ratchets a shared price stop, never loosens; no partial/BE/hard TP. Original close-only Kijun kept as control.",
+  "pyramid": "Only one add per root: >=2R and stop favorable enough to cover entry fee/slippage allowance; eligible at an earlier timestamp; next same-direction Donchian breakout; half risk, same stop, REJECT <1.2% for add too; slot is a symbol, not a leg",
+  "costs": "0.12% roundtrip fee, adverse 2bps each entry/exit, exact observed Binance funding through Sep2026, adverse 0.01% per 8h unknown Oct1-4; funding before new entries",
+  "sizing": "0.04% slippage sizing allowance (not a duplicate debit), fixed 5x equivalent notional, 60% total reserved margin, slot budget 60%/slots, 0.0001 base-unit step/$5 min; 2% rolling 24h net realized exit loss pause",
+  "disclosure": "BNB exclusion and this new search use past OOS observations; 2025-2026 is a validation slice, not untouched OOS. Minute OHLC path and shared phase ordering are approximations; no mark-price liquidation model.",
+  "target": "50-100% CAGR aspirational only; all results reported and no thresholds relaxed after observation"
+}
