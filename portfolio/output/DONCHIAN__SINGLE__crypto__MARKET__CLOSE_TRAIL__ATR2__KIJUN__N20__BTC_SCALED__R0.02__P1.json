@@ -1,0 +1,110 @@
+{
+  "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.02__P1",
+  "strategy": {
+    "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+    "family": "DONCHIAN",
+    "mode": "SINGLE",
+    "setting": "crypto",
+    "entry": "MARKET",
+    "exit": "CLOSE_TRAIL",
+    "stop": "ATR2",
+    "trail": "KIJUN",
+    "h2": false,
+    "lookback": 20
+  },
+  "kind": "BTC_SCALED",
+  "risk": 0.02,
+  "notional_cap": 1.5,
+  "max_open_positions": 1,
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "full": {
+    "trades": 196,
+    "net_profit": 10015.146370460774,
+    "return_pct": 100.15146370460775,
+    "cagr_pct": 14.889411796669494,
+    "profit_factor": 1.2741069239169205,
+    "max_dd_pct": 40.48000602485241,
+    "fees": 2579.650897653912,
+    "funding_pnl": -1608.8345343746962,
+    "gross_pnl": 14203.631802489359,
+    "win_rate_pct": 28.061224489795915,
+    "avg_win": 846.4094065790723,
+    "avg_loss": -259.13029071906544,
+    "min_stop_rejections": 5,
+    "slot_rejections": 0,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 1,
+    "maximum_open_positions": 1,
+    "maximum_entry_margin_pct": 29.385544898560546,
+    "maximum_entry_notional_pct": 146.92772449280272,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 196,
+        "net_profit": 10015.146370460749,
+        "fees": 2579.650897653912,
+        "funding_pnl": -1608.8345343746962
+      }
+    }
+  },
+  "train": {
+    "trades": 124,
+    "net_profit": 9054.576795541816,
+    "return_pct": 90.54576795541816,
+    "cagr_pct": 22.004675892671834,
+    "profit_factor": 1.4283365896328992,
+    "max_dd_pct": 21.963384882869782,
+    "fees": 1469.5401646809003,
+    "funding_pnl": -1398.9548342604085,
+    "gross_pnl": 11923.071794483132,
+    "win_rate_pct": 29.03225806451613,
+    "avg_win": 838.7084968620801,
+    "avg_loss": -240.21510331242118,
+    "min_stop_rejections": 4,
+    "slot_rejections": 0,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 0,
+    "maximum_open_positions": 1,
+    "maximum_entry_margin_pct": 28.84655262924983,
+    "maximum_entry_notional_pct": 144.23276314624914,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 124,
+        "net_profit": 9054.57679554182,
+        "fees": 1469.5401646809003,
+        "funding_pnl": -1398.9548342604085
+      }
+    }
+  },
+  "oos": {
+    "trades": 72,
+    "net_profit": 505.21332086884286,
+    "return_pct": 5.052133208688425,
+    "cagr_pct": 2.843719199364525,
+    "profit_factor": 1.0625368510599984,
+    "max_dd_pct": 32.513908145831536,
+    "fees": 582.4414132354967,
+    "funding_pnl": -110.16434213933701,
+    "gross_pnl": 1197.819076243668,
+    "win_rate_pct": 26.38888888888889,
+    "avg_win": 451.7822708326186,
+    "avg_loss": -152.42735518775314,
+    "min_stop_rejections": 1,
+    "slot_rejections": 0,
+    "margin_rejections": 0,
+    "missing_funding_proxy_events": 1,
+    "maximum_open_positions": 1,
+    "maximum_entry_margin_pct": 29.381921735355704,
+    "maximum_entry_notional_pct": 146.9096086767785,
+    "per_symbol": {
+      "BTCUSDT": {
+        "trades": 72,
+        "net_profit": 505.2133208688342,
+        "fees": 582.4414132354967,
+        "funding_pnl": -110.16434213933701
+      }
+    }
+  },
+  "eligible": false
+}

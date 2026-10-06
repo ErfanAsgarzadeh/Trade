@@ -1,0 +1,16 @@
+**/.env
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/pytest-of-root/
+**/runtime/
+**/smoke_runtime/
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+portfolio/prepared/
+btc_backtest/cache/
+portfolio/cache/
+*.tmp
+*.part

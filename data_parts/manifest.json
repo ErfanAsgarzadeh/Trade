@@ -1,0 +1,6511 @@
+{
+  "format": "Concatenated ZIP_STORED parts; python restore_data.py verifies and restores original paths",
+  "parts": [
+    {
+      "name": "inputs_and_ledgers.part000",
+      "bytes": 25165824,
+      "sha256": "9fd907bc6170869ff3ebe2f6108fdc935f3aa1e128da2339d881f9392e0c7a94"
+    },
+    {
+      "name": "inputs_and_ledgers.part001",
+      "bytes": 25165824,
+      "sha256": "6048bc04cb883283499604cbcec517d02a33454a569b42f3b7baca1b8d28de4c"
+    },
+    {
+      "name": "inputs_and_ledgers.part002",
+      "bytes": 25165824,
+      "sha256": "86b00f62febbda549be53c423f5ff13d02bd8d7a9606c4bfaa9cab585121b7bb"
+    },
+    {
+      "name": "inputs_and_ledgers.part003",
+      "bytes": 25165824,
+      "sha256": "029f0444ac24cc8b7429bf47b0479838e2ba3a7d4f2937080cdb779e468ca34c"
+    },
+    {
+      "name": "inputs_and_ledgers.part004",
+      "bytes": 25165824,
+      "sha256": "54d11e562546b3d9ea4d34b12e9e83c1d9eefe5313f21a7c0af3ecc937b1bc35"
+    },
+    {
+      "name": "inputs_and_ledgers.part005",
+      "bytes": 25165824,
+      "sha256": "0434b49fb10f7a13b98cdc6b74a0a46444ab2657c959e5ea9ca81dc784764999"
+    },
+    {
+      "name": "inputs_and_ledgers.part006",
+      "bytes": 25165824,
+      "sha256": "f84e3ed786675aa0211bc995e61c7950888abc5b1d8da1addee088cfb8bb69f9"
+    },
+    {
+      "name": "inputs_and_ledgers.part007",
+      "bytes": 25165824,
+      "sha256": "50fb6c9bd1823d4f94df0374066ca52484294eb31130ed73be7f2a9e5f76d666"
+    },
+    {
+      "name": "inputs_and_ledgers.part008",
+      "bytes": 25165824,
+      "sha256": "8aa2f2c0d2e6c948505438f1d1dfe96177f9a77b7bdb347092c03b65b2066059"
+    },
+    {
+      "name": "inputs_and_ledgers.part009",
+      "bytes": 25165824,
+      "sha256": "48cb9f9985aabeedbe8d2da48ed62cade7958c7995629891a956a75a04183deb"
+    },
+    {
+      "name": "inputs_and_ledgers.part010",
+      "bytes": 25165824,
+      "sha256": "e0e8ced9b3e4fa28b36ccbd7bb63552ac9b3bb45932f51d5ea156358449c3d2c"
+    },
+    {
+      "name": "inputs_and_ledgers.part011",
+      "bytes": 25165824,
+      "sha256": "b6c7a2285c9ddd9340f2427e92be53251615b74f547cc6f9946569038b1d432c"
+    },
+    {
+      "name": "inputs_and_ledgers.part012",
+      "bytes": 25165824,
+      "sha256": "9ef636a38f022b186f4da27c1d87fd37b834d3689f86566e42a6537e4932f415"
+    },
+    {
+      "name": "inputs_and_ledgers.part013",
+      "bytes": 25165824,
+      "sha256": "c8bde82e837aa8a3dc517650c6d21db3996c7e9da740ae3ce4b15566e84e256c"
+    },
+    {
+      "name": "inputs_and_ledgers.part014",
+      "bytes": 25165824,
+      "sha256": "57310c60112524f6cd7ac7d35903d927a505971f0bec9502ec7a9c9180f3e405"
+    },
+    {
+      "name": "inputs_and_ledgers.part015",
+      "bytes": 25165824,
+      "sha256": "209d032e3af42c00345803ac2f175da8ce360170bedf9664db76a14b0e140eff"
+    },
+    {
+      "name": "inputs_and_ledgers.part016",
+      "bytes": 25165824,
+      "sha256": "9520a5157180cd31cfb446bb5952cd82aef05e23d5f5494fd41d2f946faccf92"
+    },
+    {
+      "name": "inputs_and_ledgers.part017",
+      "bytes": 25165824,
+      "sha256": "4c04a39f747d69996632aa8dd86066fc61d83256b07af6bd6b3cce765af899b2"
+    },
+    {
+      "name": "inputs_and_ledgers.part018",
+      "bytes": 25165824,
+      "sha256": "bf2e72ad7bf040d88371855800485e9754da2e1721b1b4b51cc06176195f4101"
+    },
+    {
+      "name": "inputs_and_ledgers.part019",
+      "bytes": 25165824,
+      "sha256": "992c92a95d758140692fb187a640ef767dedf3abdad7c94df67a0a70911ad5d7"
+    },
+    {
+      "name": "inputs_and_ledgers.part020",
+      "bytes": 25165824,
+      "sha256": "6ef4d93df4b4371f9f8cd1bded2f515c89f0a025ed99f53c19cf4fd6b37171b2"
+    },
+    {
+      "name": "inputs_and_ledgers.part021",
+      "bytes": 25165824,
+      "sha256": "8cd4584005e96797c652f41f0a88009e468a25df3c7ce5201d028c6a2fdff746"
+    },
+    {
+      "name": "inputs_and_ledgers.part022",
+      "bytes": 25165824,
+      "sha256": "3a1421cef1a9245be003e0ea7b0b952b7f2f77b24e7afcdb927d914591708ad7"
+    },
+    {
+      "name": "inputs_and_ledgers.part023",
+      "bytes": 25165824,
+      "sha256": "79a51555d4473a0281f68b1653a4e33257e8a712cbc5e9f1237fd98f064f6968"
+    },
+    {
+      "name": "inputs_and_ledgers.part024",
+      "bytes": 25165824,
+      "sha256": "bc825167b00869d36ce1bddff271275116c8fa3fbaf909916305a3437a15fbe2"
+    },
+    {
+      "name": "inputs_and_ledgers.part025",
+      "bytes": 25165824,
+      "sha256": "f1ff61cebc0b5b03f6aa2b6642f679fe5fcb3bb4b53122909750d23ffbb1c561"
+    },
+    {
+      "name": "inputs_and_ledgers.part026",
+      "bytes": 25165824,
+      "sha256": "d9e64ca9f5cff5a12e7744a1858059b9b09fae58259b1d2ef7feea1f88f1f456"
+    },
+    {
+      "name": "inputs_and_ledgers.part027",
+      "bytes": 25165824,
+      "sha256": "b2418250929ff6ceca1ec57e1ed60724b8e597bc0f89f18ea591f0301705fedd"
+    },
+    {
+      "name": "inputs_and_ledgers.part028",
+      "bytes": 25165824,
+      "sha256": "7d825a9936444e110ef96b73d1d10259ac8d10b9f885b617587c38d5fb00be76"
+    },
+    {
+      "name": "inputs_and_ledgers.part029",
+      "bytes": 2456470,
+      "sha256": "9a329d2b373aa1b28915b87853860c66deb62175f3e0eb24d0e01331f34c976f"
+    }
+  ],
+  "zip_sha256": "280f77142b149244475d5a5aa4afea2562554a0fc92e9c02e5269ddb1c0689c9",
+  "zip_bytes": 732265366,
+  "members": [
+    {
+      "path": "archetypes/output/DONCHIAN_leader_ledger.npz",
+      "bytes": 186711
+    },
+    {
+      "path": "archetypes/output/EMA_PULLBACK_leader_ledger.npz",
+      "bytes": 248570
+    },
+    {
+      "path": "archetypes/output/ICHI_BREAKOUT_leader_ledger.npz",
+      "bytes": 96475
+    },
+    {
+      "path": "archetypes/output/ICHI_PULLBACK_leader_ledger.npz",
+      "bytes": 271316
+    },
+    {
+      "path": "archetypes/output/equity_comparison.png",
+      "bytes": 180070
+    },
+    {
+      "path": "archetypes/output/winner_ledger.npz",
+      "bytes": 186711
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1h-2021-10.zip",
+      "bytes": 40087
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2021-08.zip",
+      "bytes": 2049960
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2021-09.zip",
+      "bytes": 1970475
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2021-10.zip",
+      "bytes": 2040146
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2021-11.zip",
+      "bytes": 1963552
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2021-12.zip",
+      "bytes": 2033812
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-01.zip",
+      "bytes": 2029103
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-02.zip",
+      "bytes": 1795701
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-03.zip",
+      "bytes": 1922190
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-04.zip",
+      "bytes": 1833665
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-05.zip",
+      "bytes": 1926294
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-06.zip",
+      "bytes": 1875823
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-07.zip",
+      "bytes": 1925230
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-08.zip",
+      "bytes": 1897142
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-09.zip",
+      "bytes": 1842043
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-10.zip",
+      "bytes": 1847485
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-11.zip",
+      "bytes": 1801135
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2022-12.zip",
+      "bytes": 1765742
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-01.zip",
+      "bytes": 1824474
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-02.zip",
+      "bytes": 1688103
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-03.zip",
+      "bytes": 1907895
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-04.zip",
+      "bytes": 1810833
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-05.zip",
+      "bytes": 1859563
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-06.zip",
+      "bytes": 1806762
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-07.zip",
+      "bytes": 1805388
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-08.zip",
+      "bytes": 1781029
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-09.zip",
+      "bytes": 1729534
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-10.zip",
+      "bytes": 1829597
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-11.zip",
+      "bytes": 1783820
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2023-12.zip",
+      "bytes": 1874380
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-01.zip",
+      "bytes": 1898532
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-02.zip",
+      "bytes": 1770127
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-03.zip",
+      "bytes": 1950611
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-04.zip",
+      "bytes": 1870249
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-05.zip",
+      "bytes": 1896566
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-06.zip",
+      "bytes": 1789499
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-07.zip",
+      "bytes": 1912408
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-08.zip",
+      "bytes": 1919190
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-09.zip",
+      "bytes": 1829434
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-10.zip",
+      "bytes": 1878910
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-11.zip",
+      "bytes": 1876449
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2024-12.zip",
+      "bytes": 1929835
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-01.zip",
+      "bytes": 1917878
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-02.zip",
+      "bytes": 1718529
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-03.zip",
+      "bytes": 1919175
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-04.zip",
+      "bytes": 1846549
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-05.zip",
+      "bytes": 1904964
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-06.zip",
+      "bytes": 1817901
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-07.zip",
+      "bytes": 1868400
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-08.zip",
+      "bytes": 1871971
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-09.zip",
+      "bytes": 1782066
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-10.zip",
+      "bytes": 1913274
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-11.zip",
+      "bytes": 1856815
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2025-12.zip",
+      "bytes": 1868657
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-01.zip",
+      "bytes": 1852279
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-02.zip",
+      "bytes": 1743792
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-03.zip",
+      "bytes": 1911731
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-04.zip",
+      "bytes": 1810071
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-05.zip",
+      "bytes": 1845894
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-06.zip",
+      "bytes": 1838455
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-07.zip",
+      "bytes": 1844583
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-08.zip",
+      "bytes": 1817920
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-09.zip",
+      "bytes": 1796984
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-10-01.zip",
+      "bytes": 61756
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-10-02.zip",
+      "bytes": 62478
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-10-03.zip",
+      "bytes": 55463
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-1m-2026-10-04.zip",
+      "bytes": 56508
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2021-10.zip",
+      "bytes": 951
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2021-11.zip",
+      "bytes": 919
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2021-12.zip",
+      "bytes": 815
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-01.zip",
+      "bytes": 906
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-02.zip",
+      "bytes": 890
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-03.zip",
+      "bytes": 904
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-04.zip",
+      "bytes": 926
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-05.zip",
+      "bytes": 915
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-06.zip",
+      "bytes": 966
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-07.zip",
+      "bytes": 917
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-08.zip",
+      "bytes": 997
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-09.zip",
+      "bytes": 960
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-10.zip",
+      "bytes": 950
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-11.zip",
+      "bytes": 1000
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2022-12.zip",
+      "bytes": 982
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-01.zip",
+      "bytes": 863
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-02.zip",
+      "bytes": 808
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-03.zip",
+      "bytes": 956
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-04.zip",
+      "bytes": 952
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-05.zip",
+      "bytes": 983
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-06.zip",
+      "bytes": 845
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-07.zip",
+      "bytes": 861
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-08.zip",
+      "bytes": 846
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-09.zip",
+      "bytes": 914
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-10.zip",
+      "bytes": 865
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-11.zip",
+      "bytes": 696
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2023-12.zip",
+      "bytes": 810
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-01.zip",
+      "bytes": 696
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-02.zip",
+      "bytes": 776
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-03.zip",
+      "bytes": 939
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-04.zip",
+      "bytes": 842
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-05.zip",
+      "bytes": 830
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-06.zip",
+      "bytes": 721
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-07.zip",
+      "bytes": 847
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-08.zip",
+      "bytes": 904
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-09.zip",
+      "bytes": 924
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-10.zip",
+      "bytes": 801
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-11.zip",
+      "bytes": 746
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2024-12.zip",
+      "bytes": 808
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-01.zip",
+      "bytes": 825
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-02.zip",
+      "bytes": 854
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-03.zip",
+      "bytes": 938
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-04.zip",
+      "bytes": 929
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-05.zip",
+      "bytes": 943
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-06.zip",
+      "bytes": 946
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-07.zip",
+      "bytes": 796
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-08.zip",
+      "bytes": 927
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-09.zip",
+      "bytes": 941
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-10.zip",
+      "bytes": 944
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-11.zip",
+      "bytes": 941
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2025-12.zip",
+      "bytes": 963
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-01.zip",
+      "bytes": 965
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-02.zip",
+      "bytes": 937
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-03.zip",
+      "bytes": 1008
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-04.zip",
+      "bytes": 960
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-05.zip",
+      "bytes": 980
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-06.zip",
+      "bytes": 964
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-07.zip",
+      "bytes": 914
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-08.zip",
+      "bytes": 896
+    },
+    {
+      "path": "btc_backtest/cache/BTCUSDT-fundingRate-2026-09.zip",
+      "bytes": 924
+    },
+    {
+      "path": "btc_backtest/output/equity_curve.png",
+      "bytes": 143948
+    },
+    {
+      "path": "optimization/features.npz",
+      "bytes": 30721996
+    },
+    {
+      "path": "optimization/output/comparison.png",
+      "bytes": 97196
+    },
+    {
+      "path": "optimization/output/pf_winner_ledger.npz",
+      "bytes": 31221
+    },
+    {
+      "path": "optimization/output/train_winner_ledger.npz",
+      "bytes": 82999
+    },
+    {
+      "path": "optimization/output/winner_ledger.npz",
+      "bytes": 31221
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-08.zip",
+      "bytes": 1756088
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-09.zip",
+      "bytes": 1693297
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-10.zip",
+      "bytes": 1680897
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-11.zip",
+      "bytes": 1632103
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-12.zip",
+      "bytes": 1682582
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2021-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-01.zip",
+      "bytes": 1700806
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-02.zip",
+      "bytes": 1512387
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-03.zip",
+      "bytes": 1651310
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-04.zip",
+      "bytes": 1576294
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-05.zip",
+      "bytes": 1662348
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-06.zip",
+      "bytes": 1621277
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-07.zip",
+      "bytes": 1614127
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-08.zip",
+      "bytes": 1603017
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-09.zip",
+      "bytes": 1546044
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-10.zip",
+      "bytes": 1538709
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-11.zip",
+      "bytes": 1510958
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-12.zip",
+      "bytes": 1456315
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2022-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-01.zip",
+      "bytes": 1555866
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-02.zip",
+      "bytes": 1405266
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-03.zip",
+      "bytes": 1572692
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-04.zip",
+      "bytes": 1507518
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-05.zip",
+      "bytes": 1501904
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-06.zip",
+      "bytes": 1503946
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-07.zip",
+      "bytes": 1521440
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-08.zip",
+      "bytes": 1459947
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-09.zip",
+      "bytes": 1381769
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-10.zip",
+      "bytes": 1463799
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-11.zip",
+      "bytes": 1522890
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-12.zip",
+      "bytes": 1642434
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2023-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-01.zip",
+      "bytes": 1593737
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-02.zip",
+      "bytes": 1496300
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-03.zip",
+      "bytes": 1646874
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-04.zip",
+      "bytes": 1548162
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-05.zip",
+      "bytes": 1538998
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-06.zip",
+      "bytes": 1464917
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-07.zip",
+      "bytes": 1551980
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-08.zip",
+      "bytes": 1528954
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-09.zip",
+      "bytes": 1463588
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-10.zip",
+      "bytes": 1510727
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-11.zip",
+      "bytes": 1641259
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-12.zip",
+      "bytes": 1708062
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2024-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-01.zip",
+      "bytes": 1691242
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-02.zip",
+      "bytes": 1512502
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-03.zip",
+      "bytes": 1682691
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-04.zip",
+      "bytes": 1581393
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-05.zip",
+      "bytes": 1648295
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-06.zip",
+      "bytes": 1551776
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-07.zip",
+      "bytes": 1656176
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-08.zip",
+      "bytes": 1673153
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-09.zip",
+      "bytes": 1564568
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-10.zip",
+      "bytes": 1624418
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-11.zip",
+      "bytes": 1554593
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-12.zip",
+      "bytes": 1559353
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2025-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-01.zip",
+      "bytes": 1557962
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-02.zip",
+      "bytes": 1402267
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-03.zip",
+      "bytes": 1522853
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-04.zip",
+      "bytes": 1450370
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-05.zip",
+      "bytes": 1482313
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-06.zip",
+      "bytes": 1465953
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-07.zip",
+      "bytes": 1476501
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-08.zip",
+      "bytes": 1494665
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-09.zip",
+      "bytes": 1492558
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-01.zip",
+      "bytes": 50978
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-02.zip",
+      "bytes": 51553
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-03.zip",
+      "bytes": 47957
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-03.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-04.zip",
+      "bytes": 49088
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-1m-2026-10-04.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-10.zip",
+      "bytes": 953
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-11.zip",
+      "bytes": 891
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-12.zip",
+      "bytes": 847
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2021-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-01.zip",
+      "bytes": 904
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-02.zip",
+      "bytes": 915
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-03.zip",
+      "bytes": 927
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-04.zip",
+      "bytes": 898
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-05.zip",
+      "bytes": 1016
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-06.zip",
+      "bytes": 983
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-07.zip",
+      "bytes": 922
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-08.zip",
+      "bytes": 954
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-09.zip",
+      "bytes": 972
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-10.zip",
+      "bytes": 1018
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-11.zip",
+      "bytes": 922
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-12.zip",
+      "bytes": 968
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2022-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-01.zip",
+      "bytes": 822
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-02.zip",
+      "bytes": 777
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-03.zip",
+      "bytes": 925
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-04.zip",
+      "bytes": 860
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-05.zip",
+      "bytes": 877
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-06.zip",
+      "bytes": 901
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-07.zip",
+      "bytes": 737
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-08.zip",
+      "bytes": 844
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-09.zip",
+      "bytes": 856
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-10.zip",
+      "bytes": 815
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-11.zip",
+      "bytes": 678
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-12.zip",
+      "bytes": 829
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2023-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-01.zip",
+      "bytes": 670
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-02.zip",
+      "bytes": 773
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-03.zip",
+      "bytes": 943
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-04.zip",
+      "bytes": 844
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-05.zip",
+      "bytes": 778
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-06.zip",
+      "bytes": 745
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-07.zip",
+      "bytes": 792
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-08.zip",
+      "bytes": 923
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-09.zip",
+      "bytes": 840
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-10.zip",
+      "bytes": 802
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-11.zip",
+      "bytes": 787
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-12.zip",
+      "bytes": 829
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-01.zip",
+      "bytes": 697
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-02.zip",
+      "bytes": 871
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-03.zip",
+      "bytes": 924
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-04.zip",
+      "bytes": 896
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-05.zip",
+      "bytes": 905
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-06.zip",
+      "bytes": 906
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-07.zip",
+      "bytes": 784
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-08.zip",
+      "bytes": 858
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-09.zip",
+      "bytes": 808
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-10.zip",
+      "bytes": 913
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-11.zip",
+      "bytes": 932
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-12.zip",
+      "bytes": 954
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-01.zip",
+      "bytes": 930
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-02.zip",
+      "bytes": 946
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-03.zip",
+      "bytes": 974
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-04.zip",
+      "bytes": 896
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-05.zip",
+      "bytes": 941
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-06.zip",
+      "bytes": 987
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-07.zip",
+      "bytes": 897
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-08.zip",
+      "bytes": 869
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-09.zip",
+      "bytes": 837
+    },
+    {
+      "path": "portfolio/cache/ADAUSDT-fundingRate-2026-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-08.zip",
+      "bytes": 1756313
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-09.zip",
+      "bytes": 1684036
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-10.zip",
+      "bytes": 1726954
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-11.zip",
+      "bytes": 1695827
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-12.zip",
+      "bytes": 1718185
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2021-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-01.zip",
+      "bytes": 1710810
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-02.zip",
+      "bytes": 1533930
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-03.zip",
+      "bytes": 1668066
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-04.zip",
+      "bytes": 1605455
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-05.zip",
+      "bytes": 1705984
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-06.zip",
+      "bytes": 1653940
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-07.zip",
+      "bytes": 1676683
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-08.zip",
+      "bytes": 1700044
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-09.zip",
+      "bytes": 1604481
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-10.zip",
+      "bytes": 1615427
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-11.zip",
+      "bytes": 1660210
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-12.zip",
+      "bytes": 1643927
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2022-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-01.zip",
+      "bytes": 1654830
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-02.zip",
+      "bytes": 1506325
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-03.zip",
+      "bytes": 1668886
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-04.zip",
+      "bytes": 1565447
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-05.zip",
+      "bytes": 1580190
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-06.zip",
+      "bytes": 1612555
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-07.zip",
+      "bytes": 1605477
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-08.zip",
+      "bytes": 1565529
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-09.zip",
+      "bytes": 1490439
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-10.zip",
+      "bytes": 1563487
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-11.zip",
+      "bytes": 1587346
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-12.zip",
+      "bytes": 1666942
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2023-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-01.zip",
+      "bytes": 1655989
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-02.zip",
+      "bytes": 1535541
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-03.zip",
+      "bytes": 1745941
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-04.zip",
+      "bytes": 1662237
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-05.zip",
+      "bytes": 1655418
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-06.zip",
+      "bytes": 1615162
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-07.zip",
+      "bytes": 1659305
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-08.zip",
+      "bytes": 1683722
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-09.zip",
+      "bytes": 1611681
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-10.zip",
+      "bytes": 1635265
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-11.zip",
+      "bytes": 1671815
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-12.zip",
+      "bytes": 1741862
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2024-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-01.zip",
+      "bytes": 1670579
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-02.zip",
+      "bytes": 1560245
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-03.zip",
+      "bytes": 1695837
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-04.zip",
+      "bytes": 1598225
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-05.zip",
+      "bytes": 1658801
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-06.zip",
+      "bytes": 1560241
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-07.zip",
+      "bytes": 1661406
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-08.zip",
+      "bytes": 1695657
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-09.zip",
+      "bytes": 1646271
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-10.zip",
+      "bytes": 1811871
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-11.zip",
+      "bytes": 1681530
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-12.zip",
+      "bytes": 1668553
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2025-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-01.zip",
+      "bytes": 1661719
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-02.zip",
+      "bytes": 1546095
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-03.zip",
+      "bytes": 1657904
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-04.zip",
+      "bytes": 1569266
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-05.zip",
+      "bytes": 1640581
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-06.zip",
+      "bytes": 1615316
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-07.zip",
+      "bytes": 1600637
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-08.zip",
+      "bytes": 1614536
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-09.zip",
+      "bytes": 1610312
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-01.zip",
+      "bytes": 53398
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-02.zip",
+      "bytes": 54358
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-03.zip",
+      "bytes": 52386
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-03.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-04.zip",
+      "bytes": 52585
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-1m-2026-10-04.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-10.zip",
+      "bytes": 1003
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-11.zip",
+      "bytes": 891
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-12.zip",
+      "bytes": 833
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2021-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-01.zip",
+      "bytes": 927
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-02.zip",
+      "bytes": 833
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-03.zip",
+      "bytes": 840
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-04.zip",
+      "bytes": 812
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-05.zip",
+      "bytes": 990
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-06.zip",
+      "bytes": 960
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-07.zip",
+      "bytes": 875
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-08.zip",
+      "bytes": 862
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-09.zip",
+      "bytes": 918
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-10.zip",
+      "bytes": 841
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-11.zip",
+      "bytes": 920
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-12.zip",
+      "bytes": 886
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2022-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-01.zip",
+      "bytes": 882
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-02.zip",
+      "bytes": 854
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-03.zip",
+      "bytes": 986
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-04.zip",
+      "bytes": 944
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-05.zip",
+      "bytes": 905
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-06.zip",
+      "bytes": 774
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-07.zip",
+      "bytes": 887
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-08.zip",
+      "bytes": 799
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-09.zip",
+      "bytes": 654
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-10.zip",
+      "bytes": 804
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-11.zip",
+      "bytes": 899
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-12.zip",
+      "bytes": 950
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2023-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-01.zip",
+      "bytes": 870
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-02.zip",
+      "bytes": 844
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-03.zip",
+      "bytes": 931
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-04.zip",
+      "bytes": 905
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-05.zip",
+      "bytes": 867
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-06.zip",
+      "bytes": 702
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-07.zip",
+      "bytes": 667
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-08.zip",
+      "bytes": 706
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-09.zip",
+      "bytes": 704
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-10.zip",
+      "bytes": 727
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-11.zip",
+      "bytes": 863
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-12.zip",
+      "bytes": 873
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-01.zip",
+      "bytes": 776
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-02.zip",
+      "bytes": 750
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-03.zip",
+      "bytes": 843
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-04.zip",
+      "bytes": 751
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-05.zip",
+      "bytes": 745
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-06.zip",
+      "bytes": 762
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-07.zip",
+      "bytes": 808
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-08.zip",
+      "bytes": 836
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-09.zip",
+      "bytes": 809
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-10.zip",
+      "bytes": 836
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-11.zip",
+      "bytes": 787
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-12.zip",
+      "bytes": 791
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-01.zip",
+      "bytes": 856
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-02.zip",
+      "bytes": 663
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-03.zip",
+      "bytes": 708
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-04.zip",
+      "bytes": 818
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-05.zip",
+      "bytes": 908
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-06.zip",
+      "bytes": 777
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-07.zip",
+      "bytes": 937
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-08.zip",
+      "bytes": 888
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-09.zip",
+      "bytes": 861
+    },
+    {
+      "path": "portfolio/cache/BNBUSDT-fundingRate-2026-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-08.zip",
+      "bytes": 1981272
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-09.zip",
+      "bytes": 1911350
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-10.zip",
+      "bytes": 1960163
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-11.zip",
+      "bytes": 1892524
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-12.zip",
+      "bytes": 1956211
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2021-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-01.zip",
+      "bytes": 1943635
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-02.zip",
+      "bytes": 1770290
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-03.zip",
+      "bytes": 1922609
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-04.zip",
+      "bytes": 1848537
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-05.zip",
+      "bytes": 1938461
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-06.zip",
+      "bytes": 1901973
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-07.zip",
+      "bytes": 1969156
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-08.zip",
+      "bytes": 1980362
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-09.zip",
+      "bytes": 1905953
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-10.zip",
+      "bytes": 1906554
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-11.zip",
+      "bytes": 1878009
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-12.zip",
+      "bytes": 1862705
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2022-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-01.zip",
+      "bytes": 1886386
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-02.zip",
+      "bytes": 1722282
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-03.zip",
+      "bytes": 1924989
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-04.zip",
+      "bytes": 1840076
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-05.zip",
+      "bytes": 1871691
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-06.zip",
+      "bytes": 1811667
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-07.zip",
+      "bytes": 1829055
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-08.zip",
+      "bytes": 1789888
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-09.zip",
+      "bytes": 1742207
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-10.zip",
+      "bytes": 1848719
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-11.zip",
+      "bytes": 1839269
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-12.zip",
+      "bytes": 1914277
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2023-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-01.zip",
+      "bytes": 1918758
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-02.zip",
+      "bytes": 1796355
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-03.zip",
+      "bytes": 1977193
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-04.zip",
+      "bytes": 1896608
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-05.zip",
+      "bytes": 1935350
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-06.zip",
+      "bytes": 1842414
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-07.zip",
+      "bytes": 1934815
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-08.zip",
+      "bytes": 1941203
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-09.zip",
+      "bytes": 1852202
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-10.zip",
+      "bytes": 1907533
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-11.zip",
+      "bytes": 1921220
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-12.zip",
+      "bytes": 1981846
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2024-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-01.zip",
+      "bytes": 1962399
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-02.zip",
+      "bytes": 1786957
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-03.zip",
+      "bytes": 1957769
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-04.zip",
+      "bytes": 1895060
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-05.zip",
+      "bytes": 1986381
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-06.zip",
+      "bytes": 1904828
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-07.zip",
+      "bytes": 1988465
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-08.zip",
+      "bytes": 2017496
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-09.zip",
+      "bytes": 1900520
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-10.zip",
+      "bytes": 1996726
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-11.zip",
+      "bytes": 1931576
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-12.zip",
+      "bytes": 1941385
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2025-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-01.zip",
+      "bytes": 1928094
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-02.zip",
+      "bytes": 1790010
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-03.zip",
+      "bytes": 1958005
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-04.zip",
+      "bytes": 1860146
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-05.zip",
+      "bytes": 1893623
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-06.zip",
+      "bytes": 1875936
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-07.zip",
+      "bytes": 1905641
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-08.zip",
+      "bytes": 1881488
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-09.zip",
+      "bytes": 1858695
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-01.zip",
+      "bytes": 63024
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-02.zip",
+      "bytes": 63946
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-03.zip",
+      "bytes": 58007
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-03.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-04.zip",
+      "bytes": 58529
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-1m-2026-10-04.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-10.zip",
+      "bytes": 935
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-11.zip",
+      "bytes": 838
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-12.zip",
+      "bytes": 806
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2021-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-01.zip",
+      "bytes": 950
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-02.zip",
+      "bytes": 898
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-03.zip",
+      "bytes": 866
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-04.zip",
+      "bytes": 941
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-05.zip",
+      "bytes": 972
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-06.zip",
+      "bytes": 980
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-07.zip",
+      "bytes": 953
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-08.zip",
+      "bytes": 1000
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-09.zip",
+      "bytes": 1016
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-10.zip",
+      "bytes": 1004
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-11.zip",
+      "bytes": 987
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-12.zip",
+      "bytes": 964
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2022-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-01.zip",
+      "bytes": 819
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-02.zip",
+      "bytes": 821
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-03.zip",
+      "bytes": 963
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-04.zip",
+      "bytes": 945
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-05.zip",
+      "bytes": 990
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-06.zip",
+      "bytes": 888
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-07.zip",
+      "bytes": 861
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-08.zip",
+      "bytes": 897
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-09.zip",
+      "bytes": 902
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-10.zip",
+      "bytes": 849
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-11.zip",
+      "bytes": 699
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-12.zip",
+      "bytes": 801
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2023-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-01.zip",
+      "bytes": 685
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-02.zip",
+      "bytes": 770
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-03.zip",
+      "bytes": 941
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-04.zip",
+      "bytes": 834
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-05.zip",
+      "bytes": 836
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-06.zip",
+      "bytes": 758
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-07.zip",
+      "bytes": 831
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-08.zip",
+      "bytes": 944
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-09.zip",
+      "bytes": 908
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-10.zip",
+      "bytes": 748
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-11.zip",
+      "bytes": 809
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-12.zip",
+      "bytes": 837
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-01.zip",
+      "bytes": 768
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-02.zip",
+      "bytes": 868
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-03.zip",
+      "bytes": 934
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-04.zip",
+      "bytes": 940
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-05.zip",
+      "bytes": 919
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-06.zip",
+      "bytes": 928
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-07.zip",
+      "bytes": 854
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-08.zip",
+      "bytes": 922
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-09.zip",
+      "bytes": 934
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-10.zip",
+      "bytes": 953
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-11.zip",
+      "bytes": 956
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-12.zip",
+      "bytes": 985
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-01.zip",
+      "bytes": 979
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-02.zip",
+      "bytes": 939
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-03.zip",
+      "bytes": 1002
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-04.zip",
+      "bytes": 963
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-05.zip",
+      "bytes": 980
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-06.zip",
+      "bytes": 967
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-07.zip",
+      "bytes": 941
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-08.zip",
+      "bytes": 925
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-09.zip",
+      "bytes": 931
+    },
+    {
+      "path": "portfolio/cache/ETHUSDT-fundingRate-2026-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-08.zip",
+      "bytes": 1629267
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-09.zip",
+      "bytes": 1689612
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-10.zip",
+      "bytes": 1686040
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-11.zip",
+      "bytes": 1618302
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-12.zip",
+      "bytes": 1579903
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2021-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-01.zip",
+      "bytes": 1486921
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-26.zip",
+      "bytes": 47421
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-26.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-27.zip",
+      "bytes": 47949
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-27.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-28.zip",
+      "bytes": 49243
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02-28.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02.zip",
+      "bytes": 1204629
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-03.zip",
+      "bytes": 1463709
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04-01.zip",
+      "bytes": 50787
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04-02.zip",
+      "bytes": 50000
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04.zip",
+      "bytes": 1334627
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-05.zip",
+      "bytes": 1482408
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-06.zip",
+      "bytes": 1447293
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-07.zip",
+      "bytes": 1450054
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-08.zip",
+      "bytes": 1427092
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-09.zip",
+      "bytes": 1353336
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-10.zip",
+      "bytes": 1351431
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-11.zip",
+      "bytes": 1506429
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-12.zip",
+      "bytes": 1468615
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2022-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-01.zip",
+      "bytes": 1613893
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-02.zip",
+      "bytes": 1425133
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-03.zip",
+      "bytes": 1568915
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-04.zip",
+      "bytes": 1492899
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-05.zip",
+      "bytes": 1509824
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-06.zip",
+      "bytes": 1500407
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-07.zip",
+      "bytes": 1597079
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-08.zip",
+      "bytes": 1541736
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-09.zip",
+      "bytes": 1475943
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-10.zip",
+      "bytes": 1600585
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-11.zip",
+      "bytes": 1633463
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-12.zip",
+      "bytes": 1703152
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2023-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-01.zip",
+      "bytes": 1698240
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-02.zip",
+      "bytes": 1567850
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-03.zip",
+      "bytes": 1738207
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-04.zip",
+      "bytes": 1658919
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-05.zip",
+      "bytes": 1681927
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-06.zip",
+      "bytes": 1591430
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-07.zip",
+      "bytes": 1682413
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-08.zip",
+      "bytes": 1694056
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-09.zip",
+      "bytes": 1608317
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-10.zip",
+      "bytes": 1602398
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-11.zip",
+      "bytes": 1556146
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-12.zip",
+      "bytes": 1584587
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2024-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-01.zip",
+      "bytes": 1599190
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-02.zip",
+      "bytes": 1444191
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-03.zip",
+      "bytes": 1545154
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-04.zip",
+      "bytes": 1688075
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-05.zip",
+      "bytes": 1819534
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-06.zip",
+      "bytes": 1746877
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-07.zip",
+      "bytes": 1818115
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-08.zip",
+      "bytes": 1848031
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-09.zip",
+      "bytes": 1779913
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-10.zip",
+      "bytes": 1852486
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-11.zip",
+      "bytes": 1769429
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-12.zip",
+      "bytes": 1775230
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2025-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-01.zip",
+      "bytes": 1763272
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-02.zip",
+      "bytes": 1608609
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-03.zip",
+      "bytes": 1748963
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-04.zip",
+      "bytes": 1651560
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-05.zip",
+      "bytes": 1701050
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-06.zip",
+      "bytes": 1686229
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-07.zip",
+      "bytes": 1685996
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-08.zip",
+      "bytes": 1695675
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-09.zip",
+      "bytes": 1698379
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-01.zip",
+      "bytes": 57212
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-02.zip",
+      "bytes": 58470
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-03.zip",
+      "bytes": 53792
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-03.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-04.zip",
+      "bytes": 54796
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-1m-2026-10-04.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-10.zip",
+      "bytes": 922
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-11.zip",
+      "bytes": 813
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-12.zip",
+      "bytes": 737
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2021-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-01.zip",
+      "bytes": 840
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-02.zip",
+      "bytes": 931
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-03.zip",
+      "bytes": 827
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-04.zip",
+      "bytes": 911
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-05.zip",
+      "bytes": 1024
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-06.zip",
+      "bytes": 995
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-07.zip",
+      "bytes": 924
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-08.zip",
+      "bytes": 964
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-09.zip",
+      "bytes": 939
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-10.zip",
+      "bytes": 977
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-11.zip",
+      "bytes": 1620
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-12.zip",
+      "bytes": 1015
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2022-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-01.zip",
+      "bytes": 910
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-02.zip",
+      "bytes": 859
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-03.zip",
+      "bytes": 941
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-04.zip",
+      "bytes": 890
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-05.zip",
+      "bytes": 916
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-06.zip",
+      "bytes": 881
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-07.zip",
+      "bytes": 818
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-08.zip",
+      "bytes": 897
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-09.zip",
+      "bytes": 927
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-10.zip",
+      "bytes": 902
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-11.zip",
+      "bytes": 735
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-12.zip",
+      "bytes": 841
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2023-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-01.zip",
+      "bytes": 697
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-02.zip",
+      "bytes": 802
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-03.zip",
+      "bytes": 946
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-04.zip",
+      "bytes": 869
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-05.zip",
+      "bytes": 810
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-06.zip",
+      "bytes": 803
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-07.zip",
+      "bytes": 850
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-08.zip",
+      "bytes": 940
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-09.zip",
+      "bytes": 880
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-10.zip",
+      "bytes": 839
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-11.zip",
+      "bytes": 790
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-12.zip",
+      "bytes": 893
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-01.zip",
+      "bytes": 916
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-02.zip",
+      "bytes": 872
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-03.zip",
+      "bytes": 938
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-04.zip",
+      "bytes": 920
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-05.zip",
+      "bytes": 940
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-06.zip",
+      "bytes": 939
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-07.zip",
+      "bytes": 876
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-08.zip",
+      "bytes": 917
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-09.zip",
+      "bytes": 947
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-10.zip",
+      "bytes": 976
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-11.zip",
+      "bytes": 963
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-12.zip",
+      "bytes": 957
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-01.zip",
+      "bytes": 962
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-02.zip",
+      "bytes": 942
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-03.zip",
+      "bytes": 1010
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-04.zip",
+      "bytes": 944
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-05.zip",
+      "bytes": 979
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-06.zip",
+      "bytes": 973
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-07.zip",
+      "bytes": 964
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-08.zip",
+      "bytes": 899
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-09.zip",
+      "bytes": 917
+    },
+    {
+      "path": "portfolio/cache/SOLUSDT-fundingRate-2026-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-08.zip",
+      "bytes": 1824230
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-09.zip",
+      "bytes": 1736090
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-10.zip",
+      "bytes": 1763417
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-11.zip",
+      "bytes": 1707054
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-12.zip",
+      "bytes": 1752999
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2021-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-01.zip",
+      "bytes": 1702714
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-26.zip",
+      "bytes": 57774
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-26.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-27.zip",
+      "bytes": 57624
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-27.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-28.zip",
+      "bytes": 57724
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02-28.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02.zip",
+      "bytes": 1422328
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-03.zip",
+      "bytes": 1721233
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04-01.zip",
+      "bytes": 55947
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04-02.zip",
+      "bytes": 55246
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04.zip",
+      "bytes": 1529786
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-05.zip",
+      "bytes": 1706028
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-06.zip",
+      "bytes": 1618922
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-07.zip",
+      "bytes": 1658703
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-08.zip",
+      "bytes": 1637947
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-09.zip",
+      "bytes": 1661843
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-10.zip",
+      "bytes": 1735124
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-11.zip",
+      "bytes": 1661700
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-12.zip",
+      "bytes": 1624711
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2022-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-01.zip",
+      "bytes": 1678866
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-02.zip",
+      "bytes": 1485559
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-03.zip",
+      "bytes": 1729446
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-04.zip",
+      "bytes": 1635885
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-05.zip",
+      "bytes": 1656191
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-06.zip",
+      "bytes": 1646062
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-07.zip",
+      "bytes": 1717878
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-08.zip",
+      "bytes": 1685697
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-09.zip",
+      "bytes": 1572027
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-10.zip",
+      "bytes": 1640535
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-11.zip",
+      "bytes": 1650930
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-12.zip",
+      "bytes": 1683772
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2023-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-01.zip",
+      "bytes": 1669307
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-02.zip",
+      "bytes": 1565423
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-03.zip",
+      "bytes": 1756498
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-04.zip",
+      "bytes": 1652217
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-05.zip",
+      "bytes": 1640231
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-06.zip",
+      "bytes": 1559746
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-07.zip",
+      "bytes": 1714550
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-08.zip",
+      "bytes": 1702936
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-09.zip",
+      "bytes": 1607281
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-10.zip",
+      "bytes": 1636869
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-11.zip",
+      "bytes": 1764695
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-12.zip",
+      "bytes": 1898405
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2024-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-01.zip",
+      "bytes": 1866486
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-02.zip",
+      "bytes": 1680617
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-03.zip",
+      "bytes": 1842007
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-04.zip",
+      "bytes": 1760122
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-05.zip",
+      "bytes": 1803083
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-06.zip",
+      "bytes": 1719574
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-07.zip",
+      "bytes": 1848830
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-08.zip",
+      "bytes": 1831399
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-09.zip",
+      "bytes": 1726698
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-10.zip",
+      "bytes": 1818791
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-10.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-11.zip",
+      "bytes": 1761064
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-11.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-12.zip",
+      "bytes": 1748758
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2025-12.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-01.zip",
+      "bytes": 1764391
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-01.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-02.zip",
+      "bytes": 1624991
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-02.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-03.zip",
+      "bytes": 1738272
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-03.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-04.zip",
+      "bytes": 1642251
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-04.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-05.zip",
+      "bytes": 1700366
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-05.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-06.zip",
+      "bytes": 1670216
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-06.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-07.zip",
+      "bytes": 1675029
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-07.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-08.zip",
+      "bytes": 1711388
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-08.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-09.zip",
+      "bytes": 1721703
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-09.zip.CHECKSUM",
+      "bytes": 89
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-01.zip",
+      "bytes": 57682
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-01.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-02.zip",
+      "bytes": 58730
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-02.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-03.zip",
+      "bytes": 54077
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-03.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-04.zip",
+      "bytes": 54621
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-1m-2026-10-04.zip.CHECKSUM",
+      "bytes": 92
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-10.zip",
+      "bytes": 944
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-11.zip",
+      "bytes": 894
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-12.zip",
+      "bytes": 813
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2021-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-01.zip",
+      "bytes": 860
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-02.zip",
+      "bytes": 862
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-03.zip",
+      "bytes": 841
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-04.zip",
+      "bytes": 861
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-05.zip",
+      "bytes": 998
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-06.zip",
+      "bytes": 986
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-07.zip",
+      "bytes": 1005
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-08.zip",
+      "bytes": 1017
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-09.zip",
+      "bytes": 1003
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-10.zip",
+      "bytes": 994
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-11.zip",
+      "bytes": 976
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-12.zip",
+      "bytes": 1023
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2022-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-01.zip",
+      "bytes": 805
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-02.zip",
+      "bytes": 782
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-03.zip",
+      "bytes": 906
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-04.zip",
+      "bytes": 926
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-05.zip",
+      "bytes": 921
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-06.zip",
+      "bytes": 867
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-07.zip",
+      "bytes": 792
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-08.zip",
+      "bytes": 816
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-09.zip",
+      "bytes": 868
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-10.zip",
+      "bytes": 816
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-11.zip",
+      "bytes": 735
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-12.zip",
+      "bytes": 868
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2023-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-01.zip",
+      "bytes": 673
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-02.zip",
+      "bytes": 755
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-03.zip",
+      "bytes": 957
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-04.zip",
+      "bytes": 881
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-05.zip",
+      "bytes": 783
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-06.zip",
+      "bytes": 753
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-07.zip",
+      "bytes": 786
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-08.zip",
+      "bytes": 925
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-09.zip",
+      "bytes": 861
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-10.zip",
+      "bytes": 740
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-11.zip",
+      "bytes": 771
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-12.zip",
+      "bytes": 805
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-01.zip",
+      "bytes": 743
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-02.zip",
+      "bytes": 862
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-03.zip",
+      "bytes": 951
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-04.zip",
+      "bytes": 907
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-05.zip",
+      "bytes": 895
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-06.zip",
+      "bytes": 907
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-07.zip",
+      "bytes": 817
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-08.zip",
+      "bytes": 910
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-09.zip",
+      "bytes": 881
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-10.zip",
+      "bytes": 952
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-11.zip",
+      "bytes": 983
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-12.zip",
+      "bytes": 1007
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-01.zip",
+      "bytes": 990
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-02.zip",
+      "bytes": 939
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-03.zip",
+      "bytes": 999
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-04.zip",
+      "bytes": 974
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-05.zip",
+      "bytes": 1002
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-06.zip",
+      "bytes": 962
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-07.zip",
+      "bytes": 972
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-08.zip",
+      "bytes": 934
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-08.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-09.zip",
+      "bytes": 904
+    },
+    {
+      "path": "portfolio/cache/XRPUSDT-fundingRate-2026-09.zip.CHECKSUM",
+      "bytes": 98
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_REFERENCE__R0.005__P1__full.npz",
+      "bytes": 408985
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_REFERENCE__R0.005__P1__oos.npz",
+      "bytes": 145094
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_REFERENCE__R0.005__P1__train.npz",
+      "bytes": 264126
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.015__P1__full.npz",
+      "bytes": 413221
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.015__P1__oos.npz",
+      "bytes": 146503
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.015__P1__train.npz",
+      "bytes": 266718
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.01__P1__full.npz",
+      "bytes": 412054
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.01__P1__oos.npz",
+      "bytes": 146051
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.01__P1__train.npz",
+      "bytes": 266005
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.02__P1__full.npz",
+      "bytes": 405674
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.02__P1__oos.npz",
+      "bytes": 145489
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__BTC_SCALED__R0.02__P1__train.npz",
+      "bytes": 260770
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P3__full.npz",
+      "bytes": 604037
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P3__oos.npz",
+      "bytes": 213532
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P3__train.npz",
+      "bytes": 391177
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4__full.npz",
+      "bytes": 628096
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4__oos.npz",
+      "bytes": 222319
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4__train.npz",
+      "bytes": 406476
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P3__full.npz",
+      "bytes": 605974
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P3__oos.npz",
+      "bytes": 214288
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P3__train.npz",
+      "bytes": 391965
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P4__full.npz",
+      "bytes": 628804
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P4__oos.npz",
+      "bytes": 222115
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P4__train.npz",
+      "bytes": 407102
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P3__full.npz",
+      "bytes": 605484
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P3__oos.npz",
+      "bytes": 214503
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P3__train.npz",
+      "bytes": 391803
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P4__full.npz",
+      "bytes": 622781
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P4__oos.npz",
+      "bytes": 219822
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.0075__P4__train.npz",
+      "bytes": 403710
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P3__full.npz",
+      "bytes": 596009
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P3__oos.npz",
+      "bytes": 208867
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P3__train.npz",
+      "bytes": 387647
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P4__full.npz",
+      "bytes": 616543
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P4__oos.npz",
+      "bytes": 216681
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.015__P4__train.npz",
+      "bytes": 400731
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P3__full.npz",
+      "bytes": 598251
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P3__oos.npz",
+      "bytes": 209741
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P3__train.npz",
+      "bytes": 388869
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P4__full.npz",
+      "bytes": 617568
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P4__oos.npz",
+      "bytes": 217112
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.01__P4__train.npz",
+      "bytes": 401249
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__full.npz",
+      "bytes": 347579
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__oos.npz",
+      "bytes": 124487
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__train.npz",
+      "bytes": 223917
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__full.npz",
+      "bytes": 351107
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__oos.npz",
+      "bytes": 125519
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__train.npz",
+      "bytes": 226098
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__full.npz",
+      "bytes": 349945
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__oos.npz",
+      "bytes": 125187
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__train.npz",
+      "bytes": 225392
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__full.npz",
+      "bytes": 348438
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__oos.npz",
+      "bytes": 123755
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__train.npz",
+      "bytes": 225503
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__full.npz",
+      "bytes": 578481
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__oos.npz",
+      "bytes": 203583
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__train.npz",
+      "bytes": 375178
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__full.npz",
+      "bytes": 604719
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__oos.npz",
+      "bytes": 212343
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__train.npz",
+      "bytes": 393012
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__full.npz",
+      "bytes": 579450
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__oos.npz",
+      "bytes": 204056
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__train.npz",
+      "bytes": 376148
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__full.npz",
+      "bytes": 604427
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__oos.npz",
+      "bytes": 211609
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__train.npz",
+      "bytes": 393711
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__full.npz",
+      "bytes": 578146
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__oos.npz",
+      "bytes": 202342
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__train.npz",
+      "bytes": 376626
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__full.npz",
+      "bytes": 601120
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__oos.npz",
+      "bytes": 208903
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__train.npz",
+      "bytes": 392918
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__full.npz",
+      "bytes": 571766
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__oos.npz",
+      "bytes": 200353
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__train.npz",
+      "bytes": 372566
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__full.npz",
+      "bytes": 594807
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__oos.npz",
+      "bytes": 207134
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__train.npz",
+      "bytes": 388594
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__full.npz",
+      "bytes": 575315
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__oos.npz",
+      "bytes": 201144
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__train.npz",
+      "bytes": 375019
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__full.npz",
+      "bytes": 599271
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__oos.npz",
+      "bytes": 208583
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__train.npz",
+      "bytes": 391461
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_REFERENCE__R0.005__P1__full.npz",
+      "bytes": 381515
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_REFERENCE__R0.005__P1__oos.npz",
+      "bytes": 136471
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_REFERENCE__R0.005__P1__train.npz",
+      "bytes": 245800
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.015__P1__full.npz",
+      "bytes": 384774
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.015__P1__oos.npz",
+      "bytes": 137768
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.015__P1__train.npz",
+      "bytes": 247884
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.01__P1__full.npz",
+      "bytes": 384543
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.01__P1__oos.npz",
+      "bytes": 137338
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.01__P1__train.npz",
+      "bytes": 247666
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.02__P1__full.npz",
+      "bytes": 377162
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.02__P1__oos.npz",
+      "bytes": 134009
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__BTC_SCALED__R0.02__P1__train.npz",
+      "bytes": 244063
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P3__full.npz",
+      "bytes": 633738
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P3__oos.npz",
+      "bytes": 222171
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P3__train.npz",
+      "bytes": 412061
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P4__full.npz",
+      "bytes": 666085
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P4__oos.npz",
+      "bytes": 234435
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P4__train.npz",
+      "bytes": 432798
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P3__full.npz",
+      "bytes": 634388
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P3__oos.npz",
+      "bytes": 222757
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P3__train.npz",
+      "bytes": 412419
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P4__full.npz",
+      "bytes": 667399
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P4__oos.npz",
+      "bytes": 234909
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P4__train.npz",
+      "bytes": 433640
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P3__full.npz",
+      "bytes": 629738
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P3__oos.npz",
+      "bytes": 221387
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P3__train.npz",
+      "bytes": 409366
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P4__full.npz",
+      "bytes": 656307
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P4__oos.npz",
+      "bytes": 231418
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.0075__P4__train.npz",
+      "bytes": 425891
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P3__full.npz",
+      "bytes": 614678
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P3__oos.npz",
+      "bytes": 214311
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P3__train.npz",
+      "bytes": 401385
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P4__full.npz",
+      "bytes": 643258
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P4__oos.npz",
+      "bytes": 224143
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.015__P4__train.npz",
+      "bytes": 420019
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P3__full.npz",
+      "bytes": 622153
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P3__oos.npz",
+      "bytes": 218166
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P3__train.npz",
+      "bytes": 405054
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P4__full.npz",
+      "bytes": 651242
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P4__oos.npz",
+      "bytes": 227717
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.01__P4__train.npz",
+      "bytes": 424480
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__full.npz",
+      "bytes": 365012
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__oos.npz",
+      "bytes": 131353
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_REFERENCE__R0.005__P1__train.npz",
+      "bytes": 234103
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__full.npz",
+      "bytes": 368247
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__oos.npz",
+      "bytes": 132688
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.015__P1__train.npz",
+      "bytes": 236414
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__full.npz",
+      "bytes": 367771
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__oos.npz",
+      "bytes": 132347
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.01__P1__train.npz",
+      "bytes": 235920
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__full.npz",
+      "bytes": 363630
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__oos.npz",
+      "bytes": 130952
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__BTC_SCALED__R0.02__P1__train.npz",
+      "bytes": 233392
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__full.npz",
+      "bytes": 594268
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__oos.npz",
+      "bytes": 208239
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3__train.npz",
+      "bytes": 386755
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__full.npz",
+      "bytes": 623384
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__oos.npz",
+      "bytes": 219135
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4__train.npz",
+      "bytes": 404982
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__full.npz",
+      "bytes": 595675
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__oos.npz",
+      "bytes": 208811
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P3__train.npz",
+      "bytes": 387538
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__full.npz",
+      "bytes": 624237
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__oos.npz",
+      "bytes": 219496
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P4__train.npz",
+      "bytes": 405749
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__full.npz",
+      "bytes": 593778
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__oos.npz",
+      "bytes": 207682
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P3__train.npz",
+      "bytes": 387102
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__full.npz",
+      "bytes": 618943
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__oos.npz",
+      "bytes": 216897
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.0075__P4__train.npz",
+      "bytes": 402745
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__full.npz",
+      "bytes": 584208
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__oos.npz",
+      "bytes": 203899
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P3__train.npz",
+      "bytes": 381237
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__full.npz",
+      "bytes": 611286
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__oos.npz",
+      "bytes": 213030
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.015__P4__train.npz",
+      "bytes": 399222
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__full.npz",
+      "bytes": 586984
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__oos.npz",
+      "bytes": 205342
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P3__train.npz",
+      "bytes": 382877
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__full.npz",
+      "bytes": 614222
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__oos.npz",
+      "bytes": 214426
+    },
+    {
+      "path": "portfolio/output/DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.01__P4__train.npz",
+      "bytes": 400701
+    },
+    {
+      "path": "portfolio/output/equity_comparison.png",
+      "bytes": 132527
+    }
+  ]
+}

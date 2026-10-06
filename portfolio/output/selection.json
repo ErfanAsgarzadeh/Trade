@@ -1,0 +1,6 @@
+{
+  "winner_id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4",
+  "eligible_portfolio_count": 10,
+  "rule": "Highest full net portfolio profit, full trades>=40, positive train/oos net and DD<=25% in all three periods; PF tie-break; retain prior config if none",
+  "adaptive_supplement": true
+}

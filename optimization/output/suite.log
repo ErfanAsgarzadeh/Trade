@@ -1,0 +1,110 @@
+Prepared cached minute data and exact 199-bar indicators.
+Signals MTF none 633
+Signals MTF slope 279
+Signals MTF ADX20 507
+Signals MTF ADX25 407
+Signals MTF slope_ADX20 232
+Signals MTF slope_ADX25 195
+Signals SINGLE none 78
+Signals SINGLE slope 19
+Signals SINGLE ADX20 50
+Signals SINGLE ADX25 28
+Signals SINGLE slope_ADX20 12
+Signals SINGLE slope_ADX25 10
+Baseline JIT matches original trade count, net PnL, DD exactly.
+Completed cases: 25
+Completed cases: 50
+Completed cases: 75
+Completed cases: 100
+Completed cases: 125
+Completed cases: 150
+Completed cases: 175
+Completed cases: 200
+Completed cases: 225
+Completed cases: 250
+Completed cases: 275
+Completed cases: 300
+Completed cases: 325
+Completed cases: 350
+Completed cases: 375
+Completed cases: 400
+Completed cases: 425
+WINNER {
+  "id": "SINGLE__B_runner_hard4__none__slope_ADX25",
+  "mode": "SINGLE",
+  "exit": "B_runner_hard4",
+  "stop": "none",
+  "momentum": "slope_ADX25",
+  "params": [
+    2.0,
+    0.0,
+    3.0,
+    0.5,
+    240.0,
+    4.0,
+    0.0,
+    0.0
+  ],
+  "full": {
+    "trades": 8,
+    "win_rate_pct": 37.5,
+    "avg_win": 123.88763085111073,
+    "avg_loss": -49.29116404774895,
+    "fees": 9.926602820599308,
+    "funding_pnl": 10.877013205984213,
+    "gross_pnl": 124.25666192920261,
+    "profit_factor": 1.5080304948501433,
+    "max_dd_pct": 1.6138431136044062,
+    "net_profit": 125.207072314588,
+    "return_pct": 1.2520707231458816,
+    "final_equity": 10125.207072314588,
+    "kijun_break_exits": 2,
+    "runner_stop_exits": 0,
+    "setups": 9,
+    "cancelled_setups": 1,
+    "min_stop_rejections": 0,
+    "missing_funding_proxy_events": 0
+  },
+  "train": {
+    "trades": 4,
+    "win_rate_pct": 25.0,
+    "avg_win": 152.99262335266522,
+    "avg_loss": -48.59255678321,
+    "fees": 3.925539997293513,
+    "funding_pnl": 6.846994495674804,
+    "gross_pnl": 4.293498504653968,
+    "profit_factor": 1.049492854329,
+    "max_dd_pct": 1.3123616148833503,
+    "net_profit": 7.214953003031042,
+    "return_pct": 0.07214953003031876,
+    "final_equity": 10007.214953003031,
+    "kijun_break_exits": 1,
+    "runner_stop_exits": 0,
+    "setups": 4,
+    "cancelled_setups": 0,
+    "min_stop_rejections": 0,
+    "missing_funding_proxy_events": 0
+  },
+  "validation": {
+    "trades": 4,
+    "win_rate_pct": 50.0,
+    "avg_win": 109.3351346003335,
+    "avg_loss": -50.33907494455738,
+    "fees": 6.001062823305795,
+    "funding_pnl": 4.0300187103094025,
+    "gross_pnl": 119.96316342454864,
+    "profit_factor": 2.1719734564203534,
+    "max_dd_pct": 1.4285071083727139,
+    "net_profit": 117.99211931155696,
+    "return_pct": 1.1799211931155629,
+    "final_equity": 10117.992119311557,
+    "kijun_break_exits": 1,
+    "runner_stop_exits": 0,
+    "setups": 5,
+    "cancelled_setups": 1,
+    "min_stop_rejections": 0,
+    "missing_funding_proxy_events": 0
+  }
+}
+PF WINNER SINGLE__B_runner_hard4__none__slope_ADX25 {'trades': 8, 'win_rate_pct': 37.5, 'avg_win': 123.88763085111073, 'avg_loss': -49.29116404774895, 'fees': 9.926602820599308, 'funding_pnl': 10.877013205984213, 'gross_pnl': 124.25666192920261, 'profit_factor': 1.5080304948501433, 'max_dd_pct': 1.6138431136044062, 'net_profit': 125.207072314588, 'return_pct': 1.2520707231458816, 'final_equity': 10125.207072314588, 'kijun_break_exits': 2, 'runner_stop_exits': 0, 'setups': 9, 'cancelled_setups': 1, 'min_stop_rejections': 0, 'missing_funding_proxy_events': 0}
+TRAIN WINNER MTF__baseline__reject__none {'trades': 47, 'win_rate_pct': 40.42553191489361, 'avg_win': 64.68763489156943, 'avg_loss': -48.58737200747464, 'fees': 137.84147474276722, 'funding_pnl': 2.766659678874399, 'gross_pnl': 3.6934617944220207, 'profit_factor': 0.9034277633399571, 'max_dd_pct': 6.28824905832432, 'net_profit': -131.3813532694585, 'return_pct': -1.3138135326945855, 'final_equity': 9868.618646730542, 'kijun_break_exits': 3, 'runner_stop_exits': 16, 'setups': 80, 'cancelled_setups': 33, 'min_stop_rejections': 76, 'missing_funding_proxy_events': 0}

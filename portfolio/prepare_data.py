@@ -15,7 +15,11 @@ def main():
   dst=ROOT/'prepared'/symbol;dst.mkdir(parents=True,exist_ok=True)
   if (dst/'manifest.json').exists():checks.append(json.loads((dst/'manifest.json').read_text()));continue
   cache=ROOT.parent/'btc_backtest/cache' if symbol=='BTCUSDT' else ROOT/'cache';frames=[]
-  for r in sorted([x for x in selected if '-1m-' in x['name']],key=lambda x:x['name']):
+  repairs=json.loads((ROOT/'output/repair_manifest.json').read_text()) if (ROOT/'output/repair_manifest.json').exists() else []
+  extra=[x for x in repairs if x['symbol']==symbol]
+  if any(x['status']!='verified' for x in extra):raise ValueError('Unverified repair')
+  sources=selected+extra
+  for r in sorted([x for x in sources if '-1m-' in x['name']],key=lambda x:x['name']):
    p=cache/r['name'];assert hashlib.sha256(p.read_bytes()).hexdigest()==r['sha256']
    with zipfile.ZipFile(p) as z:d=pd.read_csv(z.open(z.namelist()[0]),header=None,usecols=range(6),names=['timestamp','open','high','low','close','volume'],low_memory=False)
    d=d[pd.to_numeric(d.timestamp,errors='coerce').notna()].astype(float)
@@ -42,7 +46,7 @@ def main():
   ix=((ts-bt.START)//60000).to_numpy();mask=(ix>=0)&(ix<len(fund));fund[ix[mask]]=f.last_funding_rate.to_numpy()[mask];np.save(dst/'funding.npy',fund)
   if symbol=='BTCUSDT':
    old=np.load(ROOT.parent/'optimization/features.npz');assert np.array_equal(prices,old['prices']) and np.array_equal(fund,old['funding'],equal_nan=True)
-  result=dict(symbol=symbol,minutes=len(prices),warmup_minutes=len(d)-len(test),observed_funding_events=int(mask.sum()),parity_windows=parity,prices_sha256=hashlib.sha256(prices.tobytes()).hexdigest(),unknown_funding_from='2026-10-01T00:00:00Z')
+  result=dict(symbol=symbol,recovery_archives=len(extra),minutes=len(prices),warmup_minutes=len(d)-len(test),observed_funding_events=int(mask.sum()),parity_windows=parity,prices_sha256=hashlib.sha256(prices.tobytes()).hexdigest(),unknown_funding_from='2026-10-01T00:00:00Z')
   (dst/'manifest.json').write_text(json.dumps(result,indent=2));checks.append(result);print('PREPARED',result,flush=True)
  (ROOT/'output/coverage.json').write_text(json.dumps(checks,indent=2))
  if len(checks)!=6:raise SystemExit(2)

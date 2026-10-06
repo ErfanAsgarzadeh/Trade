@@ -1,0 +1,82 @@
+[
+  {
+    "symbol": "SOLUSDT",
+    "name": "SOLUSDT-1m-2022-02-27.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-27.zip",
+    "status": "verified",
+    "sha256": "2c27849bc6b152578ec54ad8cbc4c418f7653cd3e0f712de0107b289bbe0c355",
+    "bytes": 47949
+  },
+  {
+    "symbol": "SOLUSDT",
+    "name": "SOLUSDT-1m-2022-02-26.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-26.zip",
+    "status": "verified",
+    "sha256": "34edc8ed16789b073f5936c5aeac77d5233ee97261dd4f8cf424404565069a9b",
+    "bytes": 47421
+  },
+  {
+    "symbol": "XRPUSDT",
+    "name": "XRPUSDT-1m-2022-02-26.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-26.zip",
+    "status": "verified",
+    "sha256": "b0ab75e80659453a51ff5473ca94b41b8fe3d2394651b8db17853d4f3fa30e36",
+    "bytes": 57774
+  },
+  {
+    "symbol": "SOLUSDT",
+    "name": "SOLUSDT-1m-2022-04-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-04-01.zip",
+    "status": "verified",
+    "sha256": "44e3335fbdf3b8337acd4032e90b66c086d910b948089d860250593f8518f791",
+    "bytes": 50787
+  },
+  {
+    "symbol": "XRPUSDT",
+    "name": "XRPUSDT-1m-2022-02-28.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-28.zip",
+    "status": "verified",
+    "sha256": "8a56566f2d89c70572c9740868ec91de7c48e2677521f8a814628ea834fa04d6",
+    "bytes": 57724
+  },
+  {
+    "symbol": "XRPUSDT",
+    "name": "XRPUSDT-1m-2022-02-27.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-02-27.zip",
+    "status": "verified",
+    "sha256": "7283b18bb4999177417451a54239b32bfc5f535ec6d2d4595faa61b1dbb9ba9b",
+    "bytes": 57624
+  },
+  {
+    "symbol": "SOLUSDT",
+    "name": "SOLUSDT-1m-2022-04-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-04-02.zip",
+    "status": "verified",
+    "sha256": "d2f9d68165c7a13c6bbaee9efb44a90844b0f9d6090bd315f31d3666b852f6c7",
+    "bytes": 50000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "name": "SOLUSDT-1m-2022-02-28.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1m/SOLUSDT-1m-2022-02-28.zip",
+    "status": "verified",
+    "sha256": "f77272622c24ef8ceb46048cc88683360d50ad6ddb7d4f6b08995041f85ab794",
+    "bytes": 49243
+  },
+  {
+    "symbol": "XRPUSDT",
+    "name": "XRPUSDT-1m-2022-04-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-04-02.zip",
+    "status": "verified",
+    "sha256": "73073095f35fe004bfa61122cf5acce1db53a210e055abaad12c9f0048021e72",
+    "bytes": 55246
+  },
+  {
+    "symbol": "XRPUSDT",
+    "name": "XRPUSDT-1m-2022-04-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/XRPUSDT/1m/XRPUSDT-1m-2022-04-01.zip",
+    "status": "verified",
+    "sha256": "018c6366274843d1041d7facf0a2c0ec014455d86c958fd3d90db0e9bca7a4b0",
+    "bytes": 55947
+  }
+]

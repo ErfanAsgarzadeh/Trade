@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('portfolio_suite',ROOT/'run_suite.py');suite=importlib.util.module_from_spec(spec);sys.modules[spec.name]=suite;spec.loader.exec_module(suite)
 def main():
  d=json.loads((ROOT/'output/matrix.json').read_text());checked=0
- assert d['cases']==40 and len(d['matrix'])==40
+ assert d['cases'] in [40,56] and len(d['matrix'])==d['cases']
  for case in d['matrix']:
   for period,(begin,end) in suite.PERIODS.items():
    f=np.load(ROOT/'output'/(case['id']+'__'+period+'.npz'));a,t=f['stats'],f['trades'];s=suite.summarize(a,t,begin,end,case['symbols'])

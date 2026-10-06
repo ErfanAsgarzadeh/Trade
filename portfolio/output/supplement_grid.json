@@ -1,0 +1,455 @@
+{
+  "reason": "All 24 original portfolios have full DD>25%; test lower sizing, no strategy modifications",
+  "cases": [
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20__PORTFOLIO__R0.005__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "CLOSE_TRAIL",
+        "stop": "ATR2",
+        "trail": "KIJUN",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "CLOSE_TRAIL",
+        "stop": "ATR2",
+        "trail": "KIJUN",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "CLOSE_TRAIL",
+        "stop": "ATR2",
+        "trail": "KIJUN",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "CLOSE_TRAIL",
+        "stop": "ATR2",
+        "trail": "KIJUN",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.005__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 10
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 10
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.00375__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 10
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "standard",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "KIJUN",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 10
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N10__PORTFOLIO__R0.005__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "ATR2",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "ATR2",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.00375,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.00375__P4"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "ATR2",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 3,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P3"
+    },
+    {
+      "strategy": {
+        "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20",
+        "family": "DONCHIAN",
+        "mode": "SINGLE",
+        "setting": "crypto",
+        "entry": "MARKET",
+        "exit": "STOP_TRAIL",
+        "stop": "ATR2",
+        "trail": "DONCHIAN10",
+        "h2": false,
+        "lookback": 20
+      },
+      "kind": "PORTFOLIO",
+      "risk": 0.005,
+      "notional_cap": 1.25,
+      "max_open_positions": 4,
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "BNBUSDT",
+        "SOLUSDT",
+        "XRPUSDT",
+        "ADAUSDT"
+      ],
+      "supplemental": true,
+      "id": "DONCHIAN__SINGLE__crypto__MARKET__STOP_TRAIL__ATR2__DONCHIAN10__N20__PORTFOLIO__R0.005__P4"
+    }
+  ],
+  "registered_after_original_results": true,
+  "selection": "Highest full net portfolio profit, full trades>=40, positive train/oos net and DD<=25% in all three periods; PF tie-break; retain prior config if none"
+}

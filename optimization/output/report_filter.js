@@ -1,0 +1,1 @@
+document.getElementById('filter').addEventListener('input',function(){const query=this.value.toLowerCase();for(const row of document.querySelectorAll('#matrix tbody tr'))row.hidden=!row.cells[0].textContent.toLowerCase().includes(query)});

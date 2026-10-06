@@ -1,0 +1,78 @@
+{
+  "bot_control": {
+    "auto_trade_enabled": true,
+    "dry_run_mode": true,
+    "check_interval_seconds": 15
+  },
+  "strategy_mode": {
+    "mode": "SINGLE",
+    "htf_trend_timeframe": "4h",
+    "ltf_entry_timeframe": "1h",
+    "single_timeframe": "4h"
+  },
+  "symbols": [
+    "BTC/USDT:USDT"
+  ],
+  "ichimoku_params": {
+    "tenkan": 9,
+    "kijun": 26,
+    "senkou_b": 52,
+    "displacement": 26,
+    "candle_fetch_limit": 200
+  },
+  "filters_and_triggers": {
+    "rsi_period": 14,
+    "long_rsi_min": 38.0,
+    "long_rsi_max": 65.0,
+    "short_rsi_min": 35.0,
+    "short_rsi_max": 62.0,
+    "atr_period": 14,
+    "kijun_touch_atr_tolerance": 0.25,
+    "max_kijun_extension_atr": 2.5
+  },
+  "al_brooks_filters": {
+    "enable_barb_wire_filter": false,
+    "barb_wire_lookback": 3,
+    "barb_wire_min_overlap_ratio": 0.65,
+    "barb_wire_doji_body_ratio": 0.25,
+    "require_signal_bar_breakout": false,
+    "stop_entry_atr_buffer": 0.0,
+    "pending_order_expiry_bars": 1,
+    "require_h2_l2_pullback": false,
+    "h2_l2_lookback_bars": 8
+  },
+  "risk_and_exit": {
+    "risk_per_trade_pct": 0.005,
+    "max_open_positions": 3,
+    "max_margin_per_position_pct": 0.1,
+    "default_isolated_leverage": 5,
+    "sl_atr_buffer": 0.0,
+    "tp1_rr_ratio": 2.0,
+    "tp1_close_pct": 0.0,
+    "daily_max_loss_pct": 0.02,
+    "lbank_round_trip_fee": 0.0012,
+    "min_stop_distance_pct": 0.012,
+    "min_stop_policy": "REJECT",
+    "exit_scheme": "PURE_KIJUN",
+    "breakeven_policy": "NONE",
+    "breakeven_trigger_rr": 2.0,
+    "trail_atr_buffer": 0.0,
+    "trail_timeframe": "ENTRY",
+    "hard_tp_rr": 0.0
+  },
+  "structural_filters": {
+    "enable_htf_slope_filter": false,
+    "adx_period": 14,
+    "min_htf_adx": 0.0
+  },
+  "archetype_strategy": {
+    "family": "DONCHIAN",
+    "entry_variant": "MARKET",
+    "donchian_lookback": 20,
+    "stop_source": "KIJUN",
+    "trail_source": "DONCHIAN10",
+    "require_h2_l2": false,
+    "trail_close_only": false,
+    "pending_policy": "GTC_REGIME"
+  }
+}

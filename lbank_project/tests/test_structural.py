@@ -84,14 +84,17 @@ def test_adx_initialization_and_known_trends(kind):
 def test_deployed_config_matches_eligible_winner():
     root=Path(__file__).parents[2]
     c=lb.validate_config(json.loads((root/'lbank_project/config.json').read_text()))
-    expected=lb.validate_config(json.loads((root/'archetypes/output/winning_config.json').read_text()))
-    result=json.loads((root/'archetypes/output/matrix.json').read_text())['winner']
+    output=root/'portfolio/output' if (root/'portfolio/output/winning_config.json').exists() else root/'archetypes/output'
+    expected=lb.validate_config(json.loads((output/'winning_config.json').read_text()))
+    result=json.loads((output/'matrix.json').read_text())['winner']
+    if output.parent.name=='portfolio':
+        assert all(result[p]['max_dd_pct']<=25 for p in ['full','train','oos'])
     assert c==expected
     assert result['full']['trades']>=40
     assert result['train']['net_profit']>0 and result['oos']['net_profit']>0
     assert c['risk_and_exit']['min_stop_policy']=='REJECT'
     assert c['risk_and_exit']['min_stop_distance_pct']==.012
-    assert c['risk_and_exit']['risk_per_trade_pct']==.005
+    assert c['risk_and_exit']['risk_per_trade_pct']==(result['risk'] if output.parent.name=='portfolio' else .005)
 
 @pytest.mark.parametrize('side',['long','short'])
 def test_slope_and_adx_thresholds(cfg,side):

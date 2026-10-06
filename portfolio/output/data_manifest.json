@@ -192,6 +192,822 @@
     "bytes": 1521440
   },
   {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2023-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2023-08.zip",
+    "status": "verified",
+    "sha256": "c2515555603d2f8f290e372d964f68acecfd868f59865c0366c6f8efeb25556f",
+    "bytes": 1459947
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2023-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2023-09.zip",
+    "status": "verified",
+    "sha256": "2b8ff55aec9108f32f74beb7d2b3418112488f36ec80cb514ffc49fe4031f60a",
+    "bytes": 1381769
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2023-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2023-10.zip",
+    "status": "verified",
+    "sha256": "554b1c7bf270d96c7318d86626c5e4b26d37c087a0e9ce46c74f41f1bbc62dba",
+    "bytes": 1463799
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2023-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2023-11.zip",
+    "status": "verified",
+    "sha256": "74a2ab4045b5204f6e986f2a3c1947805e9f76ad64986de73c0282e9523f42f8",
+    "bytes": 1522890
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2023-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2023-12.zip",
+    "status": "verified",
+    "sha256": "628df2281bbedb24f404fc5cc6577d98f4d7a2070ff9e8007a8b191ccbe0b6b7",
+    "bytes": 1642434
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-01.zip",
+    "status": "verified",
+    "sha256": "18a21b063cf5338666aea1049126f4e34f41af828ffba8a4bf3199a0f9f42981",
+    "bytes": 1593737
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-02.zip",
+    "status": "verified",
+    "sha256": "4bf3886ad758c078cb96db7eca962a258a0de71ca39e4aeefc2b6fa294c28c84",
+    "bytes": 1496300
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-03.zip",
+    "status": "verified",
+    "sha256": "fc198d15f4bcae72832b7d02278cbc6b91a21fd1b7517249df69f9e9f9a207cd",
+    "bytes": 1646874
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-04.zip",
+    "status": "verified",
+    "sha256": "779a1f79a82d565721c460d31bd6159aa0eed8d2657ba9dbec7336fe24b88c21",
+    "bytes": 1548162
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-05.zip",
+    "status": "verified",
+    "sha256": "737c14d244e333384edb30e8ac167b0be34f493a685a65a2fa677ea65cdfb50d",
+    "bytes": 1538998
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-06.zip",
+    "status": "verified",
+    "sha256": "859e7286752154b62dcb8a1f7ce2a7ada039e67a5a7b4c859f5aad9ac653e93d",
+    "bytes": 1464917
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-07.zip",
+    "status": "verified",
+    "sha256": "43ae3232650c9dc7ec67974e9650f2f1dbdc0c76e7db4330753140fb2f339490",
+    "bytes": 1551980
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-08.zip",
+    "status": "verified",
+    "sha256": "d809ee15e508a7d764052cd97595d14717e01dad9e9b946f4b394b5d3bd7c42f",
+    "bytes": 1528954
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-09.zip",
+    "status": "verified",
+    "sha256": "a206d457fffb9d6574c3bdef41d19ae9f579880b2bb59868eadcde0c83d7a8ab",
+    "bytes": 1463588
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-10.zip",
+    "status": "verified",
+    "sha256": "55b3b8bb3e8eae40e805b9e3f9bfee63ee104aa72f823426c6b2241a62fbf2fb",
+    "bytes": 1510727
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-11.zip",
+    "status": "verified",
+    "sha256": "8f5820e2a0edbad4eec23bda98731db1ae65497d99824150c9952a069620f64f",
+    "bytes": 1641259
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2024-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2024-12.zip",
+    "status": "verified",
+    "sha256": "a86adac0baec7760c07306886599d5464e549405557e84634dbe355e5187b6c0",
+    "bytes": 1708062
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-01.zip",
+    "status": "verified",
+    "sha256": "cc67ac9c2fc7c05a97fed57c90c071e8dcf2c5def6859a946ebbaf6bbf2cac2c",
+    "bytes": 1691242
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-02.zip",
+    "status": "verified",
+    "sha256": "15df15731326945897977f6ddf0414a13533d8d7dd167e7a59cdc2fcda3b8d85",
+    "bytes": 1512502
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-03.zip",
+    "status": "verified",
+    "sha256": "aa98ac5adb06a3be6ed65340f2223597244d13c282b9600d4d6df1e5dd3feecc",
+    "bytes": 1682691
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-04.zip",
+    "status": "verified",
+    "sha256": "423f30b85f71463002fe00f65310e63196e48555f2a7d3c68c0888d83ace6fee",
+    "bytes": 1581393
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-05.zip",
+    "status": "verified",
+    "sha256": "84a5802110fd625b21754b87a00c462d3af9b6e07bd8d22c90feed6f921cf03d",
+    "bytes": 1648295
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-06.zip",
+    "status": "verified",
+    "sha256": "3a178ab37a2e232d3009e270832a50dfbb29d9f2ddfba8695391af74dd3de57d",
+    "bytes": 1551776
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-07.zip",
+    "status": "verified",
+    "sha256": "e017c9d37daa1f2fe3a254dbe5409f31ae1056037f969476ee6cf9eb7a908b01",
+    "bytes": 1656176
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-08.zip",
+    "status": "verified",
+    "sha256": "86c99b5d9c086b61db1f971b0b996ec35919169f7bf511ed852c4437cafd06f4",
+    "bytes": 1673153
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-09.zip",
+    "status": "verified",
+    "sha256": "49c661705b3edd784bd377b6d246708621593e441d2f31623f259542c3242b39",
+    "bytes": 1564568
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-10.zip",
+    "status": "verified",
+    "sha256": "ed34570f78990bb424befefd3fc4d4b3cabb515419b9b6788c7db908a5a381a1",
+    "bytes": 1624418
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-11.zip",
+    "status": "verified",
+    "sha256": "70859a6e2bac16816dc57897ed8803950211d7602b1d62e647076fd1dc8d1501",
+    "bytes": 1554593
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2025-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2025-12.zip",
+    "status": "verified",
+    "sha256": "d00dc838513bf910a0d80ae913e4bedc2b9aa5e116503c6acf0ec4ffd7107dfe",
+    "bytes": 1559353
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-01.zip",
+    "status": "verified",
+    "sha256": "6ed895f7c4889a7c98198b88366d61d40bb7ce5e90aea97d70ce790b44c45d63",
+    "bytes": 1557962
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-02.zip",
+    "status": "verified",
+    "sha256": "f9f638e2364572fa21597ec822bd7e0c67942ebed737456f0069672b40eb128f",
+    "bytes": 1402267
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-03.zip",
+    "status": "verified",
+    "sha256": "10e3ce90b30d31c0fa0a926374ad6891c057eba9e45058d240f7582dbbf29ff2",
+    "bytes": 1522853
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-04.zip",
+    "status": "verified",
+    "sha256": "fb7d637f6544dc642d325d017c1a9247d62046b5c3b0e8275a04031b29d5b0a7",
+    "bytes": 1450370
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-05.zip",
+    "status": "verified",
+    "sha256": "c57b6888032fa70f474b601ea0e58dd619037853af65240ba1d56f45afc563c1",
+    "bytes": 1482313
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-06.zip",
+    "status": "verified",
+    "sha256": "1d8406368d6cd42f717ce98d2ef138e55144b6ce84f56973cb5628fbc93b026b",
+    "bytes": 1465953
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-07.zip",
+    "status": "verified",
+    "sha256": "f14086dffdaa52559c6ca84df70f6442ef1ccf7a0fc3806104fd8d9f546aeaf8",
+    "bytes": 1476501
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-08.zip",
+    "status": "verified",
+    "sha256": "639520f80d6ffcf52a0e77657685c3c0541bd878095ddf24ac77edaee17710ea",
+    "bytes": 1494665
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2026-09.zip",
+    "status": "verified",
+    "sha256": "c7abc5d20f7a9583673b445dc8c495d85065b86d31ab3c9930df6b4217e5656f",
+    "bytes": 1492558
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-10-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/ADAUSDT/1m/ADAUSDT-1m-2026-10-01.zip",
+    "status": "verified",
+    "sha256": "dbc40854a393b8487fb58f13bc91da5619d3f5cf45b6d0f7e90a57ae5147b3c3",
+    "bytes": 50978
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-10-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/ADAUSDT/1m/ADAUSDT-1m-2026-10-02.zip",
+    "status": "verified",
+    "sha256": "9d4f126a8b1916cdc5dd5537bedc895c73538784d772e79d6b1e16a96b7d2924",
+    "bytes": 51553
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-10-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/ADAUSDT/1m/ADAUSDT-1m-2026-10-03.zip",
+    "status": "verified",
+    "sha256": "1b772ec929362e1214cbd294d7b14e86a3ed6727ad4910341685adcb55be0baf",
+    "bytes": 47957
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-1m-2026-10-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/daily/klines/ADAUSDT/1m/ADAUSDT-1m-2026-10-04.zip",
+    "status": "verified",
+    "sha256": "2499376aa25295a8b3ed1b6ef4039457775f6faa851aaf466de4851e6689c9e5",
+    "bytes": 49088
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2021-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2021-10.zip",
+    "status": "verified",
+    "sha256": "482f64070cfa5b51e1ff2fcea3f1a1456b813581fd73edbad787c88e32f53c71",
+    "bytes": 953
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2021-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2021-11.zip",
+    "status": "verified",
+    "sha256": "63251772c553d9f3b326ec0715bde7f50430a98a2be83e23774d3fcbe808628f",
+    "bytes": 891
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2021-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2021-12.zip",
+    "status": "verified",
+    "sha256": "73ef76b38444697576945d62eb3d128e6db17ffb5282b0d5a1a6f67b8976c19c",
+    "bytes": 847
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-01.zip",
+    "status": "verified",
+    "sha256": "3138295cb16bc090a6d1d658cd1e57138f21c6ceb6cffec47b79b65f4f11a6f8",
+    "bytes": 904
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-02.zip",
+    "status": "verified",
+    "sha256": "8d2a62d7de4038c5b29b160ec57196976aecad618f70edb0d64da5dc2f3226df",
+    "bytes": 915
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-03.zip",
+    "status": "verified",
+    "sha256": "087b203cea3653811affc5f52dfca7410bf11d1daf8c51013da259f675f8ef24",
+    "bytes": 927
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-04.zip",
+    "status": "verified",
+    "sha256": "7a309960d46bf0b83958871636a368ea1b3cedb905e2de2786bf09aeb73bdd44",
+    "bytes": 898
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-05.zip",
+    "status": "verified",
+    "sha256": "943b13250bd58873e0c10b212e42caf7b401fafc6c8794c3656be689a97cde1c",
+    "bytes": 1016
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-06.zip",
+    "status": "verified",
+    "sha256": "e1f0e37ed17c45d8220951b334fa922a30e978a0662a0332de422fe761e69656",
+    "bytes": 983
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-07.zip",
+    "status": "verified",
+    "sha256": "18174b5948e1356cd5dca9b818ce27b59d72b04e0a14cc2e4c9e98fe1dbbf637",
+    "bytes": 922
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-08.zip",
+    "status": "verified",
+    "sha256": "bba667b6d4b95257af774f1da39fca7075ac2ba2349f78f3352d1c46c1da5b7a",
+    "bytes": 954
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-09.zip",
+    "status": "verified",
+    "sha256": "e886a2b7e43c81c43471d8bee405d4cc1b78e9b014391024885402150a858994",
+    "bytes": 972
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-10.zip",
+    "status": "verified",
+    "sha256": "1a309c079492d7475ae7ffce7b6261941a1e1a60a1adc8fbfba7bbd424ba2720",
+    "bytes": 1018
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-11.zip",
+    "status": "verified",
+    "sha256": "8432e7df74a8579db955160ffbdb8a18523b64011bdea30ddbd2e405ffc3c4c1",
+    "bytes": 922
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2022-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2022-12.zip",
+    "status": "verified",
+    "sha256": "f7d24b7047e6840f91f54500733079f4f20eba22cdb67f79b43b0a34e37dd638",
+    "bytes": 968
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-01.zip",
+    "status": "verified",
+    "sha256": "0f15aefda466406c18b88a653e5dccf1916bbfb3be6accc5196a0289237e0c85",
+    "bytes": 822
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-02.zip",
+    "status": "verified",
+    "sha256": "618ff4e73258d603b2b1215dccb3835834fbce33731c51d4e194c011641689bf",
+    "bytes": 777
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-03.zip",
+    "status": "verified",
+    "sha256": "f2f97cad940c730d5576da7954af9b944240e451e54b1163058eb9f2c445f4fc",
+    "bytes": 925
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-04.zip",
+    "status": "verified",
+    "sha256": "6adf0981c8ed8eae67abe6834c2360ac7ee83fbb575c35735978489db443effd",
+    "bytes": 860
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-05.zip",
+    "status": "verified",
+    "sha256": "216652bb167d682883d29f1c4591ec1bf3eabdab9e1a5091f518bd2742330353",
+    "bytes": 877
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-06.zip",
+    "status": "verified",
+    "sha256": "7c91256dd07a9692f2e3acf6ce241b61c3a63cdde4eb485bb6cbaeb29ff06303",
+    "bytes": 901
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-07.zip",
+    "status": "verified",
+    "sha256": "7ae0fc563a17f317779e6d1cc2119ad1ca72d71d1e3807fc4998f381655026e3",
+    "bytes": 737
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-08.zip",
+    "status": "verified",
+    "sha256": "7b188eefc9364b1f74533c765ed212832cce3c17ce41b2ac174506bfec45a169",
+    "bytes": 844
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-09.zip",
+    "status": "verified",
+    "sha256": "31dfd8cba1fb717fc5a6cad9937df97f89d6042a9e8107f462d00e648df8f221",
+    "bytes": 856
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-10.zip",
+    "status": "verified",
+    "sha256": "e8136f7b6dfb140927ee500b7bfdf3015d0f0c45e035c06c8b026b16f83cb354",
+    "bytes": 815
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-11.zip",
+    "status": "verified",
+    "sha256": "83adbacfbee09c65314458b81579ebcaf4fbc30340ef8ede8da028a4ab2f3408",
+    "bytes": 678
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2023-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2023-12.zip",
+    "status": "verified",
+    "sha256": "a9685314dafa5ece6b7b6bab64366e46ccd80c4a794c3c26aa141b10289a6fc8",
+    "bytes": 829
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-01.zip",
+    "status": "verified",
+    "sha256": "556bdb1b34faf97f266989be2a545d49cba0a7862091fa4c9600fd47f10c23c7",
+    "bytes": 670
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-02.zip",
+    "status": "verified",
+    "sha256": "14ad791ae90a85faa463de8a3732e8298eb6bfbdaf989046d92ab079ff945ac3",
+    "bytes": 773
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-03.zip",
+    "status": "verified",
+    "sha256": "e6fabaeb3abddaef662819b0bab3e1c9256c8acefcfebb60b99dee2ed79a6318",
+    "bytes": 943
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-04.zip",
+    "status": "verified",
+    "sha256": "c878ea5f06295a32afce857a7179d59ac1437bb4e56d92bb508f47f6334c8fc0",
+    "bytes": 844
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-05.zip",
+    "status": "verified",
+    "sha256": "a79c3bd86f11b6866802910152c18aa847a3f646547772a5115f965c8669f5e7",
+    "bytes": 778
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-06.zip",
+    "status": "verified",
+    "sha256": "01a5eecac131548ffaaff8ef1122c9a4828243a0979d91df40f319368b1177b3",
+    "bytes": 745
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-07.zip",
+    "status": "verified",
+    "sha256": "3e2cbc523d8fa9ccef3cd49b65ddbd08bc066dd2693139219b91b953fdc6ce85",
+    "bytes": 792
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-08.zip",
+    "status": "verified",
+    "sha256": "0e3e1bb39d7f78a63f1182f89d451a68777f2b57e7ca985448d8c8b12b8a6997",
+    "bytes": 923
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-09.zip",
+    "status": "verified",
+    "sha256": "387bb17d1ea7995270ce2769ec2c888bc8fa3d2110d5843888807254c40381d4",
+    "bytes": 840
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-10.zip",
+    "status": "verified",
+    "sha256": "a95896349b3447f08bb67b3167223cae41abcfebd1b106826bb89989c1dd2e18",
+    "bytes": 802
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-11.zip",
+    "status": "verified",
+    "sha256": "8ac7afd8541ae2fac72093d8b3713acb64f64bf0d859bf72be4c3a6f83a09dd2",
+    "bytes": 787
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2024-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2024-12.zip",
+    "status": "verified",
+    "sha256": "b15893bcb18cc762d191f337c0a44e7ea4acd1730067cdec9788ad9fbfc4b262",
+    "bytes": 829
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-01.zip",
+    "status": "verified",
+    "sha256": "ef6a5a286fc3d91fcdb479226500693ce9bc16ee39399ef09076a40349d2e399",
+    "bytes": 697
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-02.zip",
+    "status": "verified",
+    "sha256": "4bc50dceb5108bef8e51c417b13108595c64460d738080a619b60ce341718ed0",
+    "bytes": 871
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-03.zip",
+    "status": "verified",
+    "sha256": "3d0e98df673dad946ea8a6318d7b3f7189323127362f3aa80734a78d42aa5594",
+    "bytes": 924
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-04.zip",
+    "status": "verified",
+    "sha256": "0db8f973876decb78f7ef39c4114216c769c92e10ed5bbdae1ca148178b2104d",
+    "bytes": 896
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-05.zip",
+    "status": "verified",
+    "sha256": "2c2596eb60963e0970ccd887e4e7da52d6eed2ea2c33523407803fb7a28ff951",
+    "bytes": 905
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-06.zip",
+    "status": "verified",
+    "sha256": "c5cc8021595af02e572658ebbc6ee76210d0226e0d474bb354106b55b12edea9",
+    "bytes": 906
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-07.zip",
+    "status": "verified",
+    "sha256": "17222cc957c27ecb23eb4ab528fe954bf8da05256a38ffc9b04d06ffe1f26811",
+    "bytes": 784
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-08.zip",
+    "status": "verified",
+    "sha256": "f89ac9f7c6feb4a4ce110a7c40571cb1bdf0ac9ff273ee708216a2eb94ce5355",
+    "bytes": 858
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-09.zip",
+    "status": "verified",
+    "sha256": "2ea59a1d407e7c2888128227a070f68d4bd9bf25dc89066b92a217b7fe2eab45",
+    "bytes": 808
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-10.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-10.zip",
+    "status": "verified",
+    "sha256": "5b127fad9e89c53cece939b1ebafa4921f20ba47f10a7069e5eeb19ab2de63fb",
+    "bytes": 913
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-11.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-11.zip",
+    "status": "verified",
+    "sha256": "a70b35260554e81dc79aa1ed0448e2cafddbf1952bbac0120251184c09b548fa",
+    "bytes": 932
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2025-12.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2025-12.zip",
+    "status": "verified",
+    "sha256": "14d01f1b4dba807e178f3e21154c2b70e0d6a7921322dd082da59d7356e63879",
+    "bytes": 954
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-01.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-01.zip",
+    "status": "verified",
+    "sha256": "261376bf6f7d275b4dce115e8d2802e4a18a05504b8fb6717db4d3834aad7d3e",
+    "bytes": 930
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-02.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-02.zip",
+    "status": "verified",
+    "sha256": "b9934577dcac9d5a9d3a63a66261738d7f9c128bd986b4fd90393e15c131e182",
+    "bytes": 946
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-03.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-03.zip",
+    "status": "verified",
+    "sha256": "5a9a9b2e3b41521ab2cc28ece3ece06d8611f0f033cabaa1ac1f7e678ce23c0e",
+    "bytes": 974
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-04.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-04.zip",
+    "status": "verified",
+    "sha256": "b2769eeed3ad6e22d871c995632110cc568c6a40d1d61be7158cad1fc4d60cf8",
+    "bytes": 896
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-05.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-05.zip",
+    "status": "verified",
+    "sha256": "6e32d7bbdfaa3a2542fe39f918c1b79fccb01be6ee725775095a93c253778862",
+    "bytes": 941
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-06.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-06.zip",
+    "status": "verified",
+    "sha256": "e41b9ac1f3d6651ff94562de9b3a0297016c6dc2d2def42f6561d963cfdb0fc1",
+    "bytes": 987
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-07.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-07.zip",
+    "status": "verified",
+    "sha256": "b5f0642d725a80e55a4f6588ad2c55529ac22ea21e08022fde0056d39ee7a59c",
+    "bytes": 897
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-08.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-08.zip",
+    "status": "verified",
+    "sha256": "ede6e08abb0784007fe2d768644069ede9012a1a2e271b534d75a97fcd8edd34",
+    "bytes": 869
+  },
+  {
+    "symbol": "ADAUSDT",
+    "name": "ADAUSDT-fundingRate-2026-09.zip",
+    "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ADAUSDT/ADAUSDT-fundingRate-2026-09.zip",
+    "status": "verified",
+    "sha256": "987dea07f28d553b81153d542b0c476686773af011b4b31c3aed1a335f5c6518",
+    "bytes": 837
+  },
+  {
     "symbol": "BNBUSDT",
     "name": "BNBUSDT-1m-2021-08.zip",
     "url": "https://data.binance.vision/data/futures/um/monthly/klines/BNBUSDT/1m/BNBUSDT-1m-2021-08.zip",

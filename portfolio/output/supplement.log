@@ -1,0 +1,17 @@
+1 standard DONCHIAN10 0.00375 3 net 4085.54 dd 18.31 oos 1468.46 eligible True
+2 standard DONCHIAN10 0.00375 4 net 7380.12 dd 23.4 oos 1917.32 eligible True
+3 standard DONCHIAN10 0.005 3 net 5498.99 dd 23.66 oos 1870.08 eligible True
+4 standard DONCHIAN10 0.005 4 net 9452.49 dd 30.25 oos 2308.8 eligible False
+5 crypto KIJUN 0.00375 3 net 11503.0 dd 19.08 oos 355.16 eligible True
+6 crypto KIJUN 0.00375 4 net 13708.7 dd 22.23 oos 539.48 eligible True
+7 crypto KIJUN 0.005 3 net 16366.03 dd 25.41 oos 287.61 eligible False
+8 crypto KIJUN 0.005 4 net 20188.5 dd 27.13 oos 908.04 eligible False
+9 standard DONCHIAN10 0.00375 3 net 4090.36 dd 20.46 oos 1091.45 eligible True
+10 standard DONCHIAN10 0.00375 4 net 9430.51 dd 22.99 oos 1946.58 eligible True
+11 standard DONCHIAN10 0.005 3 net 5781.48 dd 26.35 oos 1337.72 eligible False
+12 standard DONCHIAN10 0.005 4 net 12803.06 dd 29.71 oos 2400.21 eligible False
+13 crypto DONCHIAN10 0.00375 3 net 5511.42 dd 18.83 oos 1413.46 eligible True
+14 crypto DONCHIAN10 0.00375 4 net 8969.41 dd 20.77 oos 2385.49 eligible True
+15 crypto DONCHIAN10 0.005 3 net 7564.21 dd 24.28 oos 1806.11 eligible True
+16 crypto DONCHIAN10 0.005 4 net 13259.72 dd 25.1 oos 3448.89 eligible False
+WINNER DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20__PORTFOLIO__R0.00375__P4
