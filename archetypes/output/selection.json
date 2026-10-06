@@ -1,0 +1,8 @@
+{
+  "rule": "Maximum full-period net PnL among full trades>=40, train net>0, oos net>0; PF breaks ties",
+  "winner_id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+  "pf_leader_id": "DONCHIAN__SINGLE__crypto__MARKET__CLOSE_TRAIL__ATR2__KIJUN__N20",
+  "train_only_leader_id": "DONCHIAN__SINGLE__standard__MARKET__STOP_TRAIL__KIJUN__DONCHIAN10__N20",
+  "winner_missing_funding_cost": 0.372750075,
+  "eligible_count": 17
+}

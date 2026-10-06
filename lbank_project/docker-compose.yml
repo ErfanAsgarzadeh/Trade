@@ -1,0 +1,44 @@
+services:
+  lbank-bot:
+    build: .
+    command: ["python", "-u", "lbank_bot.py"]
+    restart: unless-stopped
+    init: true
+    environment:
+      LBANK_API_KEY: ${LBANK_API_KEY:-}
+      LBANK_SECRET_KEY: ${LBANK_SECRET_KEY:-}
+      BOT_PIN: ${BOT_PIN:?Set BOT_PIN in .env}
+      PAPER_EQUITY: ${PAPER_EQUITY:-10000}
+      PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+      OHLCV_DIR: /app/runtime/ohlcv
+      BOT_CONFIG: /app/runtime/config.json
+      BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+    volumes:
+      - ./runtime:/app/runtime
+    stop_grace_period: 30s
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+  lbank-dashboard:
+    build: .
+    command: ["uvicorn", "dashboard_server:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    init: true
+    environment:
+      LBANK_API_KEY: ${LBANK_API_KEY:-}
+      LBANK_SECRET_KEY: ${LBANK_SECRET_KEY:-}
+      BOT_PIN: ${BOT_PIN:?Set BOT_PIN in .env}
+      PAPER_EQUITY: ${PAPER_EQUITY:-10000}
+      PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+      OHLCV_DIR: /app/runtime/ohlcv
+      BOT_CONFIG: /app/runtime/config.json
+      BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+    volumes:
+      - ./runtime:/app/runtime
+    ports:
+      - "127.0.0.1:8000:8000"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"

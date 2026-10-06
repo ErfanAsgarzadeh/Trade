@@ -1,0 +1,8 @@
+runtime
+data
+tests
+.env
+.venv
+__pycache__
+.pytest_cache
+*.zip
