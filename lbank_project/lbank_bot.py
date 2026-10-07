@@ -792,7 +792,9 @@ class MarketData:
 
     @staticmethod
     def demo_base(symbol: str) -> float:
-        bases = {"BTC": 60000, "ETH": 3000, "BNB": 600, "SOL": 150, "XRP": 0.5, "ADA": 0.4}
+        bases = {"BTC": 60000, "ETH": 3000, "BNB": 600, "SOL": 150, "XRP": 0.5, "ADA": 0.4,
+                 # C3 sleeve coins (c3_sleeve.py), synthetic demo only
+                 "AAVE": 150, "UNI": 8, "AVAX": 30, "KSM": 30, "EGLD": 40, "DOT": 6, "DOGE": 0.15, "ONE": 0.02, "TRX": 0.12, "SUSHI": 1.0}
         if symbol not in [key + "/USDT:USDT" for key in bases]:
             raise ValueError(f"No synthetic demo market for {symbol}")
         return float(bases[symbol.split("/")[0]])

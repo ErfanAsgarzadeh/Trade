@@ -258,3 +258,14 @@ FUNDING_DIR=data/funding python fetch_funding.py --source binance   # منبع �
 - 2A — کلیدها در `strategy_settings`: `atr_regime_filter_enabled`، `atr_regime_window` (۶۰)، `atr_regime_min_ratio` (۱٫۰). وقتی ATR آخرین کندل بستهٔ ۴ساعته از میانهٔ ATR شصت کندل قبلی کمتر است، نه ورود جدید باز می‌شود نه افزودن. هر ATR دقیقاً مثل اندیکاتور runtime روی پنجرهٔ خودش محاسبه می‌شود؛ ربات برای این کار `candle_fetch_limit + 60` کندل می‌خواند. تاریخچهٔ ناقص یا دارای gap یعنی ورود انجام نمی‌شود.
 - 5A — همان profit floor موجود با `profit_floor_trigger_r=1.0` و `profit_floor_lock_r=0.1`.
 - پیکربندی آزموده‌شدهٔ 2A+5A: `profit_floor_enabled=true`، `profit_floor_trigger_r=1.0`، `profit_floor_lock_r=0.1`، `safe_pyramid_enabled=false`، `pyramid_risk_fraction=0.5`، `stop_width_filter_enabled=false`، `btc_regime_filter_enabled=false`، `initial_stop_atr_mult=2.0`، `atr_regime_filter_enabled=true`، `atr_regime_window=60`، `atr_regime_min_ratio=1.0`؛ F4 خاموش. ترکیب 2A با V2، فیلتر BTC یا 4B آزموده نشده است.
+
+## بخش دوم: C3 (پولبک در روند ۴ساعته) روی ۱۰ ارز دیگر — فقط paper
+
+کنار ربات اصلی، پروسهٔ جداگانهٔ `c3_sleeve.py` با تنظیمات `c3_config.json` و دیتابیس جدا (`data/c3_sleeve.db` یا `runtime/c3_sleeve.db` در Docker) اجرا می‌شود. ربات اصلی و تنظیماتش دست نمی‌خورند.
+
+- **قواعد (کندل بستهٔ ۴ساعته):** لانگ وقتی EMA50 بالای EMA200 است و RSI14 از ۴۰ به بالا عبور می‌کند؛ شورت برعکس (EMA50 زیر EMA200، RSI از ۶۰ به پایین). کندل سیگنالی که شنبه/یکشنبه (UTC) بسته شود معامله نمی‌شود. استاپ اولیه ۲ ATR، سپس تریل: بهترین Close منهای ۴٫۵ ATR که فقط جلو می‌رود.
+- **ارزها:** AAVE، UNI، AVAX، KSM، EGLD، DOT، DOGE، ONE، TRX، SUSHI (۱۰ ارز برتر بر اساس سود C3 در دورهٔ Train میان ۳۰ ارز آزموده‌شده). باید پیش از اجرا بررسی شود که قرارداد USDT دائمی همهٔ آن‌ها در LBank فعال است؛ نماد ناموجود فقط خطا ثبت می‌کند.
+- **ریسک:** ۰٫۲۵٪ سرمایهٔ paper همین بخش در هر معامله، سقف نُوشنال ۴۰٪ برای هر پوزیشن، `dry_run_mode` اجباری true.
+- **شواهد:** روی ۲۰ ارز کاملاً دست‌نخورده CAGR ۲۱٪ با افت ۳۸٪ (Calmar Train/Validation ‏0.61/0.51) و ۱۹ از ۲۰ ارز سودده؛ همبستگی با ربات اصلی حدود ۰٫۲۵ تا ۰٫۳۵. نتیجهٔ ترکیبی بک‌تست (ربات + C3 با ۰٫۲۵٪) خوش‌بینانه است، چون ارزها با نگاه به سود انتخاب شده‌اند.
+- **اجرا:** `PAPER_DATA_MODE=csv-lbank python c3_sleeve.py` (فایل‌های CSV فیوچرز ۴ساعتهٔ این ۱۰ ارز در `OHLCV_DIR` لازم است؛ حداقل ۱۰۰۰ کندل برای گرم شدن EMA200). در Docker سرویس `c3-sleeve`.
+- **تست‌ها:** `tests/test_c3_sleeve.py` سیگنال و ATR را روی دادهٔ واقعی با موتور بک‌تست مقایسه می‌کند (یکسان) و چرخهٔ ورود/تریل/استاپ را می‌آزماید.
