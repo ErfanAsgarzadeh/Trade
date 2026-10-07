@@ -637,13 +637,11 @@ def test_csv_futures_does_not_call_spot_ohlcv(monkeypatch, tmp_path):
 def test_compose_shared_directory_and_local_bind():
     compose = yaml.safe_load((ROOT / "docker-compose.yml").read_text())
     services = compose["services"]
-    assert set(services) == {"lbank-bot", "lbank-dashboard", "c3-sleeve"}
+    assert set(services) == {"lbank-bot", "lbank-dashboard"}   # C3 runs inside lbank-bot (own thread, config and DB)
     for name, service in services.items():
         assert service["volumes"] == ["./runtime:/app/runtime"]
         assert service["restart"] == "unless-stopped"
-        if name == "c3-sleeve":   # separate paper sleeve: own config and DB in the shared runtime directory
-            assert service["environment"]["C3_CONFIG"] == "/app/runtime/c3_config.json"
-            assert service["environment"]["C3_DB"] == "/app/runtime/c3_sleeve.db"
-        else:
-            assert service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
+        assert service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
+    assert services["lbank-bot"]["environment"]["C3_CONFIG"] == "/app/runtime/c3_config.json"
+    assert services["lbank-bot"]["environment"]["C3_DB"] == "/app/runtime/c3_sleeve.db"
     assert services["lbank-dashboard"]["ports"] == ["127.0.0.1:8000:8000"]

@@ -9,8 +9,10 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   no new entry when the signal candle closes on Saturday or Sunday (UTC)
   entry at the current price, initial stop = entry -/+ 2 x ATR14 of the signal candle; skip stops < 0.4% of price
   trail: at every later closed candle, best close -/+ 4.5 x ATR14 of that candle; the stop only ratchets
-  exit when the price touches the stop. One position per coin; separate equity, DB and config from the main bot.
-Sizing: risk_per_trade_pct of the sleeve's paper equity / (stop distance + round-trip fee + slippage allowance),
+  exit when the price touches the stop. One position per coin; own DB and config.
+Runs inside the main bot (lbank_bot.run starts it in its own thread; C3_IN_BOT=0 turns that off) or alone with
+`python c3_sleeve.py`. Inside the bot it sizes on the shared paper account: bot equity + C3 realized P&L.
+Sizing: risk_per_trade_pct of that equity / (stop distance + round-trip fee + slippage allowance),
 notional capped at max_notional_pct of equity.
 """
 from __future__ import annotations
@@ -87,9 +89,11 @@ class Store:
         with self.db() as db:return float(db.execute('SELECT COALESCE(SUM(pnl),0) FROM trades').fetchone()[0])
 
 class Sleeve:
-    def __init__(self,config:dict,store:Store,data):
-        self.c=validate(config);self.store=store;self.data=data
-    def equity(self)->float:return self.c['paper_capital']+self.store.realized()
+    def __init__(self,config:dict,store:Store,data,base_equity=None):
+        self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity
+    def equity(self)->float:
+        base=self.base_equity() if self.base_equity else self.c['paper_capital']
+        return base+self.store.realized()
 
     def close(self,p:dict,price:float,reason:str,now:float):
         sign=1 if p['side']=='long' else -1;pnl=sign*(price-p['entry'])*p['qty']-(p['entry']+price)*p['qty']*self.c['round_trip_fee']/2
@@ -147,20 +151,50 @@ class Sleeve:
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
+OLD_DEFAULT_RISK=.0015   # shipped default before the risk sweep; runtime copies still holding it are upgraded
+
+def prepare_config(path:Path,shipped:Path)->Path:
+    """Seed the runtime config from the shipped one; add keys it lacks and upgrade an untouched old default risk."""
+    ship=json.loads(shipped.read_text())
+    if not path.exists():
+        path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
+    cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
+    if cur.get('risk_per_trade_pct')==OLD_DEFAULT_RISK:new['risk_per_trade_pct']=ship['risk_per_trade_pct']
+    if new!=cur:
+        LOG.info('C3 runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
+    return path
+
+def paths()->tuple[Path,Store]:
+    here=Path(__file__).resolve().parent;cfg=Path(os.getenv('C3_CONFIG',here/'c3_config.json'))
+    if cfg.resolve()!=(here/'c3_config.json').resolve():prepare_config(cfg,here/'c3_config.json')
+    return cfg,Store(Path(os.getenv('C3_DB',here/'data/c3_sleeve.db')))
+
+def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
+    """Scan each closed 4h candle once, run the stop watchdog in between; stop = threading.Event (or None)."""
+    last=None
+    while not (stop and stop.is_set()):
+        try:
+            now=time.time();boundary=int(now)//H4*H4
+            if now>=boundary+3 and boundary!=last:
+                sl.c=load(cfg)
+                if sl.scan(now):last=boundary
+            else:sl.watchdog(now)
+        except Exception:LOG.exception('C3 cycle failed; will retry')
+        if once:break
+        (stop.wait if stop else time.sleep)(sl.c['check_interval_seconds'])
+
+def start_in_bot(engine,stop):
+    """Called by lbank_bot.run(): C3 in its own thread, own market-data client, sized on the bot's paper equity."""
+    import threading
+    if os.getenv('C3_IN_BOT','1')=='0':LOG.info('C3 disabled in the bot (C3_IN_BOT=0)');return None
+    cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.paper_equity)
+    t=threading.Thread(target=loop,args=(sl,cfg,stop),name='c3-sleeve',daemon=True);t.start()
+    LOG.info('C3 sleeve started inside the bot: %d coins, risk %.2f%%/trade, confirm_bars %d',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100,sl.c['confirm_bars'])
+    return t
+
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--once',action='store_true');a=ap.parse_args()
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s')
-    here=Path(__file__).resolve().parent;cfg=Path(os.getenv('C3_CONFIG',here/'c3_config.json'));store=Store(Path(os.getenv('C3_DB',here/'data/c3_sleeve.db')))
-    if not cfg.exists() and (here/'c3_config.json').exists():   # first run in Docker: seed runtime config like the main bot
-        cfg.parent.mkdir(parents=True,exist_ok=True);cfg.write_text((here/'c3_config.json').read_text())
-    sl=Sleeve(load(cfg),store,bot.MarketData());last=None
-    while True:
-        now=time.time();boundary=int(now)//H4*H4
-        if now>=boundary+3 and boundary!=last:
-            sl.c=load(cfg)
-            if sl.scan(now):last=boundary
-        else:sl.watchdog(now)
-        if a.once:break
-        time.sleep(sl.c['check_interval_seconds'])
+    cfg,store=paths();loop(Sleeve(load(cfg),store,bot.MarketData()),cfg,once=a.once)
 
 if __name__=='__main__':main()

@@ -10,7 +10,7 @@ def cfg(**kw):
     c=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text());c.update(kw);return C.validate(c)
 
 def test_config_is_paper_only_and_validated():
-    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10 and cfg()['confirm_bars']==3
+    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10 and cfg()['confirm_bars']==3 and cfg()['risk_per_trade_pct']==.002
     with pytest.raises(ValueError):cfg(confirm_bars=-1)
     with pytest.raises(ValueError):cfg(confirm_bars=2.0)
     with pytest.raises(ValueError):cfg(dry_run_mode=False)
@@ -116,3 +116,25 @@ def test_confirmation_delays_entry(tmp_path):
     c3=c2+[c[-1]*1.01];rows3=make_rows(c3);data.rows=rows3;data.px=float(c3[-1]);sl.scan(rows3[-1][0]/1000+3)
     p=st.positions()[0];df3=C.features(rows3,rows3[-1][0]/1000+3,conf)
     assert p['side']=='long' and p['stop']==pytest.approx(c3[-1]-2*df3.atr.iloc[-1])
+
+def test_runtime_config_upgrade(tmp_path):
+    shipped=Path(__file__).parents[1]/'c3_config.json';rt=tmp_path/'rt'/'c3.json'
+    C.prepare_config(rt,shipped);assert json.loads(rt.read_text())==json.loads(shipped.read_text())   # seeded
+    old={k:v for k,v in json.loads(shipped.read_text()).items() if k!='confirm_bars'};old['risk_per_trade_pct']=.0015
+    rt.write_text(json.dumps(old));C.prepare_config(rt,shipped);new=json.loads(rt.read_text())
+    assert new['confirm_bars']==3 and new['risk_per_trade_pct']==.002          # missing key added, untouched old default upgraded
+    new['risk_per_trade_pct']=.003;rt.write_text(json.dumps(new));C.prepare_config(rt,shipped)
+    assert json.loads(rt.read_text())['risk_per_trade_pct']==.003               # a user's own choice is kept
+
+def test_sizes_on_shared_bot_equity(tmp_path):
+    conf=cfg(skip_weekend=False,confirm_bars=0);st=C.Store(tmp_path/'c3.db')
+    assert C.Sleeve(conf,st,None,base_equity=lambda:25000.).equity()==25000. and C.Sleeve(conf,st,None).equity()==conf['paper_capital']
+
+def test_started_inside_the_bot(tmp_path,monkeypatch):
+    import threading
+    monkeypatch.setenv('C3_CONFIG',str(tmp_path/'c3_config.json'));monkeypatch.setenv('C3_DB',str(tmp_path/'c3.db'))
+    monkeypatch.setattr(C.bot,'MarketData',lambda:None)
+    class E:paper_equity=staticmethod(lambda:12345.)
+    stop=threading.Event();stop.set()
+    t=C.start_in_bot(E(),stop);t.join(5);assert not t.is_alive() and (tmp_path/'c3_config.json').exists()
+    monkeypatch.setenv('C3_IN_BOT','0');assert C.start_in_bot(E(),stop) is None

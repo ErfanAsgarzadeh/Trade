@@ -1536,6 +1536,14 @@ def run():
 
     thread = threading.Thread(target=scan_loop, name="closed-candle-scanner", daemon=True)
     thread.start()
+    c3_thread = None
+    try:   # second strategy (C3+D on 10 other coins), paper-only; a failure here never stops the main bot
+        sys.modules.setdefault("lbank_bot", sys.modules[__name__])
+        import c3_sleeve
+        c3_thread = c3_sleeve.start_in_bot(engine, stop)
+    except Exception as exc:
+        LOG.exception("C3 sleeve failed to start; main bot continues")
+        db.runtime_set("c3_error", str(exc))
     LOG.info("Started PAPER engine. %s", LIVE_LIMITATION)
     while not stop.is_set():
         interval = 15
@@ -1547,6 +1555,8 @@ def run():
             db.runtime_set("last_error", str(exc))
         stop.wait(interval)
     thread.join(timeout=12)
+    if c3_thread:
+        c3_thread.join(timeout=12)
 
 
 def probe_book(symbol: str, contracts: float):

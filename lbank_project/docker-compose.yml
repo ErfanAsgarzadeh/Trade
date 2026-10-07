@@ -13,21 +13,6 @@ services:
       OHLCV_DIR: /app/runtime/ohlcv
       BOT_CONFIG: /app/runtime/config.json
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
-    volumes:
-      - ./runtime:/app/runtime
-    stop_grace_period: 30s
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-  c3-sleeve:
-    build: .
-    command: ["python", "-u", "c3_sleeve.py"]
-    restart: unless-stopped
-    init: true
-    environment:
-      PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
-      OHLCV_DIR: /app/runtime/ohlcv
       C3_CONFIG: /app/runtime/c3_config.json
       C3_DB: /app/runtime/c3_sleeve.db
     volumes:
