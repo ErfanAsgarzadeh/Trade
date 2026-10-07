@@ -32,9 +32,7 @@ def apply_strategy_settings(config):
         trail_source='KIJUN' if close_only else 'DONCHIAN10',
         trail_close_only=close_only, require_h2_l2=False, pending_policy='GTC_REGIME')
     config['risk_and_exit'].update(exit_scheme='PURE_KIJUN', tp1_close_pct=0.0,
-        breakeven_policy='NONE',
-        trail_atr_buffer=0.0 if close_only else settings.get('trail_atr_buffer', 0.0),
-        trail_timeframe='ENTRY',
+        breakeven_policy='NONE', trail_atr_buffer=0.0, trail_timeframe='ENTRY',
         hard_tp_rr=settings['hard_tp_rr'], breakeven_trigger_rr=settings['breakeven_trigger_rr'])
     config['al_brooks_filters'].update(require_signal_bar_breakout=False,
         require_h2_l2_pullback=False, enable_barb_wire_filter=False)
@@ -131,9 +129,3 @@ def trail_line(bar,side,source):
 def breakout_strength(bar,side,lookback=20):
     if side=='long':return (float(bar.close)-max(float(bar[f'donchian_high_{lookback}']),float(bar.kumo_top)))/float(bar.close)
     return (min(float(bar[f'donchian_low_{lookback}']),float(bar.kumo_bottom))-float(bar.close))/float(bar.close)
-
-
-def buffered_trail_stop(bar, side, source, atr_buffer=0.0):
-    """Closed-bar stop candidate; callers ratchet and never loosen a live stop."""
-    sign = 1 if side == 'long' else -1
-    return trail_line(bar, side, source) - sign * float(atr_buffer) * float(bar.atr)

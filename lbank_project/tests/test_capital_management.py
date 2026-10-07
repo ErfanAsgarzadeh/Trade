@@ -13,7 +13,7 @@ from test_system import system, cfg, bars_for
 def modern():
     c=json.loads((Path(__file__).parents[1]/'config.json').read_text())
     c['risk_and_exit'].update(risk_per_trade_pct=.005,max_open_positions=4,engaged_capital_pct=.6,leverage_mode='DYNAMIC_MARGIN')
-    c['strategy_settings'].update(ichimoku_preset='crypto',donchian_entry_period=20,initial_stop_mode='ATR2',exit_tp_mode='CLOSE_TRAIL_KIJUN',hard_tp_rr=0.,breakeven_trigger_rr=0.,pyramid_enabled=False,initial_stop_anchor='ENTRY')
+    c['strategy_settings'].update(ichimoku_preset='crypto',donchian_entry_period=20,initial_stop_mode='ATR2',exit_tp_mode='CLOSE_TRAIL_KIJUN',hard_tp_rr=0.,breakeven_trigger_rr=0.,pyramid_enabled=False,initial_stop_anchor='ENTRY',trail_atr_buffer=0.)
     return lb.validate_config(c)
 
 def open_runner(system, modern, side='long'):

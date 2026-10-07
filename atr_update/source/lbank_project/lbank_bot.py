@@ -63,7 +63,7 @@ SCHEMA = {
     "strategy_settings": {"ichimoku_preset": str, "donchian_entry_period": int,
         "initial_stop_mode": str, "exit_tp_mode": str, "hybrid_trail_mode": str,
         "hard_tp_rr": float, "breakeven_trigger_rr": float,
-        "pyramid_enabled": bool, "initial_stop_anchor": str, "trail_atr_buffer": float},
+        "pyramid_enabled": bool, "initial_stop_anchor": str},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -132,7 +132,6 @@ def validate_config(c: dict) -> dict:
         c["strategy_settings"].setdefault("hybrid_trail_mode", "CLOSE_TRAIL_KIJUN")
         c["strategy_settings"].setdefault("pyramid_enabled", False)
         c["strategy_settings"].setdefault("initial_stop_anchor", "ENTRY")
-        c["strategy_settings"].setdefault("trail_atr_buffer", 0.0)
     if set(c) not in (set(SCHEMA), set(SCHEMA) - {"strategy_settings"}):
         raise ConfigError("Configuration must use the supplied top-level schema")
     for section, template in SCHEMA.items():
@@ -163,8 +162,7 @@ def validate_config(c: dict) -> dict:
                 or settings["exit_tp_mode"] not in (*trails, "HYBRID_TRAIL_AND_HARD_TP")
                 or settings["hybrid_trail_mode"] not in trails
                 or not 0 <= settings["hard_tp_rr"] <= 100
-                or not 0 <= settings["breakeven_trigger_rr"] <= 20
-                or not 0 <= settings["trail_atr_buffer"] <= 5):
+                or not 0 <= settings["breakeven_trigger_rr"] <= 20):
             raise ConfigError("Invalid strategy_settings")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
@@ -1152,8 +1150,7 @@ class Engine:
                     if sign * (b.close - line) < 0:
                         self._close(p, self.data.price(p["symbol"]), p["qty"], "kijun_break", now)
                     elif not p.get("trail_close_only") and (p.get("be_policy") != "CLOSE_CONFIRM" or p.get("be_confirmed")):
-                        sl = archetypes.buffered_trail_stop(
-                            b, p["side"], p.get("trail_source", "KIJUN"), p.get("trail_atr", 0.2))
+                        sl = line - sign * p.get("trail_atr", 0.2) * b.atr
                         sl = max(p["active_sl"], sl) if sign == 1 else min(p["active_sl"], sl)
                         with self.db.connect() as db:
                             db.execute("UPDATE positions SET active_sl=? WHERE symbol=?", (float(sl), p["symbol"]))
