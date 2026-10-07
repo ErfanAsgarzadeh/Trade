@@ -1,0 +1,102 @@
+[
+ {
+  "symbol": "THETAUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "84dd510c53d302859d407f442e1311db623e3821dad54ebc84ae4f7fcdf57f35"
+ },
+ {
+  "symbol": "EGLDUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "ef649a8e4405f80b5d1eeb8aed087654fdca4ff4cfc06454bdc9a127390e2f7c"
+ },
+ {
+  "symbol": "AAVEUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "d193af12daa714992a9702298a3c2106cd05fc4abca6c180b89ee4dc6f9768f6"
+ },
+ {
+  "symbol": "IOSTUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5632,
+  "parity_windows": 6,
+  "prices_sha256": "dc4d0507a011bd40dd3fef86042a2aa776da9177a229242611433f5074318136"
+ },
+ {
+  "symbol": "ONEUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5692,
+  "parity_windows": 6,
+  "prices_sha256": "40c4b68c41dd96aff686840efbaed4f9a31fc8f9f2753c333c117c00ec70a0c3"
+ },
+ {
+  "symbol": "CVCUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 510,
+  "missing_fraction": 0.00019395764877692587,
+  "first_minute": 1627776000000,
+  "funding_events": 7515,
+  "parity_windows": 6,
+  "prices_sha256": "a5921624a76a56f552921bdd49bd7f772951816de54573949fab8b203bbd9824"
+ },
+ {
+  "symbol": "CRVUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "e2a972fc640bb4375168287e3bbefc103d4c0a550800043465fc1877db1d8c63"
+ },
+ {
+  "symbol": "IOTAUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "16744f9c78dec27ab55eebeac98e12ef1daabe14d5ffa8f6791316c61b2dd1ac"
+ },
+ {
+  "symbol": "KSMUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "6d1a5a316edf0eafb40c8e95f509d59044e39c4ddf3b73f8414b93eeeb2e3c58"
+ },
+ {
+  "symbol": "VETUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "fbbec715738b6ef90758924cbaf46ed4bf4b4347724ef6e3ddd9e09ba4120d1c"
+ }
+]
