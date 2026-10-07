@@ -1,0 +1,225 @@
+{
+ "rule": "see predeclared_stage2_universe.json",
+ "chosen": [
+  {
+   "symbol": "AVAXUSDT",
+   "sep2021_quote_volume": 44431209084.302
+  },
+  {
+   "symbol": "DOTUSDT",
+   "sep2021_quote_volume": 37287337566.4356
+  },
+  {
+   "symbol": "ATOMUSDT",
+   "sep2021_quote_volume": 23877179321.46215
+  },
+  {
+   "symbol": "FILUSDT",
+   "sep2021_quote_volume": 22985859630.0294
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "sep2021_quote_volume": 22931890809.8173
+  },
+  {
+   "symbol": "LTCUSDT",
+   "sep2021_quote_volume": 22361283948.06066
+  },
+  {
+   "symbol": "AXSUSDT",
+   "sep2021_quote_volume": 19689565204.024
+  },
+  {
+   "symbol": "LINKUSDT",
+   "sep2021_quote_volume": 18007387443.61613
+  },
+  {
+   "symbol": "XTZUSDT",
+   "sep2021_quote_volume": 15842814015.5211
+  },
+  {
+   "symbol": "ALGOUSDT",
+   "sep2021_quote_volume": 15385965435.64603
+  }
+ ],
+ "skipped_before_10th": [
+  [
+   "FTMUSDT",
+   "not on LBank"
+  ],
+  [
+   "LUNAUSDT",
+   "incomplete 1m history to 2026-10-04"
+  ],
+  [
+   "MATICUSDT",
+   "not on LBank"
+  ],
+  [
+   "EOSUSDT",
+   "not on LBank"
+  ]
+ ],
+ "ranked_top40": [
+  {
+   "symbol": "AVAXUSDT",
+   "sep2021_quote_volume": 44431209084.302
+  },
+  {
+   "symbol": "FTMUSDT",
+   "sep2021_quote_volume": 40749187180.39441
+  },
+  {
+   "symbol": "DOTUSDT",
+   "sep2021_quote_volume": 37287337566.4356
+  },
+  {
+   "symbol": "LUNAUSDT",
+   "sep2021_quote_volume": 24784370805.052002
+  },
+  {
+   "symbol": "ATOMUSDT",
+   "sep2021_quote_volume": 23877179321.46215
+  },
+  {
+   "symbol": "FILUSDT",
+   "sep2021_quote_volume": 22985859630.0294
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "sep2021_quote_volume": 22931890809.8173
+  },
+  {
+   "symbol": "LTCUSDT",
+   "sep2021_quote_volume": 22361283948.06066
+  },
+  {
+   "symbol": "AXSUSDT",
+   "sep2021_quote_volume": 19689565204.024
+  },
+  {
+   "symbol": "LINKUSDT",
+   "sep2021_quote_volume": 18007387443.61613
+  },
+  {
+   "symbol": "MATICUSDT",
+   "sep2021_quote_volume": 16815716283.0279
+  },
+  {
+   "symbol": "EOSUSDT",
+   "sep2021_quote_volume": 16770484236.9046
+  },
+  {
+   "symbol": "XTZUSDT",
+   "sep2021_quote_volume": 15842814015.5211
+  },
+  {
+   "symbol": "ALGOUSDT",
+   "sep2021_quote_volume": 15385965435.64603
+  },
+  {
+   "symbol": "DYDXUSDT",
+   "sep2021_quote_volume": 14076534871.2704
+  },
+  {
+   "symbol": "ETCUSDT",
+   "sep2021_quote_volume": 12533045007.57176
+  },
+  {
+   "symbol": "NEARUSDT",
+   "sep2021_quote_volume": 11281655316.8173
+  },
+  {
+   "symbol": "TRXUSDT",
+   "sep2021_quote_volume": 10584086418.88809
+  },
+  {
+   "symbol": "SRMUSDT",
+   "sep2021_quote_volume": 10286930705.6603
+  },
+  {
+   "symbol": "CELRUSDT",
+   "sep2021_quote_volume": 10285826175.64144
+  },
+  {
+   "symbol": "ICPUSDT",
+   "sep2021_quote_volume": 9940379062.5954
+  },
+  {
+   "symbol": "OMGUSDT",
+   "sep2021_quote_volume": 9334104407.61591
+  },
+  {
+   "symbol": "BCHUSDT",
+   "sep2021_quote_volume": 9022555478.43135
+  },
+  {
+   "symbol": "COTIUSDT",
+   "sep2021_quote_volume": 8937451717.2622
+  },
+  {
+   "symbol": "UNIUSDT",
+   "sep2021_quote_volume": 8497217075.417
+  },
+  {
+   "symbol": "ALICEUSDT",
+   "sep2021_quote_volume": 7610306275.0269
+  },
+  {
+   "symbol": "SUSHIUSDT",
+   "sep2021_quote_volume": 7209684390.984
+  },
+  {
+   "symbol": "C98USDT",
+   "sep2021_quote_volume": 7083392419.747499
+  },
+  {
+   "symbol": "1000SHIBUSDT",
+   "sep2021_quote_volume": 6987184827.454126
+  },
+  {
+   "symbol": "THETAUSDT",
+   "sep2021_quote_volume": 6617129332.9838
+  },
+  {
+   "symbol": "EGLDUSDT",
+   "sep2021_quote_volume": 6556673722.2516
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "sep2021_quote_volume": 6384979015.337
+  },
+  {
+   "symbol": "IOSTUSDT",
+   "sep2021_quote_volume": 6021586740.819705
+  },
+  {
+   "symbol": "ONEUSDT",
+   "sep2021_quote_volume": 5703449515.87409
+  },
+  {
+   "symbol": "CVCUSDT",
+   "sep2021_quote_volume": 5428901453.68432
+  },
+  {
+   "symbol": "CRVUSDT",
+   "sep2021_quote_volume": 5176115118.8696
+  },
+  {
+   "symbol": "IOTAUSDT",
+   "sep2021_quote_volume": 5130646603.49766
+  },
+  {
+   "symbol": "KSMUSDT",
+   "sep2021_quote_volume": 4976550752.765
+  },
+  {
+   "symbol": "VETUSDT",
+   "sep2021_quote_volume": 4924691076.769834
+  },
+  {
+   "symbol": "SANDUSDT",
+   "sep2021_quote_volume": 4920327132.15932
+  }
+ ]
+}

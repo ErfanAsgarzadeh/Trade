@@ -1,0 +1,45 @@
+{
+ "chosen": [
+  {
+   "symbol": "THETAUSDT",
+   "sep2021_quote_volume": 6617129332.9838
+  },
+  {
+   "symbol": "EGLDUSDT",
+   "sep2021_quote_volume": 6556673722.2516
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "sep2021_quote_volume": 6384979015.337
+  },
+  {
+   "symbol": "IOSTUSDT",
+   "sep2021_quote_volume": 6021586740.819705
+  },
+  {
+   "symbol": "ONEUSDT",
+   "sep2021_quote_volume": 5703449515.87409
+  },
+  {
+   "symbol": "CVCUSDT",
+   "sep2021_quote_volume": 5428901453.68432
+  },
+  {
+   "symbol": "CRVUSDT",
+   "sep2021_quote_volume": 5176115118.8696
+  },
+  {
+   "symbol": "IOTAUSDT",
+   "sep2021_quote_volume": 5130646603.49766
+  },
+  {
+   "symbol": "KSMUSDT",
+   "sep2021_quote_volume": 4976550752.765
+  },
+  {
+   "symbol": "VETUSDT",
+   "sep2021_quote_volume": 4924691076.769834
+  }
+ ],
+ "skipped": []
+}

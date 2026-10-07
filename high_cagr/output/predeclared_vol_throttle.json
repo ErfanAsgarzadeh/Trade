@@ -1,0 +1,25 @@
+{
+ "declared_before_running": true,
+ "reference": "deployed 4B policy at R=0.75%, 4 slots, same data/costs; every candidate is compared with it at the SAME slippage",
+ "hypotheses": {
+  "V": "Breakouts whose initial stop is wide (2*ATR / price) have negative expectancy per R in BOTH halves of the data (found by mining the 5y ledger: top stop-width quintile mean R -0.14 train / -0.10 validation). Thresholds are the data-derived quintile edges 4.5% and 5.6%.",
+  "T": "Losses cluster in recurring chop regimes (four >20% drawdown episodes). A hysteretic equity-drawdown throttle cuts risk in them. Mechanism-based, no thresholds fitted: round numbers chosen before looking."
+ },
+ "variants": {
+  "V1": {"vol_max_pct": 0.056, "note": "skip new root entries whose signal stop width exceeds 5.6%"},
+  "V2": {"vol_mid_pct": 0.045, "vol_mid_mult": 0.5, "vol_max_pct": 0.056, "note": "half risk for 4.5-5.6%, skip above 5.6%"},
+  "T1": {"thr_trigger": 0.15, "thr_resume": 0.07, "thr_mult": 0.5, "note": "risk x0.5 once equity is 15% below its peak, restored at 7% below peak"},
+  "T2": {"thr_trigger": 0.20, "thr_resume": 0.10, "thr_mult": 0.5, "note": "risk x0.5 once equity is 20% below peak, restored at 10% below peak"}
+ },
+ "policies": "full factorial {none,V1,V2} x {none,T1,T2} = 9 rows incl. the reference; 8 candidates in total. No variant will be added after seeing results.",
+ "slippage_bps_per_fill": [2, 5],
+ "periods": {"H1": ["2021-10-05", "2024-01-01"], "H2": ["2024-01-01", "2026-01-01"], "Y2026": ["2026-01-01", "2026-10-05"], "full": ["2021-10-05", "2026-10-05"]},
+ "acceptance_at_2bps_and_5bps": [
+  "net profit > 0 in H1, H2 and Y2026",
+  "full-period Calmar >= reference Calmar + 0.05 AND full-period max DD < reference max DD AND full CAGR >= 30% (2bps) / >= 0.9 x reference CAGR (5bps)",
+  "Calmar >= reference Calmar in BOTH H1 and H2 (improvement must not come from one half)"
+ ],
+ "tie_break": "simplest accepted candidate (fewest rules), then highest full Calmar",
+ "contamination_disclosure": "There is no untouched holdout. Hypothesis V was mined from the full 5y ledger including 2026, and earlier ablation/diagnostics also saw 2026. Acceptance here is in-sample evidence only. The live bot will NOT be changed from this experiment without the user's explicit confirmation; the only clean test is forward paper trading.",
+ "multiple_testing": "8 candidates x 2 slippage levels; the +0.05 Calmar margin and the both-halves rule are the only protection."
+}

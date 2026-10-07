@@ -1,0 +1,17 @@
+{
+ "declared_before_running": true,
+ "idea": "Make false breakouts cheaper instead of filtering them: enter with part of the risk (pilot), add the rest only once the trade has moved in our favour. Same entry signals, same shared stop.",
+ "mechanism": "Root unit sized with pilot_frac x the normal risk. When the root's max favourable excursion reaches pilot_trigger R, a completion unit is bought as a stop order at that level (filled at the level, or at the bar-phase open if price gapped through it) with the SAME stop, sized so its own risk equals the remaining (1-pilot_frac) x the normal risk budget measured at root entry, capped by the slot/margin limits. One completion per position. The existing 4B pyramid and profit floor stay unchanged.",
+ "variants": {"P1": {"pilot_frac": 0.5, "pilot_trigger": 0.5}, "P2": {"pilot_frac": 0.5, "pilot_trigger": 1.0}, "P3": {"pilot_frac": 0.33, "pilot_trigger": 0.5}},
+ "bench": "fb_harness baseline (15 symbols, 6 slots, R=0.75%, 4B+V2+BTC gate); kernel with pilot off verified identical to the baseline",
+ "false_breakout_metric": "positions with net<0 and MFE<0.3R; cost measured as the sum of net / equity-at-entry (in % of equity), not dollars, so account growth does not distort it",
+ "pass_gate (all must hold)": [
+  "@2bps and @5bps: net > 0 in H1, H2 and 2026",
+  "@2bps and @5bps: full Calmar >= baseline + 0.05",
+  "@2bps and @5bps: full max DD <= baseline",
+  "@2bps and @5bps: Calmar >= baseline in both H1 and H2",
+  "false-breakout cost (% of equity) cut by >= 25%",
+  "Calmar not worse on both the old-5 and new-10 universes (4 slots, @2bps)"
+ ],
+ "decision": "Results only; no bot change without the user's confirmation."
+}

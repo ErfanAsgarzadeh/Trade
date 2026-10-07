@@ -117,7 +117,7 @@ def initial_stop(bar,side,config):
     sign=1 if side=='long' else -1
     source=config['archetype_strategy']['stop_source'];buffer=config['risk_and_exit']['sl_atr_buffer']
     if source=='SIGNAL_BAR':return float(bar.low-buffer*bar.atr if sign==1 else bar.high+buffer*bar.atr)
-    if source=='ATR2':return float(bar.close-sign*2*bar.atr)
+    if source=='ATR2':return float(bar.close-sign*config.get('strategy_settings',{}).get('initial_stop_atr_mult',2.0)*bar.atr)
     return float(bar.kijun-sign*buffer*bar.atr)
 
 def trail_line(bar,side,source):

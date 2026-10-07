@@ -1,0 +1,5042 @@
+[
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2021-08.zip",
+"sha256": "e4d8613a696b9302135b5da394592c87c56c720e5e013e127e2675fb28626dd3"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2021-09.zip",
+"sha256": "78c5058b7ce7f8009f1cbf907156e301b4aa5e2017f937beb46b57c70cf587d9"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2021-10.zip",
+"sha256": "bfce12184294f6694ec3333dd06ce99ea0e66286fddf040932398da701c2f0df"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2021-11.zip",
+"sha256": "0630d702a619960db4a91989fe08ba682dc55b04dc10381da2f6eaa3d9b2705f"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2021-12.zip",
+"sha256": "82a9456f72ea127110807b184eceee805c0f8c61900f3b5643b2b55109b0314c"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-01.zip",
+"sha256": "93f19a32d33fd84355ef830510122f011d081919f996fd1c4fb12449aadd6843"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-02.zip",
+"sha256": "5b4fb65178729fe21b13f9fd9269d6c76697d205c510878e055f4c65a7c275b3"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-03.zip",
+"sha256": "b7e10044b60a816d0913f51df0a96398d143bf49c1a45e64b0c4d5e84ec8971c"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-04.zip",
+"sha256": "02b3ba2617a0ff6bc531ebf043114f16a3c2686f1f364a856424c07014582d9e"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-05.zip",
+"sha256": "23336586097d0e0acb3250ee46b5125d6adba3461ca376e9809689fbd5847e9f"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-06.zip",
+"sha256": "189e2975ccc251f5a2e94c6a87d5934caae4872f98d7062cad9a47de3692dd51"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-07.zip",
+"sha256": "115a2df4915c8126f8b5248fb308ad2a53ea78848449debb19354f9ec0338977"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-08.zip",
+"sha256": "ac474beaad4ea589c25bfc55aa2804d87d3cbd433795f0a9858bd4bca27ec6ed"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-09.zip",
+"sha256": "2c16946fa40f7cc452c9e0bdfb1ee52d69ca7115ad072e7f7d28d2a060f1008b"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-10.zip",
+"sha256": "4e08691845222a2d547768e3ed17b0111b0e033d598ea59bfde1c1aeb5405ad1"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-11.zip",
+"sha256": "8ce79216d9938dd63a1ddcd52032e8deb5844f5258edac7a753d2c1b99a05553"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2022-12.zip",
+"sha256": "7a29f17b863f928ed785a77f013534038034b2f63575221dcc7747e64767b1ce"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-01.zip",
+"sha256": "82ba5eaaa5ba15b39abf4714989ca7a5faf8293ba824846f9e7b9debe2bbfabc"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-02.zip",
+"sha256": "51fd840b1ed625aae3e1fa7247f99e8145c24ce4457de6db2808eb7e007a7ac4"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-03.zip",
+"sha256": "2a484fd693f627a96c04f0400b9050c37ff01e8c157defd9238bf420338231e4"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-04.zip",
+"sha256": "83afc7d191411da5c3cb6aaac133b13807980ab2f94e4ce5c482a0f0e8c1f6e1"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-05.zip",
+"sha256": "fe5f0d3072ec5052df351717521bf035fcb917555e8b6824c9804d59932eba20"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-06.zip",
+"sha256": "bfa3b7cd523fc85b8d663d495a30c0034b5f79d90cbb22b0f10807d7d160cb07"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-07.zip",
+"sha256": "3056304c6609b2a516f2913a12fa7309a81b98c3e4901949013a5edb976cbf34"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-08.zip",
+"sha256": "7e4f1e66aa44f689046190b114c5c2695478df6547ad78ebe8aaa98971b0ab99"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-09.zip",
+"sha256": "ba85ef03e2ea3e4f197cdef1dc52ed98b9ac24b8804aa5464af50cd993b40d39"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-10.zip",
+"sha256": "0266d8789aa69dc42cdaf4a8774eba88781f4839bdad1e6f8fc57babc5990744"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-11.zip",
+"sha256": "e70602fa6a341d5ad84b4a2d89f722077e31324aae3f3c89349189c77c5a9c91"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2023-12.zip",
+"sha256": "d3c290e557735bc7ae5579f937ce2316bd1bdc14b9699fb8c63717fabb0e6415"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-01.zip",
+"sha256": "ecd33335a3627715033b466139fc47faf19c67b7085d7c2aef914ab1eb0697fa"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-02.zip",
+"sha256": "b5452bf369c32209230b81b09757bc5efcab2f310601a50e1b92ebb64535e73c"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-03.zip",
+"sha256": "48fedd5364dde8717ea10ac8f4c5abee7f399a874370c736fd7f78bef1dcbb0a"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-04.zip",
+"sha256": "7691504f5fcfad72cf0c185a7e1dc19dae726f3953b945bc36e48c3032319194"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-05.zip",
+"sha256": "384cb137d9dc41b4bafdd663f60eabe2bf2d57984bf0d96c7bbf20933cf3015a"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-06.zip",
+"sha256": "c4345c91b3b0ff8f840c2c31c169c35522a8dcf2b5625d87a364cc8923d8decb"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-07.zip",
+"sha256": "e55e5c4282b0fc9350e7c9673d7d565ffc70ab77898a8629a36c9be7a070677e"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-08.zip",
+"sha256": "95265b9002c81384fcbbdd05a5a7b47a09b7bf044920a0990884228bf4d3c1de"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-09.zip",
+"sha256": "8246cd43ab762582ce1bdf5918d4bd0d7b917adaa2e8650e033db8314efad4cc"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-10.zip",
+"sha256": "2c05ebaee4b97d190ab2e93ddb8946a773a6d2e3027f3211281a5f177bd10779"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-11.zip",
+"sha256": "f021e3b05a364cc89d9b98e0d908021e03c16304a127a83c9896ef6f2aa44473"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2024-12.zip",
+"sha256": "d250475da415a2399d63a5b7e1bd65844dee27af3f3876c27d79433950a00981"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-01.zip",
+"sha256": "ded738e96de765c963c9a1b2d236f0d1b5960aa870a89bd786891e5b4bc76d1a"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-02.zip",
+"sha256": "1266bb29786f6eeb5e0352961861fb37bb692e5a21846b584dd3e0bf13367699"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-03.zip",
+"sha256": "1923171ebd65a63ce21339a68f841a27ff829f2ff23a0fe5bb5b20d3ed023eb5"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-04.zip",
+"sha256": "41d10e7cf2d1e88312825209ea11c2f52e4a65c77c0454f6f2f480b56d0041df"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-05.zip",
+"sha256": "f586a20a413bcb5ea2b638b175d67736cfc764bc3f42f52c1d0050d75297d743"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-06.zip",
+"sha256": "41282d1dff8de6fb949a2e088a4e47046168f4a79080e7ed6842cca4326d16ed"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-07.zip",
+"sha256": "86328e2ae04337007a3877b54c0ef2fd5ca54ffd002c38a0364c1921479add88"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-08.zip",
+"sha256": "16351801220bf9db8cf66b74f2db4f658d68e2967fd829dcaff0cbc4dc4af8f1"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-09.zip",
+"sha256": "d417eedeac78c412406350265ac09a447af1d11f36664e46a643ddd8d3f1102d"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-10.zip",
+"sha256": "21d3edaa6253e957b070ed3ad46827cc6f2cab6293afab071c0a13b8db62223e"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-11.zip",
+"sha256": "3e2acefe00a0b3e4fdb035077e8222a9d11adf785d669c495da867ea0102c7b5"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2025-12.zip",
+"sha256": "777545696f9fee342293abeb6d4cb49c6cbbc6e865fce589efd587359a8b7843"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-01.zip",
+"sha256": "0d7e279e948ca6752a3dfb23cbf1ed5f2af164c44d5eb27d40b4fdafce94e92d"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-02.zip",
+"sha256": "075cc1da8452dd9124179e1d6b480d31e528d00d08f60ff0b75300fe10bbf752"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-03.zip",
+"sha256": "6faba0532f823e63a649e82016f030945ba0720179653cc6ee38092dcf35dda9"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-04.zip",
+"sha256": "421d15b8ece63d212b6b5453e5de468bac18d8a7787f42b68a2dfed8001aef49"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-05.zip",
+"sha256": "368651631cd2221fdfac5850238843938f64d071926f9b1478986ea1bd979018"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-06.zip",
+"sha256": "151746d519ffe7a314b3e4a6fd70999d9e37647be00db646dce192eb3b3abd6c"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-07.zip",
+"sha256": "a50856f78cab03d55284972ca1459ecb1da05b835cac3c672eefdcef537a3202"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-08.zip",
+"sha256": "8fe721607835cb25a9071716a72cf32791251021da611fd031887368319e095b"
+},
+{
+"file": "monthly/klines/ETCUSDT/1m/ETCUSDT-1m-2026-09.zip",
+"sha256": "0c3b29f7930b0cf3b5c6ec7329424c5a3308366f3c1b917b1e2507a516802935"
+},
+{
+"file": "daily/klines/ETCUSDT/1m/ETCUSDT-1m-2026-10-01.zip",
+"sha256": "5356ba9bd518916e2eb3ae225bacae362ff5ddc45b7fc2ff965224f685f3ade4"
+},
+{
+"file": "daily/klines/ETCUSDT/1m/ETCUSDT-1m-2026-10-02.zip",
+"sha256": "3ec1f567317245444da5bf0cad016b2890d679dfe4f414eeb6ee8cdcdfc9205f"
+},
+{
+"file": "daily/klines/ETCUSDT/1m/ETCUSDT-1m-2026-10-03.zip",
+"sha256": "0e52a13428c6d6cd38e94da397816e6d4f807dba7606e9e723fcf8744210223b"
+},
+{
+"file": "daily/klines/ETCUSDT/1m/ETCUSDT-1m-2026-10-04.zip",
+"sha256": "89fe0683e6e179a3b77acab52e55cfbd342938f92956bb41389e0d9da4472427"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2021-10.zip",
+"sha256": "c9bb6a3b769dbf6a8655a7b5be23a2ac041708d95fae3d80263d6dede0b6c6c2"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2021-11.zip",
+"sha256": "d28071633853db6c831a25191a924494a4c9ce0401f73b605459194f6ab9b6ce"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2021-12.zip",
+"sha256": "a93f7e0af48f3e833abdbd74b8c192e6f5c355577003bf44b3f2442079adb8b5"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-01.zip",
+"sha256": "37559ab25589cc34189094b186824bc02ce9f88c59dbefcc2e56bc5c01a48f63"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-02.zip",
+"sha256": "81b15d90bb40f70d0c444e96b2f1eaab686ab1f1fcc5c0b2a5c918c7e03fb70f"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-03.zip",
+"sha256": "8c83038ffcce8ed69547d37434b72785dc1b9bcd47e7cb158b80d4a5591284d1"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-04.zip",
+"sha256": "dbc3c37a5a2d6c9ede1853eb2406e660b06f02581c8a6dd028e1aecb012123dd"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-05.zip",
+"sha256": "9441e942efa93ea4ba3cdd1f208337290561c631c3a2c14d45f418cd92bca0b8"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-06.zip",
+"sha256": "af736efd5b1b35d78d6dd6f54d4f4ceba456622024b0d8b1afec52857449ec27"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-07.zip",
+"sha256": "85c784a663fb62a0e48b2630bca9b8ebc664a559c9a1ac1ea16a7342528b64ad"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-08.zip",
+"sha256": "c2d4fa195305ad6d8c60a0e8fe69d668f8a9d6221bc45d4057f860bcb9635d97"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-09.zip",
+"sha256": "2188214e2180827798a54bfbaae08dd23dfef325b9f11dffd86916bfc73bdaae"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-10.zip",
+"sha256": "b1e5c2a241e1022d5c8212aa4232fc139059c1ba95498098aa84feea98251179"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-11.zip",
+"sha256": "2ea6b73a99f47d38eac8e776bcc6fbd2183d956118ac1d74d630d371210552eb"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2022-12.zip",
+"sha256": "f59fdfb1cacea37466cdf9d8b9f20bbf04aca24db4183cd14c6ea6be9f67c918"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-01.zip",
+"sha256": "5c8cdca7fa410396049c852051b26c364d0a64f56a203a44c9b355e9e3575a41"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-02.zip",
+"sha256": "5ed9f6e76b8d951f7abab7cb80cc714e6b27532b9e83af6ee87d5a108662479d"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-03.zip",
+"sha256": "cefd6e4c6a2766191c4a90669f47d19e58e601bf166a765d7de8e98940d8de20"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-04.zip",
+"sha256": "e9dcaff05b9ac622c9fa8dbb8edb17a45e04c7fb539c344434aeaad9a8bacbbc"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-05.zip",
+"sha256": "40dc5ec91412009e315783f37194b13822b4c4ad2b97b5efd2a30e9929079e68"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-06.zip",
+"sha256": "8b547c201f720e461f0c05e399d1e3879a8843960f96d18121f2ffbf86921a11"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-07.zip",
+"sha256": "a658a7d7970e7b8826b160afb6406f5f4981fb02397778075c581a9994fd7c0d"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-08.zip",
+"sha256": "b0159c8bbe338c7a4983bb2eed6629c763664fb6b3cd4fc945d9d3398786ebb7"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-09.zip",
+"sha256": "9947a1b8f5673368d55b62579fa396638f669ee11fab6bc43d7cfa9446e2e794"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-10.zip",
+"sha256": "dd55ac56f8149037c4c10ca250aab8b638b845af21e1a3d4a7f2d17336d8a22f"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-11.zip",
+"sha256": "34891329153e821de8dbfa62d9cf8dbc051fee14fb8a11ad13df495b1acb3723"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2023-12.zip",
+"sha256": "91858a8098d6168b89cbe3793a42d9e4c2213fd50807b1c8acd388ea25298194"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-01.zip",
+"sha256": "1c42617e602a15dc17f6517b5db27cbcfd82c8abfd3578947009cdc5745199ec"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-02.zip",
+"sha256": "d8a542173c7c2f8011be7cacfbc094baf37c4c6687bc5704e10b2a6ecbccd28c"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-03.zip",
+"sha256": "bdc507ee4d051161ab8f16314dc7684120106d9f5b080f66705be32f619dc2dc"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-04.zip",
+"sha256": "78a85a2c0f953cd435c50beda1b37dead6f5b65cc186852ee0cf6ccb9c310a51"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-05.zip",
+"sha256": "1e17a95e51f0baf627612ee64677c2a30fd48be03e0b043d5aff010f02a62494"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-06.zip",
+"sha256": "9fcdb7d94c1d41404e21872b8bf0ef48a06f3b483e03aba33c6c567886f675e5"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-07.zip",
+"sha256": "2720ee222f42daf1730132e02e9870b343d5db766b81378c9388d8e3459cd6ed"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-08.zip",
+"sha256": "2e5a6d6dbe324613cc6774b40855d1b5ba8ef8de64cb0a4ba845ba3569b3ee48"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-09.zip",
+"sha256": "61218303964be7872897b4fab05e09b8b1e6e7f27166ec6482a6bb801189f57e"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-10.zip",
+"sha256": "52928c213e858773d79125dfadae123cb004513eadb2522123f9cc6ea823ebb5"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-11.zip",
+"sha256": "fd173d6effcb2a46d7e4e8adf7a18cf8cedfd6c954ae531a8130bcd662ea38ff"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2024-12.zip",
+"sha256": "75fd8e32325e1f8d5a27ead26f622953de23c2f9cc0098b546b14b733f39c51a"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-01.zip",
+"sha256": "0485303ef50063be5da0cf5a42f4df357cf37b16a3a9fb5d766240bcac6afca5"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-02.zip",
+"sha256": "7fbc38320c731c9342efeebf1094311567f40baec0de62d409e288288fe91732"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-03.zip",
+"sha256": "39da7395a9aa5c68ace4d7fe77b06b87ac10ed1df57a5d58111bc766045b6728"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-04.zip",
+"sha256": "43dd4c2ad784e4098a132657359f07ddb8ce6f7c9c2e02f30bd76942ced7a401"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-05.zip",
+"sha256": "e964e80a9ca8517578da0ef9bcdc46e25190b8178ce1cc9c33e2d6da099ef3dd"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-06.zip",
+"sha256": "23b37f8375284ba3ac235c4d518dbdb9b8c600d7abd3db09ea763984c8a1fc24"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-07.zip",
+"sha256": "ef06d744cb1fbef12b090a890ab2f05f12fe382fb09d5160b826133be0a75a48"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-08.zip",
+"sha256": "470c2e1b9779ce308d5870c70e448c83738efe9d0f1916a89968adffda728a70"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-09.zip",
+"sha256": "781cb8875604e8a0e39068ba5c9a37e28fa81e7445481fe2a5ae5c4dba4c92fc"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-10.zip",
+"sha256": "9a8aac37566ff6a2555cdbf9f9b9933c15e14949649fc0b66634bceb8f00144a"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-11.zip",
+"sha256": "72382169668bd86677d96690de45d8f54bb129318c46efe07df0dbea9d5a2328"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2025-12.zip",
+"sha256": "ae1b906d8bccd1493c8c7614f07988d7d95cd69292a4ae5d2d38e02f6a52d41a"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-01.zip",
+"sha256": "7ec5dbb3f4a3c59d1809edbff489bbed4b382c137ca4de29a6ddd58d89ae455a"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-02.zip",
+"sha256": "520a4983e272a2f4a9cb77063d042cff6cc2c87c7e12114e4c9d1257ef6d5ae8"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-03.zip",
+"sha256": "83da9cd07269e0da9ae12f19790380a8eb1e514fdc74cfe1eaddf755705abd18"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-04.zip",
+"sha256": "b31c558da58ce310e2e9d893affe725b33be765d78990f452777ddd3ceb1675a"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-05.zip",
+"sha256": "76a83a44ccbe71e99d41213b195f6a0a6cdb42fc5b4512669a5bb0c6da384948"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-06.zip",
+"sha256": "421651793d7d3203319cf182582a803e3d209156051057741e50cb0ebf71d7e7"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-07.zip",
+"sha256": "2ac162766749ebd85677379e982bcfb0aef1eeab01a1995398cafad365c9e3fe"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-08.zip",
+"sha256": "8ed33d0801a3f0e4b605c30b16928d5a2b3c6d6cb9d410344440c645a486c6fe"
+},
+{
+"file": "monthly/fundingRate/ETCUSDT/ETCUSDT-fundingRate-2026-09.zip",
+"sha256": "d82890b1784c8a174974c045e379f53cc80ee05fa9ddf957f57f5abab312878c"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2021-08.zip",
+"sha256": "4c3533ad2f0d1346a6fe44dccf1d2b48bcb65610dfc13f5fd4ce8896d6c0ed37"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2021-09.zip",
+"sha256": "30a05faf4366e0727cd1361a4c9dddba9cb3cd8a2e94a78ea37cbb26f6c3e7e7"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2021-10.zip",
+"sha256": "2eb12b6272127839ccb02ff84cc1126434a214fee6cba0bef122b481c992eac3"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2021-11.zip",
+"sha256": "db3d3df0bacf4a09e13f6f0bde5567630486beea5aea29eb764226be6798952f"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2021-12.zip",
+"sha256": "43d77b66b7cfbf0fccfd15f85db40bab8132ab037edcf86174751ff334db53c3"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-01.zip",
+"sha256": "269302d62ec1e09793be5a4cf20e477a19fe1e8f15192c1dc349590bd618b98a"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-02.zip",
+"sha256": "2597b7f96cf4773ad9cd3bcef9690e35788a4529f79ea15c5cb8ebd6443eb8f2"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-03.zip",
+"sha256": "cfcbd98653f15050e84b60e1cb3ab32a01eade3354669ef3953b3e3009e662ea"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-04.zip",
+"sha256": "e299e21a036bf2ec1e38ca28206db691b9471c6a241ab0dd61e05f94df066d9b"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-05.zip",
+"sha256": "a4223ab0fe9e9b661d37478575a5183f8c29685602ead169244a4d53b3db7e14"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-06.zip",
+"sha256": "1b45faa02cd044e7e848f66b6eb57b1df8440b3f999d0a22ffabd9612f090cbf"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-07.zip",
+"sha256": "efcf0edd1fb23cac1d080b33a4788378498f176f1d74409091e49d41e46c388c"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-08.zip",
+"sha256": "4004a4526854f4c48f0cc33fe8fdae7b290f3ed9b8753b5182c8e521540a6a21"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-09.zip",
+"sha256": "24ae5308bf46800fcbe6b1ecf584ded7c9d39ecfb32630155bbfbbdec5c008f4"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-10.zip",
+"sha256": "afcd35ac52e671e0138992a6971fc39b6db115fcc57df0a1573801d5617730d9"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-11.zip",
+"sha256": "e75aa71970106832667892e911ba39cff3fb53f1a5b542f29e19d9bc860faa78"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2022-12.zip",
+"sha256": "0d5fc27e9fa4459d99ae3a90f7c209b90396bfe8c6cdef3274a41dfeb9a7a257"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-01.zip",
+"sha256": "737282abc78a15d4368ecf719590312d6472ae95558d14ddfc8bde279ee6accb"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-02.zip",
+"sha256": "2a1a739b0ba24beebb996a66bf24a9c4acb6146e015debf9bc530b509deceefa"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-03.zip",
+"sha256": "5e7da86136e49d983091dafc50898f123bf89568cce0b5d9247788c96630de5f"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-04.zip",
+"sha256": "a8462ea96757de1a8801690dbe33edeb099e74aa38ff930e13dd5a947eaad03f"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-05.zip",
+"sha256": "1e3ef43207b30b4e2c61a7a1a7589db6bfe6a878b21781c0df8efe8c47462b5e"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-06.zip",
+"sha256": "2656d3c59fe7146f0d172cc995351f37702b1ec03e1b3413b285a510791834fb"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-07.zip",
+"sha256": "387528323deb6f85b9463904bf1a90697af7fd28ab6b1984a8182e40b2497fd2"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-08.zip",
+"sha256": "1a81d92a654d34c0c4807f708e60f53c30a0f8a12fa87a225c676901340cfa2f"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-09.zip",
+"sha256": "ae14a055005a546ced02259d5fffc25801bdeb26acaf646f355c6780b01d5ca2"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-10.zip",
+"sha256": "6393139e9dba5447ac599d6b7f7ee141dc27207c7f825e36a7efe06c6efb2584"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-11.zip",
+"sha256": "f84d3b269f37886e24bfae2b2db3c9486900ea2dd0dcddb06e566cfb3e3b15f0"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2023-12.zip",
+"sha256": "10fea94c8da2c3777cad89e4d59b90a5913455f34190afac66b79c8282e9f989"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-01.zip",
+"sha256": "200fc9b453bee08b65e79d1108adcb6ddcc4f2a51d89eeb15585144006f30b7e"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-02.zip",
+"sha256": "28b442e12f92c7b4c517a3aa67387de3111588a522c758f52e4eaf8e04cd1c33"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-03.zip",
+"sha256": "494b6b0c2d2323c71ea6108696eeea8dd3b3673ff22138ec41dc26dfc9c3a15e"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-04.zip",
+"sha256": "b6f571a46053773ad2764541a5206eb786efaf7ee4bf4e3acc8d86fbc7b17067"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-05.zip",
+"sha256": "968431ae1c794343f93d15ca7df2f756d2a6ab2d66a24f7ae5bd5be62eef79ab"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-06.zip",
+"sha256": "fb6a2163e4e22ff9724b202639d923a02d57114e97b8b88e2a13a431e805f87d"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-07.zip",
+"sha256": "dc31160f8bc8e6057ea60f5c4d943b48ec164f10e40ea3397d9a6a36bc7877af"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-08.zip",
+"sha256": "38548220dd53016cb533a75f8ee7416244d17f4c4c2c3bdaf9d65064e7f3870b"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-09.zip",
+"sha256": "c2dac6cbe541784c4a272c0af315087307e9bede8ef8ef3aa88d2f466e161d9a"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-10.zip",
+"sha256": "d4ba15946a041a40a5acc1fa9f2eef3102442e97b06cd13f4d5250fb06637ea6"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-11.zip",
+"sha256": "0e8892b04845d0ea76289cfe0ef262d914eceec1ffd12e91daaf426772047ee0"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2024-12.zip",
+"sha256": "10314939568ee46a5af531fc99d51d179de0209569a96b1b338cdc17a7ccf059"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-01.zip",
+"sha256": "aeb0d0794ce7fe129b0d1fabdde62b508ccac9678ea12bcd8b40b4e3d7fc5d4c"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-02.zip",
+"sha256": "47b00765c2a08ea321bcf588dd922493880719633891a61476ffa447ee225646"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-03.zip",
+"sha256": "71122bd804714bf332c9037588132b7d84df474ff16121321294a8c786e0ce51"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-04.zip",
+"sha256": "d91cd1ef465643aae60de79ef5b81c5f2bbdcb0debfd43904c8e9f5d0bcac69b"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-05.zip",
+"sha256": "127261f7855d879bb97489b823acaff19ed856a5512848606f3958ec77626b90"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-06.zip",
+"sha256": "3b3a23faf9ffda0baaa29156a758598ee9dc7e4a788e3161cd9c2a6b48a37c5e"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-07.zip",
+"sha256": "5f1781f5ae1d253d643e5f821e3b114c48433a1ed4c67e911741c94f65442f91"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-08.zip",
+"sha256": "a71020e53ab694044688bccc7eee661a42f74d9e7cefd4c32cd2025442986b30"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-09.zip",
+"sha256": "7420c6ec42a723b3f65d051f7555d5eb6552b84a4c9841ef2bf1e0450a0eb3dc"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-10.zip",
+"sha256": "10cf9af1221ab8ece1c76affb0556d7207ea0281bf9ae12fd56476ef9925e5d6"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-11.zip",
+"sha256": "3bf4fdddab70802290641fab67e3e8ccd5cd36785b6307743145c9289ef2a6d9"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2025-12.zip",
+"sha256": "c65aa28f487905b1dede1cd8001f076900110695d53bc300bc329e6cf7c15b3b"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-01.zip",
+"sha256": "3260d7e2445a96995826d19b3ac0e72ada9cd4f269e1f2c55c8f56ae8232aac1"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-02.zip",
+"sha256": "8081fda7d3d9a763a0a9cb1a4aa9787dfa72363dda727bf02717c5363d361671"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-03.zip",
+"sha256": "0f12b9b0758542867141bca10869d7a90eea05b3aad83b3ec256a2a056d829ef"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-04.zip",
+"sha256": "b50147b9eaad20414686379ca1b938737b4acc9135b09144aef0ba0aa0ad2f23"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-05.zip",
+"sha256": "f9c0c3e753ff5c579b8d3f5d2e3b7d295094d8f14a860413b28f71c9502fff18"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-06.zip",
+"sha256": "39ea4b16815c63c051da8900e5d0c6cee92bbb59d51c03c8c3f82853527fe54d"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-07.zip",
+"sha256": "37465e3334fb54b8e795989c4bacf1f6e3187cda8a6464fa0cb4af3afbfc7cc4"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-08.zip",
+"sha256": "f28fdb81cfb6db1d1759b959f41b889f554e3ab2d367030308cff91c9ef05462"
+},
+{
+"file": "monthly/klines/NEARUSDT/1m/NEARUSDT-1m-2026-09.zip",
+"sha256": "80f6fb16ef00bc67b2ae0522091ee8bbd5f79d9ff8a8aa3043796d3b14905990"
+},
+{
+"file": "daily/klines/NEARUSDT/1m/NEARUSDT-1m-2026-10-01.zip",
+"sha256": "ee0717d7b5d53751651ee1bdfa019bceb3325082d65e6770d4882113bc89627e"
+},
+{
+"file": "daily/klines/NEARUSDT/1m/NEARUSDT-1m-2026-10-02.zip",
+"sha256": "6712ea76e34746f5d29d88124460d2b9baa3bb4eb5b9b7546a13dd6966f4cfd9"
+},
+{
+"file": "daily/klines/NEARUSDT/1m/NEARUSDT-1m-2026-10-03.zip",
+"sha256": "595ded7695a799b6602bf08b94812c42f053ecf27ae86a44082cfb8208948968"
+},
+{
+"file": "daily/klines/NEARUSDT/1m/NEARUSDT-1m-2026-10-04.zip",
+"sha256": "fd7bc6d55cbc6c31b45e645394102b9dd0db24f6657471abf5c1a66d5f5fd83b"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2021-10.zip",
+"sha256": "319e1846953067dd7d1aa1b9c32e516541e31544fd63cb258a7bbe6948121be1"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2021-11.zip",
+"sha256": "7724fac9ce1a1c2d59d2e19a270768a3a3ecf67ada733a4ade05267bc9034821"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2021-12.zip",
+"sha256": "698dcf7f359152fee69a6089a4b9b6789d75f5fbc4bdc08404e9861cc07c71e9"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-01.zip",
+"sha256": "eae411eb325357df6f4f150796f1f0e33a5c2e5e10069dc34bc3c5a1163324e5"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-02.zip",
+"sha256": "f342709b6981dbd5ea1256d3558c2a17ad0b173059f0acbce346e41f785c5a2f"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-03.zip",
+"sha256": "4a585f4f2bcb46e6ab2c1c1aecf661e5f54e81437ff29526807eb598393996fd"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-04.zip",
+"sha256": "62c10a80e31e21cf89acbfbb1341d43faaf05365158d31a8a19aaf3288bfb0d7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-05.zip",
+"sha256": "541b888959e8ca263ed0d600b5beb0ca7b587b3535e8afbe88eec0958cae4db3"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-06.zip",
+"sha256": "e3b07b4615a79354b93a8ebefb321d8a1210bfed63ce16d57aec9739a7da9d61"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-07.zip",
+"sha256": "c22d4ec70c8ca6b73fbd13533d41df823ac59eb5a1cf33647fff965e23de29b7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-08.zip",
+"sha256": "b05bf4e06899e6a1593bf7e2febb79831c41c3a5c803f401e08e991e1d4a9540"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-09.zip",
+"sha256": "a55ffad7142ce819e17c2f669d58e8b15e1d10f877f2d0d5d2b678db922356c5"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-10.zip",
+"sha256": "14b5b1a23a2983535f2d236d745bb9eed33048ec0c0fca73e61c14ffae8db9fe"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-11.zip",
+"sha256": "c526300bd454d18063faf0630a7343c7bfb09e3b3bfb3b5699c5adfe20ff12ac"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2022-12.zip",
+"sha256": "73e4ac714afce85d43abcc9a3357a5f3ab6b6afaaeb6741e982ebeb79d6c4b90"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-01.zip",
+"sha256": "df852ad10a9e6c20281c10f124aec8e78ef5979cd850688f5e51a79feba37c7d"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-02.zip",
+"sha256": "aea16b2053602b3e03656e18f046ae7d4051404154fb913f7753353f68fc15b1"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-03.zip",
+"sha256": "5630809de7889542d17afb40629b868bf0ee50b1bcaedea1569ba041179f80b4"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-04.zip",
+"sha256": "91bb7532527dae29cffc0842050f455354051b02a9f048529bd08b4924682c52"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-05.zip",
+"sha256": "9bd5316af98dcc2723a487a3a1e3efd6b3c8767aaa731ca47f1463c024e17f16"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-06.zip",
+"sha256": "b953f6f7789576e7e42f63e08396a3dcb62d3a85ed19976fff7b84b06812a3b7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-07.zip",
+"sha256": "de3aff01c3a9f81e0d64037abbfeb51928a4aa0e2dc5feae15555190e5685a4b"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-08.zip",
+"sha256": "0340d35d83cecc03876fec2ec9266d600d1146885d21b09e298d617b9f5d2208"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-09.zip",
+"sha256": "546ed8f6d2a146214fa45cf3044f8d188a0677680465af5e0e0da95b22aa00d3"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-10.zip",
+"sha256": "e0a1892aeb1c3a5737d31078b967167505c78a8d2e8d4cf43ac4981ab75b6c9f"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-11.zip",
+"sha256": "826d4e3c89207be441f4df5a0900e48e9bbfa1ae72a42dc54f9581f408b04f83"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2023-12.zip",
+"sha256": "2e2909e98f18fe7599248f98e65734e621b5ec843b016284672187729908c2b4"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-01.zip",
+"sha256": "b4a855c3076de912184882646abafaa5ea16dd71d2147afe05596618d192a7b7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-02.zip",
+"sha256": "92dfa9c2ef49620c73d3eb119ecfe1a050c7b6ac361613b1411eae825e06ac37"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-03.zip",
+"sha256": "c04dc7950cb6249cdf68d35896d46464af671371835a7066926712ddc8f3a80f"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-04.zip",
+"sha256": "975de735f2ed1932bc5c16cd4098127f663300b39bdc74bd1d55be74aa4ee1f9"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-05.zip",
+"sha256": "a9f7ed2795227ef809bdc7004ab58debae418070771a9a726bbdc0bea0a0221d"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-06.zip",
+"sha256": "02c0fb6b8f35cfb27155d819947673cadbef54d426cd9c18826da00be11c1b85"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-07.zip",
+"sha256": "dd5248b738d33ea4f62663c6229d3e44b0c84d4af4909e8729da1fdc1c0b1d8b"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-08.zip",
+"sha256": "4ab35ce29e0043dae9b3da206dfd49df9d5d0ef6d29d62df5352ff239f161608"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-09.zip",
+"sha256": "b0edb921fa781b493bd5f91a60303c005935518eb56acf1c7ce519ecceab462c"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-10.zip",
+"sha256": "8e3f48f903f6fe1c727065d71719ec634a378cae8333314a2d46e0a31435ce3e"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-11.zip",
+"sha256": "76a35c6f1170d687a096dfc77e39a0e6aefc464901cb7c3438707765cd5ccb15"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2024-12.zip",
+"sha256": "585f38010b2cadc241061a4c6973de1ec051c46c9ef086505b1af9b1a944e9df"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-01.zip",
+"sha256": "62e250cd587ce9306c0fbcc86c490d4618015b3d6abdf6d60f7355661a40758d"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-02.zip",
+"sha256": "d243e3ef43288e01f05539acdba74d8b56545c7b9c880c375d1e7c46d4cc4e0b"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-03.zip",
+"sha256": "3661cf9917d44c14788606e86a5d899b717d19be727e96096bd7b286f4d32088"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-04.zip",
+"sha256": "e74d5b2d9236ac0f07085aa258eab80c254cc7b9a2ea7d939297845c4a355646"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-05.zip",
+"sha256": "7c416882fa0552f60c8821e31afa25f7ea0d913125b686fb2662378510b2b188"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-06.zip",
+"sha256": "8941c9dbfa39e0cf1cce5931e23552d5a91356e340339e3908e16ea92da491c8"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-07.zip",
+"sha256": "e840521961295549b985ae73fd25a65da82f2522e7e8c5ee902699f58f5a1d90"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-08.zip",
+"sha256": "0b17e289b4763a7d6695c685a0b7d1b1a1e3995b8266127a194e3b22632262a0"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-09.zip",
+"sha256": "6f7a82de3cc3c42e8ec5e8e8937bc890c308d45acbc5c59845cf5786d2d84715"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-10.zip",
+"sha256": "d26e99d7f49b6123ac1ccbe32d633eca0a15f74f33d5f5c8b9688590e54bd7f6"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-11.zip",
+"sha256": "6621daf34c959ece50eac66b7f6869ad4cce2ea70f12271cf0ed7422f9f565bf"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2025-12.zip",
+"sha256": "2d9ffe55dfd7453bd18dbe5388dac567dda4a9c4de6365acb8fdae1e32ae2ac7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-01.zip",
+"sha256": "1835812dd44e9cdef6e458f01f24f289a58fc653115008d2080723101cb6f28d"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-02.zip",
+"sha256": "09f59a143d9e7f52ff1a046dcfedd3f33b6311c285ba1da0fe5db35723c64ca9"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-03.zip",
+"sha256": "a9d792cf6b28128e89c8fcbbe9b8679e0acf72e76fc3daafb19a17aa342a6899"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-04.zip",
+"sha256": "6072480c242436e9135f7558e7200928761c03f77dfa003b418d1ad8634abb62"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-05.zip",
+"sha256": "20b0568adb90c2113ae386d37a0d1b0341c904abc911c73fa30b883817412a15"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-06.zip",
+"sha256": "3c8daac942268f63095ed293a0474cee28f5059f913c27622a6746b116db2d8e"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-07.zip",
+"sha256": "8ef582ebcd4467ad649fd198ae18718d562ef88b92e03d46e1481f2ee2185bda"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-08.zip",
+"sha256": "4ff40eec489a48bb572bfb4b9be117e5062db738ef42b612b4de956d4b2255a7"
+},
+{
+"file": "monthly/fundingRate/NEARUSDT/NEARUSDT-fundingRate-2026-09.zip",
+"sha256": "029050d30e80994d16834d3d9c18593bced42e920cbbf19210d56f86760a368d"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2021-08.zip",
+"sha256": "5a961c22b07babfd1e5dbb6ac6ed00da33f57e899dc0e43a4557319ee5dfbffc"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2021-09.zip",
+"sha256": "4b9a5eb7eae64f8c77d0b1f24c5ca5c9a93ef2b3c1ced27629c541030845cd29"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2021-10.zip",
+"sha256": "9f62f8a3b46ffda4f277e00450bc2211d47362632ab04e3de4c367ec4939e5f7"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2021-11.zip",
+"sha256": "808e7e39c0859c4a4294aff8722a1f2fe6645947fabfb69f1af2268a80bc4d2e"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2021-12.zip",
+"sha256": "fccd4f245353230fe7b60efd473a2102d12682814ab6ed4c5e0b854be1cf7867"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-01.zip",
+"sha256": "00f792a549403a9cbcbf1444b2a676cbcb7be1fdde5c6f5546cb183ac39664e3"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-02.zip",
+"sha256": "253ab76b68c17f1bc299b6feefc6b0e6c899438972f6b693e37984d6fbdf6ffa"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-03.zip",
+"sha256": "f74c031e41ab77d668142fd3fb81dc53e9fed6c55b512bd8b783f424966d9bb1"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-04.zip",
+"sha256": "e7cd5894797789112681ef3629e7d9c2ed14de12274c42892bc198f8a1e01908"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-05.zip",
+"sha256": "f7d67872668eb0bb0352a6dc988ae9faa613d65f26f9d1c929f1ce421907cba8"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-06.zip",
+"sha256": "588676bbe78a9c54e83f7588b79ae89d3acfefb5871c0a73d3979d63f53733a7"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-07.zip",
+"sha256": "b5cf56144ac62776d75d1e3f0b2f4461028bd7c4abdb244f89c989d75ca1bebc"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-08.zip",
+"sha256": "495430f7d9bece59ea0eef1db450e6f77e014f98178e25dd3fac2aa3ae989512"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-09.zip",
+"sha256": "5a23e2bac916bab09a309f493029c9aea03c1bd432f74089bb8c546144e32486"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-10.zip",
+"sha256": "7a92561de63cff201a8bdb4491ae221830b4af197ee71faeb8364f84f3591353"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-11.zip",
+"sha256": "55793f1f01ecfd4c1eb03137934c62e743cc0a1aadce47d55dd96e8dc89c3dcd"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2022-12.zip",
+"sha256": "6358f5d1f5c14fa09501b6de516485e2c2619d92a51a51fdbe625815c4392ba7"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-01.zip",
+"sha256": "b2a4f91e55eb77ab4b502f3289bc67c882f520fbc742dca3b9f51204d9a32127"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-02.zip",
+"sha256": "9278bceada80e5bb8debf08a0612d81cc49ef933ca24a3cc2e156c227dd07aca"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-03.zip",
+"sha256": "ba13199bd913bc824accc6ed461571ee7c9a347a0134f19200e595162201cac8"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-04.zip",
+"sha256": "e6da2097ae45b89386babadbc0335e06867df5ce3995913cfb00c41e285d7b5a"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-05.zip",
+"sha256": "a3f7de4945a57fc4f32939a988d624967d40af75cca42dc18907ecc02b3f89d9"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-06.zip",
+"sha256": "15faebe49d0443bc5dd963689be3dc8e7106cecb2f4f7c5e29379754a4fc297b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-07.zip",
+"sha256": "bf04540055d84e8ca99bc5cb6d57ce2858ba8e9b224519d993707750c84fa03d"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-08.zip",
+"sha256": "c88ed359ac91c4c89e3e66ade84f318df92ad34450baa68e83f9d39dcab0b920"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-09.zip",
+"sha256": "bcb954b2252301ce56ec17adc257f0820b3d55878ae8f477265b629170491969"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-10.zip",
+"sha256": "39aa64fa56357a32b150e23d35fb529b1f21e0dc6b6f64d04f991da0292d4d2b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-11.zip",
+"sha256": "8fd346815635d3c5273486987533dd636ef7aa115e27df6711d242b01b1886f3"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2023-12.zip",
+"sha256": "69f16f2347ce26fbefa17d7ac2b85c4c856ad5b5ee180e4ae09dbe9f1c2add70"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-01.zip",
+"sha256": "9071ba28bf5c857c859b5b87cbf9f2c2392e3f0270a14ef7c7b77d4e6b067617"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-02.zip",
+"sha256": "8ee7d7cd53d002444b44b280f56063c595ff6db882510f165dee92c5b9de3245"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-03.zip",
+"sha256": "8fa697c75fd578753dd217e178ffecc6bd19c1bda52ae4e98258065ac7d1f952"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-04.zip",
+"sha256": "42a21e808b686ab7cc2cc451f48fe07c9318b50521dd9af2d3554bcfa01b703b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-05.zip",
+"sha256": "197d546c8ab0e689413ae515a6de25eb66af0a66d39f96578c7463b1c4e009cc"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-06.zip",
+"sha256": "bc03b09c0985bb9cece42b61af599f44a338bec9171e96f902603405543d3cd4"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-07.zip",
+"sha256": "ae8f574ea2ec3c6e266a7700ac7c2577172f06cb062a98e52d435d47f1bd466b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-08.zip",
+"sha256": "84301a2d23a48ef3d110180b8b14342307c61e747c9a081d5ca103bd22607846"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-09.zip",
+"sha256": "6b55537f784f4dd0f463920989205632cb4d1ecfee99c2571d5577aaa756f6e2"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-10.zip",
+"sha256": "d84fa3c9327c6c16a8e4c664f0eba0c2265362ced3aa2a958d36fe55b7a12c50"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-11.zip",
+"sha256": "508ad69171d3d01c9cb76ba5471331c5144e2b6508d6ef73e9b38edc91a299f2"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2024-12.zip",
+"sha256": "51dd433df539a8b55da8604c7c19df9e770b7ec586afc3f673a93909ac6b53d4"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-01.zip",
+"sha256": "1eb49d8382b6f9716d13ff205e3f676d182a6625f691373f1d466896babd0c59"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-02.zip",
+"sha256": "6ebb45817751dae6163f409f2c2a6469419c9373b894e6e70be87ef443c012ab"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-03.zip",
+"sha256": "8c8ccaa25773efe0a6b7b1911285469ed371b27b1d512547de23de223de56fbd"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-04.zip",
+"sha256": "83ee8d919ed323b61995dbdd94e483d2c7a362799f1e2ee1b004fa0d982ff12b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-05.zip",
+"sha256": "e8b23aee8fb800f46c6423a512459ad53d79d7bc7f8f1e2d86d51035dc63a349"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-06.zip",
+"sha256": "134b9b5546a1e2d774b231e2a43855c3b936c342dffaf8494a13feee89dec5b0"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-07.zip",
+"sha256": "d88c9f67bf1700e4f6a07ddf149962d8e9fff1f4fff886bff3517614fd4ec2b2"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-08.zip",
+"sha256": "b798348b476d5e0d9cf829a157252e3d5c5b7e85f35755da2427c3e9a0090e5b"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-09.zip",
+"sha256": "e4c41fbacf8fe70b720d95f079384d1ab0fdbc7b15c8c83d9469bcfda6bad396"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-10.zip",
+"sha256": "6e823ee97cad3ba2dc73f4260ab8f880585fef7c700b73d3ec4420448eb8cf4d"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-11.zip",
+"sha256": "e7a0f53d4521e378e680504c3171b91262841e40e6573431bbc189fce6e721a8"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2025-12.zip",
+"sha256": "c3066dd9b2b94ff9239907a280c7bb1f42539201a7e085cc4f6378efb019302c"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-01.zip",
+"sha256": "376f6deb82773d6ddd754f8fe4ec1d967120af34211e0eacdf73137a7aed388a"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-02.zip",
+"sha256": "37ad3848b0497dfa0d1283d432ff9be8602408beb1443057d7b5406389c59947"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-03.zip",
+"sha256": "7e0027c87d8f955458692cc277d532e7020c7649e2b429f80cf717da407242ab"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-04.zip",
+"sha256": "b44781c6e24c5aad44168b62a0a2232c8903523053793796c50aa54c564e0d56"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-05.zip",
+"sha256": "06e00dda918f0fa9200617ed5a27beac4a292925c3cc74623c756ddd6adff8ed"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-06.zip",
+"sha256": "a773f127c61bec2ad4e73148038bfcc1b060ad459df654c177a6b260f119e0fd"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-07.zip",
+"sha256": "81c5c17db1c7c11af9455b2b3318ffa6ed14604cede31d1d28d6ce5b7adb8ca1"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-08.zip",
+"sha256": "ad52431714decc073223602ca80134c4bc53c6a74b5e8809af3b8a10ce4e57d3"
+},
+{
+"file": "monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2026-09.zip",
+"sha256": "ce2cec2c13e9a09e96715ff6f8490f67923f34010d01aedd9214191935584dd4"
+},
+{
+"file": "daily/klines/TRXUSDT/1m/TRXUSDT-1m-2026-10-01.zip",
+"sha256": "507388cdbf743462fe5da91d8e51ff6e9c8b5e466e98a24d7f92919102862840"
+},
+{
+"file": "daily/klines/TRXUSDT/1m/TRXUSDT-1m-2026-10-02.zip",
+"sha256": "814345fbf95fb85cdcf60b0f20204ace2168fa9f66cf38c872f5f45a2f0b83c5"
+},
+{
+"file": "daily/klines/TRXUSDT/1m/TRXUSDT-1m-2026-10-03.zip",
+"sha256": "73ca73c92ad61ba38e29fc90423c9ea307a449721d0724ab2d80f9682c0f0f57"
+},
+{
+"file": "daily/klines/TRXUSDT/1m/TRXUSDT-1m-2026-10-04.zip",
+"sha256": "643b047fd191e307b40ef9590f2e612e1b233f15cccfe4ba746f1ba62bde2921"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2021-10.zip",
+"sha256": "443f31300814f787bbace287720ba371410eab0ab0f273ef82ffe02af2d7d2f7"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2021-11.zip",
+"sha256": "066b0d2254ecf0ad08c67ad2078d238b01dd0ca2044d0e013bfbc8594f26751d"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2021-12.zip",
+"sha256": "c3f2ecd84da046ba135e37b0eb2021a17a728e708f89a6224f662dce50575a69"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-01.zip",
+"sha256": "a19786f7d8c449da8eb17261e327d3a878747ce6080863c62395f511d8d57f2c"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-02.zip",
+"sha256": "28979915c9225daf84b84526612870ce06e97b14584af2497878f8d27beab842"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-03.zip",
+"sha256": "93be15821e4d8a215c8c753a5cb9f925bf009660d0c219499d573c8b87a88910"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-04.zip",
+"sha256": "879840ba275a9fa2b177150dc709f3dd4b2a896817210c4f37fdf097576d1493"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-05.zip",
+"sha256": "c627c701b1e3746522e6534ef6d85a684a4f32bb7739338313789fabb4be3a15"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-06.zip",
+"sha256": "822ea000c903b33157e1b3cb3b480d44bebea70bff4391ed6494a8df0c30d29f"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-07.zip",
+"sha256": "45afaf83f0afa138c33a46441802432875b414bfefb8dcfacd18f8688aac5648"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-08.zip",
+"sha256": "8840e907ab7575572f6a7f9a4d8d677ab15dff6c91867d919204498f5e75ad96"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-09.zip",
+"sha256": "3acdad8c35a8af01763829a58291f37ee13fab699d0c9f78a51e21d5b3bd38e7"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-10.zip",
+"sha256": "3fe60976c86ac8f486a5886ebf3348ce5acd9b1f58e3ee864027a0d521cde6e4"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-11.zip",
+"sha256": "9c43f9cf7ba9feea8e1f408ec2c95e75f9dff1410a9a0ca949a1e09affc6d58a"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2022-12.zip",
+"sha256": "b183ef0f56f39820966ba201168db776a044a58f9223b6c75a900ae275e4b8dd"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-01.zip",
+"sha256": "a0317828b3beb89d36dbbd3cc813a69d56009a810c8b9ac1c5bcce0b807e233c"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-02.zip",
+"sha256": "396c4ef657c0f36f31af21ab571969da360c388f1af2d00313863a6c3c8bed70"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-03.zip",
+"sha256": "66b07f3ee27930251576208c27eacffc4362a223fa4c90640a37a181c3d3abb6"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-04.zip",
+"sha256": "45a93b1cbdbd6d6271bb3e1fd5790314e7a33fc1969ec835ca54ac52ea33e022"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-05.zip",
+"sha256": "d118c72f001e77c083fd44e0a00a1991eda4da2730941f888601941df4244bae"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-06.zip",
+"sha256": "17acf17abf551a12a6b55b95e749cdf4459eb32c51c069e6acc735da078ee8bf"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-07.zip",
+"sha256": "48513507a80c5b1666765c37e7da0d1c6e0c5121ef4182b187feb24138e44fe5"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-08.zip",
+"sha256": "a210d276ad3610dce68c4022d5942140eb7ec297a9d89badae056f0875e22cf8"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-09.zip",
+"sha256": "24e25625e3b8fa10852844bd7d9dfcb7399148b375ea15a41deec59ab3988aa3"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-10.zip",
+"sha256": "754698918f9df2c3045c0090f7ee97ed69d7b3f1d6b9ae22954455ce90ea9315"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-11.zip",
+"sha256": "71ff9aea3d62d9fe4ca6e6de6d43acce280bfd36b90fe8d577dd66c641a7cbf3"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2023-12.zip",
+"sha256": "29ad45c6c9f5c70d214139b484cba0b4db0b0a100c2353ae3a6a5d89888e5924"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-01.zip",
+"sha256": "d2877662dafe72778f32cd361236f357f0267565938db9994bd6e900b0d7e631"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-02.zip",
+"sha256": "2d2bfabeefcc10fc329f7b79d2f788ae943b659dc2ff26ab418ff263fa608356"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-03.zip",
+"sha256": "1929b1b34ea1050a5fa281697082e6f6da84e148a1bd1d90479383f7732f4220"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-04.zip",
+"sha256": "ba96693b2fb71fbfcf80f4a3adffe82defaeb6899c55951dee4994fe78fb357a"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-05.zip",
+"sha256": "d14af871339293b6fd6d43b084537868ffe290308cd27b430fd04d9d20e95d2e"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-06.zip",
+"sha256": "b7dff5f6f6a8b60db482aeecec40309cba631aa99edcd41d0b3fd413aca46685"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-07.zip",
+"sha256": "16c16033aba6cda2dac8969f3466436fdbe0aac98721a38a7e4351e4eb8b6604"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-08.zip",
+"sha256": "764f39b99fc11351cb4135b5f2fc081b2ad9a49046ba8f9638bf078d8f014278"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-09.zip",
+"sha256": "24a4450561c8e4ba1b9efe2550a8e2f9d0ace94a2afcef5d925961f229907093"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-10.zip",
+"sha256": "8b188036cd5a2a676700fd15738ef73ea0b8ee08246a2e677db2a33f2bcdfda4"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-11.zip",
+"sha256": "cdd3ead1d4001c46164bba34613ed1498caf70cecce75e41f0f1fd92161e4331"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2024-12.zip",
+"sha256": "47783220b7c56656c5f77d8883e8936b6023ed9447cf7f6797f8ab82e7a8be5c"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-01.zip",
+"sha256": "b514da4b1458c570e6e0db224d50b4cee46ff464f9506c189bf9f299ccb9eec7"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-02.zip",
+"sha256": "930652d9641e7b406a1036d4f9af02105fdac70d4601e60026c9a19a0494646d"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-03.zip",
+"sha256": "2f7346f053aa57c024aab4ff0d234f6b29ce8a208830381df9ccb2b43148a4a7"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-04.zip",
+"sha256": "df29da163f261c5eddb5356ff5f4903df50d27e6815724abe36e972f4cbdfde3"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-05.zip",
+"sha256": "f33bbf9d968946fb77e1f58fd66916e3339d9ec472431c0e1dfb913e86caecbb"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-06.zip",
+"sha256": "1446a97f655ea32a2b3cbe3842c116bc525c07827deac8a4a53b644cddb2a535"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-07.zip",
+"sha256": "c13a04d4262f2f0f4cfffdfea8fe922264f77cf9e72d3b1163758a7493389ea3"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-08.zip",
+"sha256": "d283b6ae57098196172592b522082d2bd010a6b91621bd88fd91dea1a500d72c"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-09.zip",
+"sha256": "e2534c3e0ea355c5bf48a0017fb7837f2541c4c2e1a6dd8f4f5f23cfe54332d4"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-10.zip",
+"sha256": "7d8dea0c4770eb7b23c1d409e112c9a38743e1dfcd3e6da7b376d39d7ac6684a"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-11.zip",
+"sha256": "069fbfb1a0a080cf975d32d6bba31374d10edfe439d23a492594e333ce29eed8"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2025-12.zip",
+"sha256": "337d807c1ed32a9320086f0de124dffd1be1b469c741e73ebff2c59e430ab4dd"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-01.zip",
+"sha256": "d96981457c29f6d6ffaa2ac6dd0631cb133dbca0ac3d0b38f13cb6d8498dbe05"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-02.zip",
+"sha256": "52ff68ae401eb4ef0b8ae0dc1a3bfd3f97eaf0e9c27a2579603875b7fee1f68d"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-03.zip",
+"sha256": "c5dbea20b1909f6e57d6d88ec00d548aeabcf8314511b00aad1cb174fbb63a6c"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-04.zip",
+"sha256": "745d26e023503814c71a0002b8ac214e4d540cae68672597eb2f282b0464d994"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-05.zip",
+"sha256": "70bf4134407b5935662b8730458fd3382f2fdba8a9d0c0ed282a4dc325630deb"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-06.zip",
+"sha256": "fa289ec24c20fb6dca65cbdd7ccb2ad6589f42693cf7774e1c8793f9bed2e5cc"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-07.zip",
+"sha256": "4cccd5efaae2911fdcf6a01c192b4193706650b3d97282beb354d264216aa395"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-08.zip",
+"sha256": "cfbc1ae96c1c7dc2b07742787d74010280ce587f2fa1bc49c292fa0cd509d764"
+},
+{
+"file": "monthly/fundingRate/TRXUSDT/TRXUSDT-fundingRate-2026-09.zip",
+"sha256": "a53c79bd4e69df1233a6969ad3e89b4f269ea4caa3eeac430016b1fc105ef019"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2021-08.zip",
+"sha256": "ceda6c914b3e4e868e047e25c47cb30b464cac748af0f541d674a12befaa3efc"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2021-09.zip",
+"sha256": "914b373982310f226a7ae8983511fd46f05e48e3262eaf5d9766645ee859fd77"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2021-10.zip",
+"sha256": "a70f8add1824cc1912f1efb1c581133b301ee8e78fc51b731375bb492eb0df82"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2021-11.zip",
+"sha256": "b91499c7505bc1c414e878d09dd9d3a828c361e4878d521d81ed7ecb21d5ec40"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2021-12.zip",
+"sha256": "9e3c2dd1ae4b90be9d83fb8d4b7769ace7401f3e1e41ee6842a1d3c5adafe258"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-01.zip",
+"sha256": "a325146e851280be02219a3f8a8dbedcb4959bb96f237e567045ae04d2fd189f"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-02.zip",
+"sha256": "bf56e5ebfbb4cd8848069999fd16d38297ce3316f0e705f90c8540b5cbbb3e13"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-03.zip",
+"sha256": "74784959739c7ea7967b909fa906bd62283d29aaeea76b391531356c241da580"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-04.zip",
+"sha256": "9791431e5f1ffb74c61f275a8a0e860360bb0a891e9c7a496f00e82aed6c7fd7"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-05.zip",
+"sha256": "ed3ae1e5f460663f7e06094af685c6462c98c417fdd45b2d68ebd45320c53e97"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-06.zip",
+"sha256": "26b79bc8f759841b08df69337e60ac71e0198851389d45cf87864c3a4c2f9ebd"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-07.zip",
+"sha256": "7006634e5a50df942f49b7fc8f714e6a4eab30e39e827c08792e1a353d24ad3a"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-08.zip",
+"sha256": "092a864ffa135805ff7862f314c60323dd49cd9e7687a05024e3721a9e7fd3b0"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-09.zip",
+"sha256": "5db2accb7920e4d153e4aa0f64eb6782b851d28d58f672d56dc81500b43687dd"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-10.zip",
+"sha256": "68e501416a9e5d2c12da2eb3dc84d7a50f71d7b8af884f8ad4a571fb833f8c32"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-11.zip",
+"sha256": "575d71c1d1ad5dfa7917c7a998c5e8fa891dbb30cea2dcf0b7074c9ed580d31b"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2022-12.zip",
+"sha256": "92a5267318c9d0029334a60db4442e03ca901a10a2a53f7b0a7a8062762e3f5e"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-01.zip",
+"sha256": "65bdfc1cfcf96971565914c3d7908700d8de5eaaf9bb41eee86c82ffdcab39c7"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-02.zip",
+"sha256": "6bf78124027890b3f5cdbc40e813bdef4c9284030037d5e69682ecfa15d82da6"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-03.zip",
+"sha256": "25158bd39534ce4dbe567c4bf25c0e54c424adcd62e686e70b3db452971b5306"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-04.zip",
+"sha256": "ab1c9302c49ce88c865975cce9361382ffe751a028423b26764a2480af2106d3"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-05.zip",
+"sha256": "c5b3854e360c5daf3ca1b18b65ee960bffc4f4c3af2ade5d53235e7411ce3377"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-06.zip",
+"sha256": "795ebe8dc72a025b7d5ce194203d5f6ceca7010ceb442c9fffed5d6c813d7725"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-07.zip",
+"sha256": "3031b7296a384077a085f20dab45a5c967878cffd9cdaaef927269a2576a49f6"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-08.zip",
+"sha256": "6ea4cb8dd138fe4b51737b519629470842c5e8394c7eca791a1787049c7f7908"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-09.zip",
+"sha256": "49c8cb2721bbd4d1ff0e2138a54112e1fbe73464f54c6ca0f5671161b80514c7"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-10.zip",
+"sha256": "bd25f6d24f44b99ba8c109185e2cbf84b338929e838ea3f7cd2e652253a97a42"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-11.zip",
+"sha256": "9fcd7172c3493ce20828ef72e5f1e5a4304172caad51806e6aec24e528341404"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2023-12.zip",
+"sha256": "f6af7dfe1fbc57a95b7fb061bba145e508c3de15cabb0a9c70a7b1df97495487"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-01.zip",
+"sha256": "689f69d28628dfc957c871f70b47e38f53c81983d3ac8a5047cc410814d1890b"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-02.zip",
+"sha256": "4b40afbe2cd045ae48f6167be09bba575c9ff10a92195c79f148ded7e3a53b7f"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-03.zip",
+"sha256": "145e5bd27a25ea4f8f0c009deaddf65d70ebf64b0fa77a596f6caaa2465f4bf8"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-04.zip",
+"sha256": "002c95ade8441619af3fae676607f0952d2ca0693aeb4927fbb2ebcd9ee20e8b"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-05.zip",
+"sha256": "5b923403fdb6dc90067cbf28a1492365c2496380d5a40108817639ab9677c7c7"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-06.zip",
+"sha256": "3d286fd174c23a6c4e7f78a46bc1b40f020e3ce917e77c9c36864a67bc5ac917"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-07.zip",
+"sha256": "342c93d3135d02e09f35672afd7f59b8c27dc371046a8d6388ef8aacef919eac"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-08.zip",
+"sha256": "e55e0df807d5d521d4738c975faf5c04220b8dafd02f3bf097c4d82dbc2b8099"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-09.zip",
+"sha256": "ddddc5143b49416783b666b0f2618fe6075d7f791a5613aa660dda3f1bdece99"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-10.zip",
+"sha256": "b7c6653fc610aad0eb39db3facfc6157136c75eec9241bbe5e746c953d665bd9"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-11.zip",
+"sha256": "88f974785989f0359a6fe83fc1906b46d0e644c5756f1cd3c23aa74771581d12"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2024-12.zip",
+"sha256": "e9b76fd607b54475d2b10b0033f965d86c3d6857d2b978a86587fd0a718b14bc"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-01.zip",
+"sha256": "568f780156456359bb92e1a17bbd424870cee9341e68b794f7b53349dc5334b0"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-02.zip",
+"sha256": "78a83dfab2b531f7b1819be38821aa53c2bf4784a5d1dc6334ffe30181306c55"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-03.zip",
+"sha256": "5ebbf5123ef0b941431ebbf0c8640c6727f39bbf63ddf968a35919ef517b6ab2"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-04.zip",
+"sha256": "8bb2640928e3004bcb877b9fc719245c286bbfac355173a7e300f1a200c2771e"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-05.zip",
+"sha256": "185488667dc46c34a698b6825ec7eb3f2d0825304e44b05d2d4782db946443f7"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-06.zip",
+"sha256": "79b076ac7795c390c58e6ddf45b09631db243370988a1314a4ca90957a8a7072"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-07.zip",
+"sha256": "456911e3c20b8c312f3891aea319be2b51f5d9a82e64de659d4b0f2349fd41bd"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-08.zip",
+"sha256": "437694db6f6eacdce40c5677b519cdf4e347e06d44392401ba3ae90c8fa5adc3"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-09.zip",
+"sha256": "e92317532d726fbafeb48d0db11cd602212f9c923ebc4633c38729ed1ab87df5"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-10.zip",
+"sha256": "15ebc498e03cf027710c97ad664514729574df3d073beda85b30314b0c562675"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-11.zip",
+"sha256": "562326dcd4afa93a92aab3009f4cd00cfee703f0057a0127e82b5465ec2006d3"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2025-12.zip",
+"sha256": "ec6cc8a94b19ac716649259afc5d15ddadf8d3d16ad97e84f7c00d400e9db005"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-01.zip",
+"sha256": "b34df770f70d0ae3baf4543adb5b82a2e65bf303acaf204ccbe0dc8010803a30"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-02.zip",
+"sha256": "da346246070ea4e2c4dc195689e5c80b87f802febed206678d4811834fa8d753"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-03.zip",
+"sha256": "66c625dde884f8fb2f5fc02c27d64f3d1058bbbf364c0026402ad05397676403"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-04.zip",
+"sha256": "0bd29bca74243c95bf0cfae54f83c89304d927ae9de1a7582a08dd8f23484707"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-05.zip",
+"sha256": "4719353fd316e87137a604bc1b28627a836b7b2f753fd9829f03320004cb1693"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-06.zip",
+"sha256": "f5a08219c1afc148f414fd09faa6e65ef72dd1ca920cf94098c047327522b238"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-07.zip",
+"sha256": "258d9634cbbf2e2690d3c51bc7f45c97f41d8077b81bff9e67a2172e7c533166"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-08.zip",
+"sha256": "5afaf085ae3464abb22ba0297043e76ff98fe8d9c71776e461d733947696f52b"
+},
+{
+"file": "monthly/klines/CELRUSDT/1m/CELRUSDT-1m-2026-09.zip",
+"sha256": "fcfa3506f109e0a48cecfa86a7dfd00671a7544639f84accb9e19872e2fc753c"
+},
+{
+"file": "daily/klines/CELRUSDT/1m/CELRUSDT-1m-2026-10-01.zip",
+"sha256": "78d55077aedf4a28baeefb5956d041f7b24b69c0f27422395dc36507520252c9"
+},
+{
+"file": "daily/klines/CELRUSDT/1m/CELRUSDT-1m-2026-10-02.zip",
+"sha256": "39ffb10a9389f97783017746cd62869469997c0a8e3a1916e5a4e8e4bf7601d9"
+},
+{
+"file": "daily/klines/CELRUSDT/1m/CELRUSDT-1m-2026-10-03.zip",
+"sha256": "9bd369d77bde7a9bc877dbefc48467e76520c4007a00e317959e2210f8a3ddbb"
+},
+{
+"file": "daily/klines/CELRUSDT/1m/CELRUSDT-1m-2026-10-04.zip",
+"sha256": "6367335cc769c04e6464167301fae2b4773d2483d69196cf323f79f4bd8111c9"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2021-10.zip",
+"sha256": "94acf358caef52d1c865c16701233a789f56f1efa0ab6f8d34659f80b0e8ca8a"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2021-11.zip",
+"sha256": "87218d8474fdc140b04063ffa50cb2f539b7fa6fe1f827d42c9a8a48ef8a64e7"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2021-12.zip",
+"sha256": "74ac9af77eb9d1c0bbce63df3211a1ca5f8ef94c7c0f0412bbd45d2a8042b2e3"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-01.zip",
+"sha256": "7c2d01542d62293598558310c962470def1f8ff94a3ce959ab94ce1aedbce17d"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-02.zip",
+"sha256": "e3885668a19059a1216506873f578576a51c129cb478b23383b464581af46607"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-03.zip",
+"sha256": "7746919e406ad9b135ef2e2d923fcdde4b1d98a0a576b55ed3baa7851c8c03bc"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-04.zip",
+"sha256": "7abc4e23eba09cedb3b1746a429ac68a1dee76f9b6dac27bd5b7c70291e9e228"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-05.zip",
+"sha256": "fe1e5f6e9a43572b7cf3144076a8c1daff92f410b807889665d924c8ad19056f"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-06.zip",
+"sha256": "a32caafa6458463055fe9551026ed077913bf96cd17e79de8df4bca04f1886a5"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-07.zip",
+"sha256": "3a0c8e93cdbbec719866ba870c313ef110c320792695d0bc2c5313468508e8be"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-08.zip",
+"sha256": "92b8c85e47c2bcd3fafe8da4d8af3aba38962b37ab8390e5dd321f703cd65772"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-09.zip",
+"sha256": "7e3f6fc0bdeaa235666fae6889675ae584ddca8a79662d438099070819f2ce5d"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-10.zip",
+"sha256": "269e95867af0577152c010b48a262260686cb75958693657565616808694a4f4"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-11.zip",
+"sha256": "4d782404665db967f16cc0b7fa3bf1155dd7c5155c300dbcf12c1df485471f69"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2022-12.zip",
+"sha256": "e3846fe1948acd4b8d81ed3bc360f2d23b8f6376589fc5b74e8ab592e3e2ed23"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-01.zip",
+"sha256": "87a389ee816413d626047b7b04e751488ac6a49352ddfb7dbe290612a7afe335"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-02.zip",
+"sha256": "9410ac19dea72d6071f0d438d105e72cca1b0da8225964fab14bb31e3733eded"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-03.zip",
+"sha256": "8996e40cbb9a20dfc4db67797bd7a520d6720c5579e7fb570744cff9caae377d"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-04.zip",
+"sha256": "d9dc6b23f8925c0670bfd11147bdc2ebceb8b51ca4bbedcc0154a5d6fb139ebb"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-05.zip",
+"sha256": "58816a514fd5690358d9d3d4bd8cfed2e431e462d43ee41ed8cb121197577c4d"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-06.zip",
+"sha256": "ec8f5f33717e5853303a66fa07e4676ae6aaf82e43af5eccf5313b6d3749bd96"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-07.zip",
+"sha256": "f3c651652f8c668b0580ad8c8da90a016effcdb9bc4a0dafbee3c937c7ebd1bd"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-08.zip",
+"sha256": "3f7d5c751ae2fbda52f01417571812f7c738d809fc8f5d244f65ebeabc7e5f74"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-09.zip",
+"sha256": "8e154891c38d2ef715e114f657ca11a679e1aaaac47864d9e4f55c8a7d79d253"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-10.zip",
+"sha256": "8706d77b5f6d74e1c79743cb2f42d3335da84304c15f53afc5c43d3ae25b1794"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-11.zip",
+"sha256": "ebb98c823c2fe994ef70617ae0ffccac1707401d5d88cec8821784db122213ce"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2023-12.zip",
+"sha256": "a5cc03d74bb71b1bd37ccf4bff0655cfe73fa659de5dd9f6ff4aec910e45a1c5"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-01.zip",
+"sha256": "9a5a09672654578a9b7bd57c1aed6f8334d85d401d82ffc49af3e4e89be994bc"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-02.zip",
+"sha256": "f8c7f18638faaaaffd85dec150f7cf5bce5208a6ebcd1bd7039f4ea5aba1b405"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-03.zip",
+"sha256": "56d59f553b290b51027ff328840ddbf29194c5812a4bbad0e3f1c1197d23ec56"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-04.zip",
+"sha256": "3bf25d8d7a9e1b2c275591b6c382ea8e58e9e1f5ead9c17a0798c147379ddf34"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-05.zip",
+"sha256": "871ba64ef48999e0418b14cea8d09e76cf28c7a500f147c8a96c8f1b3ec61fc7"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-06.zip",
+"sha256": "aa4ae75f0076a4304f6e205b9265d3e49e4786a68766df335cee04ac4ee6f5a2"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-07.zip",
+"sha256": "9ac610aad47f724d3f072131947cc5763314bbcef7097f9b42e6c42eca642b72"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-08.zip",
+"sha256": "401fed5ddb302ab40cc41cecf787399dec819b5a1a4bfe63db3357656cf12a77"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-09.zip",
+"sha256": "10b08b4598c0ab1c681136ad49361fea6a8158b209092cb4b7b7b44d1429b6b0"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-10.zip",
+"sha256": "22fed27249a4158ff0af05a90994634270fe209bce9d2e133996a3394a8b0512"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-11.zip",
+"sha256": "a6ae079789a52cd7d1099f5bc0cfd5e1f2eda3a4fd1facb5587351d6904e037d"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2024-12.zip",
+"sha256": "09fe8bf19026dd9239c448416c52a04d51e2611be94a20d704809b14d756e5fe"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-01.zip",
+"sha256": "dfa32eb1c9b59714fd1e03f05ca55560c721987aad68df85048e29e68c815879"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-02.zip",
+"sha256": "1e23800076f467fee2e6b9c10c88238db7a3b2a8a737de2bed41dde19a527ec7"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-03.zip",
+"sha256": "da0333ae9d60e66a3c07836ae5e4885533c079de6919f7391db14548ccf19e9c"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-04.zip",
+"sha256": "6f31fd79a23616e4bbdfb26de99d5b465fb9a572e1a5389b184b5908a82a2fcb"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-05.zip",
+"sha256": "8d3137b407624f67af5891e518f2dda2b0c7593588f34e27e648bd3647a0ff32"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-06.zip",
+"sha256": "fff9c885477eb55e5cb48002c759114f7056b589dc82dce162c9fc9dd4a78629"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-07.zip",
+"sha256": "8702150039b1e62d685d96854370b8a9779767eaad2b1d4ca0ba75b30d03fa11"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-08.zip",
+"sha256": "b7563fa762a6d65f795daa611fc346b52921994dd13830306ebad6cd27c0ed11"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-09.zip",
+"sha256": "22f4bfa3b692809a914f0dc2c28ebf68f99124c764a336234647f9368cc997b8"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-10.zip",
+"sha256": "f251f4dcc7ca6882ae15338cb7b11110190064a5b0cb3219c67f42ccf0cc63a7"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-11.zip",
+"sha256": "4172c2bbfaaff03f9bb17ecab1653aa6dbf5e85b20523eceb8e3a04c434e81a0"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2025-12.zip",
+"sha256": "bf334c5c1e1f7a0e19bc42bb8d8532386dd6d6e44b6a88d5a9144611f8179f2e"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-01.zip",
+"sha256": "0b16f73d1a87428ff04605471c3827bb6e699c70ddbd50a1f2eb41a29afcddf5"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-02.zip",
+"sha256": "848d59f03353e79527ec0cfffee6dcec4d260b57f8450db11c8ad2d1d278fe96"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-03.zip",
+"sha256": "ebb28dde76a1fcf0d77fb3bcda93cda7acef8033fb998e7793eca6920478c526"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-04.zip",
+"sha256": "aeeb84fb7d0590f78d256d78e31303edd18424e0f608cbe0ccd99a7ee97993ec"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-05.zip",
+"sha256": "beaf91ae4d2904d329cdc75fecfec3cb533761357102f4b34941de253bfbfcbe"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-06.zip",
+"sha256": "d714e22f83e45ddd461d8e4ba771a1dc62078a477017fc33a390d6321685f78b"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-07.zip",
+"sha256": "cc139f0cbb6cb2d4975359e5bcf69f98e2f733c13a51fd802ee85485a7113aca"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-08.zip",
+"sha256": "fd88a913481aeb17b0d07f46a810b850ed69fd7083ab2d323e3f782c11d703b0"
+},
+{
+"file": "monthly/fundingRate/CELRUSDT/CELRUSDT-fundingRate-2026-09.zip",
+"sha256": "e4db575b95998a7ecf3d3a7a87a297db6ee652ea352d6b9e8707f3f9713fdb27"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2021-08.zip",
+"sha256": "a41baeaf671a14087e9c1944f91c1cc9df20e016a6eeeeef01f62258217f3ab9"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2021-09.zip",
+"sha256": "3cf6ab5f4498c59fa1fcedeac11f79cfbb81019ef8bec43307cf0c1b3cb4adc4"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2021-10.zip",
+"sha256": "4ee52ad6c76dfd464b06134980be44f1970c93694d7d90d3cf39268cf93cd8e4"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2021-11.zip",
+"sha256": "26b84fbd572d7f7d22ff192ee69df0fb42213faad08b2b0e4842a89a505a4da2"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2021-12.zip",
+"sha256": "03e03494d17e963df855100a3c034f1f3e01dcd1c155008c0df5bdc7b3682390"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-01.zip",
+"sha256": "076711060761a70f501cc816e80656a8ae50e4446cc5f9b08536a8d231151e08"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-02.zip",
+"sha256": "91c02c728c8517a80f4cb4410e332d35fc84bc0f04b02b8041c632cb50ad78f5"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-03.zip",
+"sha256": "33d49c300a189cdfdc71526153f6f6aee52c73b2a38d70316ccc45192615564c"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-04.zip",
+"sha256": "182f07a73ab386aed0cf3a6301e4b76b4c26ae316dccb73ad99150fe7cace661"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-05.zip",
+"sha256": "e455c02aef189eac5c8ae6898a86e3b3ef251e91ccf041eabb706ac562b89825"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-06.zip",
+"sha256": "109e2173d6f1b0257c531b076df8ea88e59a9a26a6729cd1744bac2d4cf54a0c"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-07.zip",
+"sha256": "e5237736f0e6ffe5b3f15582ac8de9f13973e7008094481e697ce1853fc39e39"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-08.zip",
+"sha256": "3186eff34482982d8d220d3d1b6f9571168d712c47cb4da7f7986f0b95213fd9"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-09.zip",
+"sha256": "471642a6355955070f2b94f0582311ba47bf9217d6e083ccb0ddc34c95e0ab5a"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-10.zip",
+"sha256": "f3fdb8a0df757f0091dc6877d4c2dd1bb48858051c8528fbc4de36c84a227a06"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-11.zip",
+"sha256": "b1339562c3b7cc6f2a9b89ffb50748589d166d39e9c8480022362f7efabb4d38"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2022-12.zip",
+"sha256": "2156d2faeea19b43a870296b6a2afb2d299ec7a3d13a99827ca7303809646326"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-01.zip",
+"sha256": "4d2c181f57b385a16ff6aa36c2e16bef53764257fe024a24e93ca8e04ea5626a"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-02.zip",
+"sha256": "0118b6f3d4aba221cf847ecb075468735b1b92a2a086bf52d3ed6fbc03b463fd"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-03.zip",
+"sha256": "40070555397fa5855e705f9257ce50a53015ddf97c29d2bdb2ebe54c165c5b96"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-04.zip",
+"sha256": "36802c11aa9cf1a32173f334cc89d89b229c331f0ee1e750878462504562be10"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-05.zip",
+"sha256": "05da6eaa59d976d41c876d27c29f420d1dc3f33ba22244fe4875a545b69b2cce"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-06.zip",
+"sha256": "2468a6797b78c197924a2716196c7f913237bda33d6e13ef5f401faf03440a69"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-07.zip",
+"sha256": "6e7d4e99d315a66d2a8ef0ea614f0876819d0b3c72ad995318d3a919163738e2"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-08.zip",
+"sha256": "3918cec48fcab189ec4e25a0e9f3410a92b550f5d3d1d1aeacb48f38c6f56b48"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-09.zip",
+"sha256": "a4b3cca9f474b511d2ccf0f30ac2c1187f3258f3931bc9e0d0e73a55532475a3"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-10.zip",
+"sha256": "e71ec3b739b8d29364fc4671f7c9969f018df9b29f59e046db5fc46f23da5c00"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-11.zip",
+"sha256": "f66ca5e833153883bbc4167e92fc597d98a4c5d8524505b4846ec0ec3b42b871"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2023-12.zip",
+"sha256": "3ecc655fdcdddd989fae0ec726c11c994cb1b0723b93c1b7cf8549692289b5a3"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-01.zip",
+"sha256": "a3cb2bea1a1ae3c6c33f981a88b43c391f1223b71d77bc44d24a6a450c8e1720"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-02.zip",
+"sha256": "caa371a580c953fa87ceeb125f89bb35b5b7e9f91ca68458be449ef86d7313b1"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-03.zip",
+"sha256": "af0c7541504d215ba60bf532997843456c0b65644cac42cf4f219b4498566516"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-04.zip",
+"sha256": "73374327a5bb9552e9e977b3c90bb1b3fc63b4252ad6672f780f0d04b35a2eee"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-05.zip",
+"sha256": "3c879cb592a0d1deb7abc67a7c7875d121bfcd89b8b313916089ca05990e6234"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-06.zip",
+"sha256": "d224f539858325530505aac1bd85604723afa12eb24339203070e8b1064ce32f"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-07.zip",
+"sha256": "d5665622b94c9d5c03bcdde57aed8258d8d3a676fc3e1c48e6e18f0d4f5186e8"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-08.zip",
+"sha256": "6ada0e1710093985604b6373d4fdb78981c854720f492941e1b10d50ad3e1c64"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-09.zip",
+"sha256": "4ba348e11f5c622ba32ccaf5fff4a7469577534cc89b5a2dc820a430a6c7ae4c"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-10.zip",
+"sha256": "be1d1666142bdcb5112b245b81e2686dba1dcb4a6f67eb3b2b404a40e1da1441"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-11.zip",
+"sha256": "908f9b0822b473a83483d27b9213c94b34ab815ec9393695634f7eea8582f3b7"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2024-12.zip",
+"sha256": "dfee91adc8cae91371c96b30c50ab04497fde92c671458a844df34d71ec64d3f"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-01.zip",
+"sha256": "86265eda29cd718f964f5f191aaf0a448594473ba93ff46854e40829c14d0f20"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-02.zip",
+"sha256": "055fb7f8a3fa26a08e4315034d75d99d2089a44373aaf1869c75732de0339c6a"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-03.zip",
+"sha256": "bc27c4f47c7087950ae9184ac928ad65edc09a4701025f99e6914852459c04a2"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-04.zip",
+"sha256": "409f9708d6ff5586c723f71ef9d174b12f71fca5073be06c246e6a3bf30c01f7"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-05.zip",
+"sha256": "980780ca52ec9f1198761964fa973d4fdd2e606dfe6435250ec5ba6867e115db"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-06.zip",
+"sha256": "d408d92f9c14ce7185f638e2391405b532521cf2463f906fd8a7a1fbf151446c"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-07.zip",
+"sha256": "6244b94154d444fcddd97e58cde24c5d8aef6707c61ce7d129422bfaa499121d"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-08.zip",
+"sha256": "7883c9f840b266d247d8f30faa68d6160ca421571f52875a49ad1a9f5ea6cb03"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-09.zip",
+"sha256": "70a1cb1bfc9a649c6ef419f7ed1bdab4b5a2859c91ad290d45ff37b90a02e905"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-10.zip",
+"sha256": "aa02a1b0079f80a9971e25e2b2bea16a47844e216ff093f9c749ac9077f58f97"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-11.zip",
+"sha256": "861573b576ac214bbb75dc3daccff81ac59428a2ae7cee42908a2001b418a12c"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2025-12.zip",
+"sha256": "e112246d133a756469c89127a655129328b4f2ded8ddd066426496289412b3f6"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-01.zip",
+"sha256": "c190a5a305f2eb60ff5d42d430370e3a59dca252ddcd369ca37824036156faa8"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-02.zip",
+"sha256": "0329ff5c81dcbc5018ef0b373e8c5de54e4b65c80d6859749a2c3f989e39e806"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-03.zip",
+"sha256": "dfcfcf1c70e4d96c438b8af19b2815b53da39be88882798832176a22d7bddc8e"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-04.zip",
+"sha256": "da914f6fca05a6ebbc4593a129a1de9d4b504a85d699d415a03c860fd23ca892"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-05.zip",
+"sha256": "c941a3d8fc4ee452285ed51c5fa9ce3ea463e1545912a8a61992f20695c3d67a"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-06.zip",
+"sha256": "d33ccbb6b5e59bbea7776ca6f48196aa7d5aebf001bfaf70af328e4042fb8083"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-07.zip",
+"sha256": "5482812fa34f3a13854fa5ac386a03567a19f2e1699873dd6bc10c9ae0108735"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-08.zip",
+"sha256": "e503fcbbf8511cc68cd73ece20ab1f4d9c748eaed2153b12bef371b47c31599a"
+},
+{
+"file": "monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2026-09.zip",
+"sha256": "d400737c260101fcbdf2fa789cfbbc9860113af3ce258b011c50eb3ac82b6fbd"
+},
+{
+"file": "daily/klines/BCHUSDT/1m/BCHUSDT-1m-2026-10-01.zip",
+"sha256": "93ea401ec4b66e35157d68132722243c1c5e048f0c04afc103354e48179d541e"
+},
+{
+"file": "daily/klines/BCHUSDT/1m/BCHUSDT-1m-2026-10-02.zip",
+"sha256": "e4a1accf9c4366554acc4ac0fa23d4188b0d1976f43c2c3d6145c9aaae3b8bab"
+},
+{
+"file": "daily/klines/BCHUSDT/1m/BCHUSDT-1m-2026-10-03.zip",
+"sha256": "45c74471a01835990653829c9f9400106b1beb9e2285742751f3d828a553a559"
+},
+{
+"file": "daily/klines/BCHUSDT/1m/BCHUSDT-1m-2026-10-04.zip",
+"sha256": "82e6c81e42215e0d47e72c1ccdd8a5b3da8e94e70ca15b5c0e39e111efa6ab3a"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2021-10.zip",
+"sha256": "2788149c391120c8958e12f19933a017e5ef421e01dc18841cb504c51219cc06"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2021-11.zip",
+"sha256": "a255c80f9313247b807f545ef766f8be55e4f9f28eb32d1dd0c5c7a6adfb9395"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2021-12.zip",
+"sha256": "ec23ca48b9cc16ca1b281ddc36611d9dca8b337d1988be164192da88d99644f5"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-01.zip",
+"sha256": "cf958a7f683561da4d4f58c9503bcac871fc1b3f4cbb2a89eebff9eb264cc60e"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-02.zip",
+"sha256": "5df130226c391ca6c567dc44bb3200993e835baba7c3b9fd5f0c4564f12e7389"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-03.zip",
+"sha256": "ed04a3f3e37829130962c560c97b20157e4dfbe1d661bec9331c113f1fb63377"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-04.zip",
+"sha256": "f63a64c59098986487e0a3d3a0ce634154bfa15c8e60e077d34c3a8b062fe458"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-05.zip",
+"sha256": "5a119939c508b53fbedcc704206b3e83488f5402d2b58a8fdd9bef6a60e45202"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-06.zip",
+"sha256": "72f523550e661e4cc5b85a8bb9857c1af8c291c67456355da2905bce56437c22"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-07.zip",
+"sha256": "7dd30bd1dcced86a6f926b3b344e43a31ff94c91ddd9155b2694eb3a4609968f"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-08.zip",
+"sha256": "22a210fb19be108d879888900fff95faf7a1d1fabca86335c92bcd36f2419ccc"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-09.zip",
+"sha256": "36114df2e93ed3f92a087d025f00b9f974b760d09854cc658ef4c18f705441dd"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-10.zip",
+"sha256": "8d541bdee965014958a491dbeb6d08f4cff4ab92089126f37f598aeedadf4622"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-11.zip",
+"sha256": "ba44002f1ca98679510b2400fe6c15eac9ae2cdcdaa8b50de9e020acaa4e4b04"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2022-12.zip",
+"sha256": "03438f5666f8bc397791c608b2d40f7f31d0b6eb91d57ac4ad7881d70dc5a3a4"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-01.zip",
+"sha256": "e3cd931a6340aefae356e7b33d7bcb6e88538b41101b6ccd98ba03c36a2df962"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-02.zip",
+"sha256": "4366a97444b5948e64606028516a1fa9f2134ed78e50e7a1ef7501b2f98733da"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-03.zip",
+"sha256": "dd606e5f263136257588bb8c7eebb1c7d3c4703474a072e6b9b7a92739b280f1"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-04.zip",
+"sha256": "10b61e0fcbde5ebf4ee09354198fc19b9cdf1ea5c71a21b1498140b53a87a996"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-05.zip",
+"sha256": "2fbefdc37688d5b9faaa5557f507885095a731b1ce5b4c07fb9681afc601caae"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-06.zip",
+"sha256": "10df7f67648c46b730e4b30667f72794a17af561c6e27f71c5c8646938e0cf46"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-07.zip",
+"sha256": "b7de38d0e9ec1a606c39a499d5ea681e80edd515737fe3adb74e41e9e5d2ae5d"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-08.zip",
+"sha256": "9862362bbf020930adbd2a5246ab905832aefa0335685c4c150b659a2ec2d713"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-09.zip",
+"sha256": "2d52f5b522246925b7b00918a78463977d1860c68c0299d5db7eddd7d02484ee"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-10.zip",
+"sha256": "ca49c65c20e7c5a23a7f5895876ffc907d574798bd06ddfab6d4f7fc5112a49a"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-11.zip",
+"sha256": "0ddb8e18bfc2508e8d44ac3ae9aaa6e16edffb18c7cc3746f2618d2ebc2eac08"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2023-12.zip",
+"sha256": "f5dbea0d90c7c175bc56ba9d37a2794cf9a7102f87d6aa2d50bc91b7a2c5d900"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-01.zip",
+"sha256": "1672056487bb0a395b4e49edf366532d2440703c01d79e76ce14f180138160d5"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-02.zip",
+"sha256": "0639a6fcffab6efce2935e058d5873230f41013bdaf0a42c43095592cfb4cf49"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-03.zip",
+"sha256": "e5063600ef3e5752da0d42f4c799f71b4fab0a26402025e2c4b53be985eff1a5"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-04.zip",
+"sha256": "01dab38e573e454cc769bcd734918b123789cbed4150bbf1449564c32a018eb0"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-05.zip",
+"sha256": "d3f5e1ad115457ef8a7adab650762e6903043f5ee8ef5e628adc4924b99295a8"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-06.zip",
+"sha256": "9372fc329610b822774e1c00c006779254db773f3c77e1944b4ea6af455a5551"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-07.zip",
+"sha256": "a41f62ca152249d374c042a343dec9b41edb0c673f309e1bc371bb73eae32384"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-08.zip",
+"sha256": "8e80ee2b85c1fcf5ad653bdbd643f8dfc98f7d471a8de682664e7ddc39a50346"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-09.zip",
+"sha256": "d8460f06b0a159975ce94f29ed3b52249a087a820ed1f99716cd7ccdd5544b3e"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-10.zip",
+"sha256": "02f1faeb203f48d7e5d090b323147854de39d6f08db55f714608d7e044f7d6ef"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-11.zip",
+"sha256": "bae19270e37c0b2c9fe434a3241601b1a918558ac4695f0307466e03b8bf4193"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2024-12.zip",
+"sha256": "14bedc63fc1681175c07c7384abfbbc2d6a762f18a53ca1eae1a66ba3a05ea01"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-01.zip",
+"sha256": "1ae200badebfa97d82362744c32c7f1bdca722fa05f40b18972f3d70b4565257"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-02.zip",
+"sha256": "b29150f3e0fdb376cf571e225d8e58697f5bffbc72f043928e0584087a3bed26"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-03.zip",
+"sha256": "1b6e383ac4483b4f08a9afbb5d4071cca62409de2a03147eb71d6fffd7aa5f17"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-04.zip",
+"sha256": "b1ebf99d1bdbc174267a3171f7ac804d6e90edb3fd3e761501aaa90bbbd0760f"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-05.zip",
+"sha256": "f35507b1515132a5a945697bde5890e9afbf9968c1ec7c6c0ddfa6d00a2e41d6"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-06.zip",
+"sha256": "40ca1ed6f44666cd788296c5b4adde8746bc9e5d34609607e09879ff53f8d91d"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-07.zip",
+"sha256": "e740fa1cdb0f2b41a9ac3987d1f9fb027887c959939b08ca402e396d8bb3909d"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-08.zip",
+"sha256": "96548a1d2a79a14b7c8d4992cf247a363181a981c043078aed58f3f1277f1b8f"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-09.zip",
+"sha256": "3e897d2c6ea26b07a95493144b2ffd9ecdc8d6b9a4c97f66269ca044c39751b7"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-10.zip",
+"sha256": "6c2d85a99d57951a971dcb59c6dd9e0a18c682abca2e68d7e7dbaefe24d06ecd"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-11.zip",
+"sha256": "49d9318a14581930bb07ec778b7db151f5bb9b4d11ec3c718158d035eac49494"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2025-12.zip",
+"sha256": "e2ea986e4b19c2c7c33f7b80fa60b603493b1acdcac3024c5f1813ec1b216762"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-01.zip",
+"sha256": "4caf80570a6731de2658832400d88cbc95a37f95f069cf785167ced0665d5b3b"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-02.zip",
+"sha256": "52b2d25667daf76137549e9ff869819529920e8bccc7f30695a38caaedcb0743"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-03.zip",
+"sha256": "4e46c779871ad9d9c2fc426045c711ab3b193d75d62be1434ff1dae58881d9d1"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-04.zip",
+"sha256": "f164a6e3793148ba4f757d4686bae9a88b01922db871eecfb9c714914e9d0889"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-05.zip",
+"sha256": "1b28b065205295c9e99db427295c55dd1f36859380c99fffeea2f9bc264ffe14"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-06.zip",
+"sha256": "757649d4bc022a89c4d67d7c2004981132126a2e62973cf01744bf55e6423190"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-07.zip",
+"sha256": "0f0a2c9132e7b9147d54829f94dbaf46c5c38bcac8546c857c88080b9d0e2121"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-08.zip",
+"sha256": "0b59eb552977db2fc0b5fcd8696ec8425fcac7d45fe8649df0e496ed5da5ff78"
+},
+{
+"file": "monthly/fundingRate/BCHUSDT/BCHUSDT-fundingRate-2026-09.zip",
+"sha256": "4557b97addfacf95304da0cbfda3250c33f846c5146332b600d469cdb3c63ce7"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2021-08.zip",
+"sha256": "3bfd0a07f5e229597185cb4ed90539706515f82c1213e1941375c98e238f910b"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2021-09.zip",
+"sha256": "8dc6a5fce98e8fbdd2dadd92026174202464bb80d23c024aa039fbfbaf344fbc"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2021-10.zip",
+"sha256": "384851a56e5307e5a7f245edb6e0e983c34415882001aa0f9be57c15239b2b03"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2021-11.zip",
+"sha256": "759af240a94b885d054cc3416c5fd9db39794dbf8e271a4e3f150910d2f6e4e0"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2021-12.zip",
+"sha256": "28995adcca9fc6478c45052b495a02f50581656c61723cf8610bebac953842f6"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-01.zip",
+"sha256": "aa0d382cf868cb4aee1818417fa147ade761b6ef0d761d712c218d27969bc578"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-02.zip",
+"sha256": "7b7a2552eb3f11aabb69f591272ef80200934ab3fcb18c4a00650a54c3b4a990"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-03.zip",
+"sha256": "3333a708fb83b90407b2ea5366f675412bc70c87897812361841eecc73d8f790"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-04.zip",
+"sha256": "029f40e3642176d25428d327e46137076220b62316e62e235e0f0a8d118d0e60"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-05.zip",
+"sha256": "66747b30d7d51ff62fb8bdc736ebc28fc06199e258801592951a9f6ab9ba4f43"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-06.zip",
+"sha256": "ec7e6f46422a81e32e404abd2469240d1ecea0bf8ab99633b179c43741b785f4"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-07.zip",
+"sha256": "0b83efdb784b5cf699a0eea540d218a59d805cb4cdc1560c7e756aee5b239969"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-08.zip",
+"sha256": "a3ad34c96c1658329eb890b81d6a6bba7cf0e0c8eb1196a8a9f84d067cb03794"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-09.zip",
+"sha256": "41bae0df02d377be32d4408bbe421c2fe7eec25dde27d681bfd63ce42b09e522"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-10.zip",
+"sha256": "a910c9f75e962b6e2734e1593206e6688ec8f69d91500d59f58025a2ae2ebbde"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-11.zip",
+"sha256": "0842a09593ac87065f5c4caf45c74cbf32609492f0adfae34f08b84daf4ab7f6"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2022-12.zip",
+"sha256": "65a1f394db29baa90ef04f759f05e201b2c5de33c08279ab3cd329c5fc00f8d8"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-01.zip",
+"sha256": "fc7c52bdcd208ae8b53631f35128a6949ec3b422fcaefed5201e2e1f24da4102"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-02.zip",
+"sha256": "9049928422fd314c9d647ea20035a898293b4835a71fa4ba2eca6ff0e64e2008"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-03.zip",
+"sha256": "28f94bba7a634a7993b03b397d629e56a6d3a06fcc60e73137b75b6a96d280a4"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-04.zip",
+"sha256": "f7527b73341b7e016fb494a3e182daa2aadde90ad171f16ed97d16fec819cf4a"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-05.zip",
+"sha256": "026679867cdefed45ee63e3e9ff6aca027e55a06292d865ebaee9b130f1bf363"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-06.zip",
+"sha256": "a07cd31d8ff03122f34d47f2be1e13b879ec0138442a2a042c462fbe37d673e9"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-07.zip",
+"sha256": "ad9ffe0ad9d172c10526a597d759e6390ee31982286a0b808cebdd816d728863"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-08.zip",
+"sha256": "74ddcea268adebf546035cc2a61fff4020eb8a9876f890333d9d9768019fa39a"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-09.zip",
+"sha256": "1bbed02afc251ffc8256416f1acb1ac0845a85b99e67187dfdcbb8d5154b708a"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-10.zip",
+"sha256": "48bdd48aab72b950853ae2c04fbfeed73441d1eeea2febc77647cb871e0d5199"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-11.zip",
+"sha256": "0e203f61b317049cfc912c1b2d43586e90ac176d2ca423e6b28407972289aba4"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2023-12.zip",
+"sha256": "5c25854f8434be94e7ed671c2f419d19a0e7aaf7617808e0ebfe52009d0dd60e"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-01.zip",
+"sha256": "6355b6aa2017d1473a1715fc9ebc9ed9e38a7b2f1a9ff880e568e79d33e817e1"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-02.zip",
+"sha256": "6ac2206f5f28c18a1db3aba010b5773f33773fb5dd27f75e35d2de1ce2f402e5"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-03.zip",
+"sha256": "962abd7f28a534634030ba118e22ac5e4545505a8c28fd08338855af96cd9131"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-04.zip",
+"sha256": "5cb90a1260c96e0cb4113e181fa0c78881a050acfbac7a9f3143fb55aea9fd4c"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-05.zip",
+"sha256": "ebae77ad285e2474f80ab605bcd39aec1437eaf0979881f79089b52871d1d1ed"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-06.zip",
+"sha256": "e3d03355fbc104a6d57795fbc6416feba5d41bbd626266177077405706892feb"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-07.zip",
+"sha256": "64142d5daaecebd2639b0d91c4800521c4edbccfbfbedba879db4176ff8a0aad"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-08.zip",
+"sha256": "204fd163a335b2c28a87a165137ec1aee071e8816f15a57dc0b5c0c4caa043e8"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-09.zip",
+"sha256": "f19d112bf09e572648681b78cf5184dbe0a8ebb0415212f08b12ade306308404"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-10.zip",
+"sha256": "81f2d3a82b7275b9a36031d1a3725423b8f5a0bdc6e3664b1c3a0ce494dd9a7f"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-11.zip",
+"sha256": "58c5f96c3f40b3560026967eaefbbdcee9d56a80a1d9c6fec03a5e278677b365"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2024-12.zip",
+"sha256": "e01dfc159a09cd83d2b37322538badee1c3db29a9dd56a7a6790383ca1adb1b3"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-01.zip",
+"sha256": "dc63cbdadadf37928f73b1c40063023cf1f436261a4b6c5d86cf3a9fffc949e5"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-02.zip",
+"sha256": "9291ef69ab5f7f622e847582ec1b03e4a2cfd9862c371128b230436085a4d553"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-03.zip",
+"sha256": "b3f1904c4b768eadfe11c27110cb66d8a1608d8627ce3b86c1fec30ab6c146ec"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-04.zip",
+"sha256": "e0246bcd9564308a45a0713249fa364bd5ca5d6da510fca420657ec187305f54"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-05.zip",
+"sha256": "c444e2d0eaaceaa53cc6f625ea2f37ee442ddbad5bd760da59154ecdb76dcd0d"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-06.zip",
+"sha256": "5ec47f78ac233014e25d320ddffd99d563b893930a78ae6368ecc66036a867fd"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-07.zip",
+"sha256": "00c6046d2c9f8a2d3c1752dba339923acffbbe2b7bf97d0229abca03cb861a70"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-08.zip",
+"sha256": "09ad1295e6003b7c26f1e2190b1ffe1993a8bc9eb141d37e0d566acea8873d1c"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-09.zip",
+"sha256": "5511e5b94fc314edec70ff59877533cfc2b9a683c1559169d273f0d02ca1f1bd"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-10.zip",
+"sha256": "d76be31488fb65d5e0aaeeae97e8940df9d1c452f81fae9d4e95802f458f0793"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-11.zip",
+"sha256": "42e946ef5fc7b728306ececcf8bb1ea404627653cb6a3d3130254da7dcb59045"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2025-12.zip",
+"sha256": "89338f961ad5262b7e9cb85bf98606f59ea1e50a0ff710d328e46590beea35c3"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-01.zip",
+"sha256": "827773da66a8d16a66ad813ec120b441edd4c6e7d1b1a6ebe1db0bc3f74e924f"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-02.zip",
+"sha256": "e39ec240affe2e0c882ea9704ee6ebf72650ddab212145895b90c27a5f1844e0"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-03.zip",
+"sha256": "da3f441702effba0156f63288646deebf4ea93a556bc0b94ca8934c999387f50"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-04.zip",
+"sha256": "6521259167c41d822eb97577d120e4d0ede3e60143e880ed7485418ce78264e8"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-05.zip",
+"sha256": "2e87053a4e7611a3960416f96e034a0565bc4845047270e08251e8873d3a91ee"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-06.zip",
+"sha256": "fa9a476643ec170d8fd9009bc8c4a2942cb810239448aee07dcb19c7fba03525"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-07.zip",
+"sha256": "1e9ea53845f883698bb97d29ee345d96d3806fa963df45df0c75b918adc222e9"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-08.zip",
+"sha256": "3b5d4ccea2b3c4a0cac92fca426c4edc55d1e8c225145b044e86f1ebc424e7cc"
+},
+{
+"file": "monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2026-09.zip",
+"sha256": "3a060bdaef33706a41f58cb6bf8d14ef3a58ed3752d017aa1dd3f647595178d2"
+},
+{
+"file": "daily/klines/UNIUSDT/1m/UNIUSDT-1m-2026-10-01.zip",
+"sha256": "f9709bfccebf313eee418acfeced6d9ef76a09ec02d9fe5e90fa60ccdfd191b3"
+},
+{
+"file": "daily/klines/UNIUSDT/1m/UNIUSDT-1m-2026-10-02.zip",
+"sha256": "d2e936e69dc0a4c2638dff3e4fd18d3dfa28893cf1657542687bf1126046c2be"
+},
+{
+"file": "daily/klines/UNIUSDT/1m/UNIUSDT-1m-2026-10-03.zip",
+"sha256": "bfd315a6a66b104fbb704d481ae7be451e7c60afcc9e779a82bb723a03090234"
+},
+{
+"file": "daily/klines/UNIUSDT/1m/UNIUSDT-1m-2026-10-04.zip",
+"sha256": "b42630b9f6bd3509c3bee080d341ee6578f7009e2baa99457a07b4723bf38aa3"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2021-10.zip",
+"sha256": "b6b83f30c1eade3ce8435dabe2943589800fa61f7fb83b1dd7a80d86ad960d46"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2021-11.zip",
+"sha256": "82497e7d88f122456f03662bcef7eb2f31ce98d9d7af1601475e126982f05e15"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2021-12.zip",
+"sha256": "00cde4c8840a6bcccba0e96984220ede6cf850c7f5fb4045802aace94759ae62"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-01.zip",
+"sha256": "1062db4dfb65bab91cb4189d849f2164bc1e89e4f536e451d2a0ad78ffbf142c"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-02.zip",
+"sha256": "d5dbdbda2b43e7a183ee601a4002df95d9103cdb5de57fee13801bf3b8f57efb"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-03.zip",
+"sha256": "8e5a8dbafd0a78a74e1e4f20edc19110c2d27e1c77840e309f918f9946e52ed2"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-04.zip",
+"sha256": "46421c82e081cfa5d201970896ff5c57c8a095175c94ef50f18ff3a32dcfc0bc"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-05.zip",
+"sha256": "340f2e97c33a62a83fcc1600f3eebdacd6e47214d090f5606ee845374d9dcc9b"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-06.zip",
+"sha256": "afe9edd03dcd35c555fa21b84ca69343338c4b708e7f0a3dba54256fd604141f"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-07.zip",
+"sha256": "f4cf6c579a1d45f9b0b806f69d202d69ff7c8ef4414062a979df3338163009e5"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-08.zip",
+"sha256": "05aa8b622907cd314d4764ebf61689bc54b0027906e1ef8d74cbff44197e2a3e"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-09.zip",
+"sha256": "6f88e0c8b243d371740f418e91ab1dab933e8e7920ae32260f322e7b9dca167c"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-10.zip",
+"sha256": "3a9c3f162b955c69b499cce67ae6b5b53e894e0986df0939317fb67d2cb957a6"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-11.zip",
+"sha256": "64cd99d28f094287e7a0ad7dec7595892bbd6fe38e23b5c01dbcb5ade2bffa4b"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2022-12.zip",
+"sha256": "bfb145c43bcd0774135454c1b67ce4f8a159cdbae43ab6b1551c31f26a1dcf61"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-01.zip",
+"sha256": "790070fc9cff2092e0c27992d9d1d2483a2f22edaa1b9b905aaa37646cbd73e4"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-02.zip",
+"sha256": "6d805880566cb854f8eaaf61ec0c8b17cbdff548cb80c28fc8ad3fbe2ea9ab55"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-03.zip",
+"sha256": "0c8504c4ef4008c5654688314b9ab9a1c44554069970e994310bd0246a82e819"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-04.zip",
+"sha256": "9c508747c75f7920f051f13c0d0bf69e3c941553f731fcf89318324da4a82c96"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-05.zip",
+"sha256": "6e90d9b552275286758af336d1ffa7b7dfe813c2ebd405dd67c916e40ca07b76"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-06.zip",
+"sha256": "13a8f25a1c69ded315e8008152595be8314e045176177139ac59824f2cc11abb"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-07.zip",
+"sha256": "c27ab1619a51b8bc9000668197e71062790a00abaaac13986ceecce13c436651"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-08.zip",
+"sha256": "2c979e75ce037a1730eaf69184d4e18292fcf6a2dbb65c403c746ee82bedcbc5"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-09.zip",
+"sha256": "e31335b594ef7b5263470b547d2cabc0f2d5f79467243b4a8a78c364616ceba9"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-10.zip",
+"sha256": "1909257114425d06cb56fc18a70a397472b299d37e214394287e327eeffdcaa7"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-11.zip",
+"sha256": "26c54954e243430213eaaaea2236880c0fd06f037146c1f963f5abe115b35f84"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2023-12.zip",
+"sha256": "3f4370a7039f60392e7f62f485b7f50b0a6e28cc4f5d410bf926030a6fa34716"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-01.zip",
+"sha256": "dac4b85015146c9e7dbd522b67ecc6687c0ac4faba9ba7b08b9292b646303dba"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-02.zip",
+"sha256": "84f5e27d33dc6c1c799aeb203240cc917a63a7746bce49928a6a6cfae0686ac8"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-03.zip",
+"sha256": "9e5b814eba8e10bb0b872a1168fd52bc20af1161b408157895135dcd9b84a889"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-04.zip",
+"sha256": "6e9dde5098c4a0487ea9c9e1faf3979d6507f8718313efcea58347e7b0cadb30"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-05.zip",
+"sha256": "32489fbb3e88ddc6ba9dabba1fc258a098e77c41022d983242545e45511fc5d6"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-06.zip",
+"sha256": "199ac1e0dfcefa15e38df633053df753e33c87c2823afade63ecdec827cd122f"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-07.zip",
+"sha256": "986115e7ee969c0a174dccd47d2e0b19aad56a44b7b1b7980dc41845f8f27f84"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-08.zip",
+"sha256": "ceb7dec6d5c172a39d2463ed99b84d57ea56d7af0ca083d992d15c7894f8090f"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-09.zip",
+"sha256": "bff8a5cd2f0e408d6ac27823892e246507f674bff2fe3536b47858949bea3c95"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-10.zip",
+"sha256": "a0d8d6a1b4a522c0100aef5e8b86fb57becb7a8d7d020053b312d2dc28cd8d84"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-11.zip",
+"sha256": "efdb53830c9f6a6d77aed5e9d970b3e506ea3a31d38549d359b97f5849eb5d9d"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2024-12.zip",
+"sha256": "92025a766300d012a3e9f998213d5fe19d839a805fe0e6ec03ab442abf0d7e5f"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-01.zip",
+"sha256": "40366cb97eaec36eb3755ad57062bd99669625ca5b268fb20c77fb03006eb9b3"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-02.zip",
+"sha256": "642519ce40a5709cda3201876a2cbbaa052127f124ff8117143340806cd647dc"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-03.zip",
+"sha256": "383f652ed8857ea8f8a0086dc421d6fdff89cfc82479f3eb6445309841556f2c"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-04.zip",
+"sha256": "999b6ef66cf7c7d79ace0146f6e6128aac2e4b6ac8ccb701d955a8ff67fda228"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-05.zip",
+"sha256": "e88dc6d47e8f09e6246992a769cad14d77bae2cb9d955937b68298584f85940c"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-06.zip",
+"sha256": "be172318978ca806710cc52c69df1a56794feac664605d3e2217671f4ab24041"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-07.zip",
+"sha256": "6e53331ecbd1957f63f0a5be4244420a47b0941ec6a6b3067e53063924fe9595"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-08.zip",
+"sha256": "6082c13dae2e2658715030d79e01de9f4a73434859c6276a77c429d1b3c6ebc9"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-09.zip",
+"sha256": "db7027f22735d079479bd56198a12d6915fb251da2cafe437b2dab97b6ec57ff"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-10.zip",
+"sha256": "550e10e85b42c8b4576354309af60bbcbe31a06d6ca2637f029aeabbcaea29ab"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-11.zip",
+"sha256": "5671625caec0e9078d8d8d5b8e0d58e4e37e98ebb359500484fff12ee0b0d113"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2025-12.zip",
+"sha256": "ea93f1a74e2b2acb150c0b1b531dc8ffe4c032780d33e347890948276f1f4c35"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-01.zip",
+"sha256": "9c2dad1bed804f35a1cdad2a066a50bb1840261e02b71bbcb59aa6ba68acbb05"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-02.zip",
+"sha256": "16ce4dc1114bf0b3be8b5e5cf1d98ded9560ac16b0fe24102d0e3791a43508a3"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-03.zip",
+"sha256": "bb19de7d48a0bd460f416a256091b8c1fb3e038b8dac75b59f4f42b84a29f5f0"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-04.zip",
+"sha256": "81c572d1f66d1b18eb242e0ac45a7746cdd1765d06b36386939c0b5518cc2068"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-05.zip",
+"sha256": "62775b3e966b15eaf8cf650cdd9115b230f0b2c875e0a8abb4f554dfa83ef430"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-06.zip",
+"sha256": "42377834d15470e84284f58bf59c2167329a7b705ee69a05cc1d691f0528df65"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-07.zip",
+"sha256": "534136d72d956d27dbdc4b1a93e3cb794f1e32af6ae6e99ed598211dc0668d04"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-08.zip",
+"sha256": "a7d78d156f2c10027fb74a609f2efbcfc9ff87566f7f6f3060f645e35c8b310c"
+},
+{
+"file": "monthly/fundingRate/UNIUSDT/UNIUSDT-fundingRate-2026-09.zip",
+"sha256": "ed27f6e67fa91b82556cf04844b51b267f42a39bd01d621581678dd72c71d308"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2021-08.zip",
+"sha256": "c64c2808a4e68cc3d8bddfd44b6b6fcda6486c7deae852410dfb30549cac5b8b"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2021-09.zip",
+"sha256": "c757e6af2a00bf613845f5303f73cd3d78e7ea8c72d73c89b481fcee5bd0d09c"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2021-10.zip",
+"sha256": "4f418625fd5551cb440f3f44808a75091687c725769e016b6f02778f9deb3e40"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2021-11.zip",
+"sha256": "2e06e2f2dd486bd3365e4e82e65b979c40ea07c8e9a4034b1dd7f2ee258cfecf"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2021-12.zip",
+"sha256": "a9253927388b3294ff74905e758e3889c8f6d9daf935be7734f83585144e6877"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-01.zip",
+"sha256": "70f1ede892913bf75c6cccbbd08ecf06b8604979a1e010010d7feb47962096cb"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-02.zip",
+"sha256": "2df045c820ce0edd90b1c78dc13df071a91a0e9a5607bfad252c9759c6a33ff3"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-03.zip",
+"sha256": "90ce0331003f5e65ebbe0094b69e1cbfd0ea0086dd31f6f62d16f4144e3872bc"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-04.zip",
+"sha256": "65b07d70471ff272a36b1706bb160887e06366bc2ad1a064c30500fb0fa719ae"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-05.zip",
+"sha256": "4b539a9bd58f46fc5f48d36038a2532f724741527a22b4b34a97b598fd6a7143"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-06.zip",
+"sha256": "2b34b2cbc815c6a7fb5567b850cdd7575769cd29010f880b1712933c83388cab"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-07.zip",
+"sha256": "ad8f5ef9b26cdea5e41a6e4226a9e45830f96be950c9a38e60f31597c2491240"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-08.zip",
+"sha256": "5dbc0ab106cd1cd86b8c8caece0c56c9f578f6f5d0ae7577b6603813e36a26da"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-09.zip",
+"sha256": "722013b93b888ed11b2beec688436612fdf2ff24da9cd61d6abfc811c3e7aa49"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-10.zip",
+"sha256": "3c6329cfac699b55f0f9a7e14d98d5688f656426743fdea79688150ced0f884f"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-11.zip",
+"sha256": "0a2e9997fe87c21145e55d821718d2c90a6a959ad7fcfc4f45f182657d16fe86"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2022-12.zip",
+"sha256": "e9dcaf15a25eff05b60285d4a30e44331fd4d756979b305dd70eadbfd888475d"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-01.zip",
+"sha256": "413385f4c92df06a0063909f048ee76b1d79b883aaf06e64bd186675c66f2091"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-02.zip",
+"sha256": "aa5ed84b3fe75ed44e712e84bb90492cde28ffbd4a4c75f06c615333cc39b38a"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-03.zip",
+"sha256": "a87c1e5d0a65fd86088996bf655c4ccf9580219bfaf5132f62bda454481e160e"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-04.zip",
+"sha256": "a1b91e3b9ced7dbee43d17bfae402e8c89ba92160b72f5165bbd5713b676b29f"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-05.zip",
+"sha256": "da5ec5e04dbb59f977bb3bcf7c7aae4d4cd5a2c6ff3a988ed3ba39d44d896b29"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-06.zip",
+"sha256": "65bd5df3793411c3b0e147e670f591ab5669b37e67b91e9e613c8e07fe6cb8e8"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-07.zip",
+"sha256": "8cf74577f749d34270709ad019d4b01afb6409dd8785af705f9b167e6212e118"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-08.zip",
+"sha256": "b1499f5dae70f99588f19ed608ceaf005079c653af922e6b1cb9f69ad0d10e6b"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-09.zip",
+"sha256": "7d7998a9705ad11e89af0910100fe4667aa3bd6854df46d4eb6d8143794db196"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-10.zip",
+"sha256": "ef37c63819a376c32e4aec23ccb64d7afc551570a0ececa556d46666c38ad97c"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-11.zip",
+"sha256": "ac4e35956226b4a4f1825c7c96389cad603fb2450a14a221ca8fe00980b382b9"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2023-12.zip",
+"sha256": "a740f4946ca357672caf3d9e34f3f11117996ad123c5a892ba50e0b1b15dbe4b"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-01.zip",
+"sha256": "bf14b08598b27b88e62f560ccb8452f91c37b64007d1d4d6fe3a8b4373f91e5c"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-02.zip",
+"sha256": "3f1ba9974ee54639f0acb1f7ef45ce78571ddec83982db79f45c02737ec97c3e"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-03.zip",
+"sha256": "60579d4eae712254338b1b3faa9afeeab23a00c6a286b201165cf4f9aacdf018"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-04.zip",
+"sha256": "c32a9bac533f2f3a6b9757785b7d10a484aab7b0384214b38f00f36b6e6ecac8"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-05.zip",
+"sha256": "9bda5b695e5a5833cddba73df8103773f2e2f604a73fa997ab0ed5953fc849f5"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-06.zip",
+"sha256": "1b75b90524d5ab8e4d3933609a3699a8f096fcf7f6dd240b9885d88b6226365c"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-07.zip",
+"sha256": "13d28edbcbe89b874ad965f0cb273a3c791b1cf30949722a944c35b5ecb1a77a"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-08.zip",
+"sha256": "095654df686607884fa1d507893dffa67d4ee9713d6972e8b2166cd475755747"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-09.zip",
+"sha256": "8a858ccc81b10ebfa66d6ddcf0fd56f22d625e67c3e1bdeac234c519d04fc0c5"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-10.zip",
+"sha256": "dcb4345d9f4a14583ef97b461b1081a6207cc3c4753a1808cf8e90b7d3fe2129"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-11.zip",
+"sha256": "ee266e6a21ae44f0b734c18621a1ed5f5b169a4a1af74c93c8079c31398ef9c5"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2024-12.zip",
+"sha256": "fe95289d60eda86407d34d52375aa82ca9a61afcb5572bde4222a52ecacd29a2"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-01.zip",
+"sha256": "ef15e5f87d1fa49ada105f69edcb7a0371757e1d56e0cb185718da51259d4f1d"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-02.zip",
+"sha256": "2118a5bd2a67fd11bb6c3dc97ad0d426498ac4b05df73a43aead49cd9b0b482b"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-03.zip",
+"sha256": "a303e66e125628755a15454e75d9bdede9d285ae4f35d9e46af34f4fc58016bd"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-04.zip",
+"sha256": "da7744f093eb88ff8a7c4ca569455792742c6808458d80c9df3f373b4a52eac4"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-05.zip",
+"sha256": "fcdec3d7e8275d2f05c5707615cb05b34c10e30a0ee210a69d39f3537bcb3b78"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-06.zip",
+"sha256": "ddab868dfc1f207832a502437ef49bd9908d2a094f6b73834b662cfb36e3bf52"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-07.zip",
+"sha256": "a740efb6eab0d0183e6c8bd2f2281a87d14cf01d97bf4448efc228b30dcc8a2b"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-08.zip",
+"sha256": "ff7edc94e66a5f85521dc725b3cfa83c86e792c15511d5548d300b1c1497e20e"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-09.zip",
+"sha256": "e5068e4e8c6b5d8ecaf7eb5b25770a7dd234a7cd46aeac18261f72bcbba15785"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-10.zip",
+"sha256": "056d3fa525c02e053c6932e5020775ad1db954892eaa44ace8d101f37243bf18"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-11.zip",
+"sha256": "0aebd592cca671559a1798c16a0cc51acc829f64022cf2ed501b5e4a22a2b78c"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2025-12.zip",
+"sha256": "a9cd62d2e6a05b3d6d95e46b48345d20fa45e1fdd58899134225b8d50dc2608d"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-01.zip",
+"sha256": "60fd27030875d58cbba8cd858402151b10e04de1ab4f78e0ca19f54462f3a3b0"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-02.zip",
+"sha256": "645dbb2ca3de7568f82ccbe0850766053b8a02811a8858e327930bafbca3c6c6"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-03.zip",
+"sha256": "b54c683b31fe7ca05f7190f93498437d5f828b5ac049c397d4cee2f5d2b25242"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-04.zip",
+"sha256": "4390b2eda0febe82d9340cb5ecab1afc2b286c435d83cdcebeea9a0c4e13c53a"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-05.zip",
+"sha256": "a98265b8f63da99b61937b859fd1b25f0b1e404732ccfb885e19b28daac50ad6"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-06.zip",
+"sha256": "cd43e58a6a49f85752f435fdf57cc70076f16b7fd4da4f576a07388655e2be31"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-07.zip",
+"sha256": "9e742dce2bc05e50c02db5b12e2b4f41077aa5c1b8ebce14dd928a3c1f9f2713"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-08.zip",
+"sha256": "b9eca05798e90fc224ecb9fb85ae7e47e05ccc87d73eee4fd939673ba3829433"
+},
+{
+"file": "monthly/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-09.zip",
+"sha256": "c5654cb9059fff95e97b97716b570295b70deaf7c7c8d9a92994281f72e03495"
+},
+{
+"file": "daily/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-10-01.zip",
+"sha256": "20a713832f4e2bc0962d58cb6e3a193209f91c42f4081e303b3c4619b6c04a85"
+},
+{
+"file": "daily/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-10-02.zip",
+"sha256": "c3a32ac64ea54b2379f4b92e986dc9c6825d026e3abd52f40fcb019c4e278539"
+},
+{
+"file": "daily/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-10-03.zip",
+"sha256": "060fbbad8a2aa7867c4004d2c70b23ab8dcfd21df0b04b01f0f8099df60730d3"
+},
+{
+"file": "daily/klines/ALICEUSDT/1m/ALICEUSDT-1m-2026-10-04.zip",
+"sha256": "755a5755140f14d331dba526c0bfaf46a0eea60cb38923b254646ed125063ec8"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2021-10.zip",
+"sha256": "cf1aa7ae15de8c7730dcff3de36b63689fbaf088e4b2d5c963394b02a47431e1"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2021-11.zip",
+"sha256": "f907f99471151e17fa5970936589aa7fd667206c42d8c0ab3732343fa719d086"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2021-12.zip",
+"sha256": "1fa1a122e0da8c329d391d72d7763be0f97e4edf5a1c6163a639dfed5a79c41c"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-01.zip",
+"sha256": "6a424bfda6e5f3192809e41126ca4551b78692242787ba111c1d0ec555490689"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-02.zip",
+"sha256": "5978bc6a579771509556ebae6c07f4bbc12b4d1c365eefaf1b88a662bb34a2f6"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-03.zip",
+"sha256": "90c64d3fb91b6072253a80f76b2b20d426ddc86a8c401de72a24cdef01ebf06d"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-04.zip",
+"sha256": "0f87f7caf4454aa443bcaf2981571491166892e680fbeea5d7a1fe4a53164af7"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-05.zip",
+"sha256": "023f3bfc96990997a355a89635342318914284833dde14ada271d5beeaef20ad"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-06.zip",
+"sha256": "cc656532d67ece6ca97ccd69cecca3b8390bc40c6e4026d666745e88c9a53600"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-07.zip",
+"sha256": "59c64d0a91d86a0e35a9032b17833826915d30b24b7726aa3075107326091bc9"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-08.zip",
+"sha256": "02cb0611da89ee762a7243cfad3614052710798c8fc1700b13b7a06449be4b55"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-09.zip",
+"sha256": "0cf6e86af3682ad8a92d808221fd938aa6962ee97557b26bad6fdf21cd3d0a33"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-10.zip",
+"sha256": "0cb6025930eea27629abe16a4296f106418a669d531773c377bbcd6114cbacd1"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-11.zip",
+"sha256": "61dc58179b356caa568e8b3fc8542c2d2ac0f9b7f8946a10935943160c69a86a"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2022-12.zip",
+"sha256": "b836b53447137c1341ae01285ffbbc83d05e6c3ce2a71ed28967041034e0d7a6"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-01.zip",
+"sha256": "fcdc6526f314efe9d47b6695a827220895d4eb34abefb805a4dc30cb4a2b7fe6"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-02.zip",
+"sha256": "cecad86c5b736ac0bd0a81a21e4e6e7634f3c72a91b2ad3ad78861a81584bfc1"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-03.zip",
+"sha256": "480562f6931734c81b7b7fc6b7d55318034f35a926ea4fd7ccf8cd3df290c46a"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-04.zip",
+"sha256": "ce2e1738ec0cac6c6d05724d10ac9f52118726056baaa8f8b9514f5d00f5a70d"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-05.zip",
+"sha256": "0a70ece59d0a0b86acbd03c858f0f242f50e6ac5254f3fbfd506045e82d2481f"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-06.zip",
+"sha256": "5bcb4d2652f63bde49a8fe403d10b12feac65eb919c9d1b79082fbba7b1fb5fe"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-07.zip",
+"sha256": "8782daa79687d47e55133ba04c257a1025306e6fe15453285aa7634e204365b5"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-08.zip",
+"sha256": "96a2ca265b6729e3356f03b6613dd35320a65f935c603bd1f4a77c3ac1a9ba92"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-09.zip",
+"sha256": "dfba8adda16ee90dab325fe5026d2c1ed688cd8722fe0935a5892f3dc1643971"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-10.zip",
+"sha256": "1ff480b25ebede641859b04e42bcb9235172bae4123672bc7cf5b5420c1938de"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-11.zip",
+"sha256": "f98356e2bd98bdad40edd6046b7342b9d5b89740d71e2ccc7d0015f11b8be4d0"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2023-12.zip",
+"sha256": "d37f1025b2a2e65980cad8f96f06332236e9e51c8eb936347f9f737750b35a8e"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-01.zip",
+"sha256": "3f5c9b81d5dd43bfec4d0d4da3146afb540b1b7bf8c470a3cd02cb9b02ec02fd"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-02.zip",
+"sha256": "6b74033b4f622afd552762b14828793b8a344926cc2bffdf40005ca5c4fd888e"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-03.zip",
+"sha256": "113de3571a64f59a5067b536aba4254398b3f20025b813905c8a6533123ffc5d"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-04.zip",
+"sha256": "f090387647350f127f886339c3128e8f4cc47005bae14982a648027f4fe9f9db"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-05.zip",
+"sha256": "2745e7b4f2cfc1710a72abbc8be3bee01f8e4211725303f10f0e644d00e60569"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-06.zip",
+"sha256": "5b3d125ca7e2106105bd5a05a3d07ca9167955fd5e0a5b2369cf13e845f9b780"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-07.zip",
+"sha256": "feac0f3955e5145b3d1c653eb1b379a205e61e11fc92799897deeb3a3fddc701"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-08.zip",
+"sha256": "7719b00869553da904b368ea57d9d72825a32bc114b347e5286d0720fc92c16c"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-09.zip",
+"sha256": "2d3178238797b485b207cda5e23c31cdde018ae408554493f31570ad1f06411a"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-10.zip",
+"sha256": "26694a9d5036a071bbef32a1793545db4290de98067b8a9307caf71ee85eb818"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-11.zip",
+"sha256": "49926846d8b2c8a25f86adef18dcf53e32f994c611a0b27b50f4bd5712970fe8"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2024-12.zip",
+"sha256": "91ad3c1d777967445e3d96f5e2826a5a0c4e1b6064aa15687135e7eec1b1aac6"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-01.zip",
+"sha256": "289d21246a35911138eb0212a9d0194e63ef8e88bd7f58a52210094741772ad8"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-02.zip",
+"sha256": "be012fb49f7fd91f08d34ff53005c760dd6c1f93a505b92a99a2c22c8ed2d79b"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-03.zip",
+"sha256": "aa1d8d6389f1937e83bb3e3c5af2e764ab263209f3a80221904a7779efb5d096"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-04.zip",
+"sha256": "aae6ca2fe08b63ca0ca4738aa7c0b59f5379f2d0cbea77595f412a99c24b9c93"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-05.zip",
+"sha256": "f8fe06644cc1b097e09a35bf0c8ee499eb4ba696fa151a31a35a52dfe84fb062"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-06.zip",
+"sha256": "6205febcd6f2ff6e8ad47031bda9537997ee28df0357729090b81b5eac9960ba"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-07.zip",
+"sha256": "1604c3ca15f8ca8eaad404e11185a695938509dc4100414653ee59fa766ae679"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-08.zip",
+"sha256": "0ea479e3a5a87d6aa1b84f2bd9f67ede57de859854e423931d332805f07cf37e"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-09.zip",
+"sha256": "0b032cfab9df82a355a2d1ba9509ff93dfebcd0c9355a03cd2b771aa0ab8dd22"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-10.zip",
+"sha256": "b6fa4308acc01ff4c876e84fba089b7f3ce4ff68e78d002d58997eb2ffaa42c8"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-11.zip",
+"sha256": "f43640dfb4269e85e2c8ccad017d0ec6ddc26ecc982ac4719246ec8a89bb21df"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2025-12.zip",
+"sha256": "002c744424cb170107d605cac1051ede2af8ff91f81287e52e2bf21e832b601d"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-01.zip",
+"sha256": "a4340341f29891261efa6089bd9b96b23c87f875de6c5cbdac3c7da02202e377"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-02.zip",
+"sha256": "2f20ba406834361d21097288695cc82fc467983c509a76926ab2fc5acd66f9b6"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-03.zip",
+"sha256": "054595e85fe33f1b9ad3913f00871dda3f42bc95fadcc1c10cf881f0647cc645"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-04.zip",
+"sha256": "e42a64478eb50815d907bfe0768c2eb160c9b5296dd0761c45f0bc19b5ac5f66"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-05.zip",
+"sha256": "1f5cfee3d3671c1d213eaf8599a23b3fd82dc3f1dcf1aecb610e7a90119f0b9f"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-06.zip",
+"sha256": "f495bec71ed1ff154528e6e9155e9772fedf8bae3d57167ee2730715de1b2acf"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-07.zip",
+"sha256": "1e3bf03d8b70de9905b8e50caeb9c680fe9bb91b5813e180ff176d6f63cb32cc"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-08.zip",
+"sha256": "a8e6cdecb133276e64486b6f9b280a83524c9c5edf7905afbf04bd20197b4329"
+},
+{
+"file": "monthly/fundingRate/ALICEUSDT/ALICEUSDT-fundingRate-2026-09.zip",
+"sha256": "18935d9f6741493863f92881fd3932501b4ec2c684909e55c2caacc5115911e2"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2021-08.zip",
+"sha256": "fd04b7797edd49e17187cbc8b3c97ec7ba2b8660fe440755b87279480c5280e9"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2021-09.zip",
+"sha256": "9389f5f33d4a14dbec2afcc40fc69a6be7be81f638fcfa36ae37e3c210ce4188"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2021-10.zip",
+"sha256": "c9429cadf80dda3333c7160524f24517b3a76517d295a8c3fa0824b0c0bc4129"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2021-11.zip",
+"sha256": "a883a6ea148b2d3fa33903aea125625a49ec2e6cee76a45ff2aa400a5d2e3dd5"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2021-12.zip",
+"sha256": "c6058c919650ebcfedc3c37678decbe5d06c332aec213e9a6daede17f051c6d1"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-01.zip",
+"sha256": "1e38a347b46de78e36c179de210597cf0f7a59c2448b55f0446314ef2aabe778"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-02.zip",
+"sha256": "770c4e7ef404f91633054cea993a285e5bc20ecd26ee28a480a31f26bb334a10"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-03.zip",
+"sha256": "e37c94d124fe2303c7b3f9391652851ec20a48ce4803dac0f9c5180c3bc72b49"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-04.zip",
+"sha256": "0e77b555027d1f969cb16de00690756e2183c39cd8aebe953e79758cd34516a4"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-05.zip",
+"sha256": "723575c7f3ec8dc7577fb6ace4858233b3ff19e1ae088b3a56a8702bc63ac66f"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-06.zip",
+"sha256": "d381d58de9715084652644123652425790a4e8ea069cc9c64ee618d47721f623"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-07.zip",
+"sha256": "1957dcef87a88e19480ac66ffe0f2e54d18a0e2175c959acc3326848a73434bc"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-08.zip",
+"sha256": "5f72d4cbbbc9e3b7c5bedd9e5e05b88410b3e66f4a1a690a67070b3fb9604282"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-09.zip",
+"sha256": "316c18b5f77fa4a9da7860ef815f340954e2b5a54f596d429cf8919e014b15af"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-10.zip",
+"sha256": "97e3a00247efafc8c2e2333ca8775d1a6ab0889f31b346f9bd2def00246208c2"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-11.zip",
+"sha256": "d063d157c98b60f93a8dff51c6acb43d3331b1b68e7b811c015f050406e2ebe8"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2022-12.zip",
+"sha256": "993c88ebd39cb26477dd879aa4013953ea5f595bbc94e1de943d2f037e399b5c"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-01.zip",
+"sha256": "d8faa1571acbd9a6d2d622d00e4edf36e336682968171afddb7b99f8a78bec10"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-02.zip",
+"sha256": "02348f7203013e1133b2065790d65eb90dde64dba78047bac047a0b797c5d7e7"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-03.zip",
+"sha256": "25d088efb3c3b3b971d0de236169c5e5b0aebe8f3aa54e4a780e849bd03025dd"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-04.zip",
+"sha256": "83661f6daedb3f282bcf69fcb5e01098479def36d80ea303f5df306e7641ef7f"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-05.zip",
+"sha256": "d263766323b36a0a87998635bf571520141101c698d212c281320d76653f8e9d"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-06.zip",
+"sha256": "3fe34064e63e94209a8684d1111f438c67672e208dba635aab86ae9a37c13274"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-07.zip",
+"sha256": "70d93213528f6097830ae50817a89ee91911c4a28ed8f49dad59ae037248ab29"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-08.zip",
+"sha256": "6a56bd92fbb5ae3f67b38f43f8d8082a2aa518bb17a3248933525a0e8a532925"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-09.zip",
+"sha256": "83a3dc3cefa0b04747e2188df191c4df198b1b937dde57c258b31e3856da6dfa"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-10.zip",
+"sha256": "d0f1fb5018c437e8e3c0411e5e17d75e7b67dc4690a3f4b66cb3066cc4f58f69"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-11.zip",
+"sha256": "ea0d0778653ba0464ae4e54cd673b058af9543d49a51d3fb0e1bd95f5511a37b"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2023-12.zip",
+"sha256": "33ddd3887ef733b3e4fed528558696665ca4029bd6b0da0e7eea5f47333806d7"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-01.zip",
+"sha256": "252468902357184045e61edf526e4f61c08dbd78361da880510325b3e51cf86c"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-02.zip",
+"sha256": "5e6ed7d8702f6f7c54b92f498e583338e0eb5e86ab9ae3b574cd3e5507511848"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-03.zip",
+"sha256": "9b1265bffe5ce21867d122b054ab9f1d57dafe4c4aad68604dce31cdfa7e7d88"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-04.zip",
+"sha256": "11f66cab3efce4a805ce2fbe9506a8853e2139f94ea9138e0af86549d0420caa"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-05.zip",
+"sha256": "3a08085c7f42b34a9c5c363f804bcf1c0e143069c09a571d401f340608eac641"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-06.zip",
+"sha256": "f4bd058e5133449d149155b8fc69f6c568674ce24a2cd85efb805436d3cf5a99"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-07.zip",
+"sha256": "ec6829573e85eb03594735c6fd3aa02feb43da82fe358f388ec0ebac8291e44d"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-08.zip",
+"sha256": "819a80ae68ba42726df876310043a3b0c41bf7954243d1d4c2a6e7c920ec2627"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-09.zip",
+"sha256": "679831287109c6bf73068c71906c55a1ee4f43675bf80a4c1529eaad940add09"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-10.zip",
+"sha256": "f5a5d49a81fd837d51f19f3eaa2f6d51646e6f8e622a3484287d44f3b5fd6db8"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-11.zip",
+"sha256": "2193046decfde5e523a21810137b8c585805269730ab471b309417cc9f7452b3"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2024-12.zip",
+"sha256": "932ac21bc395ad23f1ecbeefd09af3e143c144c2c805fed9caaf97790c6bfae0"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-01.zip",
+"sha256": "038ce9a26160728f69ea640083508d04cbfab20536192f23d3fa9c06277f837a"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-02.zip",
+"sha256": "0f1135e6b0ce583aae111adb1fb5c1004073b03d410745d9a468fe953f174b5e"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-03.zip",
+"sha256": "e99f5b65185301a8d711b80dc099004e64c1732fd50096ca73b2d6fc7596e6f4"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-04.zip",
+"sha256": "aab9201c4ca2076a8a50f510cbc015688d70e14eba7090c8f606e35558792138"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-05.zip",
+"sha256": "f9635bf79aa21fbeb035e7efc786560116e9ee2f9102460b9aebab86bab7195d"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-06.zip",
+"sha256": "dc1f6abbf853f98a35e32edbbc91728ad03ee8146e03f343be16bbde3e319b30"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-07.zip",
+"sha256": "f82c1c04598ede6888c6890c19354af5316121045b39820b1cd01cfb509813c2"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-08.zip",
+"sha256": "aa7b05f136575bb54dc0556fbe664514917e555130cb550a9c8bcd777c366c7a"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-09.zip",
+"sha256": "600829fd1863f01d4c09832fb7c59f59a9b06d7bd66c8439e9b5d9b9aee09bb6"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-10.zip",
+"sha256": "e3bb9b060014d606a9cfcdcff3adb8ea9753345f6521f8253f218e8402326a9c"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-11.zip",
+"sha256": "c79eae1336784fc5faaff45ccca568c865304f5028186755e484e2e1dc92f846"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2025-12.zip",
+"sha256": "046c7f6f53e628c0dff9e156634e2de8d292c2492ed9dd9f4ec44f242bdc5b66"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-01.zip",
+"sha256": "34fa037ac0787f31f67c7bdb36e4caf70a5af15bac4025efe32c5524be371aca"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-02.zip",
+"sha256": "7f5de3ad5492183072281de177317d6fcbc6119e814e4367fb5e9b9fb6f94064"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-03.zip",
+"sha256": "d8a0bbee756e5a3a270a79b2b47b2e86d46b702736181147f251047af21d9238"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-04.zip",
+"sha256": "294094fae54df9c48e1181e63c463db086473074fbaa49ec78b2ce9a6c8d0874"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-05.zip",
+"sha256": "7d9df925435a8674c07e52a89dcfb631deaf1b1d504474732109329bb14c3678"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-06.zip",
+"sha256": "5350a64ee5758079af37ccb963d2241a3169eaa64d226b454f043807846cffe5"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-07.zip",
+"sha256": "688eb5c70d8e12ec3307e2f728e05e1bf9be63444a17ac1e2d0b0aac789b1e07"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-08.zip",
+"sha256": "e81e0d3c3e49f61f824173e45b928ab3bf3e2dcce12ab9637745f7424bdc4c90"
+},
+{
+"file": "monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-09.zip",
+"sha256": "c40f22c28209f7e746dceb2e624853c25135c5814a8b84742fde8412c392a6fb"
+},
+{
+"file": "daily/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-10-01.zip",
+"sha256": "2b346809e965dbd08c1b892a41be49fb59a31a47d64b220cb1f9800cdcce4d4b"
+},
+{
+"file": "daily/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-10-02.zip",
+"sha256": "e75c66698ad5b8c93fceb504cf146ac87b76e56e14d9f8daeb3e0cb963b788f2"
+},
+{
+"file": "daily/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-10-03.zip",
+"sha256": "f035318a5b8b983948f94f77e7cc174e57890803cea8bbd246a0beb3823a2583"
+},
+{
+"file": "daily/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2026-10-04.zip",
+"sha256": "c20f53882e70eefabe5634ceab73c160ccce0d42dd2947495d39e70a21e1dd6e"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2021-10.zip",
+"sha256": "95b91bbea7ddcf5939ea6a60bb1c4b9d283f80cd477034f1d5bae9f2a72795ef"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2021-11.zip",
+"sha256": "8089477356d9d4d5fc4fabd8180ac44e8ea47b8a9402d008a48dc191ddc47b16"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2021-12.zip",
+"sha256": "76d2fde9b83cad5ef1f0777d6506289ffb8b71111fdf89b4a2da4945fd9501cd"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-01.zip",
+"sha256": "2750075cc6bad11737f0d0d5d87d38bfabdd899ab44cd374dff243f17def61ce"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-02.zip",
+"sha256": "1f4a5cf0c308ffe2325748fc3ef8054f4863aad3f7202c951f87c88f67db64c1"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-03.zip",
+"sha256": "d7e1188800831063ea84543381cc734cd6b4945634b8b4a58c0c91078c965a86"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-04.zip",
+"sha256": "75e2aae93642291836e43b92353ca39723cfe794a2d3d6c39a0980efb3713d1c"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-05.zip",
+"sha256": "c7b2b6e0b2abf90c7b2c3aedc8b72ce27abbbacdbce983bb822eb0621374eca4"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-06.zip",
+"sha256": "ed9d101a440ec4d80e697e84482821cc68c056ca187a08eb417bf981e92f177b"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-07.zip",
+"sha256": "f83c6218b2b5b7276b96fff2407ad973a42978eef3434a6e4fb7c2ea37219157"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-08.zip",
+"sha256": "f88f62d743b088d5aa1ce66d1c8d6054e52da4e2805142a3eacddf2cc84c9d7a"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-09.zip",
+"sha256": "7069225c031df8887cd9d52667e088d018d5bb8ab7056c374f0010241b27013b"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-10.zip",
+"sha256": "e4c68f6d0a05275f171f9123345c54652bfed5508a8914086532143c5b51585f"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-11.zip",
+"sha256": "83e5a40cc0cfd9c5ccf357d3d42d25a978178f9cf6bf12239e06dda7d98e69d0"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2022-12.zip",
+"sha256": "87af31d9ec7440514b4d47221c916c48abd63caae8799f4f811bb9e22e5abdcc"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-01.zip",
+"sha256": "a78c377c54306c43f8abf3038a67e1b2daeadef34543a938d8e48a7e6f955ad2"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-02.zip",
+"sha256": "3579fbdb88bca3bb83719caeeb6231e46d91cd4d0f3353a69101b2ef9f5b1493"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-03.zip",
+"sha256": "314727e744be768f0ad0c34ca57c00fadc29a3736f23aa5ec2b937da9c4b4eb2"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-04.zip",
+"sha256": "8adae0ea5157188c972c82a0efa1e261e300c87f076d2b3cbcb43c7ae2482d1a"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-05.zip",
+"sha256": "c47e8c3ae9ab586fdd44b464a60c40995a1f86ae5c74307f29edd74fa95aafe5"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-06.zip",
+"sha256": "5c967e0aebdcad16181dcbcf674a834934fb0bb80c3c8d00222bdfcc6592fafb"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-07.zip",
+"sha256": "3e899fd706b3cdd49d1ca9403efcc034f53740540dad5bafba99949bfd97f93d"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-08.zip",
+"sha256": "c2487d7083b65ac470206bbd20b4c0f7a1cd27a4deedeb0821f0948c785a4277"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-09.zip",
+"sha256": "dec83be91813bb53f175ff85ca6d3b5ae9ee35529c732f52e75550fb3fcfa260"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-10.zip",
+"sha256": "9eb32341b4bdb075e366cee7531dbd68af47b7723eea7096d6279074b121cef6"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-11.zip",
+"sha256": "457392df0a4af8dd95a7b016e019f149e5e269c215ca00c22a7b2406213c2373"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2023-12.zip",
+"sha256": "9faad8caa00b30a8a6b7565afef439d8d01e9d667cf2db7290dde396b364081f"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-01.zip",
+"sha256": "68e7d0cd4df295aabb93f023bfe012344a1f587099cd77e8e70e314d17f8ce23"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-02.zip",
+"sha256": "a1cb1beb1fde36a0d6ade4fa38a279d93f7016487ac0aa4ea72bb95c8278fa21"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-03.zip",
+"sha256": "f3f3b66d43895a1381c01543d00bd99875fed19ef4098b5dbce881cb218a4a53"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-04.zip",
+"sha256": "48afee6a804f2c0d1213d13ccae42a4dad47ff3a5845c769c1e86ba3eeabd29c"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-05.zip",
+"sha256": "52e6d4b528779772e74fb1664f27649a5198a2ce1bbd7179e8acbba3cca410ed"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-06.zip",
+"sha256": "7a926df4f40cdf55905ac9314f639a3f4517a24cae20c75de9cdc49ad7faf634"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-07.zip",
+"sha256": "10b23e93d9e13a578cbd1e1f341b067d3e9842822f21c2b0c9b570b362869f22"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-08.zip",
+"sha256": "9b29ed5d94981374818aaaf04527d9951602355388097d4ce3612b1b5fb881dd"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-09.zip",
+"sha256": "bb5943841063c1c8a62ed32c9671d713f8bea7e7093743119f26410e8dd72193"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-10.zip",
+"sha256": "7da0f22e010a2a2b0f7291154aa0e5cddf322bfc8e7028f3e31be82eef02d30d"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-11.zip",
+"sha256": "128b237dc16a71d67ebb578c413f24a1804d8a92495bb4cba76993befcfc71e2"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2024-12.zip",
+"sha256": "aae22dcebef716b1156386011b6e9e80a5c9781c09f3973e672a979e9d41638b"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-01.zip",
+"sha256": "efac5024cdf66bcef01e9b8aa63fc9afcc7e226db83e618f3266fae6a61833c8"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-02.zip",
+"sha256": "5939f77e3ecaf11c035c85553058cd434c18b03f3cf8cf0f265f538c7c8d28d6"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-03.zip",
+"sha256": "1d81bd2c9b5e55b343067e58d93ce8a5b09b60d78d20a61151c266bd508fca40"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-04.zip",
+"sha256": "b3e1f22505e93247e55520549a61e2b57f90b7e1bb965fab83e72a9e731960c9"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-05.zip",
+"sha256": "e46f66ba8f67c65f011cf8fb6a2c0c72d14149f25f1bc2f91a7f6e6062ac49d7"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-06.zip",
+"sha256": "e3c70363c054478c1a374ba0e35e6cf96f4fc4b0f264fa894d6f48da4452ea00"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-07.zip",
+"sha256": "cb025494fa6a0bf78198b9d2ec8a1761711eb5ebb40c9549a60f254d1c489ebc"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-08.zip",
+"sha256": "9316764c083ac8f16ef2d1b27939c9863153a144acf3c637c6fc94ffcfe79642"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-09.zip",
+"sha256": "fd375f642b881dea8e14bb5c4047a11be29bd7ac553075baa710fc484b28ee48"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-10.zip",
+"sha256": "f6f953d2dc071b9a2784610daf06574abc4a8b2b9390793fd4207267bbfb8efd"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-11.zip",
+"sha256": "fda89b54ab93f6078deb8603e407b5d4e8fce5db88560c56b0695ed7c76ee887"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2025-12.zip",
+"sha256": "44f81f97bd9e170840619f6c08fc8bf3d843211a8d5be826bc8248742e1628ff"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-01.zip",
+"sha256": "28f2763cd9cf26276ffc56adb0c43da87930d7b7a01f6b3a983f6f499f5bd6db"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-02.zip",
+"sha256": "f309db6a1ed3ef6d60d2d3f9b21aa1fc1c14b0c132e2327ea86eb53e947ce29b"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-03.zip",
+"sha256": "2210f69377752f016cadb0dcfe8d03adee1a396942274680c07fc6ef3e525c27"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-04.zip",
+"sha256": "a09831e46864e82181c24f23ee488f07513aec370bc46f16244f5b144203ea22"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-05.zip",
+"sha256": "35ea79749bba2e2d43ee36549313e1d377a13eec994c78659221038a38ae7c84"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-06.zip",
+"sha256": "666cd39735a12fa875d5c70bbc03d2310b66dcf4c8dd0161d92abcfe724deef7"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-07.zip",
+"sha256": "f1cbc664c01dd2d516e8165e1ac21c90ef9b43342b9490c51f2a0ac05caa9916"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-08.zip",
+"sha256": "590fc24bb497df9a7bc05171872b9bbb0b0dae291068f031a8ad9b1282f4b8f1"
+},
+{
+"file": "monthly/fundingRate/SUSHIUSDT/SUSHIUSDT-fundingRate-2026-09.zip",
+"sha256": "96a5a69a7c95112833d518118848bbc2e5ed7301fd642bc29012d5a5dacf6d10"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2021-08.zip",
+"sha256": "58d315b3f4bfacd66b069f84eed616c60c110b645f8cb96331f430fd27034b51"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2021-09.zip",
+"sha256": "be06c1758d1392aa2a3a268d1b83249edda9ccab230b8dfdff07a393c3a6f311"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2021-10.zip",
+"sha256": "c711aa13700b0963cf9c6244de3a20b27fd26f7930140f9d306ffaa4bc0ea4e8"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2021-11.zip",
+"sha256": "ea56370eeb19e1d39e595a714a54f96145957392e06bde45e06fc0d20d5865f4"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2021-12.zip",
+"sha256": "1e9fef9031c9e9e23dd2c3fd2c411622167a08ba3b35a089bbc87c14e032a603"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-01.zip",
+"sha256": "189101bebb6204f29658cb0928dd533b9df1a020683021c8d1afccddfae0520a"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-02.zip",
+"sha256": "b846475719d651e7350b702dac56b16c27012eb7c1a342744386d3c08f866727"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-03.zip",
+"sha256": "04b280cf3845d270500f0f53fae9532e4af62b3d851453dd073fe628a123e2ed"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-04.zip",
+"sha256": "8f402fb3f423a23be74c9e910a71733a70072c287aa796aae488a026bc1d1365"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-05.zip",
+"sha256": "758d97b21d532c8e01647e8263785c290028563714f50c1dfed03b49ea2bfecb"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-06.zip",
+"sha256": "53668641ebdcd19eb538258ab42ed1672367b95d4a556cd092292cd946ec259e"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-07.zip",
+"sha256": "161776f65a4a6f32184351324426b0ca6560bac2904004372c2da04c116a37e2"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-08.zip",
+"sha256": "908b062d5d40eb9d0d69a0e04f5865c58cba19f59f36db096c77ebbbbacf21fd"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-09.zip",
+"sha256": "aae6e167e98e659f321299341e12ac8f4bc57b5cf434da659c0f986f9847d6d4"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-10.zip",
+"sha256": "99a84d0b4ecfae0610c250303ef456f6b48d25477d330683417dcc189c84793b"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-11.zip",
+"sha256": "677f9d4cc8190c42a10c97a7c002d6d3c0763a5cdc619ef1f5259512abdede4c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2022-12.zip",
+"sha256": "f95a4b9e8f23c3bf4d12b9da80d3b332fb19346e0dc810746f80d3b61c561a23"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-01.zip",
+"sha256": "1f35cfbe6bddf9af53735050de32813784d2e6be7bd570663e7bed69b3691944"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-02.zip",
+"sha256": "1cc946cc482278d9d2f613bc7c61c0685ff8bc351ac86286590122c484e972f4"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-03.zip",
+"sha256": "163cbeda74bee342a38cec0f3b5ce4120c8fc73d22c122c4f0c6bca2bc23789f"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-04.zip",
+"sha256": "0f0f780c2174a24e76a3542d64de8ef27518a9a6fca31665fda2ab28c699c2e2"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-05.zip",
+"sha256": "d66d2e8e4caed13da4887eeb5142154ed6a9d7bf716c67370efd3b94e3da835c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-06.zip",
+"sha256": "ba159ac6c37a20b05e90e6db5546bfc750b6467c741a4f4ff22e6232b1039b9e"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-07.zip",
+"sha256": "2668634a2edf2d71527dfedb2c7f55bbe645fceccf297643d1ced3f85f0a0f41"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-08.zip",
+"sha256": "1dccdbea548ddf2ed2c01ebaaf6542d43fcc4e1458d7336c40ad4e57dd3be62f"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-09.zip",
+"sha256": "cececa9fdce3bd04ec65e6561c12c12945c2c420563a8d35752546d0cdcacef8"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-10.zip",
+"sha256": "9911d9eeadfa59c7745f31fe2d78f97894677ca6ec8050d8c795bfbe8f0a83b1"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-11.zip",
+"sha256": "cf7cfc8ea7191dd9c4adf6fb360c65b4f292705ec96c7a3a57119f97da1c7a2c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2023-12.zip",
+"sha256": "e2b5a0429a59e9923241a11b23fbdf88df95f5a555a8fd3235294b47c9e37c19"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-01.zip",
+"sha256": "c3def1d2b0e01ee0503277259662a5d7ca3d8add0b3a70c2d788dd69f21fbee8"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-02.zip",
+"sha256": "0c733c627e11fa6faa88ca41353d03624c59a529155750d4f63bfd9050cdfb39"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-03.zip",
+"sha256": "b482a530a3cf0c6c2ef26c05c67335b46cffc358b148675ee21d201c0d182d15"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-04.zip",
+"sha256": "70de0b2e4b3280989c4aae7dd32bdb8bf6f3fae5ad7dfcfc23adc889bee693df"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-05.zip",
+"sha256": "523ffad66e1d21c111e325e5126b472ec59978f3db36e413cdc5189fc7054413"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-06.zip",
+"sha256": "d0694683b46536e15fd4c3380746f3c726a227cd94ff210b1f0297b6b1dba95d"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-07.zip",
+"sha256": "6f3a4a457a382c22a1a50924e44ff524371358022af76e9618e1b7ec6a83ae83"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-08.zip",
+"sha256": "885e1cec7a7fe6a01a825137eb5438429b9d418cea379918d25e7834dc86824c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-09.zip",
+"sha256": "0d1b76bd6c82e6f8787534967476e8e6fac7a9bec1240fa01428c6d8e192e90a"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-10.zip",
+"sha256": "4bfac6cbd702260802529fddbdc026895dd1e701d86f95741e695f98e6004a09"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-11.zip",
+"sha256": "d2210379a80c417f4decfe9c48744175d32288559c90b7045ed8ae6202f2389a"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2024-12.zip",
+"sha256": "ddb60a8583fcddbd2e4a948a7d69c75730be459c11b0ee1d445b77604bf4b6a1"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-01.zip",
+"sha256": "985b6fa6cd134919daaa2d7d4a1d2cca3340616834449d318c1c8c563068896f"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-02.zip",
+"sha256": "949229b948847fc2d269c26a107943ed41bbd0e09f236c0a7bee7ff5753b2f82"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-03.zip",
+"sha256": "c473f67a3f8aaa0f88573a7d144cd2eab7827ef2ac79fbc258cdf13ae45c2b8b"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-04.zip",
+"sha256": "8434e8b24c6da2b28b8466bed182ae37f01eec7c666692ece2ab41f326df5df7"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-05.zip",
+"sha256": "d553a554328dba83c3bb1a06b12bba89bcc97d2f86c27f4dc257fa06449b7cf5"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-06.zip",
+"sha256": "2609070caa1d756769ae1d9551eebbfc687b824eda7ee6f3349ffd84401254c9"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-07.zip",
+"sha256": "a909d65d444f685bb1bd963143b9ddc5ea1d3e72fbd04e9c4edcc67a7ea4746c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-08.zip",
+"sha256": "54cf9c63f3d45f532b403ae98446117a8e2da625944bb5cce159847fdada6c87"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-09.zip",
+"sha256": "a2cb51db344eb62a8014afbd8b43b3b7f97cd4172c13d2499a4862a8624cc112"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-10.zip",
+"sha256": "b170129ff67e1e8a6984d585985d8407395bf867a136057201000cd994ceb30a"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-11.zip",
+"sha256": "901c722e4db2e85fdd663ef9dd0cb806b9bcba65402c99fee360be7b35ae416c"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2025-12.zip",
+"sha256": "9b37e0cc481baa630b5a8973beb94464166d7865c94d5693406921af1e605dea"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-01.zip",
+"sha256": "0c84050e8d03887339f83692ab3c062bf6198a130a27c8277315a24d0db7032e"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-02.zip",
+"sha256": "706946aa81d6cd864691a646605b97c6247897c4d25a51439edb261566a667c9"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-03.zip",
+"sha256": "37cfbf8b36f721c01978473e8244057aba84764f64f4ac7801181dd9d8ffbadf"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-04.zip",
+"sha256": "f26a2600a6cfe90bbaaa19a89e15b419b1516a085d6cc21d6801ca4e7ab5f3b8"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-05.zip",
+"sha256": "d84b151255a25fb0dbfbac716ed13af8620aa5d6db7c48923f7ec53e29cd2abc"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-06.zip",
+"sha256": "bb570b9de93a2e900797895c59916958c216d0d8e33d0747e960cd41d21a2cb3"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-07.zip",
+"sha256": "2ce4148b22b3f94a9b385e9b8f288a07233da82f794d28014c5a0da976bfbe58"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-08.zip",
+"sha256": "bc396c6087d629752ba90336c64e91eee6fbbd0d1f2b59b3e19aea02d0f2de6b"
+},
+{
+"file": "monthly/klines/C98USDT/1m/C98USDT-1m-2026-09.zip",
+"sha256": "a6dff2927382899a3f15626eeb067d256b791e9b29a63d4a909aa5bdcd4eee19"
+},
+{
+"file": "daily/klines/C98USDT/1m/C98USDT-1m-2026-10-01.zip",
+"sha256": "f1be99ffc1e379bb62218ee2d4ff5571fc35ec21b688b37b7714e5305f4eb668"
+},
+{
+"file": "daily/klines/C98USDT/1m/C98USDT-1m-2026-10-02.zip",
+"sha256": "8e483780510d9c19d5b567f31e17c0c64a42ff88b271ce27bda7a1cd4dc1152c"
+},
+{
+"file": "daily/klines/C98USDT/1m/C98USDT-1m-2026-10-03.zip",
+"sha256": "88a907e60acb9dd60227d13f648bc80bef725c74cf0652aa4cacd7847c9745e0"
+},
+{
+"file": "daily/klines/C98USDT/1m/C98USDT-1m-2026-10-04.zip",
+"sha256": "1a375d6793310cdbebab593cbc4a20ff94e9a8b7dde4f64eacd2492c49d45d69"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2021-10.zip",
+"sha256": "c0239d1c8db84adb4f4f4938892f37050e9cf71d298eb2755771cf2df2a42594"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2021-11.zip",
+"sha256": "8e732ee143ac4d1d4430d1735d2fdbedfed8eab110dec2982e2342780a1902be"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2021-12.zip",
+"sha256": "4556638f81dca28931ec939f011c25cc835fff02a5f7cbbee2aabbe436c4f939"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-01.zip",
+"sha256": "9bbe508f37385254c4c777edd169d2fdc9d075277f200647faabd3071c63f7ea"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-02.zip",
+"sha256": "aac88de9846decb272b03311e027d5fdb9379f68311d66d5e5060735f06219f7"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-03.zip",
+"sha256": "c54d44551697c3ecb7350ecc2c2c968a6dd5216e43950ed450dd65593afed673"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-04.zip",
+"sha256": "6a61334221fd37663d7585c8f8c01033178cf74df9ad17b0ed0888bbb06f51a6"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-05.zip",
+"sha256": "b3136f1ce64fdcbe80804a403e42fc1bfa53918eff97e762e62530031ceb9442"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-06.zip",
+"sha256": "8d25ab0a93723cf938dadc9cba6017a547e1b93896efeec03d4a036389bc403e"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-07.zip",
+"sha256": "5ce78cbb57a1a3a20d012eae68111fd576bb8b85de3bdc291ca1c76d72410cbe"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-08.zip",
+"sha256": "e2d3b29e47eb6d138b8eaee8ae51c95f6c33f32b093145ae4931955690f7cf83"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-09.zip",
+"sha256": "75df7d8df2685f1cccf97a6c92ceadbfde613ee52b125fc35f87fad9740722c0"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-10.zip",
+"sha256": "0c9afab508ed0a0feb2f2595bbd17f8d3de9c001ad8dc51c5a852bc9a55143bb"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-11.zip",
+"sha256": "2580fbd66e702cec354ff1412324eeb349e1682ab010c72e52f4b9380e4d63b8"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2022-12.zip",
+"sha256": "b0e45c4eeaf79c4fefbb67b1c7b42026cd176a5da867ef964f4b54616775ea97"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-01.zip",
+"sha256": "80c190a82c2ef4e4241a1b19f63be660b94aa77e386848549d10069c515b151f"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-02.zip",
+"sha256": "e61b54c619fd9a8e7cd629ef9874c31ba77d9aec39cac5e98a3739c40df75bc2"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-03.zip",
+"sha256": "37461885cdbd1007170a4f10336eee230369388595a5b7f0a5ead429a5171e30"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-04.zip",
+"sha256": "8886dee0f3e8c85ecd733299136fb9209fd3f2f31dee8ffc186be3c97d10d5eb"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-05.zip",
+"sha256": "ef83e25e24c874457b6218c82c918088c007f8eee478bc24ca981eeb4c450e9f"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-06.zip",
+"sha256": "1b50df4411dcc61f4efb37f07bd8dd7aad3c17a7e52bc5b0243ba4060aa11fd2"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-07.zip",
+"sha256": "66e4a27185aeb5ca81bd62b405fd9b86b3a2fc3fcf0443504dc42cd5dfd76c7f"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-08.zip",
+"sha256": "27305a8175731de4501a4f4956df1390701674610a23a25af678d296806e7fec"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-09.zip",
+"sha256": "001407765c884ba7c1fe813d5ebccb29b7a6246190001f94ad4b2d9a72474b23"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-10.zip",
+"sha256": "b94357c2a72ada76d75370e2b867f7e490ac2673a33b1e6bd630741fddbfd66b"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-11.zip",
+"sha256": "af06c4aa182fc83c77290d49264a45bf4a45359cfffddf431b86000fc9aa5a7d"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2023-12.zip",
+"sha256": "b4b2814a202c869e9fe7bf08876566335269998da4ed3e6af700246813900766"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-01.zip",
+"sha256": "f556c1c57442f392c228d93026e23690864e7480baa735592b6bdd00155bfa63"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-02.zip",
+"sha256": "4fde0f353f784b7048e17400150fb1cbd7e63ba6a20080c388b30343a4c5604c"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-03.zip",
+"sha256": "12f2c393ef0d6574c4a9ef51df454f68c808cfce649b8b7f37b02331703d145d"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-04.zip",
+"sha256": "501d3ead2f163c27a5818ad0f352bedd719891e46cbd51cf96012db440070241"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-05.zip",
+"sha256": "8e5fd9ab5c3e067c6c16fb5ddf591809bc2b21ec2f6b372c56081c9da2bb65ac"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-06.zip",
+"sha256": "fa55f4fc5251de7372c4b84dbc382cc8f051011b78213f9f5d7f8ea251a3c3b2"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-07.zip",
+"sha256": "d0ed5b75f4cba50e5cfcd0df766ce21a3f18e7c1613f81a001a9a5b065ecd138"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-08.zip",
+"sha256": "17a97773444c89bca1b6aa1239d79e50a597066b8c3dc677a0779601e31c275b"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-09.zip",
+"sha256": "e21754147dfc197a3ad0ec28174cb23990094d22ded9690d069c113438188a9d"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-10.zip",
+"sha256": "15858b308a56d513777d62407b743c4425a71989962cd035ca41a30d63a123dc"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-11.zip",
+"sha256": "7ec56a64cb23b5f00f7ddb5ac04bae6556289cad9c99c77e4b9bedec891f0d74"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2024-12.zip",
+"sha256": "cac88a1520305643d03f7853e49eafd2970a82c555f8cccea7664b7baf648dfd"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-01.zip",
+"sha256": "a6e9ff9e7f17075e643f9a8b3b1c761bf379f1d3309fbc93b16d7bc7ef144586"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-02.zip",
+"sha256": "ca54a22d9f31b6603bc0d21972236491203f5ca9095cf483979fb268a05ac3f3"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-03.zip",
+"sha256": "4f58f550016c9dea5ee927c9a77d69c545f599999b65b3a1bf4a25a778065553"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-04.zip",
+"sha256": "d3d9ae7620a7856577a7a323261e1c31d1fd53187407d619265f1a2f778aa563"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-05.zip",
+"sha256": "c18d7cdbddba6c82ab86407f3c057527573f0d5e7b756233c56f2158c2c2fd08"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-06.zip",
+"sha256": "6b7e31643782e98ee9f7e1cf9bccd8e53045de5f270d02c02bcab23d72349b31"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-07.zip",
+"sha256": "ba97435e41f2f8eebbfd1df8b26264a5e4d5553f5e624613500e9ccf65a435c3"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-08.zip",
+"sha256": "10cd0924c7063d62287b5546fa428f000555f8abe81d06037b741437ce88ee2e"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-09.zip",
+"sha256": "009b5ed0a9b0103dc1304255688c18155e8bf906b96d17c6835806d5ea4057ec"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-10.zip",
+"sha256": "2f37fd842f2600834adcb2b5f714f01068096453f875b0ec43b6f5d56de6f100"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-11.zip",
+"sha256": "a03126094ed9063ac0390a6a5592ac21620495a1b9ba57c712173e765bec6c28"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2025-12.zip",
+"sha256": "85be4402641f49100dd9e3a803a899e50665e12a2c309560c936cf64cb3b7c27"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-01.zip",
+"sha256": "5e651b43a3b001226b13837d790b564f87cea99971f66ba1d394ff34a949caeb"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-02.zip",
+"sha256": "9dc515e325599e46a1deaf3578e00633c95a3f76c8cc988041da459e175a3418"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-03.zip",
+"sha256": "6888b8952eed2b9fa84e3ed15c827b9fe891149770779628808746d367271a02"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-04.zip",
+"sha256": "a0b19111ade39df145dfa2dc589639cd575dbbc9f98ab20cabb1c4c8c7d76e1e"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-05.zip",
+"sha256": "d42b136b13b30ba8f0d5cd18776af6ceeb1fd5696d341ef28bf6296e6690eda0"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-06.zip",
+"sha256": "0ecc0d534916acedbe631c5143512369566b13bd60a9d6780ce181c300e65921"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-07.zip",
+"sha256": "a5d3dd6181d39499152c62faec9c683f7fbf532697a0da010afd7bdef4a0519b"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-08.zip",
+"sha256": "d590a9ec3e92e901b1052b3d84b92a867980302458d4ba4f2f2facee09e9c23f"
+},
+{
+"file": "monthly/fundingRate/C98USDT/C98USDT-fundingRate-2026-09.zip",
+"sha256": "5e1a433da588c2ab897a7c1ba44b7bbaacf8dfc3c25ef9d9977a84679489be12"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2021-08.zip",
+"sha256": "4a4af4fc5983098b9e6e24db6d6dc5abe98d12ef4b00c8560286a1f892e8fef8"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2021-09.zip",
+"sha256": "0a66ea094890b3adc4c520b962dbcc3089cd0ce0b06e8450a96166d964174c07"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2021-10.zip",
+"sha256": "97c89afaee6fd2f2230f5c1aae12c8873b623a3d831f245d3855ef32a278f652"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2021-11.zip",
+"sha256": "9e124df35ba08a33473397ed69497f261c43e827f742f973a1811a4e4f3d4fe7"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2021-12.zip",
+"sha256": "a9c5740c2c5164df900cbac03e6f23b02782bdd2e5769d2ff143596f685f2671"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-01.zip",
+"sha256": "42f8eec71193eac1bfa4f0cd0cc6fd603dbfff8fc171a06115eb0113b1fbf8a0"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-02.zip",
+"sha256": "cdac24429397838c26cf03dbad12f62657b7fbebcb1878328495e4f3cf9b6a02"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-03.zip",
+"sha256": "9629190e70eebf984efe459e80ce01e46395d4ebd7b31a433976e177dbdefcd1"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-04.zip",
+"sha256": "d403aa26dfd530fc91ad36114005dc64ef264bb873c3356a51ae4619fcf9f4fa"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-05.zip",
+"sha256": "cdd05f0dd95683256149f6884a443e578d1a762c8e067dd61f7a31d216f4ab8c"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-06.zip",
+"sha256": "ef4c0f55620be2c2a9a65b6f781e0fbc078e3b6416e23b8e5225737e5e476532"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-07.zip",
+"sha256": "b3699d788c61ded5afb0a97a780ad9ee812efc3481a62de954b9795f89738c61"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-08.zip",
+"sha256": "aacc79451cb2e04710d373d2b04ad5533cef6dcfe6404c87c62201c31fa98250"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-09.zip",
+"sha256": "9243c4867b4c55fa3f3637309e7c189e3e61e6937fe5fccc02ca2eb6284021c0"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-10.zip",
+"sha256": "6c5842a0be8be8a3c58ab25b7f8064875491e1aefc7daf0488b1bdf38b7f1ede"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-11.zip",
+"sha256": "b5a4c1c248d677f9300e0ec619839c8609fb271ad5ae3fa76a0014663a8e461b"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2022-12.zip",
+"sha256": "c72688477ec753f0cc63fff6cb0135892d6788f1b80b7e858b064efd92a690b2"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-01.zip",
+"sha256": "f0e93098f37986e46fe86acfd41d5e4c0b861840ed0fcb3c2a5f23c4862f3637"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-02.zip",
+"sha256": "5278f3b1897db7ffd595917c59e3f6bad8c16a1deaaa69f8c07f8c06160624c8"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-03.zip",
+"sha256": "db67389854e2c0d0f0d1546c9185b88c7eb186f176c429d42762f3f3343c2fce"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-04.zip",
+"sha256": "222a099f68bb0e9a12d34c3bcb33480fa054d2778bd58522af841d931e593eb8"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-05.zip",
+"sha256": "2cfba47ab82faf6161064e518d5d43985c00b642675758477bfcc236bad9ba98"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-06.zip",
+"sha256": "70448e1b7de8d09333ae1718e0a5706e2a668ae270e72558d2b48d7cb172abeb"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-07.zip",
+"sha256": "8343a8bff351ed303de89ac7ccf315e4a80cb50800bfa9e33108c6a211f2eb56"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-08.zip",
+"sha256": "e676161e976b484cc21718a04bbd572ae7a17601374c844b33209b44e85f1086"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-09.zip",
+"sha256": "fd45fba05e4e4aacb99ea49421b3f68342f31df6f08dd350e959168f21b40127"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-10.zip",
+"sha256": "e918e76d40da3de9d2d94ac23761d7f445228191a4e3c1d57e92772797801265"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-11.zip",
+"sha256": "623f836d90412e85b3c3cc090a6b1da5360c824bdde47516547d226d89fca0f6"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2023-12.zip",
+"sha256": "13c4317d79f910e6e9558ace754d403901ebd6403944666715252bc50053787e"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-01.zip",
+"sha256": "0dad206f24320519311070b30e29e306b01d82e018384019c9ac5565a0bc3196"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-02.zip",
+"sha256": "367a72b3dfddd1c6e30fc48a9b10f19b269b5821c05688c2d9fad6a2fdcfceb0"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-03.zip",
+"sha256": "f4e593380aa966a2928056530070dd1817da8c4a91e65369031fc97469169709"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-04.zip",
+"sha256": "d94912ae1a3a92605e3473d0abdc2dfddb2d0cecde9ef7bb3e4725ef5a77bc3d"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-05.zip",
+"sha256": "7ba884aea34120377a092fdc9fcab8afedbb9e7de1a1b82234acd9881c6cbfba"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-06.zip",
+"sha256": "e5cd27a5fc9eaf8e0f0abc3ecc8dc8e322e6cdfb270e891b6145bc25d691d944"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-07.zip",
+"sha256": "0f2433bfe57babe33b8d58fd7d17cc16c52a1165738f36016cbf1312e9237fc7"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-08.zip",
+"sha256": "a45da9719baf7384a39bec0e43040850f04acdbdf08797ab22103a65ace98284"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-09.zip",
+"sha256": "e719bd9cc5f2d1d984acdf7320ea1d20d6b2df68c8765e5bd42620312b30ca82"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-10.zip",
+"sha256": "32ee21258a8ece434b1f413214c7904e3cdb6dbf3856b37962c886992f9a3017"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-11.zip",
+"sha256": "6e7db71bc47698028d0fe539e88a8e4ebb85c3ea0358fca8790ba1f7e79f86e4"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2024-12.zip",
+"sha256": "5df810a508df128352c30fbb51d733a619f26df12038bfbf8fe72a968a11a86d"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-01.zip",
+"sha256": "021618a093538a11b7214db134287625dc8d69fe88208110bb89a88fed20f82c"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-02.zip",
+"sha256": "9a0315b112c39605b6a672cce201021ab04ad45da391d2ed0809b35e337302f2"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-03.zip",
+"sha256": "44f58474048c33ae620f8840c383d7ce1ecfff2d882648f108e3d87921347234"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-04.zip",
+"sha256": "bfb1d08624d91415e85b6e5cfa20c3ac816fbd152400a4e8c9c99a20fec959f8"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-05.zip",
+"sha256": "5c3502825f5dfa73e1f3b5653d84bf491d7cf9041beba66c4a3d67f0518b14ef"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-06.zip",
+"sha256": "8bd99a4b3d1eba69d5a06072fe456433caf6e19f48065ee3d006889ada8605ad"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-07.zip",
+"sha256": "fb860d92adfc401001f901bb19062a40bb1e241177c1966094c69e29d9d09b48"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-08.zip",
+"sha256": "6ba6b55ca69fdf87b47a8d0b326cd274db6d239771b9cd870f8f6adc05539bdc"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-09.zip",
+"sha256": "2d486f8f04cae2af041c4f21b56c4ce3a99c4f5cd3d5957696626becacec69d9"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-10.zip",
+"sha256": "3e7cc1b163f861ab1dbc1f8039756817ef8926e440ba3d0d1511a8a11189ebe5"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-11.zip",
+"sha256": "988db713dffed4f3d868fc7bb3ab57f903dfa1b1bae8edb0610e26284cfc2e4d"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2025-12.zip",
+"sha256": "f2a6f308b923332393e5570028a8c398e1767df3a6215bc2a055dcbfb35b0e50"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-01.zip",
+"sha256": "517914bdc10446b221cd78da7f0119394b21f52e8de90b6820d86bc8c978c421"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-02.zip",
+"sha256": "9f0b5d62674db5dbd9125be6b24e7afd332c429f8e61446b7d3f1cf696f8c54e"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-03.zip",
+"sha256": "d1d76d3c9ede2dc1717b20ef3ee6a600f4745a4c4657a6d2ac6bd020e52f4edc"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-04.zip",
+"sha256": "3482e92a79fc2788af04f602feb31f57752ed6f96337ff06e2d7d3c98bdcbf33"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-05.zip",
+"sha256": "690d939b602c636c33eec044eaa687fa77b7725defcd540f448a7021cc0560b5"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-06.zip",
+"sha256": "435fad1310d665db1bd0d1df116cef9e3035e1e84e6cf0187c25d1a4703aae03"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-07.zip",
+"sha256": "f8c98e72d8c660fc3f97f011d2b5a86e678d1494bf9d0c91b51dae9267dbd4e9"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-08.zip",
+"sha256": "a8d07c27300819d149b23e501c1bd48be558ac2734957de80cdb0dfecf9577be"
+},
+{
+"file": "monthly/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-09.zip",
+"sha256": "1195ebb5b1966c0c857ab939b35d3abff8cdf890289acc82f8c00d6aa0ad7b65"
+},
+{
+"file": "daily/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-10-01.zip",
+"sha256": "bae357f1b2a2ed58981c787767480cfb1bf61c2f6ac2fbc8abcd7f35e0430ea4"
+},
+{
+"file": "daily/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-10-02.zip",
+"sha256": "889a2232167beba59cd3698f42dde45da1662c9b51111240f0b0cd18961d9b59"
+},
+{
+"file": "daily/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-10-03.zip",
+"sha256": "0d8f65cd9530e3fcd14fd02ad1faa877e57571cc2c0e0fe2d163e19b19693096"
+},
+{
+"file": "daily/klines/1000SHIBUSDT/1m/1000SHIBUSDT-1m-2026-10-04.zip",
+"sha256": "6c71108fa4e55f010c482d577a4407f0ed294968f00ab330fd88cfb066dec1a6"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2021-10.zip",
+"sha256": "3d1c558764e1982162139c17c032e84b438aaf91a78439f962e123e63c005d0c"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2021-11.zip",
+"sha256": "b027fe62086d8597468e06f35bb52032075723be8dc286d8972832d427650719"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2021-12.zip",
+"sha256": "6430257e4c4582e329f2051d195d680b117bd6f5662178e560ecbd242a5e1b0c"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-01.zip",
+"sha256": "06b14896a522bdc6fc9a5b529a57a4cb6798ea01ceb5a38599764429b25c4b27"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-02.zip",
+"sha256": "12fd1958321b97fc38a4a23541ea6f9753a5b1d6468ae228098c6558d1a6ad27"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-03.zip",
+"sha256": "2cffb121a3efb5c7a639c661f1cff1604265b58890bf91e3e7c3accd561233da"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-04.zip",
+"sha256": "9b3c97a84e7ffb12b44d83d2ec85ad08f211adb7ded85e82971ee17a224bbff3"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-05.zip",
+"sha256": "5487690b41d2351fe3d343b55ca1cb2c25e9fed906ef8b4fe2254cbcb8b47ea8"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-06.zip",
+"sha256": "9c46d639317a603f1816e6e252d3ede25cb6b05b0a2230cf550584ec8dd3d7cd"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-07.zip",
+"sha256": "526007193865542ecf20c5f07991c619166a17294194056979cce705add0b839"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-08.zip",
+"sha256": "d90ba0b4573601cf5b92a888ec6c6d78de1001172f262b36d5b87da9e92c49a9"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-09.zip",
+"sha256": "41b89562b3a1c6771dff694a01656c227d00718c6ff761b74fb3c3b27428e249"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-10.zip",
+"sha256": "80d844e61e8a9c5ce814d887a4a2fd9da5ac1c9f6bb7a92f035f564e7a3b9679"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-11.zip",
+"sha256": "5c0b28bf04d23eb3d5b2e66bb02a9923cec0f7102c0e24a5e808093fdb4d97b2"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2022-12.zip",
+"sha256": "567a5bc88e205a47ca1bb9f5b4a5703add66fc48e5c14b618c975954b308180e"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-01.zip",
+"sha256": "429793610c548dbc85a51bd819e5008bf2eae4e20c519316640bc85160be4ddf"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-02.zip",
+"sha256": "2fd5ebc88af8d4a87ec496336b1f2d4ff03e3c3f98a6d785978026a8089db4a1"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-03.zip",
+"sha256": "21e6ff4e4216f4ae9aff4d0c238d92ba7de4f082ff712043ef304e78cf9063a9"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-04.zip",
+"sha256": "af3636d608c76ef6ddc6f03e81b029d59cdc7a6fb256a8b728994cf2be1c59fe"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-05.zip",
+"sha256": "095ff8c53bde207cc1b9afa002aa0cf82887a123522f87b9a1c81c54a4e745ab"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-06.zip",
+"sha256": "f4424169af21c0fe0b261680c3dc517b2a8345f586168f6f23aa55c93db089ea"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-07.zip",
+"sha256": "dd1a437f26342206f0fd3564a4cdb0f7de8eb3f7a4dbbc173d6f98a963d88545"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-08.zip",
+"sha256": "c579ec668e7a4ac4134f9ffe9c8ffd61e31080c06c421e6fbf5e01a42e7b5af5"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-09.zip",
+"sha256": "42df655c6f33919b72ca9aea955a45c8910b4709d4fa433c672ca376cd061b14"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-10.zip",
+"sha256": "e24b20db83a5154900dfdc016784136e194c948fcbd97e8e8b4ef0327e844252"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-11.zip",
+"sha256": "05731e0d15ba6805bb421ce2ca7614be882d43815c27c46728c974f70779dfa7"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2023-12.zip",
+"sha256": "166dcbf679f3fe7ff534526475605d1c02a539ffec519bce728361499b1ac339"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-01.zip",
+"sha256": "a25347d1ebb3520df274a6a81dc8106dc08b19fd1294da349f6b9739d7df604d"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-02.zip",
+"sha256": "baca35fd5793e252f69a30109327973f3faaf00d50550781b8cf77554befd597"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-03.zip",
+"sha256": "1cbf4fdc3913dc7f759b8f65276331ee2d945a855c91af1a8b499de6d44da4ad"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-04.zip",
+"sha256": "5b91f178316b9bc3daf44a0429684399ef9427a4526b753731664754ad1f3131"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-05.zip",
+"sha256": "ac9e2ba0dbda903e6024576114350f3c19819ebe30dea7c27cb3d5082e5f7100"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-06.zip",
+"sha256": "ba36ff05b7747d2b0d865fa7225eefc643f71edda475a51a765c324261ce8c94"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-07.zip",
+"sha256": "3976a0f0332a3d8fe79b2932a7149779547b0a8bb5ac23491d71375ddbdeb688"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-08.zip",
+"sha256": "a37558e5fd6b2dfb38374ca407947c63d17ada7ca687794ab34a2964cc518529"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-09.zip",
+"sha256": "694740be4e4600a0e029af6f0fe17526f09c32d8c4bbd82f01fe857b923adf09"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-10.zip",
+"sha256": "86fab6af579c499a6120fc9ddd75f986287f33e0d022525556a9610ac9e083c4"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-11.zip",
+"sha256": "fedd5010237f5ee433dc6f4c7c33c921d5b80992e43a6e4657dfa8ff89c22b4a"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2024-12.zip",
+"sha256": "4c961225acd866f23d28e642e8a903d3d76943afa11e4c7768be9094e77edea1"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-01.zip",
+"sha256": "595b894c90a52374f2ebf56cccb033fe979d97025e8a3ac8f1c062ed483259a9"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-02.zip",
+"sha256": "1ef0f44fd6924075e06a70091190b3418859a199ae7a6ee84dc6f2793ed24ef6"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-03.zip",
+"sha256": "ea23790dfeddc4f2c7cb2d4378d4c584d9c3ad540f6917914664c76896276091"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-04.zip",
+"sha256": "6b871649bc9f7ed70aa8db72de73b4f9f277b36a65e2584db1b5792e76f15865"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-05.zip",
+"sha256": "1aa909e7eacbf6dda6f9490cc6cb98b00785cd5914849d1b75b1b8798ecbbac7"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-06.zip",
+"sha256": "3f1684c17508958da7f36ae20134833ae90cfb997345b7f30a12e39d7ef3f7f4"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-07.zip",
+"sha256": "d7627fed7e65bb7e7e93ff84e15d2ff266bc8f27e6da2fd2cce1218f41c0006a"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-08.zip",
+"sha256": "2eaf24372d81dc661beff4aa85d500886f4731a39c0ad9fe734986d112e071cf"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-09.zip",
+"sha256": "522d0d67a02b1e45593ded74514398206d3eb5ccc664aa14f623ccbfb01c52a7"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-10.zip",
+"sha256": "d54284f17eca19953e322952455d16b722f62f762f134fb29724b7cae0e86182"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-11.zip",
+"sha256": "d76eff1f4221ab813ba6d31b96e31f396f5f36bb9163474433199d455f92f878"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2025-12.zip",
+"sha256": "132c59d77eff23078d132367cabaee44bf4c8ef24d77a385ac33822549d438c4"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-01.zip",
+"sha256": "43bf25614a5a0cf31726bd3dc51c0ecd3b1b61069cbd0fa35946ec475f90a6a8"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-02.zip",
+"sha256": "7628475888e6dfbf14e3135e1a4648e443c68791ae6d7703204328d3ce09d3be"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-03.zip",
+"sha256": "3cd15eed38933869874b012ad920b3ff82c56f6b1a16d4a4e797b640ed5e979a"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-04.zip",
+"sha256": "877141f878d7156c470da400e11a7eaa8dbca37b9ff8c5b21b991dff25b5aeb3"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-05.zip",
+"sha256": "580d14b75a7abc7460ff6e5514e2b6ff62a3ab7b7f1e50590c74e9157627474a"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-06.zip",
+"sha256": "457514414a77ba9ddc8be6cdf4815ad6f940fe50cb17eb3ab3bad83707b10e76"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-07.zip",
+"sha256": "457807f310ffe4ee8bffb1ce567d65016bdf3bc13dd28d6e516758c629701f4d"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-08.zip",
+"sha256": "02db47b60757d6ed652e23f2c61e670b3668d5f2509709fa9c00db8d334d1d7a"
+},
+{
+"file": "monthly/fundingRate/1000SHIBUSDT/1000SHIBUSDT-fundingRate-2026-09.zip",
+"sha256": "1ea1dac25060a091920530514e95021b2b28b28df75ede62891774c82804bf2a"
+}
+]

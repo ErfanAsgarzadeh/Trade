@@ -1,0 +1,28 @@
+{
+ "declared_before_any_agent_ran": true,
+ "goal": "Reduce false breakouts (losing positions whose max favourable excursion stayed < 0.3R) without choking winners.",
+ "bench": "high_cagr/fb_harness.py (frozen). Baseline = deployed research config: 15 symbols, 6 slots, R=0.75%, 4B + V2 + BTC-regime gate. Baseline full 2021-10-05..2026-10-05 @2bps: CAGR 44.89%, DD 36.71%, Calmar 1.223; false breakouts 535 positions, -$82,988.",
+ "method_form": "entry filter only: a causal boolean mask over signal bars (can only remove signals; also blocks pyramid adds at that bar). Each method has exactly the two variants below; no other variant may be added or reported as a result.",
+ "methods": {
+  "close_location": {"idea": "Breakout bar must close near its extreme (strong close = real demand).", "A": "long: (close-low)/(high-low) >= 0.60; short: (high-close)/(high-low) >= 0.60", "B": "same with 0.75"},
+  "confirmation": {"idea": "Require the breakout to hold or to penetrate clearly.", "A": "previous closed bar ALSO closed beyond its own Donchian-10 level and the 4h Kumo in the same direction (2 consecutive breakout closes)", "B": "close beyond max(donchian_high_10, kumo_top) (long) / below min(donchian_low_10, kumo_bottom) (short) by >= 0.25 ATR"},
+  "volume": {"idea": "Real breakouts come with participation.", "A": "signal-bar volume >= 1.2 x mean volume of the previous 20 closed bars", "B": "same with 1.5"},
+  "squeeze": {"idea": "Breakouts out of volatility compression are more reliable.", "A": "range of the 20 bars BEFORE the signal bar (max high - min low) divided by ATR, ranked against its own previous 250 values, percentile <= 50%", "B": "same with <= 30%"},
+  "adx": {"idea": "Only trade breakouts when a trend is already present.", "A": "Wilder ADX(14) on 4h at the signal bar >= 20 (use lbank_bot.adx_wilder)", "B": "ADX >= 25"},
+  "bar_shape": {"idea": "Avoid exhaustion bars / require decisive bars.", "A": "signal-bar range (high-low) <= 2.5 x ATR", "B": "body |close-open| >= 50% of range AND bar closes in the trade direction"},
+  "htf_trend": {"idea": "Higher-timeframe alignment.", "A": "last COMPLETED UTC day: daily close above (long) / below (short) daily EMA20 AND daily EMA20 higher (lower) than 5 completed days earlier", "B": "4h close above (long) / below (short) the midpoint of the 100-bar high-low range"},
+  "breadth": {"idea": "Breakouts are more reliable when the market moves together.", "A": ">= 2 OTHER symbols had a same-direction signal within the last 6 signal bars (24h, current bar included)", "B": ">= 3 other symbols"}
+ },
+ "false_breakout_metric": "positions with net < 0 and MFE < 0.3R, full period @2bps",
+ "pass_gate (all must hold)": [
+  "causal (check_causal passes)",
+  "@2bps and @5bps: net > 0 in H1 (2021-10..2023), H2 (2024-2025) and 2026",
+  "@2bps and @5bps: full Calmar >= baseline + 0.05",
+  "@2bps and @5bps: full max DD <= baseline",
+  "@2bps and @5bps: Calmar >= baseline in BOTH H1 and H2",
+  "false-breakout $ loss cut by >= 15%",
+  "Calmar not worse than baseline on BOTH the old-5 and the new-10 universes (4 slots, @2bps, full)"
+ ],
+ "multiple_testing": "16 candidates. Any pass is in-sample evidence on the period where V2/B were found; a pass would still need forward paper data before going live.",
+ "decision": "Results only; nothing is changed in the bot without the user's confirmation."
+}

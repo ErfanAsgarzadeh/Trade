@@ -99,6 +99,13 @@
     "profit_floor_trigger_r": 2.0,
     "profit_floor_lock_r": 0.25,
     "safe_pyramid_enabled": true,
-    "pyramid_risk_fraction": 0.35
+    "pyramid_risk_fraction": 0.35,
+    "stop_width_filter_enabled": true,
+    "stop_width_skip_pct": 0.056,
+    "stop_width_mid_pct": 0.045,
+    "stop_width_mid_risk_fraction": 0.5,
+    "initial_stop_atr_mult": 2.0,
+    "btc_regime_filter_enabled": true,
+    "btc_regime_symbol": "BTC/USDT:USDT"
   }
 }

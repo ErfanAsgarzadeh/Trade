@@ -1,0 +1,102 @@
+[
+ {
+  "symbol": "AVAXUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "c78d5acb400bfd76110c5e98d0e17295f7a6f26f7492cf7814ed46b83a942cbb"
+ },
+ {
+  "symbol": "DOTUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "e86864853430a150d29e4770ca28b21fc7760f1c3e65b369aae0058390ecd4cb"
+ },
+ {
+  "symbol": "ATOMUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "ef5c08f236c052e6028ae340c85a73b620de592200d7b807265118c0afc0b267"
+ },
+ {
+  "symbol": "FILUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "a9c02e63ef25bef34d1c816f017779690e9a13dda0c4de359e8f079300d9593d"
+ },
+ {
+  "symbol": "DOGEUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "eca2e7939635bd16e5b551df031aeb27273f3f8e7853f8ed0bf801c3966b2cd1"
+ },
+ {
+  "symbol": "LTCUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "50453cd2eb9ee163da6a817b2e84601d7c7ed3e6154da9ee8e84d1cc8f9dfca9"
+ },
+ {
+  "symbol": "AXSUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 6390,
+  "parity_windows": 6,
+  "prices_sha256": "7b71516d6514cf6a84bb217f068ec4075b71ff7bda9e25c5545305b8a8f9ae65"
+ },
+ {
+  "symbol": "LINKUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "b6397b489a2177c68269630a417bad2b22932c78e8195ea8952d2b846ad65a11"
+ },
+ {
+  "symbol": "XTZUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 6817,
+  "parity_windows": 6,
+  "prices_sha256": "f54e2d5ad4108bea28c5bed7097ab46ea61eca8887d925f3f7f04961b3e070a2"
+ },
+ {
+  "symbol": "ALGOUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "48d835c9b3652f18d2afd4494319dcad90dee3822daf1df9b624de6a9cefd481"
+ }
+]

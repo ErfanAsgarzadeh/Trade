@@ -1,0 +1,4 @@
+A6 pre-declared BEFORE bench run (2026-10-07). Discovery = OLD5+NEW10 H1 root entries (overlaps bench; disclosed). 1107 entries; max single-feature AUC 0.60 (weak).
+Rule R1 "btc_against": block signal bar if side*(BTC close[b] - BTC close[b-30]) / BTC ATR[b] < 0   (BTC 30-bar (5d) drift against trade direction). Discovery: removes 215 entries, 120 FB/CHOP (-56%eq) vs 23 big winners (+42), net -4.
+Rule R2 "btc_near_kumo": block if side*(BTC close - BTC Kumo edge on trade side)/BTC ATR < 0.5 (BTC only barely out of its Kumo). Discovery: removes 317 entries, net +4.7 (mixed: OLD5 -12, NEW10 +17).
+Variants: A=R1; B=R2; C=R1 OR R2.
