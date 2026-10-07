@@ -70,7 +70,8 @@ SCHEMA = {
         "stop_width_filter_enabled": bool, "stop_width_skip_pct": float,
         "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float,
         "initial_stop_atr_mult": float,
-        "btc_regime_filter_enabled": bool, "btc_regime_symbol": str},
+        "btc_regime_filter_enabled": bool, "btc_regime_symbol": str,
+        "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -83,7 +84,10 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     # 2.5 passed in-sample and on untouched holdout symbols, but only together with V2 + the BTC gate.
     "initial_stop_atr_mult": 2.0,
     # BTC regime gate (high_cagr/btc_regime_experiment.py): alts do not enter while BTC's closed 4h bar is inside its Kumo.
-    "btc_regime_filter_enabled": False, "btc_regime_symbol": "BTC/USDT:USDT"}
+    "btc_regime_filter_enabled": False, "btc_regime_symbol": "BTC/USDT:USDT",
+    # Funding crowding filter F4 (high_cagr/output/r3/hold2_results.json): no new short while the mean of the last
+    # 9 funding prints (3 days) before the entry bar is below 0, i.e. shorts are already paying longs. Ships OFF.
+    "funding_short_filter_enabled": False, "funding_short_prints": 9, "funding_short_threshold": 0.0}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -194,6 +198,8 @@ def validate_config(c: dict) -> dict:
             raise ConfigError("Invalid stop-width filter settings")
         if not 1.0 <= settings["initial_stop_atr_mult"] <= 5.0:
             raise ConfigError("initial_stop_atr_mult must be between 1 and 5")
+        if not (1 <= settings["funding_short_prints"] <= 90 and -0.01 <= settings["funding_short_threshold"] <= 0.01):
+            raise ConfigError("Invalid funding short filter settings")
         if settings["btc_regime_filter_enabled"] and settings["btc_regime_symbol"] not in c["symbols"]:
             raise ConfigError("btc_regime_symbol must be one of the traded symbols")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
@@ -691,6 +697,27 @@ class MarketData:
                 raise ValueError("CSV header must be timestamp,open,high,low,close,volume")
             # Atomic replacement of the CSV by its producer avoids partial reads.
             return df.tail(limit).to_numpy().tolist()
+
+    def funding_mean(self, symbol: str, prints: int, before_ms: int) -> float | None:
+        """Mean of the last `prints` funding rates stamped strictly before `before_ms`.
+
+        csv-lbank mode reads FUNDING_DIR/<symbol>_funding.csv (timestamp ms, funding_rate), produced like the OHLCV
+        CSVs; the research used Binance USDT-M funding history. Returns None when there is no usable data: demo mode,
+        missing file, too few prints, or a latest print older than 9 hours (stale feed).
+        """
+        if self.mode == "demo":
+            return None
+        source = Path(os.getenv("FUNDING_DIR", "data/funding")) / (symbol.replace("/", "_").replace(":", "_") + "_funding.csv")
+        if not source.is_file():
+            return None
+        df = pd.read_csv(source)
+        if list(df.columns) != ["timestamp", "funding_rate"]:
+            raise ValueError("Funding CSV header must be timestamp,funding_rate")
+        df = df[df.timestamp < before_ms].sort_values("timestamp")
+        if len(df) < prints or before_ms - int(df.timestamp.iloc[-1]) > 9 * 3600 * 1000:
+            return None
+        value = float(df.funding_rate.tail(prints).mean())
+        return value if math.isfinite(value) else None
 
     def book_fill(self, symbol: str, buy: bool, contracts: float) -> dict | None:
         """Average price a market order of `contracts` would get by walking the live order book.
@@ -1354,6 +1381,14 @@ class Engine:
                     continue
                 if btc_inside and symbol != gate["btc_regime_symbol"]:
                     continue
+                if side == "short" and gate.get("funding_short_filter_enabled", False):
+                    reader = getattr(self.data, "funding_mean", None)
+                    mean = reader(symbol, gate["funding_short_prints"], stamp + TIMEFRAMES[ltf] * 1000) if reader else None
+                    if mean is None:
+                        # Same as the research: no funding history means the filter does not block.
+                        LOG.warning("Funding data unavailable for %s; short filter not applied", symbol)
+                    elif mean < gate["funding_short_threshold"]:
+                        continue
                 if side and (entry_signal(low, side, c) if c["archetype_strategy"]["family"] == "LEGACY" else entry_signal(low, side, c, high)):
                     score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])
                              if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else
