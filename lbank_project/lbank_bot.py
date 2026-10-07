@@ -71,7 +71,8 @@ SCHEMA = {
         "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float,
         "initial_stop_atr_mult": float,
         "btc_regime_filter_enabled": bool, "btc_regime_symbol": str,
-        "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float},
+        "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float,
+        "atr_regime_filter_enabled": bool, "atr_regime_window": int, "atr_regime_min_ratio": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -87,7 +88,10 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     "btc_regime_filter_enabled": False, "btc_regime_symbol": "BTC/USDT:USDT",
     # Funding crowding filter F4 (high_cagr/output/r3/hold2_results.json): no new short while the mean of the last
     # 9 funding prints (3 days) before the entry bar is below 0, i.e. shorts are already paying longs. Ships OFF.
-    "funding_short_filter_enabled": False, "funding_short_prints": 9, "funding_short_threshold": 0.0}
+    "funding_short_filter_enabled": False, "funding_short_prints": 9, "funding_short_threshold": 0.0,
+    # ATR regime filter 2A (high_cagr/output/ideas/idea2_atr_regime.json): no entry or pyramid add while the signal
+    # bar's ATR is below min_ratio x the median ATR of the `window` closed bars before it. Older configs: OFF.
+    "atr_regime_filter_enabled": False, "atr_regime_window": 60, "atr_regime_min_ratio": 1.0}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -200,6 +204,8 @@ def validate_config(c: dict) -> dict:
             raise ConfigError("initial_stop_atr_mult must be between 1 and 5")
         if not (1 <= settings["funding_short_prints"] <= 90 and -0.01 <= settings["funding_short_threshold"] <= 0.01):
             raise ConfigError("Invalid funding short filter settings")
+        if not (10 <= settings["atr_regime_window"] <= 500 and 0.1 <= settings["atr_regime_min_ratio"] <= 5.0):
+            raise ConfigError("Invalid ATR regime filter settings")
         if settings["btc_regime_filter_enabled"] and settings["btc_regime_symbol"] not in c["symbols"]:
             raise ConfigError("btc_regime_symbol must be one of the traded symbols")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
@@ -541,6 +547,32 @@ def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
     df["atr"] = wilder(tr, f["atr_period"])
     df["adx"] = adx_wilder(df, c.get("structural_filters", {}).get("adx_period", 14))
     return archetypes.add_features(df) if c.get("archetype_strategy", archetypes.DEFAULTS)["family"] != "LEGACY" else df
+
+
+def atr_regime_ratio(bars: list, c: dict, timeframe: str, now: float, window: int) -> float | None:
+    """ATR of the last closed bar / median ATR of the `window` closed bars before it.
+
+    Every ATR is the value indicators() would report as the last row of its own runtime window
+    (candle_fetch_limit fetched, forming bar dropped), exactly like the research features, so `bars`
+    must hold candle_fetch_limit + window candles. None when history is short, gapped or not finite.
+    """
+    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float).iloc[:-1]
+    seconds = TIMEFRAMES[timeframe]
+    df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
+    span = c["ichimoku_params"]["candle_fetch_limit"] - 1
+    if len(df) < span + window or (np.diff(df.timestamp.to_numpy()[-(span + window):]) != seconds * 1000).any():
+        return None
+    period = c["filters_and_triggers"]["atr_period"]
+    values = []
+    for end in range(len(df) - window - 1, len(df)):
+        w = df.iloc[end - span + 1:end + 1]
+        previous = w.close.shift(1)
+        tr = pd.concat([w.high - w.low, (w.high - previous).abs(), (w.low - previous).abs()], axis=1).max(axis=1)
+        values.append(float(wilder(tr.reset_index(drop=True), period).iloc[-1]))
+    current, median = values[-1], float(np.median(values[:-1]))
+    if not (math.isfinite(current) and math.isfinite(median) and median > 0):
+        return None
+    return current / median
 
 
 def regime(df: pd.DataFrame, c: dict) -> str | None:
@@ -1390,6 +1422,14 @@ class Engine:
                     elif mean < gate["funding_short_threshold"]:
                         continue
                 if side and (entry_signal(low, side, c) if c["archetype_strategy"]["family"] == "LEGACY" else entry_signal(low, side, c, high)):
+                    if gate.get("atr_regime_filter_enabled", False):
+                        # Research: missing/short history blocks the entry; a blocked bar also blocks the pyramid add.
+                        window = gate["atr_regime_window"]
+                        ratio = atr_regime_ratio(self.data.candles(symbol, htf, c["ichimoku_params"]["candle_fetch_limit"] + window), c, htf, now, window)
+                        if ratio is None or ratio < gate["atr_regime_min_ratio"]:
+                            if ratio is None:
+                                LOG.warning("ATR regime history unavailable for %s; entry skipped", symbol)
+                            continue
                     score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])
                              if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else
                              abs(low.iloc[-1].rsi - (55 if side == "long" else 45)))

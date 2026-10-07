@@ -248,3 +248,11 @@ FUNDING_DIR=data/funding python fetch_funding.py --source binance   # منبع �
 
 - اگر داده نباشد یا کهنه باشد (آخرین نرخ قدیمی‌تر از ۹ ساعت)، فیلتر چیزی را مسدود نمی‌کند و ربات مثل قبل رفتار می‌کند.
 - تحقیق با funding بایننس انجام شده؛ funding لایبنک نزدیک است ولی یکسان نیست.
+
+## فیلتر رژیم ATR (2A) و محافظ سود ۱R (5A)
+
+نتیجهٔ آزمون پنج ایده (`high_cagr/output/ideas/`): ترکیب 2A+5A روی پنج نماد اصلی، کل ۵ سال، CAGR ۴۱٫۳٪، DD ۲۱٫۱٪، Calmar 1.96 (baseline گزارش شکست: 32.2٪ / 34.6٪ / 0.93). این ترکیب پس از دیدن نتایج انتخاب شده و همان فیلتر ATR روی ۲۰ نماد دست‌نخوردهٔ قبلی (NEW10/HOLD10) بهبودی نداشت؛ پیش از پول واقعی روی HOLD2 و paper آزموده شود.
+
+- 2A — کلیدها در `strategy_settings`: `atr_regime_filter_enabled`، `atr_regime_window` (۶۰)، `atr_regime_min_ratio` (۱٫۰). وقتی ATR آخرین کندل بستهٔ ۴ساعته از میانهٔ ATR شصت کندل قبلی کمتر است، نه ورود جدید باز می‌شود نه افزودن. هر ATR دقیقاً مثل اندیکاتور runtime روی پنجرهٔ خودش محاسبه می‌شود؛ ربات برای این کار `candle_fetch_limit + 60` کندل می‌خواند. تاریخچهٔ ناقص یا دارای gap یعنی ورود انجام نمی‌شود.
+- 5A — همان profit floor موجود با `profit_floor_trigger_r=1.0` و `profit_floor_lock_r=0.1`.
+- پیکربندی آزموده‌شدهٔ 2A+5A: `profit_floor_enabled=true`، `profit_floor_trigger_r=1.0`، `profit_floor_lock_r=0.1`، `safe_pyramid_enabled=false`، `pyramid_risk_fraction=0.5`، `stop_width_filter_enabled=false`، `btc_regime_filter_enabled=false`، `initial_stop_atr_mult=2.0`، `atr_regime_filter_enabled=true`، `atr_regime_window=60`، `atr_regime_min_ratio=1.0`؛ F4 خاموش. ترکیب 2A با V2، فیلتر BTC یا 4B آزموده نشده است.
