@@ -1,0 +1,18 @@
+{
+ "declared_before_running": true,
+ "stage": "1 of 2 (current 5-symbol data). Stage 2 (new symbols) will be declared separately before any download.",
+ "reference": "deployed 4B policy, R=0.75%, 4 slots, same data/costs; candidates compared at the SAME slippage",
+ "hypothesis_B": "Alt breakouts taken while BTC's last closed 4h close is INSIDE BTC's 4h Kumo have ~0 expectancy (ledger: -0.02R train / -0.04R validation, n=218). Mechanism: alts follow BTC; without a BTC trend alt breakouts are mostly noise. Found by mining the same ledger; in-sample.",
+ "rule_B": "For ETH/SOL/XRP/ADA, drop the signal (root entry AND pyramid add) at any 4h bar where BTC 4h close is within [kumo_bottom, kumo_top] (standard preset). BTC itself is unaffected. The 'BTC against' case is NOT filtered (inconsistent between halves).",
+ "rule_V2": "as declared in predeclared_vol_throttle.json: half risk for 4.5-5.6% stop width, skip above 5.6%",
+ "policies": ["4B (reference)", "V2", "B", "V2+B"],
+ "slippage_bps_per_fill": [2, 5],
+ "periods": {"H1": ["2021-10-05", "2024-01-01"], "H2": ["2024-01-01", "2026-01-01"], "Y2026": ["2026-01-01", "2026-10-05"], "full": ["2021-10-05", "2026-10-05"]},
+ "acceptance_at_2bps_and_5bps": [
+  "net profit > 0 in H1, H2 and Y2026",
+  "full Calmar >= reference + 0.05 AND full max DD < reference AND full CAGR >= 30% (2bps) / >= 0.9 x reference (5bps)",
+  "Calmar >= reference in BOTH H1 and H2"
+ ],
+ "tie_break": "fewest rules, then highest full Calmar",
+ "decision": "Results only. No bot change without the user's confirmation. Whatever wins here is re-tested unchanged on the stage-2 symbols, which are genuinely untouched data."
+}
