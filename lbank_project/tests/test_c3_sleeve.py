@@ -10,7 +10,9 @@ def cfg(**kw):
     c=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text());c.update(kw);return C.validate(c)
 
 def test_config_is_paper_only_and_validated():
-    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10
+    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10 and cfg()['confirm_bars']==3
+    with pytest.raises(ValueError):cfg(confirm_bars=-1)
+    with pytest.raises(ValueError):cfg(confirm_bars=2.0)
     with pytest.raises(ValueError):cfg(dry_run_mode=False)
     with pytest.raises(ValueError):cfg(timeframe='1h')
     with pytest.raises(ValueError):cfg(candle_fetch_limit=300)
@@ -61,7 +63,7 @@ def find_signal_end(c,conf):
         return rows,now,C.signal(df,conf),df
 
 def test_long_entry_trail_and_stop(tmp_path):
-    conf=cfg(skip_weekend=False);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
+    conf=cfg(skip_weekend=False,confirm_bars=0);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
     assert side=='long'
     st=C.Store(tmp_path/'c3.db');data=FakeData(rows,float(c[-1]));sl=C.Sleeve({**conf},st,data)
     sl.c['symbols']=['AVAX/USDT:USDT'];assert sl.scan(now)
@@ -82,7 +84,35 @@ def test_weekend_signal_skipped():
     assert (C.signal(df,conf) is None)==(close_day>=5)
 
 def test_no_double_processing_of_a_candle(tmp_path):
-    conf=cfg(skip_weekend=False);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
+    conf=cfg(skip_weekend=False,confirm_bars=0);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
     st=C.Store(tmp_path/'c3.db');sl=C.Sleeve({**conf},st,FakeData(rows,float(c[-1])));sl.c['symbols']=['AVAX/USDT:USDT']
     sl.scan(now);sl.scan(now+60)
     with st.db() as db:assert db.execute('SELECT COUNT(*) FROM positions').fetchone()[0]==1
+
+@pytest.mark.parametrize('coin',['AVAXUSDT','DOTUSDT'])
+def test_confirmation_matches_the_backtest(coin):
+    """Variant D: replaying confirm_step bar by bar gives exactly the research entries (A1._confirm, weekday-masked)."""
+    p=ROOT/'high_cagr/prepared_stage2'/coin/'prices.npy'
+    if not p.exists():pytest.skip('research data not restored')
+    sys.path.insert(0,str(ROOT));from high_cagr.ideas import ltf_search as L, c3_a1_followthrough as A1;from high_cagr import run_suite as rs
+    o,h,l,c=L.bars(np.load(p),240);sig,atr,adx=L.signals(o,h,l,c);le,se,_,_=sig['PULL'];n=len(c)
+    ts=rs.START+np.arange(n)*240*60000;wk=pd.to_datetime(ts+240*60000,unit='ms').weekday<5;e50,e200=L.ema(c,50),L.ema(c,200)
+    cl,cs=A1._confirm(dict(h=h,l=l,c=c,e50=e50,e200=e200,wk=wk,n=n),le,se,3,'close')
+    pend=[];got_l=np.zeros(n,bool);got_s=np.zeros(n,bool)
+    for t in range(n):
+        new='long' if (le[t] and wk[t]) else ('short' if (se[t] and wk[t]) else None)
+        side,pend=C.confirm_step(pend,float(c[t]),int(np.sign(e50[t]-e200[t])),int(ts[t]),new,3)
+        if side and C.weekday_close(int(ts[t])):
+            (got_l if side=='long' else got_s)[t]=True
+    assert (got_l==(cl&wk)).all() and (got_s==(cs&wk)).all() and (cl&wk).sum()>20
+
+def test_confirmation_delays_entry(tmp_path):
+    """With confirm_bars=3 the signal bar opens nothing; a later close above the signal close opens the long."""
+    conf=cfg(skip_weekend=False,confirm_bars=3);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf);assert side=='long'
+    st=C.Store(tmp_path/'c3.db');data=FakeData(rows,float(c[-1]));sl=C.Sleeve({**conf},st,data);sl.c['symbols']=['AVAX/USDT:USDT']
+    sl.scan(now);assert not st.positions()
+    c2=list(c)+[c[-1]*.99];rows2=make_rows(c2);data.rows=rows2;data.px=float(c2[-1]);sl.scan(rows2[-1][0]/1000+3)
+    assert not st.positions()                                   # close below the signal close: still waiting
+    c3=c2+[c[-1]*1.01];rows3=make_rows(c3);data.rows=rows3;data.px=float(c3[-1]);sl.scan(rows3[-1][0]/1000+3)
+    p=st.positions()[0];df3=C.features(rows3,rows3[-1][0]/1000+3,conf)
+    assert p['side']=='long' and p['stop']==pytest.approx(c3[-1]-2*df3.atr.iloc[-1])

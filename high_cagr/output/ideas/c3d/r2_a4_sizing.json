@@ -1,0 +1,281 @@
+{
+ "name": "r2_a4_sizing",
+ "notes": "C3 round 2, agent 4 - SIZING by trend conviction on top of C3+D (c3bench_d baseline).\n\nMECHANISM. C3's profit is concentrated in a few big-trend trades (top 10% = 173% of net R). The C3 diagnosis (train\ncohort) shows entries early in a trend earn far more per trade (cross age <=30 bars: +1.05R, 30-90: +0.39R,\n>400: -0.03R), and that moderate EMA50/200 separation (1-2 ATR: +0.59R) beats stretched separation (4-8 ATR: +0.16R).\nYoung, still-accelerating trends are the ones that turn into the >=30% moves. Putting more risk on those entries and\nless on old or stretched ones should capture more of the big moves in R terms. Average risk is meant to stay around\n0.5% per trade; tiers are symmetric (1.5 / 1.0 / 0.5) and the realised mean multiplier is reported.\n\nAll features are measured at the decision bar k = the D confirmation bar (entry at k+1); data <= k only.\nEntries = c3bench_d.confirm_signals(d), weekday mask d['wk'], mode 6 exit (2 ATR stop, 4.5 ATR chandelier), costs\n.0006/.0002, funding d['fb'], base 1e4, base risk 0.5% x multiplier, notional cap 0.4 x base unchanged.\n\nPRE-DECLARED VARIANTS (fixed round parameters, single round):\n  S1_age    cross age = bars since EMA50 last crossed EMA200 (into the trade side):\n            age <= 90 -> 1.5x ; 90 < age <= 400 -> 1.0x ; age > 400 -> 0.5x\n  S2_score  3 binary conviction items: (a) cross age <= 180, (b) EMA50 slope in trade direction, e50[k] vs e50[k-20],\n            (c) 15 <= ADX14 <= 35.  3 items -> 1.5x ; 2 -> 1.0x ; 0-1 -> 0.5x\n  S3_gap    EMA50-EMA200 separation in ATR (trade side), g = side*(e50-e200)/atr:\n            g <= 2 -> 1.5x ; 2 < g <= 4 -> 1.0x ; g > 4 -> 0.5x\nRealised risk multiplier = qty / qty of the same trade at 1.0x (cap included), averaged over MAIN10 trades.\n",
+ "baseline": {
+  "main": {
+   "full": [
+    1.7320314884655275,
+    47.52423253520266,
+    27.438434492496544
+   ],
+   "train": [
+    1.8522735586337353,
+    50.823486700755204,
+    27.438434492496544
+   ],
+   "oos": [
+    2.2818258503345015,
+    41.62774498782162,
+    18.2431735453077
+   ]
+  },
+  "other": {
+   "full": [
+    0.40972918862431507,
+    11.847044319250589,
+    28.914328410498634
+   ],
+   "train": [
+    0.5757832220899856,
+    15.82559605285454,
+    27.485337268791167
+   ],
+   "oos": [
+    0.16824213337150087,
+    4.864608296786477,
+    28.91432841049857
+   ]
+  },
+  "port": {
+   "full": [
+    3.103634307819689,
+    59.320048395291856,
+    19.113092108124153
+   ],
+   "train": [
+    3.020206775241402,
+    54.6056238223098,
+    18.080094472321427
+   ],
+   "oos": [
+    3.578428450611147,
+    68.394832578863,
+    19.113092108124196
+   ]
+  },
+  "trades": 1174,
+  "win": 37.22316865417377,
+  "mean_R": 0.37466934623193493
+ },
+ "variants": {
+  "S1_age": {
+   "variant": {
+    "v": "S1_age"
+   },
+   "main": {
+    "full": [
+     1.913983172671722,
+     57.20312002520558,
+     29.886950335804652
+    ],
+    "train": [
+     2.162173295343694,
+     64.62076589534007,
+     29.886950335804652
+    ],
+    "oos": [
+     1.8577561005359506,
+     44.38868677821386,
+     23.893710678924972
+    ]
+   },
+   "other": {
+    "full": [
+     0.4550818064778447,
+     15.836187178406714,
+     34.79855039904278
+    ],
+    "train": [
+     0.8332509307158076,
+     22.54924968035055,
+     27.061775569790868
+    ],
+    "oos": [
+     0.1265934513108418,
+     4.405268595629108,
+     34.798550399042874
+    ]
+   },
+   "port": {
+    "full": [
+     3.2016632884932297,
+     62.64652308195606,
+     19.56686804234147
+    ],
+    "train": [
+     3.210827820972185,
+     59.142433759049794,
+     18.419683974565302
+    ],
+    "oos": [
+     3.5423401628894724,
+     69.3125025283447,
+     19.56686804234147
+    ]
+   },
+   "trades": 1174,
+   "win": 37.22316865417377,
+   "mean_R": 0.4401933451422614,
+   "verdict": {
+    "checks": {
+     "R1_train": 1.0,
+     "R2_valid": 0.0,
+     "R3_other20": 1.0,
+     "R4_portfolio": 1.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 31.670278338847613
+  },
+  "S2_score": {
+   "variant": {
+    "v": "S2_score"
+   },
+   "main": {
+    "full": [
+     1.6723414495158424,
+     47.66462983929396,
+     28.501733215482574
+    ],
+    "train": [
+     1.9698088054079832,
+     56.14296505724676,
+     28.501733215482574
+    ],
+    "oos": [
+     1.4782407619139133,
+     33.21748344632369,
+     22.470956221851324
+    ]
+   },
+   "other": {
+    "full": [
+     0.33931827817789145,
+     10.219211258524608,
+     30.116889998973384
+    ],
+    "train": [
+     0.6341695504364147,
+     15.644452597316437,
+     24.669195464447068
+    ],
+    "oos": [
+     0.028969629321411082,
+     0.8724751395839725,
+     30.116889998973416
+    ]
+   },
+   "port": {
+    "full": [
+     2.9719189906442143,
+     59.3917756695479,
+     19.98431850145206
+    ],
+    "train": [
+     3.0438019875573152,
+     56.3671968147925,
+     18.518680599202774
+    ],
+    "oos": [
+     3.258759564812765,
+     65.12408906287142,
+     19.984318501452
+    ]
+   },
+   "trades": 1174,
+   "win": 37.22316865417377,
+   "mean_R": 0.3781562656835514,
+   "verdict": {
+    "checks": {
+     "R1_train": 1.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 31.670278338847613
+  },
+  "S3_gap": {
+   "variant": {
+    "v": "S3_gap"
+   },
+   "main": {
+    "full": [
+     2.252665079101107,
+     63.742780493655495,
+     28.296607909015535
+    ],
+    "train": [
+     2.4073643744268782,
+     68.12024579728984,
+     28.296607909015535
+    ],
+    "oos": [
+     2.6331971396801466,
+     55.96644116354326,
+     21.254178170017866
+    ]
+   },
+   "other": {
+    "full": [
+     0.40702153230089944,
+     15.477097004382777,
+     38.02525364417576
+    ],
+    "train": [
+     0.7033608060249164,
+     22.318932806397473,
+     31.7318403516599
+    ],
+    "oos": [
+     0.10116956663975098,
+     3.8469984325478768,
+     38.02525364417579
+    ]
+   },
+   "port": {
+    "full": [
+     3.3677161834815568,
+     64.85799786640736,
+     19.258748164269868
+    ],
+    "train": [
+     3.6371042774412605,
+     60.323711371435195,
+     16.585642524902678
+    ],
+    "oos": [
+     3.819526815136271,
+     73.5593050393852,
+     19.258748164269868
+    ]
+   },
+   "trades": 1174,
+   "win": 37.22316865417377,
+   "mean_R": 0.4817221173517066,
+   "verdict": {
+    "checks": {
+     "R1_train": 1.0,
+     "R2_valid": 1.0,
+     "R3_other20": 1.0,
+     "R4_portfolio": 1.0
+    },
+    "passed": true
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": true,
+   "trend_capture": 31.670278338847613
+  }
+ }
+}

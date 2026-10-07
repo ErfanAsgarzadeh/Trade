@@ -1,0 +1,290 @@
+{
+ "name": "r2_a2_pyramid",
+ "notes": "C3 round 2, agent 2 -- PYRAMIDING into winners (baseline = C3 + D, bench high_cagr/ideas/c3bench_d.py).\n\nDeclared BEFORE any run (fixed round parameters, no tuning after results).\n\nBase trade = unchanged C3+D (D confirmation entries, 2 ATR initial stop, 4.5 ATR chandelier on closes, 0.5% risk).\n1R = base initial stop distance. All units share ONE stop and exit together at the base trade's exit.\nAdd sizing: each add risks 0.25% of the 1e4 base (half a unit) on its own distance (add entry fill -> shared stop at\nthe add), qty = 25/(dist + entry*(2 fee + 2 slip)), notional cap 0.4 x base per row, skipped if that distance < 0.4% of\nprice. Decision on the close of bar j (after the stop check and chandelier update), entry at the open of j+1.\n\"Never turn a winner into a net loser\" lock: when the k-th add is decided, the shared stop is raised to at least\nentry + 0.5R x k (base fill). Each add can lose at most its 0.5R (the stop only moves in its favour afterwards), so at\nthe stop the base unit's locked profit >= the adds' combined maximum loss (before gaps and costs).\n\nVariants:\n  A ADD3R_BREAKOUT : one add when a close first reaches +3R (6 ATR) beyond entry. Mechanism: a trade that runs 3R has\n                     proven it is in a real trend (big winners are the whole edge: top 10% = 173% of net R); at +3R\n                     the 4.5 ATR chandelier already sits near +0.75R, so the +0.5R lock rarely tightens anything and\n                     the add gets the full 4.5 ATR breathing room.\n  B ADD2R_PULL     : one add on a NEW C3+D resumption signal (confirm bar on the trade side, weekday) while the open\n                     trade's best close is >= +2R. Mechanism: add on a pullback-and-resume inside a proven trend --\n                     the same edge as the base entry, but with the trend already confirmed by 2R of progress; the\n                     pullback entry is closer to the shared stop, so the add risk buys more quantity.\n  C ADD2X_PULL     : as B but up to two adds: 1st needs best close >= +2R, 2nd needs best close >= +4R and another new\n                     resumption signal after the 1st add. Lock = entry + 0.5R per add. Mechanism: longer trends offer\n                     several pullbacks; scaling twice concentrates risk on the rare 8R+ runs.\n\nOutput rows: bench format [entry_bar, exit_bar, side, net_frac, price_R, qty, entry_fill, exit_fill, cost];\nthe base unit and each add are separate rows (same exit bar / exit price), so mark-to-market is exact.\nWith adds off the engine reproduces c3bench_d.d_trades exactly (asserted before the run).\n",
+ "baseline": {
+  "main": {
+   "full": [
+    1.7320314884655275,
+    47.52423253520266,
+    27.438434492496544
+   ],
+   "train": [
+    1.8522735586337353,
+    50.823486700755204,
+    27.438434492496544
+   ],
+   "oos": [
+    2.2818258503345015,
+    41.62774498782162,
+    18.2431735453077
+   ]
+  },
+  "other": {
+   "full": [
+    0.40972918862431507,
+    11.847044319250589,
+    28.914328410498634
+   ],
+   "train": [
+    0.5757832220899856,
+    15.82559605285454,
+    27.485337268791167
+   ],
+   "oos": [
+    0.16824213337150087,
+    4.864608296786477,
+    28.91432841049857
+   ]
+  },
+  "port": {
+   "full": [
+    3.103634307819689,
+    59.320048395291856,
+    19.113092108124153
+   ],
+   "train": [
+    3.020206775241402,
+    54.6056238223098,
+    18.080094472321427
+   ],
+   "oos": [
+    3.578428450611147,
+    68.394832578863,
+    19.113092108124196
+   ]
+  },
+  "trades": 1174,
+  "win": 37.22316865417377,
+  "mean_R": 0.37466934623193493
+ },
+ "variants": {
+  "A_ADD3R_BREAKOUT": {
+   "variant": {
+    "mode": 1,
+    "max_adds": 1,
+    "trig1": 3.0,
+    "trig2": 0.0
+   },
+   "main": {
+    "full": [
+     1.5537490745441571,
+     47.37158658008522,
+     30.488569458349136
+    ],
+    "train": [
+     1.684502605924013,
+     51.35807470348439,
+     30.488569458349136
+    ],
+    "oos": [
+     2.086797149881991,
+     40.292892545539075,
+     19.30848551706027
+    ]
+   },
+   "other": {
+    "full": [
+     0.3118889909320649,
+     9.940837577966555,
+     31.872999262522384
+    ],
+    "train": [
+     0.4931596444169591,
+     14.947931231292454,
+     30.310532097501074
+    ],
+    "oos": [
+     0.03989528442032526,
+     1.2715823709071428,
+     31.87299926252226
+    ]
+   },
+   "port": {
+    "full": [
+     3.0528538184996954,
+     59.445509005863364,
+     19.472111191710272
+    ],
+    "train": [
+     2.897274636960001,
+     54.975244050177885,
+     18.974812863395407
+    ],
+    "oos": [
+     3.4937487870903587,
+     68.03066485812637,
+     19.472111191710272
+    ]
+   },
+   "trades": 1460,
+   "win": 37.602739726027394,
+   "mean_R": 0.307803186644015,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 31.658966587146786
+  },
+  "B_ADD2R_PULL": {
+   "variant": {
+    "mode": 2,
+    "max_adds": 1,
+    "trig1": 2.0,
+    "trig2": 0.0
+   },
+   "main": {
+    "full": [
+     1.6396957670174184,
+     47.097683631775865,
+     28.723428198784607
+    ],
+    "train": [
+     1.781983973268492,
+     51.18468870756243,
+     28.723428198784607
+    ],
+    "oos": [
+     2.098304324758937,
+     39.847842904174826,
+     18.990497438331655
+    ]
+   },
+   "other": {
+    "full": [
+     0.3666842934940853,
+     10.870985432593194,
+     29.646716877358003
+    ],
+    "train": [
+     0.49988775996807844,
+     14.763229904057074,
+     29.533089397907673
+    ],
+    "oos": [
+     0.1361255118207516,
+     4.035674508735276,
+     29.646716877358024
+    ]
+   },
+   "port": {
+    "full": [
+     3.065751474165814,
+     59.2371316428637,
+     19.32222234647446
+    ],
+    "train": [
+     3.032619287985115,
+     54.78286711164417,
+     18.06453824543276
+    ],
+    "oos": [
+     3.5084347874045707,
+     67.79075705033712,
+     19.322222346474504
+    ]
+   },
+   "trades": 1225,
+   "win": 36.816326530612244,
+   "mean_R": 0.3582552980553461,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 31.682138025799144
+  },
+  "C_ADD2X_PULL": {
+   "variant": {
+    "mode": 2,
+    "max_adds": 2,
+    "trig1": 2.0,
+    "trig2": 4.0
+   },
+   "main": {
+    "full": [
+     1.6237643136945732,
+     46.933851842961325,
+     28.904349878321987
+    ],
+    "train": [
+     1.7659717249097302,
+     51.044264612014636,
+     28.904349878321987
+    ],
+    "oos": [
+     2.087591482225853,
+     39.64440069549304,
+     18.990497438331655
+    ]
+   },
+   "other": {
+    "full": [
+     0.3670056284966429,
+     10.9148270610254,
+     29.740217079873045
+    ],
+    "train": [
+     0.49988775996807844,
+     14.763229904057074,
+     29.533089397907673
+    ],
+    "oos": [
+     0.139633328936157,
+     4.152725514146627,
+     29.740217079873045
+    ]
+   },
+   "port": {
+    "full": [
+     3.063174884532885,
+     59.187346205081106,
+     19.322222346474614
+    ],
+    "train": [
+     3.020107621082289,
+     54.74274841059839,
+     18.126091940717238
+    ],
+    "oos": [
+     3.504863754796189,
+     67.72175676427146,
+     19.322222346474504
+    ]
+   },
+   "trades": 1229,
+   "win": 36.77786818551668,
+   "mean_R": 0.3562551276551629,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 31.682138025799144
+  }
+ }
+}

@@ -1,0 +1,293 @@
+{
+ "name": "a6r2_runner",
+ "notes": "C3 round 2, agent 6 - HIGHER-TIMEFRAME RUNNER LEG on top of C3+D (c3bench_d baseline).\n\nMechanism: the 4.5 ATR(4h) chandelier is sized for 4h noise; on a multi-week trend the first normal 4h correction\n(often a daily pullback) takes the whole position out, and C3 then waits for a fresh PULL+D signal. Once a trade has\nPROVEN itself (best 4h close >= entry + 3R, R = initial 2 ATR stop distance), the trend is established; letting part\nof the position trail on the DAILY timeframe lets it sit through daily-scale pullbacks and ride the multi-week leg,\nwhile the rest keeps the normal 4h chandelier (keeps C3's profit-taking profile on the trades that fade).\n\nOwn engine copy (identical to mtf_search.engine mode 6 for entry, initial stop, sizing, costs .0006/.0002, funding\nd['fb'], base 1e4, total initial risk 0.5%). The position is split at entry into a MAIN leg (fraction 1-f) and a\nRUNNER leg (fraction f), both sharing the same initial stop and 4h chandelier until activation (so total initial risk\nis unchanged at 0.5%). After the +3R activation (decided on a bar close, effective from the next bar) the runner\nleaves the 4h chandelier and uses a daily trail, ratcheting only in the trade's favour, floored at the entry price\n(breakeven). Daily bars = 6 consecutive 4h bars (UTC day, as c3bench_d uses c[5::6]); a daily level is only updated\nwhen a day has completed (bar index % 6 == 5) - strictly causal. One position per coin: no new entry until ALL legs\nare closed. Each leg is emitted as its own bench row (own qty, exit, cost) so mark-to-market works.\n\nPRE-DECLARED variants (fixed round parameters, no post-hoc changes):\n  R50_DON20  f=0.5, activation +3R, runner trail = 20-day Donchian (lowest daily low of the last 20 completed days;\n             highest daily high for shorts) - the classic turtle-style daily exit.\n  R50_ATR3   f=0.5, activation +3R, runner trail = best 4h close since entry - 3 x daily ATR14 (Wilder, completed\n             days), updated at day closes - a daily chandelier.\n  R100_DON20 f=1.0 (the whole position switches to the 20-day Donchian at +3R) - maximum trend exposure, tests whether\n             splitting matters.\nInputs: C3+D entries via c3bench_d.confirm_signals(d), weekend mask d['wk'] on the decision bar.\n",
+ "baseline": {
+  "main": {
+   "full": [
+    1.7320314884655275,
+    47.52423253520266,
+    27.438434492496544
+   ],
+   "train": [
+    1.8522735586337353,
+    50.823486700755204,
+    27.438434492496544
+   ],
+   "oos": [
+    2.2818258503345015,
+    41.62774498782162,
+    18.2431735453077
+   ]
+  },
+  "other": {
+   "full": [
+    0.40972918862431507,
+    11.847044319250589,
+    28.914328410498634
+   ],
+   "train": [
+    0.5757832220899856,
+    15.82559605285454,
+    27.485337268791167
+   ],
+   "oos": [
+    0.16824213337150087,
+    4.864608296786477,
+    28.91432841049857
+   ]
+  },
+  "port": {
+   "full": [
+    3.103634307819689,
+    59.320048395291856,
+    19.113092108124153
+   ],
+   "train": [
+    3.020206775241402,
+    54.6056238223098,
+    18.080094472321427
+   ],
+   "oos": [
+    3.578428450611147,
+    68.394832578863,
+    19.113092108124196
+   ]
+  },
+  "trades": 1174,
+  "win": 37.22316865417377,
+  "mean_R": 0.37466934623193493
+ },
+ "variants": {
+  "R50_DON20": {
+   "variant": {
+    "f": 0.5,
+    "trig": 3.0,
+    "kind": 0,
+    "N": 20,
+    "k": 3.0
+   },
+   "main": {
+    "full": [
+     1.0360157540872597,
+     34.9487326521625,
+     33.733784949006576
+    ],
+    "train": [
+     1.1508654396163538,
+     35.80363101331265,
+     31.11018002699599
+    ],
+    "oos": [
+     2.398424480821951,
+     33.386187304507175,
+     13.920049420553603
+    ]
+   },
+   "other": {
+    "full": [
+     0.3727914260127024,
+     9.228868566156368,
+     24.756118092270462
+    ],
+    "train": [
+     0.45647812942575494,
+     10.749957138216605,
+     23.549774776154
+    ],
+    "oos": [
+     0.26168082105868423,
+     6.4782013086110535,
+     24.756118092270352
+    ]
+   },
+   "port": {
+    "full": [
+     2.864491481110248,
+     55.511440986693785,
+     19.37916078744214
+    ],
+    "train": [
+     3.022407422481714,
+     50.495749037644,
+     16.707128450664566
+    ],
+    "oos": [
+     3.364649856980782,
+     65.20409057187477,
+     19.37916078744214
+    ]
+   },
+   "trades": 1564,
+   "win": 36.31713554987212,
+   "mean_R": 0.22845917481362352,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 36.019224393115074
+  },
+  "R50_ATR3": {
+   "variant": {
+    "f": 0.5,
+    "trig": 3.0,
+    "kind": 1,
+    "N": 20,
+    "k": 3.0
+   },
+   "main": {
+    "full": [
+     1.6032019540976772,
+     38.99044390880449,
+     24.320357026229612
+    ],
+    "train": [
+     1.7284473423208855,
+     42.03645646628165,
+     24.320357026229612
+    ],
+    "oos": [
+     2.0863211397159125,
+     33.5431639010173,
+     16.0776609422578
+    ]
+   },
+   "other": {
+    "full": [
+     0.3976189725348007,
+     10.445073212504674,
+     26.269051363213038
+    ],
+    "train": [
+     0.6018819804403498,
+     14.123762053696943,
+     23.46599917040828
+    ],
+    "oos": [
+     0.15108565409998306,
+     3.968876807797095,
+     26.26905136321305
+    ]
+   },
+   "port": {
+    "full": [
+     2.79265231373342,
+     56.43114937050553,
+     20.207008617934353
+    ],
+    "train": [
+     3.069891424019744,
+     51.81915458204291,
+     16.87980043091897
+    ],
+    "oos": [
+     3.2319158640591055,
+     65.30735171748117,
+     20.207008617934374
+    ]
+   },
+   "trades": 1812,
+   "win": 36.920529801324506,
+   "mean_R": 0.20676273560524244,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 34.57625165224021
+  },
+  "R100_DON20": {
+   "variant": {
+    "f": 1.0,
+    "trig": 3.0,
+    "kind": 0,
+    "N": 20,
+    "k": 3.0
+   },
+   "main": {
+    "full": [
+     0.5229522667018303,
+     29.407470372515586,
+     56.23356517409023
+    ],
+    "train": [
+     0.5312626970631968,
+     28.42796091342221,
+     53.51017692484541
+    ],
+    "oos": [
+     1.8385495650144479,
+     31.233553178456354,
+     16.988148577985662
+    ]
+   },
+   "other": {
+    "full": [
+     0.1120523187152759,
+     3.842020102045929,
+     34.28773403438864
+    ],
+    "train": [
+     0.0446214791788354,
+     1.4323534029964557,
+     32.1000878804538
+    ],
+    "oos": [
+     0.3160046052906861,
+     8.437156546154934,
+     26.699473377591342
+    ]
+   },
+   "port": {
+    "full": [
+     2.23787068469933,
+     55.420220662229895,
+     24.764710955439273
+    ],
+    "train": [
+     2.522363517367826,
+     50.38605882858933,
+     19.975732475376486
+    ],
+    "oos": [
+     3.391720111138235,
+     65.15054163044944,
+     19.208702220592556
+    ]
+   },
+   "trades": 782,
+   "win": 33.887468030690535,
+   "mean_R": 0.4808939903554745,
+   "verdict": {
+    "checks": {
+     "R1_train": 0.0,
+     "R2_valid": 0.0,
+     "R3_other20": 0.0,
+     "R4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false,
+   "trend_capture": 36.019224393115074
+  }
+ }
+}

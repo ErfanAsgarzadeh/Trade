@@ -23,7 +23,7 @@ import lbank_bot as bot
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
-    stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,symbols=[])
+    stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[])
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -31,6 +31,7 @@ def validate(c:dict)->dict:
     if c['dry_run_mode'] is not True:raise ValueError('C3 sleeve is paper-only: dry_run_mode must be true')
     if c['timeframe']!='4h':raise ValueError('C3 was researched on 4h only')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['stop_atr']>0 and c['trail_atr']>0):raise ValueError('Invalid C3 risk settings')
+    if not (type(c['confirm_bars']) is int and 0<=c['confirm_bars']<=12):raise ValueError('confirm_bars must be an int 0..12')
     if c['candle_fetch_limit']<c['ema_slow']*3:raise ValueError('candle_fetch_limit too small for the EMA warm-up')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('C3 needs a list of distinct symbols')
     return c
@@ -48,6 +49,21 @@ def features(rows:list,now:float,c:dict)->pd.DataFrame:
     tr=pd.concat([df.high-df.low,(df.high-cl.shift()).abs(),(df.low-cl.shift()).abs()],axis=1).max(axis=1)
     df['atr']=tr.ewm(alpha=1/c['atr_period'],adjust=False).mean();return df
 
+def weekday_close(ts_ms:int)->bool:return pd.Timestamp(int(ts_ms)+H4*1000,unit='ms').weekday()<5
+
+def confirm_step(pending:list,close:float,trend:int,bar_ts:int,new_side:str|None,window:int)->tuple[str|None,list]:
+    """Variant D (agent 1, high_cagr/ideas/c3_a1_followthrough.py): a PULL signal becomes an entry only when a LATER
+    closed candle, within `window` candles, closes beyond the signal candle's close; it is dropped as soon as EMA50 vs
+    EMA200 no longer agrees. trend = +1 (EMA50 > EMA200), -1 (<), 0 (equal). Pure function, shared with the tests."""
+    hit=set();keep=[]
+    for p in pending:
+        sign=1 if p['side']=='long' else -1
+        if trend!=sign:continue
+        if sign*(close-p['level'])>0:hit.add(p['side']);continue
+        if bar_ts<p['deadline']:keep.append(p)
+    if new_side:keep.append(dict(side=new_side,level=float(close),deadline=int(bar_ts)+window*H4*1000))
+    return ('long' if 'long' in hit else 'short' if 'short' in hit else None),keep
+
 def signal(df:pd.DataFrame,c:dict)->str|None:
     b,p=df.iloc[-1],df.iloc[-2]
     if c['skip_weekend'] and pd.Timestamp(int(b.timestamp)+H4*1000,unit='ms').weekday()>=5:return None
@@ -62,6 +78,7 @@ class Store:
             db.execute('CREATE TABLE IF NOT EXISTS positions(symbol TEXT PRIMARY KEY,side TEXT,entry REAL,qty REAL,stop REAL,best REAL,opened REAL,signal_ts INTEGER,last_bar_ts INTEGER,risk_usd REAL)')
             db.execute('CREATE TABLE IF NOT EXISTS trades(id INTEGER PRIMARY KEY,symbol TEXT,side TEXT,entry REAL,exit REAL,qty REAL,opened REAL,closed REAL,pnl REAL,reason TEXT)')
             db.execute('CREATE TABLE IF NOT EXISTS scanned(symbol TEXT PRIMARY KEY,candle_ts INTEGER)')
+            db.execute('CREATE TABLE IF NOT EXISTS pending(symbol TEXT PRIMARY KEY,data TEXT)')
     def db(self):return sqlite3.connect(self.path,timeout=30)
     def positions(self)->list[dict]:
         with self.db() as db:
@@ -103,9 +120,14 @@ class Sleeve:
                         sign=1 if pos['side']=='long' else -1;best=max(pos['best'],b.close) if sign==1 else min(pos['best'],b.close)
                         new=best-sign*c['trail_atr']*b.atr;stop=max(pos['stop'],new) if sign==1 else min(pos['stop'],new)
                         with self.store.db() as db:db.execute('UPDATE positions SET best=?,stop=?,last_bar_ts=? WHERE symbol=?',(best,stop,stamp,s))
-                elif c['enabled']:
-                    side=signal(df,c)
-                    if side:self.open(s,side,b,now)
+                side=signal(df,c)
+                if c['confirm_bars']>0:   # variant D: track signals (also while a position is open) and wait for confirmation
+                    with self.store.db() as db:row=db.execute('SELECT data FROM pending WHERE symbol=?',(s,)).fetchone()
+                    trend=int(np.sign(b.ema_f-b.ema_s))
+                    side,pend=confirm_step(json.loads(row[0]) if row else [],float(b.close),trend,stamp,side,c['confirm_bars'])
+                    if side and c['skip_weekend'] and not weekday_close(stamp):side=None
+                    with self.store.db() as db:db.execute('INSERT INTO pending VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET data=excluded.data',(s,json.dumps(pend)))
+                if not pos and c['enabled'] and side:self.open(s,side,b,now)
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
                 ok=False;LOG.exception('C3 scan failed for %s',s)

@@ -19,6 +19,7 @@
   "skip_weekend": true,
   "candle_fetch_limit": 1000,
   "check_interval_seconds": 15,
+  "confirm_bars": 3,
   "symbols": ["AAVE/USDT:USDT", "UNI/USDT:USDT", "AVAX/USDT:USDT", "KSM/USDT:USDT", "EGLD/USDT:USDT",
               "DOT/USDT:USDT", "DOGE/USDT:USDT", "ONE/USDT:USDT", "TRX/USDT:USDT", "SUSHI/USDT:USDT"]
 }
