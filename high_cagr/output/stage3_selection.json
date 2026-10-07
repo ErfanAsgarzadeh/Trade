@@ -17,10 +17,6 @@
    "sep2021_quote_volume": 10285826175.64144
   },
   {
-   "symbol": "ICPUSDT",
-   "sep2021_quote_volume": 9940379062.5954
-  },
-  {
    "symbol": "BCHUSDT",
    "sep2021_quote_volume": 9022555478.43135
   },
@@ -39,6 +35,10 @@
   {
    "symbol": "C98USDT",
    "sep2021_quote_volume": 7083392419.747499
+  },
+  {
+   "symbol": "1000SHIBUSDT",
+   "replaces": "ICPUSDT"
   }
  ],
  "skipped": [
@@ -57,6 +57,11 @@
   [
    "COTIUSDT",
    "not on LBank"
+  ],
+  [
+   "ICPUSDT",
+   "funding files missing 2021-10..2022-08 (found during download)"
   ]
- ]
+ ],
+ "deviation": "Funding completeness was not checked at selection; ICP lacked 11 months of funding files, so it was replaced by the next symbol in the liquidity ranking meeting all requirements incl. funding. Chosen without looking at any performance."
 }
