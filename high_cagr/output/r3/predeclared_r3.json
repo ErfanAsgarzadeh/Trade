@@ -1,0 +1,21 @@
+{
+ "declared_before_running": "2026-10-07",
+ "goal": "Reduce FALSE_BREAKOUT (losing positions, MFE < 0.3R) and CHOP (losing, MFE 0.3R..1R) losses of the DEPLOYED bot without cutting the winners.",
+ "bench": "high_cagr/r3_harness.py (frozen). Baseline = deployed bot (4B + V2 + BTC gate, 2.0 ATR, R 0.75%, 4 slots) run separately on OLD5 / NEW10 / HOLD10. Baseline full@2bps Calmar 1.420 / 0.956 / 0.283.",
+ "baseline_costs_%equity": {"FB": "OLD5 -164 (291), NEW10 -167 (318), HOLD10 -170 (309)", "CHOP": "OLD5 -155 (367), NEW10 -158 (431), HOLD10 -179 (452)"},
+ "pass_gate (all)": ["target cost cut >= 15% pooled", "full@2 Calmar not worse than baseline-0.02 on EACH universe", "mean Calmar of 3 universes >= baseline + 0.05", "mean Calmar @5bps not worse", "DD not worse by > 1pt on each universe", "mean Calmar not worse in H1 and in H2", "mean Calmar of the two untouched universes (NEW10, HOLD10) >= baseline + 0.03", "causal (truncation check) and, for a custom kernel, bit-identical parity with switches off"],
+ "multiple_testing": "Each agent: max 2 batches of <= 4 variants, every variant ever run stays in the JSON. A pass from batch 2 counts only if a neighbouring parameter value also passes or is within 0.03 Calmar.",
+ "confirmation": "Any pass must then be confirmed on a FRESH holdout of 10 symbols never touched (next by Sep-2021 liquidity, funding complete), declared before download.",
+ "already_tested_and_failed (do not repeat)": ["ADX", "bar shape / range", "breadth across symbols", "close location in bar", "confirmation bar / penetration >= 0.25 ATR", "higher-timeframe trend (daily EMA20 slope, mid100)", "squeeze (low prior range)", "volume surge", "pilot entry (partial size, complete later)", "combinations of the above", "Choppiness Index", "Kaufman efficiency ratio", "fail-exit back inside level/Kumo", "partial take-profit 1R/1.5R", "time stop 48h/72h", "tighter trail after 1R/1.5R", "more slots/less risk", "profit floor variants", "pyramid off / 0.5x", "short risk scaling", "trail width", "ATR expansion (ChatGPT)", "stricter BTC gate (ChatGPT)", "liquidity-ranked symbol selection"],
+ "passed_before_but_not_deployed": "initial stop 2.5 ATR (passes on 15 symbols/6 slots, fails on 5/4)",
+ "agents": {
+  "A1_entry_mechanics": "FB: how/where we enter: retest/limit entry after breakout, entry buffer beyond level, stop anchored to breakout structure, delayed entry on the next bar's open only if still beyond level",
+  "A2_positioning": "FB: crowding/positioning from FUNDING rates (available per symbol, minute grid) and relative strength vs BTC",
+  "A3_timing": "FB: calendar/session/bar-timing effects (weekend, UTC hour of the 4h bar, time since last signal on the symbol, number of recent failed breakouts on the same symbol)",
+  "A4_adaptive_risk": "CHOP: don't filter, SIZE: per-symbol / portfolio risk scaled by recent strategy outcomes or regime, re-entry cooldown after a stop-out",
+  "A5_regime_statistics": "CHOP: statistical trendiness measures not yet tried: Hurst / variance ratio / return autocorrelation / realized-vol regime / R-squared of linear fit",
+  "A6_loss_anatomy": "BOTH: data-mining discriminators between FB/CHOP losers and winners at entry time; discovery ONLY on OLD5+NEW10 H1 trades, then pre-declare 1-2 rules and test on the bench"
+ },
+ "meeting": "After batch 1 every agent receives all results, critiques the others and proposes at most one follow-up (batch 2). The strategy lead (main session) decides which follow-ups run and writes the synthesis.",
+ "decision": "Results only; no bot change without the user's confirmation."
+}
