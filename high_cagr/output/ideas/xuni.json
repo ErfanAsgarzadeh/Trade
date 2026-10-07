@@ -1,0 +1,43 @@
+{
+ "notes": "Cross-universe check: every config from orb_intraday (3), ltf_search (840) and mtf_search (2,880) plus the bot\n(2A+5A, unchanged) on 10 OTHER coins: AVAX DOT ATOM FIL DOGE LTC AXS LINK XTZ ALGO (stage-2 liquidity list chosen\nin Sep-2021 terms, before any result). Written and committed BEFORE running on these coins. No parameter is refit.\n\nSame engines, costs, sizing, filters and mark-to-market daily returns as the 5-coin runs; 10 symbols, one position\nper symbol (strategies), bot keeps 4 slots and 0.75% risk. BTC filter uses BTC from the 5-coin data.\nReported (no pass/fail, comparison only):\n  1. bot on the 10 coins vs bot on the 5 coins (full / train / validation Calmar and CAGR)\n  2. share of configs profitable on the 10 coins, by family type and timeframe; how many beat the bot on the\n     10 coins (full-period Calmar)\n  3. transfer: Spearman rank correlation of 5-coin TRAIN Calmar (the selection metric used before) vs 10-coin\n     full Calmar; median 10-coin Calmar of the 5-coin top-20 vs all configs\n",
+ "bot10": {
+  "full": [
+   0.01553145277319737,
+   0.706141549759387,
+   45.46526072422379
+  ],
+  "train": [
+   -0.02622121663225798,
+   -1.1921544506919624,
+   45.46526072422379
+  ],
+  "oos": [
+   0.16685533425463064,
+   4.3032164213742785,
+   25.79010398796917
+  ]
+ },
+ "bot5": {
+  "full": [
+   2.3084642168487317,
+   41.260069931859555,
+   17.873385097640103
+  ],
+  "train": [
+   2.1881520935280356,
+   35.99978347241599,
+   16.45213949199128
+  ],
+  "oos": [
+   2.8814186017937575,
+   51.50070429736346,
+   17.87338509764008
+  ]
+ },
+ "bot10_roots": 1430,
+ "spearman": 0.7161507273652533,
+ "top20_median": 0.22039501702448083,
+ "all_median": -0.13147846454269113,
+ "beat_bot": 1062,
+ "configs": 3723
+}
