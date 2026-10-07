@@ -1,0 +1,102 @@
+[
+ {
+  "symbol": "ETCUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "d90cbb0888405ca77d8ff4508d910305d8962daf05943c10dbd088c12bc9a7e7"
+ },
+ {
+  "symbol": "NEARUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "6fed8524a1711f57f94b0a7221874e194e50a29ebcb45c3c4b89ce478e4f51c1"
+ },
+ {
+  "symbol": "TRXUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "6787c03243dc47d201f9193c65894e277c507dce7be9ff142d25a9ee235af253"
+ },
+ {
+  "symbol": "CELRUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "a4a1630118035ac7cf62051f9244577fdff2fd89ea88ae5a0e0937b9f95bb1c9"
+ },
+ {
+  "symbol": "BCHUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "b0aa3e0a21fd785b20f6d94e042b7ea5bf49ea79c30d3477d84aae44cd246ee9"
+ },
+ {
+  "symbol": "UNIUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "024fd0920e08259939653667cd49f18d1b6accd793e5aba2f4b3ca2b616dd157"
+ },
+ {
+  "symbol": "ALICEUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 6170,
+  "parity_windows": 6,
+  "prices_sha256": "048b8ab02367dfad9f928d645d4a0903642293bce0fa9e6ceea0aea1ab3d75c6"
+ },
+ {
+  "symbol": "SUSHIUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 7200,
+  "missing_fraction": 0.002738225629791895,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "a4986dee24d8aed5af8f3b8a335af19682d36c4e76ae2679e89dfa3c1fd3dc5a"
+ },
+ {
+  "symbol": "C98USDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1629775800000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "6a88a29a92c283e1b7739154b107b157e096af35a39989165bee98db15f58788"
+ },
+ {
+  "symbol": "1000SHIBUSDT",
+  "minutes": 2629440,
+  "missing_minutes_in_test": 0,
+  "missing_fraction": 0.0,
+  "first_minute": 1627776000000,
+  "funding_events": 5466,
+  "parity_windows": 6,
+  "prices_sha256": "8b8d40c99d5ba39b639cd0c1a6e29a4eef8f8d265f41c847625e072a63f8e711"
+ }
+]
