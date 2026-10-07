@@ -251,6 +251,8 @@ FUNDING_DIR=data/funding python fetch_funding.py --source binance   # منبع �
 
 ## فیلتر رژیم ATR (2A) و محافظ سود ۱R (5A)
 
+**از ۷ اکتبر ۲۰۲۶ پیش‌فرض `config.json` همین 2A+5A است** (به درخواست مالک). V2، فیلتر BTC و افزودن امن 4B خاموش شده‌اند؛ ربات همچنان paper است. ثبت تغییر: `high_cagr/output/deployed_overrides.json`.
+
 نتیجهٔ آزمون پنج ایده (`high_cagr/output/ideas/`): ترکیب 2A+5A روی پنج نماد اصلی، کل ۵ سال، CAGR ۴۱٫۳٪، DD ۲۱٫۱٪، Calmar 1.96 (baseline گزارش شکست: 32.2٪ / 34.6٪ / 0.93). این ترکیب پس از دیدن نتایج انتخاب شده و همان فیلتر ATR روی ۲۰ نماد دست‌نخوردهٔ قبلی (NEW10/HOLD10) بهبودی نداشت؛ پیش از پول واقعی روی HOLD2 و paper آزموده شود.
 
 - 2A — کلیدها در `strategy_settings`: `atr_regime_filter_enabled`، `atr_regime_window` (۶۰)، `atr_regime_min_ratio` (۱٫۰). وقتی ATR آخرین کندل بستهٔ ۴ساعته از میانهٔ ATR شصت کندل قبلی کمتر است، نه ورود جدید باز می‌شود نه افزودن. هر ATR دقیقاً مثل اندیکاتور runtime روی پنجرهٔ خودش محاسبه می‌شود؛ ربات برای این کار `candle_fetch_limit + 60` کندل می‌خواند. تاریخچهٔ ناقص یا دارای gap یعنی ورود انجام نمی‌شود.

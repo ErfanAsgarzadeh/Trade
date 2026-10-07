@@ -12,7 +12,7 @@ def deployed():
 
 def run(system,monkeypatch,side,funding,enabled=True):
     c=deployed();c['symbols']=SYMS;c['risk_and_exit']['max_open_positions']=2
-    c['strategy_settings'].update(btc_regime_filter_enabled=False,stop_width_filter_enabled=False,funding_short_filter_enabled=enabled)
+    c['strategy_settings'].update(atr_regime_filter_enabled=False,btc_regime_filter_enabled=False,stop_width_filter_enabled=False,funding_short_filter_enabled=enabled)
     system.config.write(c);now=1_800_000_003;calls=[]
     for symbol in SYMS:
         bars=bars_for(now,'4h');bars[-2][4]=110;bars[-2][2]=max(bars[-2][2],111);bars[-2][3]=min(bars[-2][3],109);system.data.bars[symbol,'4h']=bars;system.data.prices[symbol]=110.

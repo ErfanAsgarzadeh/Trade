@@ -6,8 +6,9 @@ import pytest
 import lbank_bot as lb
 from test_system import system,cfg
 
-def setup(system):
+def setup(system,**overrides):
  c=lb.validate_config(json.loads((Path(__file__).parents[1]/'config.json').read_text()))
+ c['strategy_settings'].update(overrides)
  c['strategy_settings'].update(pyramid_enabled=True,exit_tp_mode='STOP_TRAIL_DONCHIAN10',hard_tp_rr=0.,breakeven_trigger_rr=0.,initial_stop_anchor='SIGNAL')
  c['risk_and_exit']['leverage_mode']='FIXED_LEVERAGE';system.config.write(c);c=system.config.read()
  bar=pd.Series(dict(close=100.,high=102.,low=98.,kijun=95.,atr=1.,timestamp=0))

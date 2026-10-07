@@ -7,8 +7,14 @@ import lbank_bot as lb
 from test_system import system,cfg
 from test_pyramiding import setup
 
-def config():
+FOUR_B=dict(profit_floor_enabled=True,profit_floor_trigger_r=2.0,profit_floor_lock_r=.25,safe_pyramid_enabled=True,pyramid_risk_fraction=.35)
+
+def deployed():
  return lb.validate_config(json.loads((Path(__file__).parents[1]/'config.json').read_text()))
+
+def config():
+ # Mechanics below are written for the verified 4B parameters (2R trigger, +0.25R lock).
+ c=deployed();c['strategy_settings'].update(FOUR_B);return c
 
 def open_position(system,side='long',entry=100.,r=2.):
  c=config();system.config.write(c);c=system.config.read();sign=1 if side=='long' else -1
@@ -17,9 +23,9 @@ def open_position(system,side='long',entry=100.,r=2.):
  with system.db.connect() as db:db.execute('UPDATE positions SET active_sl=?,initial_sl=?,root_r_distance=?,initial_r_distance=?,root_entry_price=? WHERE symbol=?',(entry-sign*r,entry-sign*r,r,r,entry,p['symbol']))
  return system.db.position(p['symbol'])
 
-def test_deployed_defaults_are_the_verified_4b_parameters():
- s=config()['strategy_settings']
- assert (s['profit_floor_enabled'],s['profit_floor_trigger_r'],s['profit_floor_lock_r'],s['safe_pyramid_enabled'],s['pyramid_risk_fraction'])==(True,2.0,.25,True,.35)
+def test_deployed_defaults_are_the_2a_5a_parameters():
+ s=deployed()['strategy_settings']
+ assert (s['profit_floor_enabled'],s['profit_floor_trigger_r'],s['profit_floor_lock_r'],s['safe_pyramid_enabled'],s['pyramid_risk_fraction'])==(True,1.0,.1,False,.5)
 
 @pytest.mark.parametrize('side',['long','short'])
 def test_floor_triggers_at_2r_and_only_ratchets(system,side):
@@ -52,13 +58,13 @@ def test_legacy_config_keeps_legacy_behaviour_and_validates_ranges():
   with pytest.raises(lb.ConfigError):lb.validate_config(bad)
 
 def test_pyramid_add_uses_configured_risk_fraction(system):
- c,p=setup(system);equity=system.paper_equity();bar=pd.Series(dict(close=110.,timestamp=(1_800_014_400-14400)*1000))
+ c,p=setup(system,**FOUR_B);equity=system.paper_equity();bar=pd.Series(dict(close=110.,timestamp=(1_800_014_400-14400)*1000))
  assert system._pyramid_add(p,'long',bar,c,1_800_014_403)
  with system.db.connect() as db:unit=dict(db.execute('SELECT * FROM scale_in_history').fetchone())
  limit=equity*c['risk_and_exit']['risk_per_trade_pct']*.35;assert unit['modeled_risk_usd']<=limit+1e-8 and unit['modeled_risk_usd']>.9*limit
 
 def test_safe_pyramid_blocks_add_that_would_make_stopout_a_net_loss(system):
- c,p=setup(system);bar=pd.Series(dict(close=110.,timestamp=(1_800_014_400-14400)*1000))
+ c,p=setup(system,**FOUR_B);bar=pd.Series(dict(close=110.,timestamp=(1_800_014_400-14400)*1000))
  weak=dict(p,active_sl=100.2)   # covers entry costs (passes arming) but not the add-on's 10-point gap
  assert not system._pyramid_add(weak,'long',bar,c,1_800_014_403) and system.db.position(p['symbol'])['qty']==p['qty']
  legacy=copy.deepcopy(c);legacy['strategy_settings']['safe_pyramid_enabled']=False

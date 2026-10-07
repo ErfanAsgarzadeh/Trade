@@ -11,7 +11,7 @@ def deployed():
 
 def setup(system,monkeypatch,btc_kumo,enabled=True):
     c=deployed();c['symbols']=SYMS;c['risk_and_exit']['max_open_positions']=2
-    c['strategy_settings'].update(btc_regime_filter_enabled=enabled,btc_regime_symbol=SYMS[0],stop_width_filter_enabled=False)
+    c['strategy_settings'].update(atr_regime_filter_enabled=False,btc_regime_filter_enabled=enabled,btc_regime_symbol=SYMS[0],stop_width_filter_enabled=False)
     system.config.write(c);now=1_800_000_003
     for symbol in SYMS:
         bars=bars_for(now,'4h');bars[-2][4]=110;bars[-2][2]=max(bars[-2][2],111);bars[-2][3]=min(bars[-2][3],109);system.data.bars[symbol,'4h']=bars;system.data.prices[symbol]=110.
@@ -55,8 +55,8 @@ def test_stale_btc_data_retries_without_consuming_the_candle(system,monkeypatch)
 def test_config_rules():
     import json;from pathlib import Path
     c=lb.validate_config(json.loads((Path(__file__).parents[1]/'config.json').read_text()));s=c['strategy_settings']
-    assert s['btc_regime_filter_enabled'] and s['stop_width_filter_enabled'] and s['initial_stop_atr_mult']==2.0
-    bad=json.loads(json.dumps(c));bad['strategy_settings']['btc_regime_symbol']='XYZ/USDT:USDT'
+    assert not s['btc_regime_filter_enabled'] and not s['stop_width_filter_enabled'] and s['atr_regime_filter_enabled'] and s['initial_stop_atr_mult']==2.0
+    bad=json.loads(json.dumps(c));bad['strategy_settings'].update(btc_regime_filter_enabled=True,btc_regime_symbol='XYZ/USDT:USDT')
     with pytest.raises(lb.ConfigError):lb.validate_config(bad)
     legacy=json.loads(json.dumps(c))
     for k in ('btc_regime_filter_enabled','btc_regime_symbol'):legacy['strategy_settings'].pop(k)
