@@ -7,6 +7,7 @@ With every new switch at its default this is bit-identical to high_cagr.kernel.
  #C chop tools  fail_exit_mode 1/2: exit when a closed bar is back inside the breakout level / the Kumo edge
                  (bars cols 8/9 and 10/11); partial_frac at partial_r; time_stop_bars without time_stop_mfe;
                  tight_after_r: trail on bars cols tight_cols/+1 once MFE reached it
+ #R risk_col>0: root risk is multiplied by signals[:,:,risk_col] (per-signal sizing); 0 = off
  #4 profit floor  floor_on (stop >= entry +/- 0.25R once base MFE>=2R), pyr_risk_mult, pyr_safe
 bars columns 0..3 are the original (low line, atr, close, high line); 4/5 and 6/7 are the
 3- and 4-bar channel low/high used by the stale guard. MFE is measured on the minute
@@ -42,7 +43,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002,
              vol_max_pct=0.,vol_mid_pct=0.,vol_mid_mult=1.,thr_trigger=0.,thr_resume=0.,thr_mult=1.,
              pilot_frac=1.,pilot_trigger=.5,short_risk_mult=1.,
-             fail_exit_mode=0,partial_frac=0.,partial_r=1.,time_stop_bars=0,time_stop_mfe=1.,tight_after_r=0.,tight_cols=6):
+             fail_exit_mode=0,partial_frac=0.,partial_r=1.,time_stop_bars=0,time_stop_mfe=1.,tight_after_r=0.,tight_cols=6,risk_col=0):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,3,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
@@ -124,6 +125,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if not scale and vol_mid_pct>0 and dist/trigger>vol_mid_pct:vol_mult=vol_mid_mult
     unit_risk=(risk*pyr_risk_mult if scale else risk*vol_mult)*(thr_mult if throttled else 1.)
     if not scale and sign<0 and short_risk_mult!=1.:unit_risk=unit_risk*short_risk_mult
+    if not scale and risk_col>0:unit_risk=unit_risk*signals[s,b,risk_col]
     full_risk=unit_risk
     if not scale and pilot_frac<1.:unit_risk=unit_risk*pilot_frac
     if throttled:throttled_units+=1

@@ -1,0 +1,17 @@
+{
+ "written": "2026-10-07, before any idea result was computed",
+ "baseline": "HC__FIVE__standard__4h__N10__DONCHIAN10__PY1__R0.0075__P4 (failure report 'before'); bench high_cagr/ideas/bench.py",
+ "gates": "G1 train and oos net > 0; G2 full Calmar >= baseline+0.05 at 2bps AND >= baseline at 5bps; G3 full maxDD <= baseline; G4 Calmar not worse than baseline in train AND in oos. Pass = all four (+ causal).",
+ "ideas": {
+  "1_volume": {"feature": "vol_rel = volume of signal bar / mean volume of the 20 closed bars before it",
+               "A": "skip entry if vol_rel < 1.5", "B": "half root risk if vol_rel < 1.5"},
+  "2_atr_regime": {"feature": "atr_rel = ATR of signal bar / median ATR of the 60 closed bars before it",
+               "A": "skip entry if atr_rel < 1.0", "B": "half root risk if atr_rel < 1.0"},
+  "3_time_stop": {"A": "exit at 4h close after 3 bars (12h) if root MFE < 0.5R", "B": "same after 6 bars (24h)"},
+  "4_confirmation": {"A": "wait one bar: enter at bar b+1 only if bar b had a raw signal and the b+1 close is still beyond bar b's breakout level (max/min of Donchian10 and Kumo edge) with the 4h close still outside Kumo; stop = b+1 price -/+ 2 ATR",
+               "B": "enter only if the signal close penetrates the breakout level by >= 0.25 ATR"},
+  "5_giveback": {"A": "after root MFE >= 1R move stop to entry +0.1R (breakeven + costs)", "B": "close 1/3 at +1.5R, rest keeps trailing",
+               "C": "after MFE >= 2R trail on the 4-bar channel instead of Donchian10"}
+ },
+ "combo": "for each idea take the variant with the highest full|2 Calmar (whether or not it passes), and run all five together; also report every idea alone. No thresholds changed after seeing results."
+}
