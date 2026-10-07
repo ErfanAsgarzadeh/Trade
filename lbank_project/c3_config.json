@@ -3,7 +3,7 @@
   "dry_run_mode": true,
   "timeframe": "4h",
   "paper_capital": 10000.0,
-  "risk_per_trade_pct": 0.0025,
+  "risk_per_trade_pct": 0.0015,
   "max_notional_pct": 0.4,
   "round_trip_fee": 0.0012,
   "sizing_slippage_pct": 0.0004,
