@@ -1,0 +1,380 @@
+{
+ "notes": "Broad search for a 30m / 1h strategy on the 5 coins. Written and committed BEFORE any result.\n\nFAMILIES (signal on a closed bar, entry at the next bar's open):\n  DON20/DON55   Donchian N breakout (close beyond prior N-bar extreme); family exit: opposite N/2 channel\n  EMA9_21/EMA20_50/EMA50_200  EMA cross; family exit: reverse cross\n  ST10_3/ST10_2 Supertrend(10, k) flip; family exit: flip back\n  MACD200       MACD(12,26,9) cross with close beyond EMA200; family exit: reverse MACD cross\n  KELT          close beyond Keltner(EMA20 +/- 2 ATR); family exit: close back through EMA20\n  SQZ           Bollinger(20,2) width in lowest 20% of prior 120 bars, then close outside band; exit: close through mid\n  RSI2T         Connors RSI(2) < 10 (> 90) with close beyond EMA200; family exit: close through EMA5\n  RSI2          RSI(2) < 10 (> 90), no trend filter; family exit: close through EMA5\n  BBREV         close outside Bollinger(20,2), fade it; family exit: close through mid\n  PULL          EMA50 vs EMA200 trend, RSI(14) re-crosses 40 (60 for shorts); exit: RSI14 > 70 (< 30) or close through EMA50\nEXITS: SIG family exit + 2.5 ATR stop | TRAIL 2 ATR stop + 3 ATR chandelier on closes | TP2 R=1.5 ATR, target 2R |\n       TP1 target 1R | TIME close after 12 bars, 2 ATR stop. Same-bar stop+target -> stop (conservative).\nFILTERS: none | HTF: last closed 4h close beyond 4h EMA50 on the trade side | ADX(14) >= 20 | ADX < 20 |\n       ATR4h: 4h ATR >= median of prior 60 4h ATRs (the bot's 2A) | NOWKND: no entries Sat/Sun UTC\nTIMEFRAMES 30m, 1h. One position per symbol, 5 symbols, risk 0.5% of equity per trade (stop distance + cost\n  allowance), notional <= 0.4 x equity, skip stops < 0.4% of price. Taker costs 0.06%/side + 2 bps slippage + funding.\n  Maker sensitivity (0.02%/side, no slippage) is reported only, never used for selection.\nSELECTION on TRAIN (< 2025-01-01) only: configs with >= 150 train trades, ranked by train Calmar (daily, compounded).\nVALIDATION 2025-01-01..2026-10-04 judges the TOP 10. A strategy is FOUND only if: validation return > 0, validation\n  Calmar >= 0.5, and bot+strategy improves the bot (full Calmar >= bot + 0.05, full DD <= bot DD, validation Calmar\n  >= bot's). Also reported: Spearman rank correlation of train vs validation Calmar across all configs (persistence).\n",
+ "bot": {
+  "full": [
+   2.3084642168487317,
+   41.260069931859555,
+   17.873385097640103
+  ],
+  "train": [
+   2.1881520935280356,
+   35.99978347241599,
+   16.45213949199128
+  ],
+  "oos": [
+   2.8814186017937584,
+   51.500704297363484,
+   17.87338509764008
+  ]
+ },
+ "spearman": 0.8452854849318265,
+ "top10": [
+  {
+   "cfg": "1h EMA20_50 SIG NOWKND",
+   "train": [
+    2.6644357059850883,
+    52.239726302603984,
+    19.60630019529409
+   ],
+   "oos": [
+    -0.17319880106008312,
+    -4.464245154822288,
+    25.77526592273367
+   ],
+   "n_train": 1386,
+   "n_oos": 834,
+   "priceR_train": 0.3219442144104264,
+   "priceR_oos": 0.10546746088686047,
+   "combined": {
+    "full": [
+     2.5080942881358177,
+     84.03630183553,
+     33.506037724758485
+    ],
+    "train": [
+     3.7778928291866474,
+     107.5524833990079,
+     28.468908002920546
+    ],
+    "oos": [
+     1.415600280873984,
+     47.431156414142414,
+     33.506037724758485
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA20_50 SIG none",
+   "train": [
+    2.312035893503557,
+    56.56664180284461,
+    24.466160738156194
+   ],
+   "oos": [
+    0.01874159259047396,
+    0.5709643841846912,
+    30.465094224431223
+   ],
+   "n_train": 1646,
+   "n_oos": 999,
+   "priceR_train": 0.32558805604658336,
+   "priceR_oos": 0.13785509549065678,
+   "combined": {
+    "full": [
+     2.366896471181102,
+     90.76434227526171,
+     38.347406986487044
+    ],
+    "train": [
+     3.491164150638874,
+     113.44039300408566,
+     32.49357180278285
+    ],
+    "oos": [
+     1.4361617847527677,
+     55.07308045835406,
+     38.3474069864871
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA20_50 SIG HTF",
+   "train": [
+    1.7184538150475077,
+    31.961816395706787,
+    18.59917101980607
+   ],
+   "oos": [
+    -0.2722388572474365,
+    -9.847360532207606,
+    36.17176707165425
+   ],
+   "n_train": 1274,
+   "n_oos": 758,
+   "priceR_train": 0.2721960016877093,
+   "priceR_oos": 0.05778274743618603,
+   "combined": {
+    "full": [
+     1.7770792736262981,
+     63.92490143425829,
+     35.97189072146089
+    ],
+    "train": [
+     2.952780673616605,
+     80.14081703973059,
+     27.140795710225596
+    ],
+    "oos": [
+     1.0494315172573216,
+     37.7500358584373,
+     35.97189072146092
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA50_200 TRAIL ATR4h",
+   "train": [
+    1.7046081835142162,
+    12.414268440946818,
+    7.282769472192485
+   ],
+   "oos": [
+    -0.4111712433458094,
+    -8.07667708783707,
+    19.643098145957406
+   ],
+   "n_train": 286,
+   "n_oos": 171,
+   "priceR_train": 0.368704266481003,
+   "priceR_oos": -0.09965500145370498,
+   "combined": {
+    "full": [
+     1.6567919542889606,
+     46.88537488730178,
+     28.298890977789306
+    ],
+    "train": [
+     2.6213994459794403,
+     51.73194564313492,
+     19.734476453971396
+    ],
+    "oos": [
+     1.3551596093374039,
+     38.349514042142616,
+     28.298890977789213
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA20_50 SIG ATR4h",
+   "train": [
+    1.6507423166386501,
+    25.32166095383481,
+    15.339560086759295
+   ],
+   "oos": [
+    -0.5483269147437546,
+    -19.095177362726034,
+    34.8244393067038
+   ],
+   "n_train": 700,
+   "n_oos": 426,
+   "priceR_train": 0.3281069718943167,
+   "priceR_oos": -0.11210347053218864,
+   "combined": {
+    "full": [
+     1.6893971434626602,
+     51.755923165423525,
+     30.635734981380626
+    ],
+    "train": [
+     3.1753731496003943,
+     70.23992816882705,
+     22.12021228990565
+    ],
+    "oos": [
+     0.7432209330060566,
+     22.769119536187986,
+     30.635734981380615
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA50_200 SIG HTF",
+   "train": [
+    1.5773388476533179,
+    33.10782200703739,
+    20.98967007393083
+   ],
+   "oos": [
+    0.3367648622297047,
+    8.403344502549315,
+    24.953151130171825
+   ],
+   "n_train": 574,
+   "n_oos": 380,
+   "priceR_train": 0.49999951198201226,
+   "priceR_oos": 0.24100255886644,
+   "combined": {
+    "full": [
+     2.282322461139627,
+     75.17820855216497,
+     32.93934570254652
+    ],
+    "train": [
+     2.8623342865981543,
+     81.49679649865473,
+     28.47214487847699
+    ],
+    "oos": [
+     1.945894966525946,
+     64.09650700324323,
+     32.939345702546476
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA50_200 SIG NOWKND",
+   "train": [
+    1.5288282389743582,
+    29.434274380309944,
+    19.252832744675395
+   ],
+   "oos": [
+    0.6015488956005273,
+    11.921095552008044,
+    19.817334283536823
+   ],
+   "n_train": 509,
+   "n_oos": 309,
+   "priceR_train": 0.5142767573490832,
+   "priceR_oos": 0.3182992542292548,
+   "combined": {
+    "full": [
+     2.6820028777654463,
+     73.80616688882753,
+     27.519048357740882
+    ],
+    "train": [
+     2.7739651280418536,
+     76.33688050127066,
+     27.519048357740882
+    ],
+    "oos": [
+     2.622825575244311,
+     69.23380352862081,
+     26.39664802039755
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA50_200 SIG ATR4h",
+   "train": [
+    1.5089549377595042,
+    20.33699007632197,
+    13.477533071012926
+   ],
+   "oos": [
+    0.03329821895787834,
+    0.6550132626265137,
+    19.671120051648828
+   ],
+   "n_train": 253,
+   "n_oos": 162,
+   "priceR_train": 0.6135376654466874,
+   "priceR_oos": 0.11114013177632844,
+   "combined": {
+    "full": [
+     1.9270378813396516,
+     59.7184160119625,
+     30.989746797528984
+    ],
+    "train": [
+     3.062021179616588,
+     63.84402302965344,
+     20.850287860401963
+    ],
+    "oos": [
+     1.690247565836206,
+     52.38034409040382,
+     30.989746797529037
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA50_200 SIG none",
+   "train": [
+    1.426145196491419,
+    36.16905223685958,
+    25.36140943141143
+   ],
+   "oos": [
+    0.4940360141882727,
+    11.718074920970611,
+    23.71907023868296
+   ],
+   "n_train": 602,
+   "n_oos": 387,
+   "priceR_train": 0.5174838925543597,
+   "priceR_oos": 0.27736096905105795,
+   "combined": {
+    "full": [
+     2.368714633008734,
+     79.60494543628467,
+     33.606811190747244
+    ],
+    "train": [
+     2.7786698570904256,
+     85.60175719764462,
+     30.80673905149679
+    ],
+    "oos": [
+     2.054611800925315,
+     69.04895086397818,
+     33.60681119074722
+    ]
+   },
+   "found": false
+  },
+  {
+   "cfg": "1h EMA20_50 SIG ADX<20",
+   "train": [
+    1.3960582162279376,
+    19.047298998445882,
+    13.643628021409093
+   ],
+   "oos": [
+    -0.5354981548790195,
+    -22.42220301376159,
+    41.87167184325264
+   ],
+   "n_train": 880,
+   "n_oos": 590,
+   "priceR_train": 0.2983007202924057,
+   "priceR_oos": -0.06357586570188757,
+   "combined": {
+    "full": [
+     1.2499359124314244,
+     45.08634630719428,
+     36.07092640413103
+    ],
+    "train": [
+     2.727449664926676,
+     62.22507207734904,
+     22.81437962999837
+    ],
+    "oos": [
+     0.5013893660664953,
+     18.08557892319844,
+     36.07092640413099
+    ]
+   },
+   "found": false
+  }
+ ],
+ "counts": {
+  "configs": 840,
+  "eligible": 835,
+  "train_pos": 92,
+  "oos_pos": 71,
+  "both": 34
+ }
+}
