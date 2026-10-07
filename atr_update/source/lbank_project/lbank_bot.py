@@ -16,7 +16,6 @@ from pathlib import Path
 import re
 import signal
 import sqlite3
-import sys
 import tempfile
 import threading
 import time
@@ -64,35 +63,10 @@ SCHEMA = {
     "strategy_settings": {"ichimoku_preset": str, "donchian_entry_period": int,
         "initial_stop_mode": str, "exit_tp_mode": str, "hybrid_trail_mode": str,
         "hard_tp_rr": float, "breakeven_trigger_rr": float,
-        "pyramid_enabled": bool, "initial_stop_anchor": str, "trail_atr_buffer": float,
-        "profit_floor_enabled": bool, "profit_floor_trigger_r": float, "profit_floor_lock_r": float,
-        "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float,
-        "stop_width_filter_enabled": bool, "stop_width_skip_pct": float,
-        "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float,
-        "initial_stop_atr_mult": float,
-        "btc_regime_filter_enabled": bool, "btc_regime_symbol": str,
-        "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float,
-        "atr_regime_filter_enabled": bool, "atr_regime_window": int, "atr_regime_min_ratio": float},
+        "pyramid_enabled": bool, "initial_stop_anchor": str},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
-# Verified ablation fix #4B (see high_cagr/output/ablation_fixes.json). Old configs keep legacy behaviour.
-PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r": 2.0,
-    "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5,
-    # Candidate "V2" (high_cagr/output/vol_throttle_results.json): in-sample evidence only, so it ships OFF.
-    "stop_width_filter_enabled": False, "stop_width_skip_pct": 0.056,
-    "stop_width_mid_pct": 0.045, "stop_width_mid_risk_fraction": 0.5,
-    # 2.5 passed in-sample and on untouched holdout symbols, but only together with V2 + the BTC gate.
-    "initial_stop_atr_mult": 2.0,
-    # BTC regime gate (high_cagr/btc_regime_experiment.py): alts do not enter while BTC's closed 4h bar is inside its Kumo.
-    "btc_regime_filter_enabled": False, "btc_regime_symbol": "BTC/USDT:USDT",
-    # Funding crowding filter F4 (high_cagr/output/r3/hold2_results.json): no new short while the mean of the last
-    # 9 funding prints (3 days) before the entry bar is below 0, i.e. shorts are already paying longs. Ships OFF.
-    "funding_short_filter_enabled": False, "funding_short_prints": 9, "funding_short_threshold": 0.0,
-    # ATR regime filter 2A (high_cagr/output/ideas/idea2_atr_regime.json): no entry or pyramid add while the signal
-    # bar's ATR is below min_ratio x the median ATR of the `window` closed bars before it. Older configs: OFF.
-    "atr_regime_filter_enabled": False, "atr_regime_window": 60, "atr_regime_min_ratio": 1.0}
-ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
     "trail_atr_buffer": 0.2, "trail_timeframe": "ENTRY", "hard_tp_rr": 0.0,
@@ -119,7 +93,6 @@ POSITION_EXTENSIONS = {
     "archetype_family": "TEXT NOT NULL DEFAULT 'LEGACY'",
     "trail_source": "TEXT NOT NULL DEFAULT 'KIJUN'",
     "trail_close_only": "INTEGER NOT NULL DEFAULT 0",
-    "risk_mult": "REAL NOT NULL DEFAULT 1",
     "pending_policy": "TEXT NOT NULL DEFAULT 'ONE_BAR'",
     "strategy_config": "TEXT NOT NULL DEFAULT '{}'"}
 
@@ -159,9 +132,6 @@ def validate_config(c: dict) -> dict:
         c["strategy_settings"].setdefault("hybrid_trail_mode", "CLOSE_TRAIL_KIJUN")
         c["strategy_settings"].setdefault("pyramid_enabled", False)
         c["strategy_settings"].setdefault("initial_stop_anchor", "ENTRY")
-        c["strategy_settings"].setdefault("trail_atr_buffer", 0.0)
-        for key, value in PROFIT_FLOOR_DEFAULTS.items():
-            c["strategy_settings"].setdefault(key, value)
     if set(c) not in (set(SCHEMA), set(SCHEMA) - {"strategy_settings"}):
         raise ConfigError("Configuration must use the supplied top-level schema")
     for section, template in SCHEMA.items():
@@ -192,24 +162,8 @@ def validate_config(c: dict) -> dict:
                 or settings["exit_tp_mode"] not in (*trails, "HYBRID_TRAIL_AND_HARD_TP")
                 or settings["hybrid_trail_mode"] not in trails
                 or not 0 <= settings["hard_tp_rr"] <= 100
-                or not 0 <= settings["breakeven_trigger_rr"] <= 20
-                or not 0 <= settings["trail_atr_buffer"] <= 5):
+                or not 0 <= settings["breakeven_trigger_rr"] <= 20):
             raise ConfigError("Invalid strategy_settings")
-        if not (0 < settings["profit_floor_trigger_r"] <= 20
-                and 0 <= settings["profit_floor_lock_r"] < settings["profit_floor_trigger_r"]
-                and 0.05 <= settings["pyramid_risk_fraction"] <= 1):
-            raise ConfigError("Invalid profit floor / pyramid risk settings")
-        if not (0.012 <= settings["stop_width_mid_pct"] < settings["stop_width_skip_pct"] <= 0.5
-                and 0.05 <= settings["stop_width_mid_risk_fraction"] <= 1):
-            raise ConfigError("Invalid stop-width filter settings")
-        if not 1.0 <= settings["initial_stop_atr_mult"] <= 5.0:
-            raise ConfigError("initial_stop_atr_mult must be between 1 and 5")
-        if not (1 <= settings["funding_short_prints"] <= 90 and -0.01 <= settings["funding_short_threshold"] <= 0.01):
-            raise ConfigError("Invalid funding short filter settings")
-        if not (10 <= settings["atr_regime_window"] <= 500 and 0.1 <= settings["atr_regime_min_ratio"] <= 5.0):
-            raise ConfigError("Invalid ATR regime filter settings")
-        if settings["btc_regime_filter_enabled"] and settings["btc_regime_symbol"] not in c["symbols"]:
-            raise ConfigError("btc_regime_symbol must be one of the traded symbols")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
         if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"
@@ -389,14 +343,6 @@ class Database:
               entry_price REAL NOT NULL, qty REAL NOT NULL, shared_stop REAL NOT NULL,
               modeled_risk_usd REAL NOT NULL, root_entry_price REAL NOT NULL,
               root_r_distance REAL NOT NULL);
-            CREATE TABLE IF NOT EXISTS fill_quality (
-              id INTEGER PRIMARY KEY AUTOINCREMENT, ts REAL NOT NULL, symbol TEXT NOT NULL,
-              kind TEXT NOT NULL, reason TEXT NOT NULL DEFAULT '', side TEXT NOT NULL,
-              ref_price REAL NOT NULL, mid REAL NOT NULL, vwap REAL NOT NULL,
-              qty REAL NOT NULL, notional_usd REAL NOT NULL,
-              slip_ref_bps REAL NOT NULL, slip_mid_bps REAL NOT NULL,
-              spread_bps REAL NOT NULL, filled_fraction REAL NOT NULL);
-            CREATE INDEX IF NOT EXISTS fill_quality_ts ON fill_quality(ts);
             """)
             existing = {row[1] for row in db.execute("PRAGMA table_info(positions)")}
             for name, definition in POSITION_EXTENSIONS.items():
@@ -435,23 +381,6 @@ class Database:
             row = db.execute("SELECT COALESCE(SUM(pnl_usd),0),COUNT(*) FROM trade_history "
                              "WHERE closed_at>=?", (now - 86400,)).fetchone()
             return float(row[0]), int(row[1])
-
-    def fill_quality_summary(self, limit: int = 2000) -> dict:
-        """Measured order-book slippage (positive = worse than the paper fill price), per direction."""
-        with self.connect() as db:
-            rows = [dict(r) for r in db.execute("SELECT * FROM fill_quality ORDER BY id DESC LIMIT ?", (limit,))]
-        def stats(group: list[dict]) -> dict | None:
-            if not group:
-                return None
-            slip = np.array([r["slip_ref_bps"] for r in group])
-            return {"n": len(group), "mean_bps": float(slip.mean()), "median_bps": float(np.median(slip)),
-                    "p90_bps": float(np.percentile(slip, 90)), "worst_bps": float(slip.max()),
-                    "mean_spread_bps": float(np.mean([r["spread_bps"] for r in group])),
-                    "thin_book_fills": int(sum(r["filled_fraction"] < 0.999 for r in group))}
-        return {"total": len(rows), "assumed_bps_per_fill": ASSUMED_SLIPPAGE_BPS,
-                "entry": stats([r for r in rows if r["kind"] in ("entry", "add")]),
-                "exit": stats([r for r in rows if r["kind"] == "exit"]),
-                "last_error": self.runtime_all().get("fill_quality_error")}
 
     def runtime_set(self, key: str, value: Any):
         with self.connect() as db:
@@ -549,32 +478,6 @@ def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
     df["atr"] = wilder(tr, f["atr_period"])
     df["adx"] = adx_wilder(df, c.get("structural_filters", {}).get("adx_period", 14))
     return archetypes.add_features(df) if c.get("archetype_strategy", archetypes.DEFAULTS)["family"] != "LEGACY" else df
-
-
-def atr_regime_ratio(bars: list, c: dict, timeframe: str, now: float, window: int) -> float | None:
-    """ATR of the last closed bar / median ATR of the `window` closed bars before it.
-
-    Every ATR is the value indicators() would report as the last row of its own runtime window
-    (candle_fetch_limit fetched, forming bar dropped), exactly like the research features, so `bars`
-    must hold candle_fetch_limit + window candles. None when history is short, gapped or not finite.
-    """
-    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float).iloc[:-1]
-    seconds = TIMEFRAMES[timeframe]
-    df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
-    span = c["ichimoku_params"]["candle_fetch_limit"] - 1
-    if len(df) < span + window or (np.diff(df.timestamp.to_numpy()[-(span + window):]) != seconds * 1000).any():
-        return None
-    period = c["filters_and_triggers"]["atr_period"]
-    values = []
-    for end in range(len(df) - window - 1, len(df)):
-        w = df.iloc[end - span + 1:end + 1]
-        previous = w.close.shift(1)
-        tr = pd.concat([w.high - w.low, (w.high - previous).abs(), (w.low - previous).abs()], axis=1).max(axis=1)
-        values.append(float(wilder(tr.reset_index(drop=True), period).iloc[-1]))
-    current, median = values[-1], float(np.median(values[:-1]))
-    if not (math.isfinite(current) and math.isfinite(median) and median > 0):
-        return None
-    return current / median
 
 
 def regime(df: pd.DataFrame, c: dict) -> str | None:
@@ -732,57 +635,6 @@ class MarketData:
             # Atomic replacement of the CSV by its producer avoids partial reads.
             return df.tail(limit).to_numpy().tolist()
 
-    def funding_mean(self, symbol: str, prints: int, before_ms: int) -> float | None:
-        """Mean of the last `prints` funding rates stamped strictly before `before_ms`.
-
-        csv-lbank mode reads FUNDING_DIR/<symbol>_funding.csv (timestamp ms, funding_rate), produced like the OHLCV
-        CSVs; the research used Binance USDT-M funding history. Returns None when there is no usable data: demo mode,
-        missing file, too few prints, or a latest print older than 9 hours (stale feed).
-        """
-        if self.mode == "demo":
-            return None
-        source = Path(os.getenv("FUNDING_DIR", "data/funding")) / (symbol.replace("/", "_").replace(":", "_") + "_funding.csv")
-        if not source.is_file():
-            return None
-        df = pd.read_csv(source)
-        if list(df.columns) != ["timestamp", "funding_rate"]:
-            raise ValueError("Funding CSV header must be timestamp,funding_rate")
-        df = df[df.timestamp < before_ms].sort_values("timestamp")
-        if len(df) < prints or before_ms - int(df.timestamp.iloc[-1]) > 9 * 3600 * 1000:
-            return None
-        value = float(df.funding_rate.tail(prints).mean())
-        return value if math.isfinite(value) else None
-
-    def book_fill(self, symbol: str, buy: bool, contracts: float) -> dict | None:
-        """Average price a market order of `contracts` would get by walking the live order book.
-
-        Measurement only: returns None in demo mode (synthetic prices have no book) or if the book is unusable.
-        """
-        if self.mode == "demo" or contracts <= 0:
-            return None
-        with self.lock:
-            self.market(symbol)
-            book = self.exchange.fetch_order_book(symbol, 50)
-        def clean(levels):
-            out = [(float(x[0]), float(x[1])) for x in levels or [] if len(x) >= 2]
-            return [(p, a) for p, a in out if math.isfinite(p) and math.isfinite(a) and p > 0 and a > 0]
-        bids, asks = clean(book.get("bids")), clean(book.get("asks"))
-        if not bids or not asks or bids[0][0] >= asks[0][0]:
-            return None
-        mid = (bids[0][0] + asks[0][0]) / 2
-        remaining, cost, filled = contracts, 0.0, 0.0
-        for price, amount in (asks if buy else bids):
-            take = min(amount, remaining)
-            cost += take * price
-            filled += take
-            remaining -= take
-            if remaining <= 1e-12:
-                break
-        if filled <= 0:
-            return None
-        return {"mid": mid, "vwap": cost / filled, "filled_fraction": filled / contracts,
-                "spread_bps": (asks[0][0] - bids[0][0]) / mid * 1e4}
-
     def precision(self, symbol: str, quantity: float) -> float:
         with self.lock:
             self.market(symbol)
@@ -879,19 +731,7 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
     if equity <= 0 or stop <= 0 or entry <= 0 or distance <= 0:
         return None
     cs = float(data.market(symbol).get("contractSize") or 1)
-    # Optional stop-width filter: very wide 2*ATR stops (exhaustion breakouts) are skipped, wide ones sized down.
-    risk_mult, settings = 1.0, c.get("strategy_settings", {})
-    if settings.get("stop_width_filter_enabled", False):
-        width = distance / entry
-        if width > settings["stop_width_skip_pct"]:
-            return None
-        if width > settings["stop_width_mid_pct"]:
-            risk_mult = settings["stop_width_mid_risk_fraction"]
-    sized = c
-    if risk_mult != 1.0:
-        sized = copy.deepcopy(c)
-        sized["risk_and_exit"]["risk_per_trade_pct"] *= risk_mult
-    budget = entry_budget(equity, distance / entry, sized, available_notional)
+    budget = entry_budget(equity, distance / entry, c, available_notional)
     risk, cap = budget["risk_budget"], budget["max_notional"]
     # CCXT contract quantity is contracts, not necessarily base units.
     qty = data.precision(symbol, budget["final_notional"] / entry / cs)
@@ -919,7 +759,7 @@ def size_position(data: MarketData, symbol: str, side: str, bar: pd.Series,
         isolated_leverage=budget["isolated_leverage"], slot_margin_usd=budget["slot_margin_usd"],
         sizing_slippage_pct=budget["sizing_slippage_pct"],
         stop_atr_distance=float(distance) if "strategy_settings" in c and spec["stop_source"] == "ATR2" and c["strategy_settings"]["initial_stop_anchor"] == "ENTRY" else 0.0,
-        root_entry_price=float(entry), root_r_distance=float(distance), risk_mult=float(risk_mult),
+        root_entry_price=float(entry), root_r_distance=float(distance),
         archetype_family=spec["family"], trail_source=spec["trail_source"],
         trail_close_only=int(spec["trail_close_only"]), pending_policy=spec["pending_policy"],
         strategy_config=json.dumps(c) if spec["family"] != "LEGACY" else "{}")
@@ -973,32 +813,6 @@ class Engine:
             reserved += position_margin(p, leverage)
         return max(0.0, equity * c["risk_and_exit"]["engaged_capital_pct"] - reserved) * leverage
 
-    def _record_fill(self, kind: str, p: dict, price: float, qty: float, reason: str = ""):
-        """Log what this paper fill would have cost against the real book. Never raises, never moves PnL."""
-        if os.getenv("FILL_QUALITY", "on") == "off" or not hasattr(self.data, "book_fill"):
-            return
-        try:
-            buy = (p["side"] == "long") if kind in ("entry", "add") else (p["side"] == "short")
-            info = self.data.book_fill(p["symbol"], buy, qty)
-            if info is None:
-                return
-            sign = 1 if buy else -1  # paying more / receiving less than the reference is adverse
-            slip_ref = sign * (info["vwap"] - price) / price * 1e4
-            slip_mid = sign * (info["vwap"] - info["mid"]) / info["mid"] * 1e4
-            with self.db.connect() as db:
-                db.execute("INSERT INTO fill_quality(ts,symbol,kind,reason,side,ref_price,mid,vwap,qty,notional_usd,"
-                           "slip_ref_bps,slip_mid_bps,spread_bps,filled_fraction) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                           (time.time(), p["symbol"], kind, reason, "buy" if buy else "sell", price, info["mid"],
-                            info["vwap"], qty, qty * p.get("contract_size", 1) * info["vwap"], slip_ref, slip_mid,
-                            info["spread_bps"], info["filled_fraction"]))
-            self.db.runtime_set("fill_quality_error", None)
-        except Exception as exc:
-            LOG.warning("Fill-quality measurement failed for %s: %s", p.get("symbol"), exc)
-            try:
-                self.db.runtime_set("fill_quality_error", f"{p.get('symbol')}: {exc}"[:300])
-            except Exception:
-                pass
-
     def _insert(self, p: dict):
         keys = list(p)
         with self.db.connect() as db:
@@ -1039,11 +853,7 @@ class Engine:
                 with self.db.connect() as db:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
-            sized = current
-            if p.get("risk_mult", 1.0) != 1.0:  # the signal-time width filter halved this position's risk
-                sized = copy.deepcopy(current)
-                sized["risk_and_exit"]["risk_per_trade_pct"] *= p["risk_mult"]
-            budget = entry_budget(equity, distance / price, sized,
+            budget = entry_budget(equity, distance / price, current,
                                   self.available_notional(equity, current, p["symbol"]))
             p["fee_rate"] = current["risk_and_exit"]["lbank_round_trip_fee"]
             p.update({k: v for k, v in budget.items() if k != "final_notional"})
@@ -1072,7 +882,6 @@ class Engine:
                  self.trail_marker(p, now if now is not None else time.time()) if scheme == "PURE_KIJUN" else 0,
                  p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
                  p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], price, distance, p["symbol"], PENDING))
-        self._record_fill("entry", p, price, qty)
         return True
 
     @staticmethod
@@ -1100,29 +909,7 @@ class Engine:
                 db.execute("UPDATE positions SET qty=?,active_sl=?,state=?,be_confirmed=?,trail_last_candle_ts=? WHERE symbol=?",
                     (remaining, stop, TRAILING if transition else p["state"], confirmed,
                      self.trail_marker(p, now) if transition else p.get("trail_last_candle_ts", 0), p["symbol"]))
-        if reason != "panic":  # never delay an emergency close with a network call
-            self._record_fill("exit", p, price, qty, reason)
         return {"symbol": p["symbol"], "result": "closed", "qty": qty, "pnl_usd": pnl, "dry_run": True}
-
-    def apply_profit_floor(self, p: dict, price: float):
-        """Once the root unit has reached trigger R, never let the shared stop sit below entry +/- lock R.
-
-        Idempotent and ratchet-only, so the persisted active_sl is the whole state: no extra column needed.
-        """
-        settings = json.loads(p.get("strategy_config", "{}")).get("strategy_settings", {})
-        entry, distance = p.get("root_entry_price", 0), p.get("root_r_distance", 0)
-        # Verified only with the unlimited Donchian10 stop trail; other exit modes keep their own stop logic.
-        if (not settings.get("profit_floor_enabled", False) or settings.get("exit_tp_mode") != "STOP_TRAIL_DONCHIAN10"
-                or p["state"] == PENDING or entry <= 0 or distance <= 0):
-            return
-        sign = 1 if p["side"] == "long" else -1
-        if sign * (price - entry) < settings["profit_floor_trigger_r"] * distance:
-            return
-        floor = entry + sign * settings["profit_floor_lock_r"] * distance
-        if sign * (floor - p["active_sl"]) > 0:
-            with self.db.connect() as db:
-                db.execute("UPDATE positions SET active_sl=? WHERE symbol=?", (float(floor), p["symbol"]))
-            p["active_sl"] = float(floor)
 
     def arm_pyramid(self, p: dict, price: float, now: float):
         """Arm only after the root is 2R profitable and its stop covers costs."""
@@ -1171,7 +958,7 @@ class Engine:
         if equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]:
             return False
         unit = copy.deepcopy(c)
-        unit["risk_and_exit"]["risk_per_trade_pct"] *= settings.get("pyramid_risk_fraction", .5)
+        unit["risk_and_exit"]["risk_per_trade_pct"] *= .5
         available = self.available_notional(equity, c)
         planned = entry_budget(equity, sign * (bar.close - p["active_sl"]) / bar.close, unit, available)
         budget = entry_budget(equity, distance / price, unit, available)
@@ -1179,17 +966,6 @@ class Engine:
         qty = self.data.precision(p["symbol"], cap)
         if not self.data.tradable(p["symbol"], qty, price):
             return False
-        if settings.get("safe_pyramid_enabled", False):
-            # Combined stop-out must be net >= 0 after round-trip fees and the benchmark's 2bps adverse
-            # slippage on both entries and the exit; otherwise the add-on could turn a winner into a loser.
-            side_fee, slip, cs = p["fee_rate"] / 2, .0002, p["contract_size"]
-            exit_price = p["active_sl"] * (1 - sign * slip)
-            combined = 0.0
-            for unit_qty, unit_entry in ((p["qty"], p["entry_price"]), (qty, price)):
-                fill = unit_entry * (1 + sign * slip)
-                combined += unit_qty * cs * (sign * (exit_price - fill) - side_fee * (fill + exit_price))
-            if combined < 0:
-                return False
         total = p["qty"] + qty
         average = (p["entry_price"] * p["qty"] + price * qty) / total
         modeled_risk = qty * p["contract_size"] * (distance + price * (p["fee_rate"] + .0004))
@@ -1200,7 +976,6 @@ class Engine:
                 return False
             db.execute("INSERT INTO scale_in_history(symbol,root_signal_ts,added_at,entry_price,qty,shared_stop,modeled_risk_usd,root_entry_price,root_r_distance) VALUES(?,?,?,?,?,?,?,?,?)",
                        (p["symbol"], p["signal_ts"], now, price, qty, p["active_sl"], modeled_risk, root, p["root_r_distance"]))
-        self._record_fill("add", p, price, qty)
         return True
 
     def close_symbol(self, symbol: str, now: float | None = None) -> dict:
@@ -1272,7 +1047,6 @@ class Engine:
                             continue
                     price = self.data.price(p["symbol"])
                     sign = 1 if p["side"] == "long" else -1
-                    self.apply_profit_floor(p, price)
                     self.arm_pyramid(p, price, now)
                     if p["state"] == PENDING:
                         if sign * (price - p["cancel_price"]) <= 0:
@@ -1376,8 +1150,7 @@ class Engine:
                     if sign * (b.close - line) < 0:
                         self._close(p, self.data.price(p["symbol"]), p["qty"], "kijun_break", now)
                     elif not p.get("trail_close_only") and (p.get("be_policy") != "CLOSE_CONFIRM" or p.get("be_confirmed")):
-                        sl = archetypes.buffered_trail_stop(
-                            b, p["side"], p.get("trail_source", "KIJUN"), p.get("trail_atr", 0.2))
+                        sl = line - sign * p.get("trail_atr", 0.2) * b.atr
                         sl = max(p["active_sl"], sl) if sign == 1 else min(p["active_sl"], sl)
                         with self.db.connect() as db:
                             db.execute("UPDATE positions SET active_sl=? WHERE symbol=?", (float(sl), p["symbol"]))
@@ -1389,18 +1162,6 @@ class Engine:
             self.db.runtime_set("scanner_at", now)
             return not failed
         candidates, scanned = [], []
-        gate = c.get("strategy_settings", {})
-        btc_inside = False
-        if gate.get("btc_regime_filter_enabled", False):
-            # Computed before any symbol is marked as scanned: if BTC data is stale we retry the whole scan instead of
-            # silently consuming the candle with the gate open.
-            try:
-                bar = frame(gate["btc_regime_symbol"], ltf).iloc[-1]
-                btc_inside = bool(np.isfinite(bar.kumo_bottom) and np.isfinite(bar.kumo_top) and bar.kumo_bottom <= bar.close <= bar.kumo_top)
-            except Exception as exc:
-                LOG.exception("BTC regime gate unavailable; retrying scan")
-                self.db.runtime_set("last_error", str(exc))
-                return False
         for symbol in c["symbols"]:
             try:
                 low = frame(symbol, ltf)
@@ -1414,25 +1175,7 @@ class Engine:
                 scanned.append((symbol, ltf, stamp))
                 if c["archetype_strategy"]["family"] == "DONCHIAN" and (stamp + TIMEFRAMES[ltf] * 1000) % (4 * 3600 * 1000):
                     continue
-                if btc_inside and symbol != gate["btc_regime_symbol"]:
-                    continue
-                if side == "short" and gate.get("funding_short_filter_enabled", False):
-                    reader = getattr(self.data, "funding_mean", None)
-                    mean = reader(symbol, gate["funding_short_prints"], stamp + TIMEFRAMES[ltf] * 1000) if reader else None
-                    if mean is None:
-                        # Same as the research: no funding history means the filter does not block.
-                        LOG.warning("Funding data unavailable for %s; short filter not applied", symbol)
-                    elif mean < gate["funding_short_threshold"]:
-                        continue
                 if side and (entry_signal(low, side, c) if c["archetype_strategy"]["family"] == "LEGACY" else entry_signal(low, side, c, high)):
-                    if gate.get("atr_regime_filter_enabled", False):
-                        # Research: missing/short history blocks the entry; a blocked bar also blocks the pyramid add.
-                        window = gate["atr_regime_window"]
-                        ratio = atr_regime_ratio(self.data.candles(symbol, htf, c["ichimoku_params"]["candle_fetch_limit"] + window), c, htf, now, window)
-                        if ratio is None or ratio < gate["atr_regime_min_ratio"]:
-                            if ratio is None:
-                                LOG.warning("ATR regime history unavailable for %s; entry skipped", symbol)
-                            continue
                     score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])
                              if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else
                              abs(low.iloc[-1].rsi - (55 if side == "long" else 45)))
@@ -1547,17 +1290,5 @@ def run():
     thread.join(timeout=12)
 
 
-def probe_book(symbol: str, contracts: float):
-    """`python lbank_bot.py --probe-book BTC/USDT:USDT 0.01`: check that live order-book measurement works."""
-    data = MarketData()
-    if data.mode == "demo":
-        sys.exit("Set PAPER_DATA_MODE=csv-lbank first: demo mode has no order book.")
-    for buy in (True, False):
-        print("BUY " if buy else "SELL", json.dumps(data.book_fill(symbol, buy, contracts)))
-
-
 if __name__ == "__main__":
-    if len(sys.argv) == 4 and sys.argv[1] == "--probe-book":
-        probe_book(sys.argv[2], float(sys.argv[3]))
-    else:
-        run()
+    run()

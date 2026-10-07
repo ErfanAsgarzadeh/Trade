@@ -94,22 +94,6 @@
     "hard_tp_rr": 0.0,
     "breakeven_trigger_rr": 0.0,
     "pyramid_enabled": true,
-    "initial_stop_anchor": "SIGNAL",
-    "trail_atr_buffer": 0.0,
-    "profit_floor_enabled": true,
-    "profit_floor_trigger_r": 1.0,
-    "profit_floor_lock_r": 0.1,
-    "safe_pyramid_enabled": false,
-    "pyramid_risk_fraction": 0.5,
-    "stop_width_filter_enabled": false,
-    "stop_width_skip_pct": 0.056,
-    "stop_width_mid_pct": 0.045,
-    "stop_width_mid_risk_fraction": 0.5,
-    "initial_stop_atr_mult": 2.0,
-    "btc_regime_filter_enabled": false,
-    "btc_regime_symbol": "BTC/USDT:USDT",
-    "atr_regime_filter_enabled": true,
-    "atr_regime_window": 60,
-    "atr_regime_min_ratio": 1.0
+    "initial_stop_anchor": "SIGNAL"
   }
 }

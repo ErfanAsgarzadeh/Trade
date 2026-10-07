@@ -1,0 +1,54 @@
+{
+  "source_commit": "56fc480bd191c592e9e205bb927e8eab67823b3c",
+  "tested_buffer": 0.25,
+  "production_default": 0.0,
+  "decision": "REJECT_0.25_ATR",
+  "data_coverage": [
+    {
+      "symbol": "BTCUSDT",
+      "minutes": 2629440,
+      "prices_sha256": "d213641cb009eabdb44726d3ff4493c52c5330f7dfca5fe9eea4f9df3b724f9e",
+      "parity_windows": 6,
+      "observed_funding_events": 5466,
+      "gap_repairs": 0
+    },
+    {
+      "symbol": "ETHUSDT",
+      "minutes": 2629440,
+      "prices_sha256": "b1253c7ec1b2ed90de02b70cbe3a88c28be066a9a5bd98114de755eb6acd1eb3",
+      "parity_windows": 6,
+      "observed_funding_events": 5466,
+      "gap_repairs": 0
+    },
+    {
+      "symbol": "SOLUSDT",
+      "minutes": 2629440,
+      "prices_sha256": "509d50a9240e2263d3e001878d9c4b5c1101e7d68932615cf34db30e3356d841",
+      "parity_windows": 6,
+      "observed_funding_events": 5541,
+      "gap_repairs": 5
+    },
+    {
+      "symbol": "XRPUSDT",
+      "minutes": 2629440,
+      "prices_sha256": "c74f3482f84ee185279e659defe914473aca696eaf0fcd36557b884b935df3ed",
+      "parity_windows": 6,
+      "observed_funding_events": 5466,
+      "gap_repairs": 5
+    },
+    {
+      "symbol": "ADAUSDT",
+      "minutes": 2629440,
+      "prices_sha256": "9597ef6be74e18c7aee6ff75c4ce26b709d5d82561f35906af33af9ea6a30bde",
+      "parity_windows": 6,
+      "observed_funding_events": 5466,
+      "gap_repairs": 0
+    }
+  ],
+  "parity_windows_actual": 30,
+  "risk": 0.0075,
+  "slots": 4,
+  "start": "2021-10-05",
+  "end_exclusive": "2026-10-05",
+  "changes": "buffer stop candidate only; raw close-through unchanged; baseline original pyramid; no ATR entry gate or 4B"
+}
