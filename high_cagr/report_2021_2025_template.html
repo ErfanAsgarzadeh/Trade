@@ -1,0 +1,376 @@
+<title>کالبدشکافی ربات ۱۵نمادی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column, a sticky section rail, data blocks that scroll sideways on their own. */
+:root{
+  --bg:#f3f5f8;--surface:#ffffff;--ink:#121821;--ink-2:#4a5463;--ink-3:#778191;--line:#dce1e8;--chip:#eaeef4;
+  --pos:#2a78d6;--neg:#e34948;--s2:#eb6834;--accent:#1c4f8f;--good:#0b7d0b;--bad:#c23434;
+  --font:'Vazirmatn',Tahoma,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10141a;--surface:#171c24;--ink:#edf0f4;--ink-2:#b3bbc7;--ink-3:#8a93a1;--line:#2a313c;--chip:#212833;
+  --pos:#3987e5;--neg:#e66767;--s2:#d95926;--accent:#9cc2f2;--good:#3fbf55;--bad:#f07a7a;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141a;--surface:#171c24;--ink:#edf0f4;--ink-2:#b3bbc7;--ink-3:#8a93a1;--line:#2a313c;--chip:#212833;
+  --pos:#3987e5;--neg:#e66767;--s2:#d95926;--accent:#9cc2f2;--good:#3fbf55;--bad:#f07a7a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15.5px;line-height:1.85;direction:rtl}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:18px;padding-block:28px 64px}
+h1{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+h2{font-size:1.4rem;font-weight:800;margin:0 0 4px;text-wrap:balance}
+h3{font-size:1.05rem;font-weight:700;margin:18px 0 4px}
+p{margin:6px 0;max-width:72ch}
+.lede{color:var(--ink-2);max-width:78ch}
+.meta{font-size:.82rem;color:var(--ink-3)}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.num{font-variant-numeric:tabular-nums}
+code,.mono{font-family:var(--mono);font-size:.82em}
+nav.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-block:18px 8px;overflow-x:auto}
+nav.rail ul{display:flex;gap:6px;list-style:none;margin:0;padding:8px 0;white-space:nowrap}
+nav.rail a{display:block;padding:3px 11px;border-radius:99px;color:var(--ink-2);text-decoration:none;font-size:.85rem;background:var(--chip)}
+nav.rail a:hover,nav.rail a:focus-visible{color:var(--ink);outline:2px solid var(--accent);outline-offset:1px}
+section{padding-block:30px 6px;border-top:1px solid var(--line);margin-top:22px;scroll-margin-top:56px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:0}
+.kpi b{display:block;font-size:1.45rem;font-weight:800;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.8rem;color:var(--ink-3)}
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-weight:700;color:var(--ink-2);background:var(--chip);position:sticky;top:0}
+td.n{direction:ltr;text-align:left}
+tr.hl td{background:color-mix(in srgb,var(--pos) 10%,transparent)}
+.pos{color:var(--good)}.negt{color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px}
+.grid2>*{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 4px;margin-top:10px;direction:ltr}
+.chart svg{display:block;width:100%;height:auto}
+.chart .ttl{direction:rtl;font-size:.86rem;color:var(--ink-2);padding:2px 8px 0}
+.legend{direction:rtl;display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-2);padding:0 8px 6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.76rem;font-weight:700;background:var(--chip);color:var(--ink-2)}
+.pill.worse{background:color-mix(in srgb,var(--neg) 18%,transparent);color:var(--bad)}
+.pill.better{background:color-mix(in srgb,var(--pos) 18%,transparent);color:var(--accent)}
+.cause{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.cause .tagk{font-size:.74rem;color:var(--ink-3);font-family:var(--mono)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px}
+.filters label{display:flex;flex-direction:column;font-size:.78rem;color:var(--ink-3);gap:2px}
+select{font:inherit;font-size:.85rem;padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.tablewrap{max-height:70vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-top:10px}
+th.sort{cursor:pointer}th.sort:hover{color:var(--ink)}
+ol.hyp{padding-inline-start:20px;margin:8px 0}ol.hyp li{margin-block:12px;max-width:80ch}
+.evid{font-size:.86rem;color:var(--ink-2)}
+#tip{position:fixed;pointer-events:none;z-index:20;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.8rem;line-height:1.6;box-shadow:0 4px 14px rgb(0 0 0/.15);direction:rtl;max-width:260px}
+.axis text{fill:var(--ink-3);font-size:11px;font-family:var(--font)}
+.axis line,.grid line{stroke:var(--line)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="meta">بک‌تست دقیقه‌ای · Binance USDT‑M · ۵ اکتبر ۲۰۲۱ تا ۳۱ دسامبر ۲۰۲۵</p>
+  <h1>کالبدشکافی ربات ۱۵نمادی</h1>
+  <p class="lede" id="lede"></p>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<nav class="rail" aria-label="بخش‌ها"><ul>
+  <li><a href="#risk">ریسک</a></li><li><a href="#curve">منحنی سرمایه</a></li><li><a href="#years">سال‌به‌سال</a></li>
+  <li><a href="#causes">علت ضررها</a></li><li><a href="#lift">کدام واقعاً علت است</a></li><li><a href="#time">زمان</a></li>
+  <li><a href="#psych">روانشناسی</a></li><li><a href="#symbols">نمادها</a></li><li><a href="#stops">جای استاپ</a></li>
+  <li><a href="#table">همهٔ معاملات زیان‌ده</a></li><li><a href="#next">از کجا شروع کنیم</a></li><li><a href="#limits">محدودیت‌ها</a></li>
+</ul></nav>
+
+<section id="risk">
+  <h2>از کمترین تا بیشترین ریسک</h2>
+  <p>هر ردیف همان استراتژی است و فقط درصد سرمایه‌ای که در هر معامله ریسک می‌شود عوض می‌کند. لغزش ۲bps فرض بک‌تست است و ۵bps حالت بدبینانه‌تر.</p>
+  <div class="scroll"><table id="riskTable"></table></div>
+  <div class="chart"><div class="ttl">بازده سالانه در برابر بیشترین افت سرمایه، به‌ازای هر سطح ریسک</div><div class="legend" id="riskLegend"></div><div id="riskChart"></div></div>
+  <p id="riskNote"></p>
+</section>
+
+<section id="curve">
+  <h2>منحنی سرمایه با ریسک ۰٫۷۵٪</h2>
+  <p>ریسک ۰٫۷۵٪ تنظیم فعلی ربات است. همهٔ تحلیل‌های پایین روی همین اجرا انجام شده‌اند.</p>
+  <div class="chart"><div class="ttl">ارزش حساب (دلار)، شروع با ۱۰٬۰۰۰ دلار</div><div id="eqChart"></div></div>
+  <div class="chart"><div class="ttl">افت از قله (٪)</div><div id="ddChart"></div></div>
+</section>
+
+<section id="years">
+  <h2>بازده سال‌به‌سال</h2>
+  <p>سال ۲۰۲۱ فقط سه ماه آخر را دارد، چون داده‌ها از ۵ اکتبر ۲۰۲۱ شروع می‌شوند.</p>
+  <div class="scroll"><table id="yearTable"></table></div>
+</section>
+
+<section id="causes">
+  <h2>چرا معاملات ضرر دادند</h2>
+  <p id="causeLede"></p>
+  <div class="chart"><div class="ttl">زیان کل هر علت (دلار)</div><div id="causeChart"></div></div>
+  <div class="grid2" id="causeCards" style="margin-top:14px"></div>
+</section>
+
+<section id="lift">
+  <h2>کدام نشانه واقعاً با ضرر همراه است</h2>
+  <p>یک نشانه وقتی «علت» حساب می‌شود که معاملات دارای آن، میانگین R کمتری از بقیه داشته باشند و این اختلاف از نویز بزرگ‌تر باشد (z کمتر از ۲−). صرفِ دیده شدن یک نشانه در بازنده‌ها کافی نیست؛ باید در برنده‌ها کمتر دیده شود.</p>
+  <p id="liftSum"></p>
+  <div class="scroll"><table id="liftTable"></table></div>
+  <p class="meta">«ضرر سریع» و «استاپ‌شکار» در این جدول نیستند، چون از خود نتیجهٔ معامله ساخته شده‌اند و نمی‌توانند پیش از ورود چیزی بگویند.</p>
+</section>
+
+<section id="time">
+  <h2>زمان</h2>
+  <div class="chart"><div class="ttl">سود و زیان خالص بر اساس مدت باز ماندن معامله (دلار)</div><div id="holdChart"></div></div>
+  <p id="holdNote"></p>
+  <div class="grid2">
+    <div><h3>ساعت ورود (UTC)</h3><div class="scroll"><table id="hourTable"></table></div></div>
+    <div><h3>روز هفته</h3><div class="scroll"><table id="dayTable"></table></div></div>
+  </div>
+  <p class="meta">ربات فقط روی بسته شدن کندل ۴ساعته وارد می‌شود، پس ساعت‌های ورود همیشه ۰، ۴، ۸، ۱۲، ۱۶ و ۲۰ به وقت UTC هستند.</p>
+</section>
+
+<section id="psych">
+  <h2>روانشناسی</h2>
+  <p>ربات ترس و طمع ندارد. روانشناسی در اینجا دو معنا دارد: رفتار جمعی بازار که از روی داده قابل اندازه‌گیری است، و فشاری که خود تو موقع دنبال کردن ربات تحمل می‌کنی.</p>
+  <div class="grid2">
+    <div class="card"><h3>رفتار جمعی بازار</h3><div id="crowd"></div></div>
+    <div class="card"><h3>آنچه تو باید تحمل کنی</h3><div id="trader"></div></div>
+  </div>
+  <div class="chart"><div class="ttl">بازده ماهانه (٪) با ریسک ۰٫۷۵٪</div><div id="monthChart"></div></div>
+</section>
+
+<section id="symbols">
+  <h2>نمادها</h2>
+  <p>میانگین R هر معامله برای هر نماد. صفر یعنی آن نماد در عمل چیزی اضافه نکرده است.</p>
+  <div class="chart"><div class="ttl">میانگین R هر معامله</div><div id="symChart"></div></div>
+  <p id="symNote"></p>
+</section>
+
+<section id="stops">
+  <h2>جای استاپ: تنگ یا گشاد؟</h2>
+  <div class="grid2" id="stopCards"></div>
+</section>
+
+<section id="table">
+  <h2>همهٔ معاملات زیان‌ده</h2>
+  <p>هر ردیف یک پوزیشن است (اگر پیرامید داشت، هر دو واحد با هم). ستون‌های R نسبت به فاصلهٔ استاپ اولیه‌اند. روی سرستون‌ها کلیک کن تا مرتب شوند.</p>
+  <div class="filters">
+    <label for="fCause">علت<select id="fCause"></select></label>
+    <label for="fSym">نماد<select id="fSym"></select></label>
+    <label for="fYear">سال<select id="fYear"></select></label>
+    <label for="fSide">جهت<select id="fSide"><option value="">همه</option><option value="1">خرید</option><option value="-1">فروش</option></select></label>
+    <span class="meta" id="fCount" aria-live="polite"></span>
+  </div>
+  <div class="tablewrap"><table id="loserTable"></table></div>
+</section>
+
+<section id="next">
+  <h2>از کجا شروع کنیم</h2>
+  <p>این‌ها فرضیه‌اند، نه نتیجه. هرکدام را باید قبل از اجرا با آستانهٔ ثابت پیش‌اعلام کنیم و بعد آزمایش کنیم، همان‌طور که با V2 و فیلتر BTC کردیم.</p>
+  <ol class="hyp" id="hyp"></ol>
+</section>
+
+<section id="limits">
+  <h2>محدودیت‌ها</h2>
+  <ul id="limitsList"></ul>
+</section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+'use strict';
+const D=/*__DATA__*/null;
+const $=id=>document.getElementById(id);
+const fa=new Intl.NumberFormat('en-US');
+const f0=x=>x==null?'—':fa.format(Math.round(x));
+const f1=x=>x==null?'—':(Math.round(x*10)/10).toFixed(1);
+const f2=x=>x==null?'—':(Math.round(x*100)/100).toFixed(2);
+const ISO=t=>'\u2066'+t+'\u2069';
+const usd=x=>x==null?'—':ISO((x<0?'−$':'$')+fa.format(Math.abs(Math.round(x))));
+const pct=x=>x==null?'—':ISO(f1(x)+'%');
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const R=D.summary.results, main=R['0.0075|2'], dg=D.diag;
+const RISKS=[0.0025,0.005,0.0075,0.01,0.0125,0.015,0.02];
+const CAUSE={FALSE_BREAKOUT:['شکست کاذب','فنی: کیفیت سیگنال','قیمت تقریباً هیچ‌وقت به سود نرسید (بیشترین سود شناور کمتر از ۰٫۳R) و به استاپ اولیه خورد.'],
+ CHOP:['بازار بی‌روند','فنی: شرایط بازار','کمی در جهت درست رفت (۰٫۳ تا ۱R)، بعد برگشت و استاپ خورد. شکست واقعی بود ولی روند ادامه پیدا نکرد.'],
+ WHIPSAW:['جهت درست، استاپ زود','زمانی: جای استاپ','استاپ خورد، ولی ظرف ۳ روز قیمت دست‌کم ۱R در جهت معامله از نقطهٔ ورود گذشت. پیش‌بینی جهت درست بود، زمان‌بندی و جای استاپ نه.'],
+ LATE_ENTRY:['ورود دیرهنگام (FOMO)','روانشناسی جمعی','در ۲۴ ساعت قبل از ورود قیمت دست‌کم ۳ ATR در همان جهت رفته بود، یا دست‌کم ۳ ATR از کیجون فاصله داشت. ربات بعد از هیجان جمعی وارد شد.'],
+ GAVE_BACK:['سود برگشتی','فنی: مدیریت خروج','دست‌کم به ۱R سود رسید ولی با ضرر بسته شد. کف سود فعلی فقط از ۲R فعال می‌شود.'],
+ COSTS:['هزینه‌ها','اجرایی','سود ناخالص داشت ولی کارمزد، لغزش و funding آن را منفی کرد.']};
+const TAG={tag_crowded:['شلوغی یک طرف بازار','funding در جهت معامله ≥ ۰٫۰۳٪؛ یعنی همان طرفی که ما واردش شدیم شلوغ بود'],
+ tag_volume_climax:['اوج حجم','حجم کندل سیگنال ≥ ۲٫۵ برابر میانگین ۲۰ کندل قبل'],
+ tag_cluster:['ورود دسته‌جمعی','دست‌کم ۳ ورود در یک کندل ۴ساعته'],
+ tag_weekend:['آخر هفته','ورود شنبه یا یکشنبه (UTC)'],
+ tag_btc_against:['خلاف جهت بیت‌کوین','بیت‌کوین بیرون ابر Kumo ولی در جهت مخالف معامله'],
+ tag_counter_daily:['خلاف روند ۲۰ روزه','قیمت سمت مخالفِ میانگین ۱۲۰ کندل ۴ساعته'],
+ tag_late_entry:['ورود دیرهنگام','حرکت ۲۴ساعتهٔ قبل یا فاصله از کیجون ≥ ۳ ATR']};
+
+/* ---------- tooltip ---------- */
+const tip=$('tip');
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=Math.max(8,x)+'px';tip.style.top=Math.max(8,y)+'px';}
+function hideTip(){tip.hidden=true;}
+function bindTips(root){root.querySelectorAll('[data-tip]').forEach(el=>{el.addEventListener('mousemove',e=>showTip(e,el.getAttribute('data-tip')));el.addEventListener('mouseleave',hideTip);el.addEventListener('focus',e=>{const r=el.getBoundingClientRect();showTip({clientX:r.right,clientY:r.top},el.getAttribute('data-tip'));});el.addEventListener('blur',hideTip);});}
+
+/* ---------- small chart kit (one y-scale per chart) ---------- */
+function ticks(min,max,n){const span=max-min||1,step0=span/n,mag=Math.pow(10,Math.floor(Math.log10(step0))),err=step0/mag,step=(err>=7.5?10:err>=3.5?5:err>=1.5?2:1)*mag;const out=[];for(let v=Math.ceil(min/step)*step;v<=max+1e-9;v+=step)out.push(+v.toFixed(10));return out;}
+function frame(W,H,m){return{W,H,m,iw:W-m.l-m.r,ih:H-m.t-m.b};}
+function lineChart(el,dates,vals,{H=260,fmt=f0,area=false,color='--pos',neg=false}={}){
+  const F=frame(760,H,{l:58,r:16,t:12,b:26}),n=vals.length;let lo=Math.min(...vals),hi=Math.max(...vals);if(neg){hi=0;}const pad=(hi-lo)*.05;lo-=pad;hi+=neg?0:pad;
+  const x=i=>F.m.l+i/(n-1)*F.iw,y=v=>F.m.t+(hi-v)/(hi-lo)*F.ih,T=ticks(lo,hi,5);
+  let s=`<svg viewBox="0 0 ${F.W} ${F.H}" role="img" aria-label="${esc(el.dataset.label||'')}"><g class="grid">`+T.map(t=>`<line x1="${F.m.l}" x2="${F.W-F.m.r}" y1="${y(t)}" y2="${y(t)}"/>`).join('')+`</g><g class="axis">`+T.map(t=>`<text x="${F.m.l-6}" y="${y(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('');
+  const years=[];dates.forEach((d,i)=>{if(i===0||d.slice(0,4)!==dates[i-1].slice(0,4))years.push([i,d.slice(0,4)]);});
+  s+=years.filter(([i])=>i>0).map(([i,yv])=>`<line x1="${x(i)}" x2="${x(i)}" y1="${F.m.t}" y2="${F.m.t+F.ih}" stroke-dasharray="2 4"/><text x="${x(i)+4}" y="${F.H-8}">${yv}</text>`).join('')+'</g>';
+  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  if(area)s+=`<polygon points="${F.m.l},${y(neg?0:lo)} ${pts} ${F.W-F.m.r},${y(neg?0:lo)}" fill="var(${color})" fill-opacity=".16"/>`;
+  s+=`<polyline points="${pts}" fill="none" stroke="var(${color})" stroke-width="2" stroke-linejoin="round"/>`;
+  const last=n-1;s+=`<circle cx="${x(last)}" cy="${y(vals[last])}" r="4" fill="var(${color})" stroke="var(--surface)" stroke-width="2"/>`;
+  s+=`<line id="${el.id}-x" y1="${F.m.t}" y2="${F.m.t+F.ih}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/><circle id="${el.id}-d" r="4.5" fill="var(${color})" stroke="var(--surface)" stroke-width="2" visibility="hidden"/>`;
+  s+=`<rect x="${F.m.l}" y="${F.m.t}" width="${F.iw}" height="${F.ih}" fill="transparent" id="${el.id}-hit"/></svg>`;
+  el.innerHTML=s;const svg=el.querySelector('svg'),hit=$(el.id+'-hit'),xl=$(el.id+'-x'),dot=$(el.id+'-d');
+  hit.addEventListener('mousemove',e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*F.W,i=Math.max(0,Math.min(n-1,Math.round((px-F.m.l)/F.iw*(n-1))));
+    xl.setAttribute('x1',x(i));xl.setAttribute('x2',x(i));xl.setAttribute('visibility','visible');dot.setAttribute('cx',x(i));dot.setAttribute('cy',y(vals[i]));dot.setAttribute('visibility','visible');
+    showTip(e,`<b class="ltr">${dates[i]}</b><br>${neg?'افت از قله: ':'ارزش حساب: '}<span class="ltr num">${neg?f1(-vals[i])+'%':usd(vals[i])}</span>`);});
+  hit.addEventListener('mouseleave',()=>{xl.setAttribute('visibility','hidden');dot.setAttribute('visibility','hidden');hideTip();});
+}
+function hbars(el,items,{fmt=f0,label=x=>x}={}){ // items: {name,value,tip}; diverging around 0
+  const rowH=26,F=frame(760,items.length*rowH+30,{l:150,r:70,t:6,b:24});
+  const lo=Math.min(0,...items.map(d=>d.value))*1.16,hi=Math.max(0,...items.map(d=>d.value))*1.16,x=v=>F.m.l+(v-lo)/(hi-lo||1)*F.iw,T=ticks(lo,hi,5);
+  let s=`<svg viewBox="0 0 ${F.W} ${F.H}" role="img"><g class="grid">`+T.map(t=>`<line x1="${x(t)}" x2="${x(t)}" y1="${F.m.t}" y2="${F.H-F.m.b}"/>`).join('')+`</g><g class="axis">`+T.map(t=>`<text x="${x(t)}" y="${F.H-6}" text-anchor="middle">${fmt(t)}</text>`).join('')+'</g>';
+  items.forEach((d,i)=>{const y0=F.m.t+i*rowH+4,h=rowH-8,a=x(Math.min(0,d.value)),b=x(Math.max(0,d.value)),c=d.value<0?'--neg':'--pos',w=Math.max(1,b-a);
+    const rad=Math.min(4,w/2),path=d.value<0?`M${b},${y0} H${a+rad} Q${a},${y0} ${a},${y0+rad} V${y0+h-rad} Q${a},${y0+h} ${a+rad},${y0+h} H${b} Z`:`M${a},${y0} H${b-rad} Q${b},${y0} ${b},${y0+rad} V${y0+h-rad} Q${b},${y0+h} ${b-rad},${y0+h} H${a} Z`;
+    s+=`<text x="${F.m.l-8}" y="${y0+h/2+4}" text-anchor="end" fill="var(--ink-2)" font-size="12" font-family="var(--font)">${esc(label(d.name))}</text>`;
+    s+=`<path d="${path}" fill="var(${c})" tabindex="0" data-tip="${esc(d.tip)}"/>`;
+    s+=`<text x="${d.value<0?a-6:b+6}" y="${y0+h/2+4}" text-anchor="${d.value<0?'end':'start'}" fill="var(--ink-2)" font-size="11.5" font-family="var(--font)">${fmt(d.value)}</text>`;});
+  s+=`<line x1="${x(0)}" x2="${x(0)}" y1="${F.m.t}" y2="${F.H-F.m.b}" stroke="var(--ink-3)"/></svg>`;el.innerHTML=s;bindTips(el);
+}
+function vbars(el,labels,vals,{fmt=f1,tipf}={}){
+  const n=vals.length,F=frame(760,230,{l:46,r:10,t:10,b:28}),lo=Math.min(0,...vals),hi=Math.max(0,...vals),y=v=>F.m.t+(hi-v)/(hi-lo||1)*F.ih,T=ticks(lo,hi,5),bw=F.iw/n;
+  let s=`<svg viewBox="0 0 ${F.W} ${F.H}" role="img"><g class="grid">`+T.map(t=>`<line x1="${F.m.l}" x2="${F.W-F.m.r}" y1="${y(t)}" y2="${y(t)}"/>`).join('')+`</g><g class="axis">`+T.map(t=>`<text x="${F.m.l-6}" y="${y(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('');
+  labels.forEach((l,i)=>{if(l.endsWith('-01')||i===0)s+=`<text x="${F.m.l+i*bw+bw/2}" y="${F.H-8}" text-anchor="middle">${l.slice(0,4)}</text>`;});s+='</g>';
+  vals.forEach((v,i)=>{const x0=F.m.l+i*bw+1,w=Math.max(1,bw-2),a=y(Math.max(0,v)),b=y(Math.min(0,v));s+=`<rect x="${x0}" y="${a}" width="${w}" height="${Math.max(1,b-a)}" rx="1.5" fill="var(${v<0?'--neg':'--pos'})" tabindex="0" data-tip="${esc(tipf(i))}"/>`;});
+  s+=`<line x1="${F.m.l}" x2="${F.W-F.m.r}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink-3)"/></svg>`;el.innerHTML=s;bindTips(el);
+}
+function riskScatter(el){
+  const F=frame(760,300,{l:52,r:24,t:14,b:36});const S=[2,5].map(b=>RISKS.map(r=>({r,b,...R[r+'|'+b]})));const all=S.flat();
+  const xlo=0,xhi=Math.max(...all.map(d=>d.max_dd))*1.08,ylo=0,yhi=Math.max(...all.map(d=>d.cagr))*1.1,x=v=>F.m.l+(v-xlo)/(xhi-xlo)*F.iw,y=v=>F.m.t+(yhi-v)/(yhi-ylo)*F.ih;
+  const TX=ticks(xlo,xhi,6),TY=ticks(ylo,yhi,5);
+  let s=`<svg viewBox="0 0 ${F.W} ${F.H}" role="img"><g class="grid">`+TY.map(t=>`<line x1="${F.m.l}" x2="${F.W-F.m.r}" y1="${y(t)}" y2="${y(t)}"/>`).join('')+TX.map(t=>`<line x1="${x(t)}" x2="${x(t)}" y1="${F.m.t}" y2="${F.m.t+F.ih}"/>`).join('')+`</g><g class="axis">`+
+    TY.map(t=>`<text x="${F.m.l-6}" y="${y(t)+4}" text-anchor="end">${t}%</text>`).join('')+TX.map(t=>`<text x="${x(t)}" y="${F.H-18}" text-anchor="middle">${t}%</text>`).join('')+
+    `<text x="${F.m.l+F.iw/2}" y="${F.H-2}" text-anchor="middle">Max drawdown</text><text x="12" y="${F.m.t+F.ih/2}" transform="rotate(-90 12 ${F.m.t+F.ih/2})" text-anchor="middle">CAGR</text></g>`;
+  S.forEach((ser,k)=>{const c=k?'--s2':'--pos';s+=`<polyline points="${ser.map(d=>x(d.max_dd)+','+y(d.cagr)).join(' ')}" fill="none" stroke="var(${c})" stroke-width="2"/>`;
+    ser.forEach(d=>{s+=`<circle cx="${x(d.max_dd)}" cy="${y(d.cagr)}" r="5" fill="var(${c})" stroke="var(--surface)" stroke-width="2" tabindex="0" data-tip="${esc(`ریسک <b class='ltr'>${d.r*100}%</b> · لغزش ${d.b}bps<br>CAGR <span class='ltr'>${f1(d.cagr)}%</span> · Max DD <span class='ltr'>${f1(d.max_dd)}%</span><br>Calmar ${f2(d.calmar)} · سرمایهٔ نهایی ${usd(d.final_equity)}`)}"/>`;
+      if(k===0)s+=`<text x="${x(d.max_dd)-8}" y="${y(d.cagr)-9}" text-anchor="end" fill="var(--ink-2)" font-size="11.5" font-family="var(--font)">${d.r*100}%</text>`;});});
+  el.innerHTML=s+'</svg>';bindTips(el);
+  $('riskLegend').innerHTML=`<span><i style="background:var(--pos)"></i>لغزش ۲bps</span><span><i style="background:var(--s2)"></i>لغزش ۵bps</span><span>برچسب کنار نقطه‌ها = ریسک هر معامله</span>`;
+}
+
+/* ---------- header ---------- */
+$('lede').innerHTML=`۱۵ نماد، حداکثر ۶ پوزیشن هم‌زمان، شکست دانچیان ۱۰ کندلی روی ۴ساعته با فیلتر ابر Kumo، کف سود پس از ۲R، فیلتر پهنای استاپ (V2) و فیلتر روند بیت‌کوین (B). کارمزد ۰٫۱۲٪ رفت‌وبرگشت، لغزش و funding واقعی لحاظ شده‌اند. اعداد زیر برای ریسک ۰٫۷۵٪ و لغزش ۲bps هستند.`;
+$('kpis').innerHTML=[[pct(main.cagr),'رشد سالانه (CAGR)'],[pct(main.max_dd),'بیشترین افت سرمایه'],[usd(main.net_profit),'سود خالص روی ۱۰٬۰۰۰ دلار'],[f2(main.profit_factor),'ضریب سود (PF)'],[pct(main.win_rate),'نرخ برد'],[f0(main.positions),'تعداد پوزیشن']].map(([v,l])=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join('');
+
+/* ---------- risk ---------- */
+(function(){const head=`<tr><th>ریسک هر معامله</th><th>لغزش</th><th>CAGR</th><th>بیشترین افت</th><th>Calmar</th><th>PF</th><th>Sharpe</th><th>سرمایهٔ نهایی</th><th>بدترین ماه</th><th>طولانی‌ترین زنجیرهٔ ضرر</th><th>طولانی‌ترین زیر آب</th></tr>`;
+  let rows='';[2,5].forEach(b=>RISKS.forEach(r=>{const d=R[r+'|'+b];rows+=`<tr class="${r===0.0075&&b===2?'hl':''}"><td class="n">${r*100}%</td><td class="n">${b}bps</td><td class="n">${f1(d.cagr)}%</td><td class="n">${f1(d.max_dd)}%</td><td class="n">${f2(d.calmar)}</td><td class="n">${f2(d.profit_factor)}</td><td class="n">${f2(d.sharpe)}</td><td class="n">${usd(d.final_equity)}</td><td class="n">${f1(d.worst_month)}%</td><td class="n">${d.longest_losing_streak}</td><td class="n">${d.longest_underwater_days} روز</td></tr>`;}));
+  $('riskTable').innerHTML=head+rows;riskScatter($('riskChart'));
+  const a=R['0.0025|2'],b=R['0.02|2'];
+  $('riskNote').innerHTML=`افت سرمایه تقریباً با ریسک بالا می‌رود: از ${f1(a.max_dd)}٪ با ریسک ۰٫۲۵٪ تا ${f1(b.max_dd)}٪ با ریسک ۲٪. Calmar در همهٔ سطوح حدود ۱ تا ۱٫۵ است، یعنی ریسک بیشتر کیفیت استراتژی را بهتر نمی‌کند و فقط هم سود و هم افت را بزرگ‌تر می‌کند. ریسک را از روی افتی انتخاب کن که واقعاً تحمل می‌کنی، نه از روی CAGR. زنجیرهٔ ضرر و مدت زیر آب ماندن تقریباً به ریسک بستگی ندارند.`;})();
+
+/* ---------- equity ---------- */
+lineChart($('eqChart'),D.equity.d,D.equity.v,{fmt:v=>'$'+fa.format(v),area:true});
+lineChart($('ddChart'),D.equity.d,D.equity.dd.map(v=>-v),{H:170,fmt:v=>f0(-v)+'%',area:true,color:'--neg',neg:true});
+
+/* ---------- years ---------- */
+(function(){const ys=Object.keys(main.yearly);let s=`<tr><th>ریسک</th>${ys.map(y=>`<th>${y}</th>`).join('')}</tr>`;
+  RISKS.forEach(r=>{const d=R[r+'|2'];s+=`<tr class="${r===0.0075?'hl':''}"><td class="n">${r*100}%</td>${ys.map(y=>`<td class="n ${d.yearly[y]<0?'negt':''}">${f1(d.yearly[y])}%</td>`).join('')}</tr>`;});
+  $('yearTable').innerHTML=s;})();
+
+/* ---------- causes ---------- */
+(function(){const C=dg.causes.slice().sort((a,b)=>a.loss_usd-b.loss_usd),tot=dg.loser_loss_usd;
+  $('causeLede').innerHTML=`از <b>${f0(dg.n_positions)}</b> پوزیشن، <b>${f0(dg.n_losers)}</b> پوزیشن با ضرر بسته شدند و روی هم ${usd(tot)} زیان دادند؛ برنده‌ها ${usd(dg.winner_profit_usd)} سود دادند. هر بازنده دقیقاً یک علت اصلی دارد که با قاعدهٔ ثابت و به این ترتیب تعیین شده: هزینه، سود برگشتی، استاپ زود، ورود دیرهنگام، شکست کاذب، بازار بی‌روند. آستانه‌ها پیش از دیدن نتیجه انتخاب شدند.`;
+  hbars($('causeChart'),C.map(c=>({name:c.cause,value:c.loss_usd,tip:`<b>${CAUSE[c.cause][0]}</b><br>${c.n} معامله · ${usd(c.loss_usd)}<br>میانگین R: ${f2(c.avg_r)} · میانگین مدت: ${f0(c.avg_hours)} ساعت`})),{fmt:v=>(v<0?'−$':'$')+fa.format(Math.abs(Math.round(v/1000)))+'k',label:n=>CAUSE[n][0]});
+  $('causeCards').innerHTML=C.map(c=>`<div class="card"><div class="cause"><b>${CAUSE[c.cause][0]}</b><span class="pill">${CAUSE[c.cause][1]}</span></div>
+    <p class="evid">${CAUSE[c.cause][2]}</p><p class="num"><b>${c.n}</b> معامله (${f1(c.n/dg.n_losers*100)}٪ بازنده‌ها) · <span class="ltr">${usd(c.loss_usd)}</span> (${f1(c.loss_usd/tot*100)}٪ زیان) · بیشترین سود شناور به‌طور میانگین <span class="ltr">${f2(c.avg_mfe)}R</span> · میانگین مدت ${f0(c.avg_hours)} ساعت</p></div>`).join('');})();
+
+/* ---------- lift ---------- */
+(function(){const V={worse:['بدتر از بقیه','worse'],better:['بهتر از بقیه','better'],none:['اثر قابل تشخیص نیست','']};
+  let s=`<tr><th>نشانه</th><th>تعریف</th><th>تعداد</th><th>سهم در بازنده‌ها</th><th>سهم در برنده‌ها</th><th>میانگین R با نشانه</th><th>بدون نشانه</th><th>z</th><th>داوری</th></tr>`;
+  D.lift.forEach(l=>{s+=`<tr><td>${TAG[l.tag][0]}</td><td style="white-space:normal;min-width:220px">${TAG[l.tag][1]}</td><td class="n">${l.n}</td><td class="n">${f1(l.share_losers)}%</td><td class="n">${f1(l.share_winners)}%</td><td class="n">${f2(l.avg_r_with)}</td><td class="n">${f2(l.avg_r_without)}</td><td class="n">${f1(l.z)}</td><td><span class="pill ${V[l.verdict][1]}">${V[l.verdict][0]}</span></td></tr>`;});
+  $('liftTable').innerHTML=s;
+  const sig=D.lift.filter(l=>l.verdict!=='none');$('liftSum').innerHTML=sig.length?`${sig.length} نشانه از آستانهٔ نویز عبور کرد.`:`<b>هیچ‌کدام از ${D.lift.length} نشانه از آستانهٔ نویز عبور نکرد.</b> یعنی با این داده نمی‌توان گفت شلوغی بازار، اوج حجم، ورود دیرهنگام یا آخر هفته باعث ضرر شده‌اند. نزدیک‌ترین‌ها شلوغی funding و معاملات خلاف جهت بیت‌کوین هستند.`;})();
+
+/* ---------- time ---------- */
+(function(){const H=dg.by_holding;hbars($('holdChart'),H.map(h=>({name:h.bucket,value:h.net,tip:`<b>${h.bucket}</b><br>${h.n} معامله · نرخ برد ${f0(h.win_rate*100)}%<br>میانگین R: ${f2(h.avg_r)} · خالص ${usd(h.net)}`})),{fmt:v=>(v<0?'−$':'$')+fa.format(Math.abs(Math.round(v/1000)))+'k',label:n=>({'<8h':'کمتر از ۸ ساعت','8-24h':'۸ تا ۲۴ ساعت','1-3d':'۱ تا ۳ روز','3-7d':'۳ تا ۷ روز','>7d':'بیشتر از ۷ روز'}[n])});
+  const short=H.filter(h=>h.bucket==='<8h'||h.bucket==='8-24h'),long=H.filter(h=>h.bucket==='3-7d'||h.bucket==='>7d');
+  $('holdNote').innerHTML=`تمام سود از معاملاتی می‌آید که بیش از ۳ روز باز می‌مانند (${f0(long.reduce((a,h)=>a+h.n,0))} معامله، ${usd(long.reduce((a,h)=>a+h.net,0))}). معاملاتی که زیر ۲۴ ساعت بسته شدند (${f0(short.reduce((a,h)=>a+h.n,0))} معامله) تقریباً همه ضرر دادند. این الگوی طبیعی استراتژی روندی است: ربات زود ضررها را می‌بندد و برنده‌ها را نگه می‌دارد. پس «معاملهٔ کوتاه ضرر می‌دهد» را نمی‌شود مستقیم به قانون تبدیل کرد، چون موقع ورود نمی‌دانیم کدام معامله کوتاه می‌شود.`;
+  const tbl=(rows,key,lab)=>`<tr><th>${lab}</th><th>تعداد</th><th>نرخ برد</th><th>میانگین R</th><th>خالص</th></tr>`+rows.map(r=>`<tr><td class="n">${r[key]}</td><td class="n">${r.n}</td><td class="n">${f1(r.win_rate)}%</td><td class="n ${r.avg_r<0?'negt':''}">${f2(r.avg_r)}</td><td class="n">${usd(r.net)}</td></tr>`).join('');
+  $('hourTable').innerHTML=tbl(dg.by_hour,'hour_utc','ساعت');
+  const order=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],faDay={Monday:'دوشنبه',Tuesday:'سه‌شنبه',Wednesday:'چهارشنبه',Thursday:'پنجشنبه',Friday:'جمعه',Saturday:'شنبه',Sunday:'یکشنبه'};
+  $('dayTable').innerHTML=tbl(dg.by_weekday.slice().sort((a,b)=>order.indexOf(a.weekday)-order.indexOf(b.weekday)).map(r=>({...r,weekday:faDay[r.weekday]})),'weekday','روز');})();
+
+/* ---------- psychology ---------- */
+(function(){const L=Object.fromEntries(D.lift.map(l=>[l.tag,l])),q=D.quit,mo=D.monthly.r;
+  const v=t=>({worse:'بدتر از بقیه',better:'بهتر از بقیه',none:'بی‌اثر'}[L[t].verdict]);
+  $('crowd').innerHTML=`<p><b>FOMO (ورود بعد از هیجان):</b> ${L.tag_late_entry.n} ورود بعد از حرکت تند. میانگین R ${f2(L.tag_late_entry.avg_r_with)} در برابر ${f2(L.tag_late_entry.avg_r_without)}؛ ${v('tag_late_entry')}. ورود دیر به‌تنهایی ضرر نمی‌سازد.</p>
+  <p><b>شلوغی یک طرف (funding بالا):</b> ${L.tag_crowded.n} ورود. میانگین R ${f2(L.tag_crowded.avg_r_with)} در برابر ${f2(L.tag_crowded.avg_r_without)}؛ ${v('tag_crowded')} (z = ${f1(L.tag_crowded.z)}). جهت اثر منفی است ولی نمونه برای نتیجه‌گیری کوچک است.</p>
+  <p><b>اوج حجم:</b> ${L.tag_volume_climax.n} ورود. میانگین R ${f2(L.tag_volume_climax.avg_r_with)}؛ ${v('tag_volume_climax')}. جهت اثر حتی مثبت است (z = ${f1(L.tag_volume_climax.z)})، پس اوج حجم دلیل ضرر نیست.</p>
+  <p><b>ورود دسته‌جمعی:</b> ${L.tag_cluster.n} ورود. میانگین R ${f2(L.tag_cluster.avg_r_with)}؛ ${v('tag_cluster')}. جهت اثر مثبت است (z = ${f1(L.tag_cluster.z)})، پس ورود هم‌زمان چند نماد دلیل ضرر نیست، هرچند در افت‌ها ضررها را هم‌زمان می‌کند.</p>`;
+  const neg=mo.filter(x=>x<0).length;
+  $('trader').innerHTML=`<p><b>${main.longest_losing_streak} ضرر پشت‌سرهم</b> طولانی‌ترین زنجیره بود. با نرخ برد ۳۶٪ این طبیعی است و باز هم تکرار می‌شود.</p>
+  <p><b>${main.longest_underwater_days} روز</b> طول کشید تا حساب به قلهٔ قبلی برگردد. یعنی حدود ۸ ماه بدون سقف جدید.</p>
+  <p><b>بدترین ماه:</b> <span class="ltr">${f1(main.worst_month)}%</span>. ${neg} ماه از ${mo.length} ماه منفی بود. به‌طور میانگین هر ماه ${f0(D.losses_per_month.mean)} معاملهٔ زیان‌ده می‌بینی و در بدترین ماه ${D.losses_per_month.max} تا.</p>
+  <p><b>اگر در بدترین لحظه ربات را خاموش می‌کردی:</b> حساب از ${usd(q.peak)} (<span class="ltr">${q.peak_date}</span>) به ${usd(q.trough)} (<span class="ltr">${q.trough_date}</span>) رسیده بود. ${q.recovered_date?`ربات <span class="ltr">${q.recovered_date}</span> به قله برگشت و`:''} پایان دوره به ${usd(q.final)} رسید. خاموش کردن در کف، زیان را قطعی می‌کرد و همهٔ برگشت را از دست می‌دادی. بزرگ‌ترین خطر روانی این استراتژی همین است.</p>`;
+  vbars($('monthChart'),D.monthly.m,mo,{fmt:v=>f0(v)+'%',tipf:i=>`<b class="ltr">${D.monthly.m[i]}</b><br>بازده ماه: <span class="ltr">${f1(mo[i])}%</span>`});})();
+
+/* ---------- symbols ---------- */
+(function(){const S=D.symbols;hbars($('symChart'),S.map(s=>({name:s.symbol,value:s.avg_r,tip:`<b class="ltr">${s.symbol}</b><br>${s.n} معامله · نرخ برد ${f0(s.win)}%<br>میانگین R ${f2(s.avg_r)} · خالص ${usd(s.net)}`})),{fmt:f2,label:n=>n.replace('USDT','')});
+  const zero=S.filter(s=>s.avg_r<0.02).map(s=>s.symbol.replace('USDT',''));
+  $('symNote').innerHTML=`${zero.length} نماد (${zero.join('، ')}) تقریباً چیزی اضافه نکرده‌اند. حذف آن‌ها ولی همان «انتخاب بعد از دیدن نتیجه» است که با BNB تجربه کردیم: روی ۵ نماد قدیمی، رتبهٔ نمادها بین دو نیمهٔ داده عوض می‌شد. اگر بخواهیم وزن نمادها را تغییر دهیم، باید قاعده‌اش از قبل ثابت باشد (مثلاً بر اساس عملکرد ۱۲ ماه گذشته)، نه این فهرست.`;})();
+
+/* ---------- stops ---------- */
+(function(){const s=D.stop;
+  $('stopCards').innerHTML=`<div class="card"><h3>نشانهٔ «استاپ گشاد است»</h3><p>برنده‌ها قبل از سود دادن معمولاً زیاد خلاف جهت نمی‌روند: میانه <span class="ltr">${f2(s.winner_mae_q['0.5'])}R</span> و ۹۵٪ آن‌ها کمتر از <span class="ltr">${f2(s.winner_mae_q['0.95'])}R</span>. فقط ${f0(s.winners_mae_gt_075)}٪ برنده‌ها بیش از ۰٫۷۵R عقب رفتند. یعنی استاپ ۱٫۵ ATR (به‌جای ۲) بیشتر برنده‌ها را نگه می‌داشت و با ریسک ثابت، اندازهٔ پوزیشن را بزرگ‌تر می‌کرد.</p></div>
+  <div class="card"><h3>نشانهٔ «استاپ تنگ است»</h3><p>${s.whipsaw_n} بازنده بعد از استاپ خوردن در جهت درست رفتند. قیمت به‌طور میانه فقط <span class="ltr">${f2(s.whipsaw_extra_q['0.5'])}R</span> از نقطهٔ خروج جلوتر رفت و برگشت. با استاپی ۰٫۲۵R گشادتر ${f0(s.survive_025)}٪ آن‌ها و با ۰٫۵R گشادتر ${f0(s.survive_05)}٪ زنده می‌ماندند.</p></div>
+  <div class="card"><h3>سود رسیده و برگشته</h3><p>${s.losers_mfe_ge_1} بازنده دست‌کم به ۱R سود رسیده بودند و ${s.losers_mfe_ge_05} بازنده به ۰٫۵R. کف سود فعلی فقط از ۲R فعال می‌شود.</p></div>
+  <div class="card"><h3>جمع‌بندی</h3><p>این دو نشانه در جهت مخالف هم‌اند و با نگاه به داده نمی‌شود فهمید کدام برنده است، چون تغییر استاپ اندازهٔ پوزیشن و همهٔ معاملات بعدی را هم عوض می‌کند. باید شبیه‌سازی شود.</p></div>`;})();
+
+/* ---------- losers table ---------- */
+(function(){const C=D.losers.cols,rows=D.losers.rows,ix=Object.fromEntries(C.map((c,i)=>[c,i]));
+  const HEAD=[['symbol','نماد'],['side','جهت'],['entry_time','ورود (UTC)'],['exit_time','خروج'],['hours','مدت (ساعت)'],['net','زیان $'],['R','R'],['mfe_r','بیشترین سود شناور (R)'],['mae_r','بیشترین زیان شناور (R)'],['later_r','۳ روز بعد از خروج (R)'],['runup_atr','حرکت ۲۴ساعت قبل (ATR)'],['ext_atr','فاصله از کیجون (ATR)'],['vol_ratio','حجم / میانگین'],['crowd','funding هم‌جهت'],['width_pct','پهنای استاپ ٪'],['btc','بیت‌کوین'],['roots_same_bar','ورود هم‌زمان'],['cause','علت']];
+  const BTC={with:'هم‌جهت',against:'خلاف',inside:'داخل ابر',self:'خود BTC'};
+  const opts=(el,vals,lab)=>{el.innerHTML=`<option value="">همه</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(lab?lab(v):v)}</option>`).join('');};
+  opts($('fCause'),[...new Set(rows.map(r=>r[ix.cause]))],v=>CAUSE[v][0]);opts($('fSym'),[...new Set(rows.map(r=>r[ix.symbol]))].sort(),v=>v.replace('USDT',''));opts($('fYear'),[...new Set(rows.map(r=>r[ix.entry_time].slice(0,4)))].sort());
+  let sortKey='entry_time',dir=1;
+  const fmtCell=(c,v)=>{if(v==null)return'—';if(c==='side')return v===1?'خرید':'فروش';if(c==='net')return usd(v);if(c==='cause')return CAUSE[v][0];if(c==='btc')return BTC[v]||v;if(c==='symbol')return v.replace('USDT','');if(c==='crowd')return f2(v*100)+'%';if(c==='hours')return f0(v);if(typeof v==='number')return f2(v);return v;};
+  function render(){const fc=$('fCause').value,fs=$('fSym').value,fy=$('fYear').value,fd=$('fSide').value;
+    let f=rows.filter(r=>(!fc||r[ix.cause]===fc)&&(!fs||r[ix.symbol]===fs)&&(!fy||r[ix.entry_time].startsWith(fy))&&(!fd||String(r[ix.side])===fd));
+    const k=ix[sortKey];f=f.slice().sort((a,b)=>(a[k]>b[k]?1:a[k]<b[k]?-1:0)*dir);
+    $('fCount').textContent=`${f.length} معامله · مجموع ${usd(f.reduce((s,r)=>s+r[ix.net],0))}`;
+    $('loserTable').innerHTML=`<thead><tr>${HEAD.map(([c,l])=>`<th class="sort" data-k="${c}" tabindex="0">${l}${c===sortKey?(dir>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>`+
+      f.map(r=>`<tr>${HEAD.map(([c])=>`<td class="${['symbol','side','cause','btc'].includes(c)?'':'n'}">${fmtCell(c,r[ix[c]])}</td>`).join('')}</tr>`).join('')+'</tbody>';
+    document.querySelectorAll('#loserTable th.sort').forEach(th=>{const go=()=>{if(sortKey===th.dataset.k)dir=-dir;else{sortKey=th.dataset.k;dir=1;}render();};th.addEventListener('click',go);th.addEventListener('keydown',e=>{if(e.key==='Enter')go();});});}
+  ['fCause','fSym','fYear','fSide'].forEach(id=>$(id).addEventListener('change',render));render();})();
+
+/* ---------- next steps ---------- */
+(function(){const C=Object.fromEntries(dg.causes.map(c=>[c.cause,c])),L=Object.fromEntries(D.lift.map(l=>[l.tag,l])),s=D.stop;
+  const H=[
+   [`شکست کاذب، بزرگ‌ترین علت`,`${C.FALSE_BREAKOUT.n} معامله و ${usd(C.FALSE_BREAKOUT.loss_usd)}. هیچ‌کدام از نشانه‌های جدول «کدام واقعاً علت است» بازنده‌ها را به‌طور معنادار از برنده‌ها جدا نمی‌کند، پس راه‌حل آماده‌ای نداریم. برای پیدا کردنش باید ویژگی‌های تازه بسازیم، مثل محل بسته شدن کندل در طول آن، شکست دوباره پس از برگشت، یا تأیید روی تایم‌فریم بالاتر.`,`پژوهش باز؛ اول ویژگی بسازیم و بعد فرضیه را ثبت کنیم.`],
+   [`فاصلهٔ استاپ اولیه`,`۹۵٪ برنده‌ها کمتر از ${f2(s.winner_mae_q['0.95'])}R عقب رفتند، که می‌گوید استاپ می‌تواند تنگ‌تر شود. از طرف دیگر ${f0(s.survive_025)}٪ از ${s.whipsaw_n} بازندهٔ «جهت درست» با استاپی کمی گشادتر زنده می‌ماندند.`,`مقایسهٔ استاپ ۱٫۵ / ۲ / ۲٫۵ ATR، با همان دروازهٔ پذیرش.`],
+   [`کف سود زودتر`,`${C.GAVE_BACK.n} بازنده به‌طور میانگین تا ${f2(C.GAVE_BACK.avg_mfe)}R سود رفتند و ${usd(C.GAVE_BACK.loss_usd)} زیان دادند. کف سود فعلی فقط از ۲R فعال می‌شود.`,`آستانهٔ ۱٫۵R و ۱R برای کف سود. ریسک: بستن زودتر روندهای بزرگ.`],
+   [`معاملات خلاف جهت بیت‌کوین`,`میانگین R معاملات خلاف جهت BTC ${f2(L.tag_btc_against.avg_r_with)} است و بقیه ${f2(L.tag_btc_against.avg_r_without)} (z = ${f1(L.tag_btc_against.z)}). روی ۵ نماد قدیمی این اثر بین دو نیمه ناپایدار بود.`,`فیلتر یا نصف کردن ریسک این معاملات، با شرط پایداری در هر دو نیمه.`],
+   [`شلوغی funding`,`${L.tag_crowded.n} معامله با میانگین R ${f2(L.tag_crowded.avg_r_with)}، در برابر ${f2(L.tag_crowded.avg_r_without)} برای بقیه. نمونه کوچک است.`,`اول با داده‌های بیشتر بسنجیم؛ هنوز ارزش قانون شدن ندارد.`],
+   [`لغزش واقعی در لحظهٔ شکست`,`با لغزش ۵bps CAGR در ریسک ۰٫۷۵٪ از ${f1(main.cagr)}٪ به ${f1(R['0.0075|5'].cagr)}٪ می‌رسد. ربات paper حالا لغزش واقعی دفتر سفارش LBank را ثبت می‌کند.`,`چند هفته داده جمع کنیم و بک‌تست را با عدد واقعی تکرار کنیم.`]];
+  $('hyp').innerHTML=H.map(([t,e,a])=>`<li><b>${t}</b><p class="evid">${e}</p><p><b>آزمایش پیشنهادی:</b> ${a}</p></li>`).join('');})();
+
+$('limitsList').innerHTML=[
+ 'V2 و فیلتر بیت‌کوین روی ۵ نماد قدیمی و همین بازه پیدا شدند. روی ۱۰ نماد جدید تنظیم نشدند، ولی تعداد نمادها و ۶ پوزیشن هم‌زمان را بعد از دیدن نتایج مرحلهٔ ۲ انتخاب کردیم. پس این عددها کاملاً خارج‌نمونه نیستند.',
+ 'فقط نمادهایی که تا امروز زنده‌اند و در LBank معامله می‌شوند انتخاب شدند (مثلاً LUNA کنار رفت). این نتیجه را خوش‌بینانه‌تر می‌کند.',
+ 'داده‌ها از Binance است ولی ربات روی LBank معامله می‌کند. لغزش ثابت فرض شده و مسیر قیمت درون هر دقیقه تقریبی است. Liquidation و Mark Price بازسازی نشده‌اند.',
+ 'بازه از ۵ اکتبر ۲۰۲۱ شروع می‌شود، نه ژانویه، چون داده‌های آماده از آنجا شروع می‌شوند.',
+ 'FIL و LTC هرکدام ۵ روز دادهٔ گم‌شده در ۲۰۲۲ دارند که با قیمت قبلی پر شد.',
+ 'برچسب‌های «روانشناسی بازار» تقریب‌هایی از روی funding، حجم و حرکت قیمت‌اند؛ احساسات معامله‌گران مستقیم اندازه‌گیری نشده است.',
+ 'علت هر بازنده با قاعدهٔ ثابت تعیین شده و فقط یک علت اصلی می‌گیرد. معامله‌ای ممکن است چند علت هم‌زمان داشته باشد؛ ستون‌های جدول برای همین بررسی هستند.'
+].map(x=>`<li>${x}</li>`).join('');
+</script>
