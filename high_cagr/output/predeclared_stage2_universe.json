@@ -1,0 +1,22 @@
+{
+ "declared_before_listing_symbols": true,
+ "purpose": "Out-of-sample check on symbols never used in any earlier stage: do V2 and B generalise, and does a wider universe help?",
+ "selection_rule": {
+  "candidates": "Binance USDT-M perpetuals ending in USDT that have a 1d monthly kline file for 2021-09 (traded before the 2021-10-05 start)",
+  "exclude": ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "BNBUSDT (seen in earlier stages)", "stablecoin bases: USDC BUSD TUSD FDUSD USDP DAI", "index products: DEFIUSDT BLUEBIRDUSDT FOOTBALLUSDT"],
+  "require": ["1m monthly klines for every month 2021-10..2026-09 plus 1m daily files 2026-10-01..04 on data.binance.vision", "an active USDT linear swap on LBank today (ccxt)"],
+  "rank": "sum of quote-asset volume over 2021-09 from the 1d monthly kline file (liquidity at the start, NOT performance)",
+  "take": "top 10",
+  "replacement": "a symbol with >0.5% missing minutes is replaced by the next one in the ranking"
+ },
+ "survivorship_disclosure": "Requiring continuous data to 2026 and an LBank listing today drops coins that died; this biases results upward and cannot be avoided for a tradable universe.",
+ "data": "1m klines + monthly funding from data.binance.vision, SHA-256 CHECKSUM verified per file; isolated missing minutes forward-filled as flat bars at the previous close and counted; funding unknown Oct 1-4 2026 uses the same adverse 0.01%/8h proxy as before. Same indicators/parity code as high_cagr/prepare.py.",
+ "tests": {
+  "T1_generalisation": "NEW10 universe alone (BTC data only used for the B gate): 4B reference vs V2 vs B vs V2+B, 4 slots",
+  "T2_universe": "ALL15 (old 5 + NEW10): 4B reference vs V2 vs V2+B, at 4 and 6 slots; compared with the old 5-symbol 4B reference"
+ },
+ "costs_and_periods": "R=0.75%, slippage 2 and 5 bps/fill, periods H1/H2/Y2026/full exactly as in predeclared_btc_regime.json",
+ "acceptance_T1": "a filter generalises if, at BOTH slippage levels: net > 0 in H1,H2,Y2026; full Calmar >= reference + 0.05; full max DD <= reference; full CAGR >= 0.9 x reference; Calmar >= reference in both H1 and H2",
+ "acceptance_T2": "a wider universe helps if, at both slippage levels, full Calmar >= old-5 reference Calmar + 0.05 with positive net in H1,H2,Y2026",
+ "decision": "Results only; no bot change without the user's confirmation."
+}
