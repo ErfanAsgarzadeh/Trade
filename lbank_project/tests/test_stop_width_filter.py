@@ -1,4 +1,4 @@
-"""Optional stop-width filter ("V2"): skip >5.6% 2*ATR stops, halve risk for 4.5-5.6%. Ships OFF."""
+"""Stop-width filter ("V2"): skip >5.6% 2*ATR stops, halve risk for 4.5-5.6%. On in the deployed config, off for legacy configs."""
 import copy,json
 from pathlib import Path
 import pandas as pd
@@ -14,8 +14,9 @@ def signal(system,c,width_pct):
  bar=pd.Series(dict(close=100.,high=101.,low=99.,kijun=95.,atr=width_pct/2,timestamp=0))
  return lb.size_position(system.data,c['symbols'][0],'long',bar,10000,c,'4h')
 
-def test_ships_off_and_legacy_configs_default_off():
- deployed=json.loads((Path(__file__).parents[1]/'config.json').read_text())['strategy_settings'];assert deployed['stop_width_filter_enabled'] is False
+def test_deployed_has_declared_v2_and_legacy_configs_default_off():
+ deployed=json.loads((Path(__file__).parents[1]/'config.json').read_text())['strategy_settings']
+ assert deployed['stop_width_filter_enabled'] is True and (deployed['stop_width_skip_pct'],deployed['stop_width_mid_pct'],deployed['stop_width_mid_risk_fraction'])==(.056,.045,.5)   # the declared V2 rule
  legacy=config(False)
  for k in ('stop_width_filter_enabled','stop_width_skip_pct','stop_width_mid_pct','stop_width_mid_risk_fraction'):legacy['strategy_settings'].pop(k)
  assert lb.validate_config(legacy)['strategy_settings']['stop_width_filter_enabled'] is False

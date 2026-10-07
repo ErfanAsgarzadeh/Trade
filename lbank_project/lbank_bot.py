@@ -69,7 +69,8 @@ SCHEMA = {
         "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float,
         "stop_width_filter_enabled": bool, "stop_width_skip_pct": float,
         "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float,
-        "initial_stop_atr_mult": float},
+        "initial_stop_atr_mult": float,
+        "btc_regime_filter_enabled": bool, "btc_regime_symbol": str},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -80,7 +81,9 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     "stop_width_filter_enabled": False, "stop_width_skip_pct": 0.056,
     "stop_width_mid_pct": 0.045, "stop_width_mid_risk_fraction": 0.5,
     # 2.5 passed in-sample and on untouched holdout symbols, but only together with V2 + the BTC gate.
-    "initial_stop_atr_mult": 2.0}
+    "initial_stop_atr_mult": 2.0,
+    # BTC regime gate (high_cagr/btc_regime_experiment.py): alts do not enter while BTC's closed 4h bar is inside its Kumo.
+    "btc_regime_filter_enabled": False, "btc_regime_symbol": "BTC/USDT:USDT"}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -191,6 +194,8 @@ def validate_config(c: dict) -> dict:
             raise ConfigError("Invalid stop-width filter settings")
         if not 1.0 <= settings["initial_stop_atr_mult"] <= 5.0:
             raise ConfigError("initial_stop_atr_mult must be between 1 and 5")
+        if settings["btc_regime_filter_enabled"] and settings["btc_regime_symbol"] not in c["symbols"]:
+            raise ConfigError("btc_regime_symbol must be one of the traded symbols")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
         if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"
@@ -1322,6 +1327,18 @@ class Engine:
             self.db.runtime_set("scanner_at", now)
             return not failed
         candidates, scanned = [], []
+        gate = c.get("strategy_settings", {})
+        btc_inside = False
+        if gate.get("btc_regime_filter_enabled", False):
+            # Computed before any symbol is marked as scanned: if BTC data is stale we retry the whole scan instead of
+            # silently consuming the candle with the gate open.
+            try:
+                bar = frame(gate["btc_regime_symbol"], ltf).iloc[-1]
+                btc_inside = bool(np.isfinite(bar.kumo_bottom) and np.isfinite(bar.kumo_top) and bar.kumo_bottom <= bar.close <= bar.kumo_top)
+            except Exception as exc:
+                LOG.exception("BTC regime gate unavailable; retrying scan")
+                self.db.runtime_set("last_error", str(exc))
+                return False
         for symbol in c["symbols"]:
             try:
                 low = frame(symbol, ltf)
@@ -1334,6 +1351,8 @@ class Engine:
                 side = regime(high, c)
                 scanned.append((symbol, ltf, stamp))
                 if c["archetype_strategy"]["family"] == "DONCHIAN" and (stamp + TIMEFRAMES[ltf] * 1000) % (4 * 3600 * 1000):
+                    continue
+                if btc_inside and symbol != gate["btc_regime_symbol"]:
                     continue
                 if side and (entry_signal(low, side, c) if c["archetype_strategy"]["family"] == "LEGACY" else entry_signal(low, side, c, high)):
                     score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])

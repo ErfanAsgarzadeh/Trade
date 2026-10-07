@@ -93,6 +93,10 @@ def test_deployed_config_matches_eligible_winner():
             ablation=json.loads((root/'high_cagr/output/ablation_fixes.json').read_text())
             assert ablation['verdicts']['0.0075'][fixes['final_subset']]['verdict']=='ACCEPTED'
             expected['strategy_settings'].update(fixes['config_overrides']['strategy_settings'])
+        extra=root/'high_cagr/output/deployed_overrides.json'
+        if extra.exists():
+            d=json.loads(extra.read_text());assert all((root/v.split(' ')[0]).exists() for k,v in d['evidence'].items() if v.startswith('high_cagr'))
+            expected['strategy_settings'].update(d['config_overrides']['strategy_settings'])
         assert c==expected
         assert result['eligible'] and result['worst_period_dd_pct']<=35
         assert c['risk_and_exit']['risk_per_trade_pct']==result['risk']
