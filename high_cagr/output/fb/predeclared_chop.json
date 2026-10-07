@@ -1,0 +1,16 @@
+{
+ "declared_before_running": true,
+ "target": "CHOP losses: positions with net<0 and gross<0 whose max favourable excursion reached 0.3R-1R (moved our way, then reversed). Baseline: 508 positions, -145.2% of equity (sum of net/equity-at-entry), full period @2bps.",
+ "baseline": "validated package: 15 symbols, 6 slots, R=0.75%, 4B + V2 + BTC gate + initial stop 2.5 ATR (high_cagr/chop_harness.py). Full @2bps: Calmar 1.879.",
+ "methods (2 fixed variants each, Sonnet agents)": {
+  "fail_exit": {"A": "exit at the 4h close when price closes back inside the breakout level (max(Donchian-10 high, Kumo top) at entry, mirrored for shorts)", "B": "exit when a 4h close is back inside the Kumo edge at entry"},
+  "partial_tp": {"A": "take 50% off at +1.0R", "B": "take 50% off at +1.5R"},
+  "time_stop": {"A": "exit at a 4h close after 12 bars (48h) if MFE never reached 1R", "B": "after 18 bars (72h)"},
+  "tight_trail": {"A": "once MFE >= 1R, trail on the 4-bar opposite extreme instead of 10", "B": "once MFE >= 1.5R, trail on the 3-bar extreme"},
+  "chop_index": {"A": "entry only if Choppiness Index(14) on 4h < 61.8", "B": "< 50"},
+  "efficiency_ratio": {"A": "entry only if Kaufman efficiency ratio over 20 bars >= 0.30", "B": ">= 0.40"}
+ },
+ "gate": "imp_harness.verdict against this baseline (@2 and @5bps: positive H1/H2/2026, full Calmar >= baseline+0.05, full DD <= baseline, Calmar >= baseline in H1 and H2; old-5 and new-10 not worse) AND CHOP cost cut >= 15%",
+ "holdout": "HOLD10 has already been used once, so it is no longer clean. Any in-sample pass goes to a NEW holdout (the next 10 symbols by Sep-2021 liquidity, same rules incl. funding completeness), declared before download.",
+ "decision": "Results only; no bot change without the user's confirmation."
+}

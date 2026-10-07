@@ -4,6 +4,9 @@ With every new switch at its default this is bit-identical to high_cagr.kernel.
  #2 stale guard   stale_bars/stale_mfe/stale_cols: tighten the Donchian10 trail to a shorter channel
  #P pilot entry  pilot_frac<1: root takes that share of the risk; the rest is added (leg 2, same stop)
                  once base MFE reaches pilot_trigger R, as a stop order at that level
+ #C chop tools  fail_exit_mode 1/2: exit when a closed bar is back inside the breakout level / the Kumo edge
+                 (bars cols 8/9 and 10/11); partial_frac at partial_r; time_stop_bars without time_stop_mfe;
+                 tight_after_r: trail on bars cols tight_cols/+1 once MFE reached it
  #4 profit floor  floor_on (stop >= entry +/- 0.25R once base MFE>=2R), pyr_risk_mult, pyr_safe
 bars columns 0..3 are the original (low line, atr, close, high line); 4/5 and 6/7 are the
 3- and 4-bar channel low/high used by the stale guard. MFE is measured on the minute
@@ -27,7 +30,7 @@ def close_symbol(slip,s,raw,ts,reason,p,t,balance,daily,nd):
   if not p[s,leg,0]:continue
   sign,entry,qty=p[s,leg,0],p[s,leg,1],p[s,leg,2];exit_price=raw*(1-sign*slip);k=int(p[s,leg,5])
   gross=sign*(exit_price-entry)*qty;fee=(entry+exit_price)*qty*.0006
-  t[k,2]=ts;t[k,8]=exit_price;t[k,9]=gross;t[k,10]=fee;t[k,12]+=gross-fee;t[k,13]=reason
+  t[k,2]=ts;t[k,8]=exit_price;t[k,9]+=gross;t[k,10]+=fee;t[k,12]+=gross-fee;t[k,13]=reason
   balance+=gross-fee;daily[nd,0]=ts;daily[nd,1]=gross-fee;nd+=1;p[s,leg,:]=0
  return balance,nd
 
@@ -38,11 +41,12 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              same_side_cap=0,max_new_per_bar=0,stale_bars=0,stale_mfe=.40,stale_cols=4,
              floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002,
              vol_max_pct=0.,vol_mid_pct=0.,vol_mid_mult=1.,thr_trigger=0.,thr_resume=0.,thr_mult=1.,
-             pilot_frac=1.,pilot_trigger=.5,short_risk_mult=1.):
+             pilot_frac=1.,pilot_trigger=.5,short_risk_mult=1.,
+             fail_exit_mode=0,partial_frac=0.,partial_r=1.,time_stop_bars=0,time_stop_mfe=1.,tight_after_r=0.,tight_cols=6):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,3,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
- mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0;vol_rejects=0;throttled=False;throttled_units=0;pilot_rem=np.zeros(ns);pilot_adds=0
+ mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0;vol_rejects=0;throttled=False;throttled_units=0;pilot_rem=np.zeros(ns);pilot_adds=0;blevel=np.zeros(ns);pdone=np.zeros(ns);chop_exits=0;partials=0
  curve=np.full(((end-begin+59)//60+2,3),np.nan)
  balance=10000.;peak=10000.;dd=0.;nt=0;nd=0;first_daily=0
  rejects=0;slotreject=0;marginreject=0;proxies=0;maxopen=0;maxmargin=0.;maxgross=0.;adds=0
@@ -66,7 +70,13 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
    b=i//entry_minutes
    for s in range(ns):
     if not p[s,0,0]:continue
-    sign=p[s,0,0];line=bars[s,b,0] if sign==1 else bars[s,b,3]
+    sign=p[s,0,0]
+    if fail_exit_mode>0 and sign*(bars[s,b,2]-blevel[s])<0:
+     balance,nd=close_symbol(slip,s,marks[s],ts+3000,9,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0;chop_exits+=1;continue
+    if time_stop_bars>0 and (ts-opened[s])//(entry_minutes*60000)>=time_stop_bars and mfe[s]<time_stop_mfe:
+     balance,nd=close_symbol(slip,s,marks[s],ts+3000,10,p,trades,balance,daily,nd);eligible_ts[s]=-1.;added[s]=0;chop_exits+=1;continue
+    line=bars[s,b,0] if sign==1 else bars[s,b,3]
+    if tight_after_r>0 and mfe[s]>=tight_after_r:line=bars[s,b,tight_cols] if sign==1 else bars[s,b,tight_cols+1]
     if stale_bars>0 and (ts-opened[s])//(entry_minutes*60000)>=stale_bars and mfe[s]<stale_mfe:
      line=bars[s,b,stale_cols] if sign==1 else bars[s,b,stale_cols+1];stale_events+=1;trades[int(p[s,0,5]),20]+=1
     if sign*(bars[s,b,2]-line)<0:
@@ -134,7 +144,11 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     trades[nt,0]=s;trades[nt,1]=ts+3000;trades[nt,3]=sign;trades[nt,4]=entry;trades[nt,5]=qty;trades[nt,6]=stop;trades[nt,7]=dist;trades[nt,14]=eq;trades[nt,15]=(dist+entry*(.0012+sizing_slip))*qty
     trades[nt,17]=int(p[s,0,5]) if scale else nt;trades[nt,18]=leg
     if scale:added[s]=1;adds+=1
-    else:eligible_ts[s]=-1.;added[s]=0;mfe[s]=0.;opened[s]=ts;floored[s]=0.;newcount+=1;pilot_rem[s]=eq*full_risk*(1.-pilot_frac) if pilot_frac<1. else 0.
+    else:
+     eligible_ts[s]=-1.;added[s]=0;mfe[s]=0.;opened[s]=ts;floored[s]=0.;newcount+=1;pdone[s]=0.
+     if fail_exit_mode==1:blevel[s]=bars[s,b,8] if sign==1 else bars[s,b,9]
+     elif fail_exit_mode==2:blevel[s]=bars[s,b,10] if sign==1 else bars[s,b,11]
+     pilot_rem[s]=eq*full_risk*(1.-pilot_frac) if pilot_frac<1. else 0.
     nt+=1
     maxopen=max(maxopen,active+(0 if scale else 1));maxmargin=max(maxmargin,(reserved+p[s,leg,6])/eq);maxgross=max(maxgross,(gross_notional+entry*qty)/eq)
     oldmark=marks[s];marks[s]=entry;eq=equity(balance,p,marks);peak=max(peak,eq);dd=max(dd,(peak-eq)/peak);marks[s]=oldmark
@@ -158,6 +172,16 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if p[s,0,0]:
      favourable=p[s,0,0]*(last-p[s,0,1])/p[s,0,4]
      if favourable>mfe[s]:mfe[s]=favourable;trades[int(p[s,0,5]),19]=favourable
+     if partial_frac>0 and not pdone[s] and mfe[s]>=partial_r:
+      sign=p[s,0,0];lv=p[s,0,1]+sign*partial_r*p[s,0,4];raw=first if sign*(first-lv)>=0 else lv;pdone[s]=1.;xp=raw*(1-sign*slip)
+      for leg in range(3):
+       if not p[s,leg,0]:continue
+       q=math.floor(p[s,leg,2]*partial_frac*10000+1e-9)/10000
+       if q<.0001 or q>=p[s,leg,2]:continue
+       k=int(p[s,leg,5]);gross=sign*(xp-p[s,leg,1])*q;fee=(p[s,leg,1]+xp)*q*.0006
+       trades[k,9]+=gross;trades[k,10]+=fee;trades[k,12]+=gross-fee;balance+=gross-fee;daily[nd,0]=ts+endoffset;daily[nd,1]=gross-fee;nd+=1
+       p[s,leg,2]-=q;p[s,leg,6]=p[s,leg,1]*p[s,leg,2]/5
+      partials+=1
      if pilot_rem[s]>0 and p[s,2,0]==0 and mfe[s]>=pilot_trigger:
       sign=p[s,0,0];lvl=p[s,0,1]+sign*pilot_trigger*p[s,0,4];fillraw=first if sign*(first-lvl)>=0 else lvl
       entry=fillraw*(1+sign*slip);stop=p[s,0,3];dist=sign*(entry-stop);rem=pilot_rem[s];pilot_rem[s]=0.
@@ -196,4 +220,4 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
  for s in range(ns):
   if p[s,0,0]:balance,nd=close_symbol(slip,s,prices[s,end-1,3],start+end*60000-1,8,p,trades,balance,daily,nd)
  peak=max(peak,balance);dd=max(dd,(peak-balance)/peak);curve[-1]=np.array([start+end*60000-1,balance,balance])
- return np.array([balance,dd,rejects,slotreject,marginreject,proxies,maxopen,maxmargin,maxgross,adds,ratio_sum/(end-begin),active_ratio/max(1,active_count),position_sum/(end-begin),cap_rejects,stale_events,pyr_safe_rejects,floor_events,vol_rejects,throttled_units,pilot_adds]),trades[:nt],curve
+ return np.array([balance,dd,rejects,slotreject,marginreject,proxies,maxopen,maxmargin,maxgross,adds,ratio_sum/(end-begin),active_ratio/max(1,active_count),position_sum/(end-begin),cap_rejects,stale_events,pyr_safe_rejects,floor_events,vol_rejects,throttled_units,pilot_adds,chop_exits,partials]),trades[:nt],curve
