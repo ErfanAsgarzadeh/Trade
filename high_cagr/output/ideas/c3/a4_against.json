@@ -1,0 +1,281 @@
+{
+ "name": "a4_against",
+ "notes": "C3 agent 4 - cause AGAINST: C3 holds positions against big (>=30%) trends ~20% of the move.\n\nMECHANISM. PULL takes direction only from EMA50 vs EMA200. After a sharp reversal EMA50 stays on the old side\nof EMA200 for weeks, so PULL keeps shorting RSI(14) re-crosses of 60 inside a fresh rally (and longing dips while a\ntop forms). In such a rally price is already back above EMA200 and above the midpoint of its multi-week range, while\nthe EMA cross still lags. Requiring a second, faster-reacting-but-still-slow trend witness on the trade side should\nremove the entries that fight the new move without touching entries inside an established trend.\n\nPRE-DECLARED VARIANTS (fixed round parameters, one round, no tuning):\n  V1_ema200   entry filter: longs only if close[t] > EMA200[t], shorts only if close[t] < EMA200[t]\n              (price must agree with the slow EMA, not just the EMA50/200 cross).\n  V2_don240   entry filter: longs only if close[t] > midline of the 240-bar (40-day) Donchian channel\n              (max high + min low over bars t-239..t)/2, shorts only if below it.\n  V3_don240x  V2 filter + regime-flip exit: if a bar closes on the wrong side of the 240-bar Donchian midline\n              (long: close < mid, short: close > mid) the position is closed at the next bar open\n              (stop and 4.5 ATR chandelier from mode 6 still apply).\nEverything else = baseline C3 (PULL, mode 6 TRAILW, no weekend entries, costs .0006/.0002, funding, warm 300).\nAll filters use data <= signal bar only.\n",
+ "baseline": {
+  "main": {
+   "full": [
+    1.3694879788180703,
+    52.35299706218059,
+    38.22815378588689
+   ],
+   "train": [
+    1.3815095433868285,
+    52.812559281262054,
+    38.22815378588689
+   ],
+   "oos": [
+    2.145271967441158,
+    51.50907723912712,
+    24.010511497321353
+   ]
+  },
+  "other": {
+   "full": [
+    0.2026784328541828,
+    8.0184435941425,
+    39.56239191918055
+   ],
+   "train": [
+    0.24339565914491537,
+    9.629314458518422,
+    39.56239191918055
+   ],
+   "oos": [
+    0.13149886149133616,
+    5.109438836350599,
+    38.8553845896775
+   ]
+  },
+  "port": {
+   "full": [
+    3.082009978794904,
+    61.3335349115824,
+    19.900498484292516
+   ],
+   "train": [
+    2.7966797144304865,
+    55.655320418075526,
+    19.900498484292516
+   ],
+   "oos": [
+    3.719076520904869,
+    72.35434137904232,
+    19.45492139576579
+   ]
+  },
+  "trades": 1507,
+  "win": 35.301924353019245,
+  "mean_R": 0.32438513783573036
+ },
+ "variants": {
+  "V1_ema200": {
+   "variant": {
+    "filter": "ema200"
+   },
+   "main": {
+    "full": [
+     1.231946202328768,
+     45.89691493977979,
+     37.25561623796567
+    ],
+    "train": [
+     1.2958077720095726,
+     48.27611707216195,
+     37.25561623796567
+    ],
+    "oos": [
+     1.9549079639081097,
+     41.6087758269462,
+     21.28426329788179
+    ]
+   },
+   "other": {
+    "full": [
+     0.12445752823703084,
+     4.284718065187065,
+     34.42715057804112
+    ],
+    "train": [
+     0.20321802836303945,
+     6.996217662626991,
+     34.42715057804112
+    ],
+    "oos": [
+     -0.0158344413518315,
+     -0.53699565001043,
+     33.913141491936386
+    ]
+   },
+   "port": {
+    "full": [
+     2.971776588601299,
+     58.964635765560615,
+     19.841543940997596
+    ],
+    "train": [
+     2.7197970246853935,
+     53.964972175889756,
+     19.841543940997596
+    ],
+    "oos": [
+     3.5082490685753327,
+     68.61489165557832,
+     19.558158589761188
+    ]
+   },
+   "trades": 1150,
+   "win": 35.391304347826086,
+   "mean_R": 0.3724710771526768,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 0.0,
+     "G2_main_valid": 0.0,
+     "G3_other20": 0.0,
+     "G4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  },
+  "V2_don240": {
+   "variant": {
+    "filter": "don",
+    "win": 240
+   },
+   "main": {
+    "full": [
+     1.4017808199486073,
+     42.673772472939596,
+     30.44254270400427
+    ],
+    "train": [
+     1.5454152871179379,
+     47.04637087350885,
+     30.44254270400427
+    ],
+    "oos": [
+     1.2817528782699539,
+     34.94782675075341,
+     27.265651080826313
+    ]
+   },
+   "other": {
+    "full": [
+     0.24842466124862045,
+     8.18385517130029,
+     32.943006262610886
+    ],
+    "train": [
+     0.35840900419530203,
+     10.666553705628633,
+     29.760841889497513
+    ],
+    "oos": [
+     0.11384285759583818,
+     3.750325970733215,
+     32.94300626261087
+    ]
+   },
+   "port": {
+    "full": [
+     2.9226104578271035,
+     57.95643637738077,
+     19.830366452760217
+    ],
+    "train": [
+     2.8891289777002407,
+     53.66798659153018,
+     18.575836179612214
+    ],
+    "oos": [
+     3.3373916739097473,
+     66.18169989002112,
+     19.830366452760217
+    ]
+   },
+   "trades": 1216,
+   "win": 35.36184210526316,
+   "mean_R": 0.3362617737803012,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 1.0,
+     "G2_main_valid": 0.0,
+     "G3_other20": 1.0,
+     "G4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  },
+  "V3_don240x": {
+   "variant": {
+    "filter": "don",
+    "win": 240,
+    "flip_exit": true
+   },
+   "main": {
+    "full": [
+     1.4012226253528413,
+     41.4193382144074,
+     29.55942722090832
+    ],
+    "train": [
+     1.482888171793053,
+     43.83332499086254,
+     29.55942722090832
+    ],
+    "oos": [
+     1.438519469543763,
+     37.07313112973163,
+     25.771727053155313
+    ]
+   },
+   "other": {
+    "full": [
+     0.37584480028257283,
+     11.611207649966481,
+     30.893623222236364
+    ],
+    "train": [
+     0.49714598619456124,
+     13.407871647321201,
+     26.969687012768006
+    ],
+    "oos": [
+     0.27099615454640236,
+     8.372053093231479,
+     30.89362322223632
+    ]
+   },
+   "port": {
+    "full": [
+     2.943042305095516,
+     57.44355201681508,
+     19.518425514087458
+    ],
+    "train": [
+     2.8931163681063277,
+     52.57173498065355,
+     18.171317116796125
+    ],
+    "oos": [
+     3.424456437434371,
+     66.83999790030022,
+     19.5184255140875
+    ]
+   },
+   "trades": 1268,
+   "win": 32.64984227129338,
+   "mean_R": 0.3128524455698134,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 0.0,
+     "G2_main_valid": 0.0,
+     "G3_other20": 1.0,
+     "G4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  }
+ }
+}

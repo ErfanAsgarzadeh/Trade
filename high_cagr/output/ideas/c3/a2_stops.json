@@ -1,0 +1,299 @@
+{
+ "name": "a2_stops",
+ "notes": "C3 agent 2 -- exit/stop-side fixes for SLOW_FAILURE losers and INITIAL_STOP exits.\n\nDeclared BEFORE any run (fixed round-number parameters, no tuning after results):\n\nBaseline C3 = 4h PULL entry, no weekend entries, mode 6 exit (2 ATR initial stop on intrabar high/low, then a\n4.5 ATR chandelier on closes). 1R = initial stop distance = 2 ATR. The chandelier only rises above the initial\nstop once the best close is > 2.5 ATR (1.25R) past entry, so trades that make 0.5-1R and roll over (SLOW_FAILURE,\nmedian 18 bars) give back the full -1R.\n\nVariants (each changes exactly one thing vs the baseline engine, everything else identical):\n  A STALE12  : stale-trade exit. At the close of the 12th bar in the trade (48h), if no 4h close since entry\n               has reached +1R, exit at that close. Mechanism: a pullback entry is a bet that the trend resumes\n               quickly; if it has not resumed in 2 days the edge has decayed and the trade drifts to the stop.\n  B SWING10  : structure-based initial stop. Stop = lowest low of the last 10 bars (signal bar included) minus\n               0.5 ATR for longs (highest high + 0.5 ATR for shorts), distance clamped to [1.5, 3.0] ATR.\n               Sizing still 0.5% risk on that distance. Mechanism: a PULL entry sits just after a pullback;\n               placing the stop beyond the pullback extreme instead of a fixed 2 ATR avoids being stopped by\n               noise inside the swing (INITIAL_STOP exits), while R adapts to the actual structure.\n  C DERISK1R : partial de-risking. Once intrabar MFE reaches +1R (high for longs, low for shorts), the stop is\n               raised to entry - 0.5R (applies from the next bar; chandelier still active above it). Mechanism:\n               caps SLOW_FAILURE losses (MFE 0.5-1R reached 1R intrabar in part) at -0.5R while leaving 1.5R\n               (3 ATR) of room so winners are not shaken out as with a true breakeven stop.\n\nEngine: copy of mtf_search.engine mode 6, same output format\n[entry_bar, exit_bar, side, net_frac, price_R, qty, entry_fill, exit_fill, cost], base 1e4, 0.5% risk,\nfee .0006/side, slippage .0002, funding via d['fb'], warm 300. With all switches off it reproduces the baseline.\n",
+ "baseline": {
+  "main": {
+   "full": [
+    1.3694879788180703,
+    52.35299706218059,
+    38.22815378588689
+   ],
+   "train": [
+    1.3815095433868285,
+    52.812559281262054,
+    38.22815378588689
+   ],
+   "oos": [
+    2.145271967441158,
+    51.50907723912712,
+    24.010511497321353
+   ]
+  },
+  "other": {
+   "full": [
+    0.2026784328541828,
+    8.0184435941425,
+    39.56239191918055
+   ],
+   "train": [
+    0.24339565914491537,
+    9.629314458518422,
+    39.56239191918055
+   ],
+   "oos": [
+    0.13149886149133616,
+    5.109438836350599,
+    38.8553845896775
+   ]
+  },
+  "port": {
+   "full": [
+    3.082009978794904,
+    61.3335349115824,
+    19.900498484292516
+   ],
+   "train": [
+    2.7966797144304865,
+    55.655320418075526,
+    19.900498484292516
+   ],
+   "oos": [
+    3.719076520904869,
+    72.35434137904232,
+    19.45492139576579
+   ]
+  },
+  "trades": 1507,
+  "win": 35.301924353019245,
+  "mean_R": 0.32438513783573036
+ },
+ "variants": {
+  "A_STALE12": {
+   "variant": {
+    "stale_n": 12,
+    "stale_r": 1.0,
+    "swing_lb": 0,
+    "swing_pad": 0.0,
+    "smin": 0.0,
+    "smax": 0.0,
+    "de_trig": 0.0,
+    "de_lvl": 0.0
+   },
+   "main": {
+    "full": [
+     1.293684134118293,
+     43.36995322535433,
+     33.52437591337781
+    ],
+    "train": [
+     1.027899031000983,
+     34.459673516273746,
+     33.52437591337781
+    ],
+    "oos": [
+     2.7396921503147786,
+     61.38003793145212,
+     22.403990873354086
+    ]
+   },
+   "other": {
+    "full": [
+     0.29581098141908535,
+     10.562281626358416,
+     35.70618499586558
+    ],
+    "train": [
+     0.19319871387867613,
+     6.898389018715312,
+     35.70618499586558
+    ],
+    "oos": [
+     0.6108121523225951,
+     17.651896465112472,
+     28.899059060943134
+    ]
+   },
+   "port": {
+    "full": [
+     3.1216189813711033,
+     57.978129977289996,
+     18.573096307808957
+    ],
+    "train": [
+     2.6562151286314593,
+     49.334139398331246,
+     18.573096307808957
+    ],
+    "oos": [
+     4.091220316758372,
+     75.25328933438237,
+     18.39384914719244
+    ]
+   },
+   "trades": 1741,
+   "win": 44.17001723147616,
+   "mean_R": 0.23287227314140105,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 0.0,
+     "G2_main_valid": 1.0,
+     "G3_other20": 1.0,
+     "G4_portfolio": 1.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  },
+  "B_SWING10": {
+   "variant": {
+    "stale_n": 0,
+    "stale_r": 0.0,
+    "swing_lb": 10,
+    "swing_pad": 0.5,
+    "smin": 1.5,
+    "smax": 3.0,
+    "de_trig": 0.0,
+    "de_lvl": 0.0
+   },
+   "main": {
+    "full": [
+     1.4574705472885818,
+     54.34878661135192,
+     37.289800958558075
+    ],
+    "train": [
+     1.5509021057921293,
+     57.83283083119708,
+     37.289800958558075
+    ],
+    "oos": [
+     1.8320251815423318,
+     48.12383776444427,
+     26.268109330205892
+    ]
+   },
+   "other": {
+    "full": [
+     0.1995284365637439,
+     7.869844925520231,
+     39.4422221767173
+    ],
+    "train": [
+     0.2564193838854908,
+     9.473633988300922,
+     36.945857387020176
+    ],
+    "oos": [
+     0.12609447281125896,
+     4.973446211877719,
+     39.44222217671734
+    ]
+   },
+   "port": {
+    "full": [
+     3.1398889499486184,
+     62.035789404188726,
+     19.75731957182877
+    ],
+    "train": [
+     2.8990165546049105,
+     57.2767965133512,
+     19.75731957182877
+    ],
+    "oos": [
+     3.719965250012924,
+     71.19338592609965,
+     19.138185746722314
+    ]
+   },
+   "trades": 1516,
+   "win": 35.15831134564644,
+   "mean_R": 0.3329836608543677,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 1.0,
+     "G2_main_valid": 0.0,
+     "G3_other20": 0.0,
+     "G4_portfolio": 1.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  },
+  "C_DERISK1R": {
+   "variant": {
+    "stale_n": 0,
+    "stale_r": 0.0,
+    "swing_lb": 0,
+    "swing_pad": 0.0,
+    "smin": 0.0,
+    "smax": 0.0,
+    "de_trig": 1.0,
+    "de_lvl": 0.5
+   },
+   "main": {
+    "full": [
+     1.3290792887438259,
+     51.49154726338316,
+     38.74226895225355
+    ],
+    "train": [
+     1.3228276558664358,
+     51.24934482105657,
+     38.74226895225355
+    ],
+    "oos": [
+     2.0458757868690465,
+     51.939243591785235,
+     25.387290824371924
+    ]
+   },
+   "other": {
+    "full": [
+     0.2650154127064128,
+     9.968332873813157,
+     37.61416278401963
+    ],
+    "train": [
+     0.3377480398584112,
+     12.704109751217828,
+     37.61416278401963
+    ],
+    "oos": [
+     0.1379759608267555,
+     5.095891969918354,
+     36.933187052176606
+    ]
+   },
+   "port": {
+    "full": [
+     3.056476618746194,
+     61.03339971639381,
+     19.96854788355309
+    ],
+    "train": [
+     2.7627986560854296,
+     55.16907725665803,
+     19.96854788355309
+    ],
+    "oos": [
+     3.7646504299063834,
+     72.43604860908978,
+     19.241108824781662
+    ]
+   },
+   "trades": 1528,
+   "win": 33.96596858638743,
+   "mean_R": 0.31523820223431653,
+   "verdict": {
+    "checks": {
+     "G1_main_train": 0.0,
+     "G2_main_valid": 0.0,
+     "G3_other20": 1.0,
+     "G4_portfolio": 0.0
+    },
+    "passed": false
+   },
+   "causal": {
+    "causal": true
+   },
+   "passed": false
+  }
+ }
+}
