@@ -38,7 +38,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              same_side_cap=0,max_new_per_bar=0,stale_bars=0,stale_mfe=.40,stale_cols=4,
              floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002,
              vol_max_pct=0.,vol_mid_pct=0.,vol_mid_mult=1.,thr_trigger=0.,thr_resume=0.,thr_mult=1.,
-             pilot_frac=1.,pilot_trigger=.5):
+             pilot_frac=1.,pilot_trigger=.5,short_risk_mult=1.):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,3,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
@@ -113,6 +113,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     if not scale and vol_max_pct>0 and dist/trigger>vol_max_pct:vol_rejects+=1;continue
     if not scale and vol_mid_pct>0 and dist/trigger>vol_mid_pct:vol_mult=vol_mid_mult
     unit_risk=(risk*pyr_risk_mult if scale else risk*vol_mult)*(thr_mult if throttled else 1.)
+    if not scale and sign<0 and short_risk_mult!=1.:unit_risk=unit_risk*short_risk_mult
     full_risk=unit_risk
     if not scale and pilot_frac<1.:unit_risk=unit_risk*pilot_frac
     if throttled:throttled_units+=1

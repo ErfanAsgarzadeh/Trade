@@ -1,0 +1,23 @@
+{
+ "declared_before_running": true,
+ "A_filter_combinations": {
+  "how": "logical AND of the verified single-filter masks (high_cagr/fb/m_*.py). Only the six filters whose single run raised full Calmar are combined: confirmation.B, volume.A, htf_trend.B, squeeze.A, breadth.A, adx.A. This choice uses the round-1 results, so it is in-sample by construction; that is why the holdout below exists.",
+  "combos": "all 15 pairs of those six + two triples: confirmation.B+volume.A+htf_trend.B and confirmation.B+volume.A+squeeze.A (17 candidates)",
+  "gate": "same as predeclared_fb.json except the false-breakout check uses cost in % of equity (cut >= 15%), fixing the dollar-metric flaw found in round 1"
+ },
+ "B_non_filter_ideas (Sonnet agents, bench high_cagr/imp_harness.py, 2 fixed variants each)": {
+  "initial_stop": {"A": "initial stop 1.5 x ATR instead of 2", "B": "2.5 x ATR"},
+  "profit_floor": {"A": "floor trigger 1.5R, lock +0.25R", "B": "floor trigger 1.0R, lock 0R (breakeven)"},
+  "trail_width": {"A": "trail on the 20-bar opposite extreme (looser)", "B": "5-bar opposite extreme (tighter)"},
+  "diversification": {"A": "8 slots, risk 0.6%", "B": "10 slots, risk 0.5%"},
+  "short_risk": {"A": "short entries at 0.5 x risk", "B": "0.75 x risk"},
+  "pyramid": {"A": "no pyramid add at all", "B": "pyramid add risk 0.5 x (instead of 0.35), safe check kept"},
+  "gate": "imp_harness.verdict: @2 and @5bps positive H1/H2/2026, full Calmar >= baseline+0.05, full DD <= baseline, Calmar >= baseline in H1 and H2; Calmar not worse on old-5 and new-10"
+ },
+ "C_holdout": {
+  "symbols": "the next 10 symbols by Sep-2021 quote volume after the stage-2 picks, same requirements as predeclared_stage2_universe.json (continuous data 2021-08..2026-10-04, active LBank USDT swap, no stablecoin/index). Never used before in this project.",
+  "who_goes_there": "at most: every in-sample PASS from A and B, the round-1 standout confirmation.B, and the baseline. Nothing is tuned on the holdout.",
+  "holdout_gate": "HOLD10 universe, 4 slots, R=0.75%: full Calmar >= baseline+0.05 at 2bps AND 5bps, net > 0 in H1, H2 and 2026 at 2bps",
+  "decision": "Only a holdout pass is recommended for the bot, and only with the user's confirmation."
+ }
+}
