@@ -74,7 +74,8 @@ def metrics(ret,dates,lo=None,hi=None):
 
 def bot_daily(days):
     c=np.array(json.loads((OUT/'htf_confirm.json').read_text())['baseline_2A5A']['curve'])
-    s=pd.Series(c[:,1],index=pd.to_datetime(c[:,0],unit='ms')).resample('D').last().ffill()
+    # curve points are stamped hh:59:59 (first one 00:59:59): shift 1h so each day's last point is that day's close
+    s=pd.Series(c[:,1],index=pd.to_datetime(c[:,0]-3600000,unit='ms')).resample('D').last().ffill()
     s=s.reindex(pd.date_range('2021-10-05',periods=days,freq='D')).ffill();prev=s.shift(1).fillna(10000.)
     return (s/prev-1).to_numpy()
 

@@ -1,6 +1,7 @@
 """Large strategy search on 2h / 3h / 4h for the 5 coins. Written and committed BEFORE any result.
 
-Engine, costs, sizing and exits are those of ltf_search.py (taker 0.06%/side + 2 bps + funding, risk 0.5%/trade,
+Daily returns are MARK-TO-MARKET (open positions marked at each UTC day close; fixed after a first run that
+booked P&L on the exit day only and so understated drawdowns). Engine, costs, sizing and exits are those of ltf_search.py (taker 0.06%/side + 2 bps + funding, risk 0.5%/trade,
 notional <= 0.4 x equity, one position per symbol, entry at next bar open, conservative stop-before-target).
 ENTRIES (19): DON10 DON20 DON55 | EMA9_21 EMA20_50 EMA50_200 | ST10_3 ST10_2 | MACD200 | KELT | SQZ | RSI2T RSI2 BBREV |
   PULL | MOM20 / MOM50 (close above/below close N bars ago AND above/below EMA50, fresh flip) | DMI (DI+ crosses DI-
@@ -33,7 +34,7 @@ from numba import njit
 @njit(cache=True)
 def engine(o,h,l,c,atr,le,se,lx,sx,al,as_,mode,fee,slip,fcum,warm):
     """ltf_search.engine plus mode 6 = wide chandelier (4.5 ATR)."""
-    n=len(c);out=np.zeros((n,6));k=0;t=warm
+    n=len(c);out=np.zeros((n,9));k=0;t=warm
     while t<n-2:
         side=1 if (le[t] and al[t]) else (-1 if (se[t] and as_[t]) else 0)
         if side==0 or not atr[t]>0:t+=1;continue
@@ -59,9 +60,21 @@ def engine(o,h,l,c,atr,le,se,lx,sx,al,as_,mode,fee,slip,fcum,warm):
         if xraw==0.:xraw=c[n-1];x=n-1
         xp=xraw*(1-side*slip);fund=-side*raw*qty*(fcum[x]-fcum[e])
         net=side*(xp-entry)*qty-(entry+xp)*qty*fee+fund
-        out[k,0]=e;out[k,1]=x;out[k,2]=side;out[k,3]=net/1e4;out[k,4]=side*(xraw-raw)/dist;out[k,5]=0.;k+=1
+        out[k,0]=e;out[k,1]=x;out[k,2]=side;out[k,3]=net/1e4;out[k,4]=side*(xraw-raw)/dist;out[k,5]=qty;out[k,6]=entry;out[k,7]=xp;out[k,8]=(entry+xp)*qty*fee-fund;k+=1
         t=x if x>t else t+1
     return out[:k]
+
+@njit(cache=True)
+def m2m(T,c,bm,days):
+    """Mark-to-market daily returns (fraction of the 1e4 sizing base): open positions are marked at each UTC day close."""
+    r=np.zeros(days);per=1440//bm
+    for i in range(len(T)):
+        e,x,side,qty,ent,xp,cost=int(T[i,0]),int(T[i,1]),T[i,2],T[i,5],T[i,6],T[i,7],T[i,8]
+        de=min(e*bm//1440,days-1);dx=min(x*bm//1440,days-1);prev=ent
+        for d in range(de,dx):
+            mark=c[min((d+1)*per-1,len(c)-1)];r[d]+=side*qty*(mark-prev)/1e4;prev=mark
+        r[dx]+=(side*qty*(xp-prev)-cost)/1e4
+    return r
 
 def extra_signals(o,h,l,c,atr,adx,sig):
     E50=L.ema(c,50)
@@ -114,8 +127,10 @@ def main():
         for fam,ex,fl in itertools.product(FAMS,EXITS,FILTS):
             res={}
             for costs,fee,slip in (('taker',.0006,.0002),('maker',.0002,0.)):
-                T=np.concatenate([engine(*per[s][:4],per[s][4],*per[s][5][fam],*per[s][6][fl],EXITS[ex],fee,slip,per[s][7],300) for s in S])
-                ds=L.daily_series(T,bm,days);trn=(T[:,1]*bm//1440)<split
+                ds=np.zeros(days);TT=[]
+                for s in S:
+                    T=engine(*per[s][:4],per[s][4],*per[s][5][fam],*per[s][6][fl],EXITS[ex],fee,slip,per[s][7],300);ds+=m2m(T,per[s][3],bm,days);TT.append(T)
+                T=np.concatenate(TT);trn=(T[:,1]*bm//1440)<split
                 res[costs]=dict(n_train=int(trn.sum()),n_oos=int((~trn).sum()),st=blend_stats(ds,split),priceR=float(T[trn,4].mean()) if trn.any() else 0.)
                 if costs=='taker':store[(tf,fam,ex,fl)]=ds
             t=res['taker'];bl=blend_stats(.5*bot+.5*store[(tf,fam,ex,fl)],split)
@@ -131,11 +146,11 @@ def main():
     print(f"\nQ1 top 10 by TRAIN Calmar (bot: train {B['train'][0]:.2f}, validation {B['oos'][0]:.2f}):");q1=[]
     for _,x in el.sort_values('train_calmar',ascending=False).head(10).iterrows():
         ok=x.train_calmar>=B['train'][0] and x.oos_calmar>=B['oos'][0];q1.append(dict(x,better=bool(ok)))
-        print(f"  {x.tf} {x.fam:9s} {x.exit:6s} {x['filter']:7s} trades {x.n_train}/{x.n_oos} | train Calmar {x.train_calmar:.2f} CAGR {x.train_cagr:.1f}% | valid Calmar {x.oos_calmar:.2f} CAGR {x.oos_cagr:.1f}% DD {x.oos_dd:.0f}% | corr {x.corr:.2f} | BETTER={ok}")
+        print(f"  {x.tf} {x.fam:9s} {x.exit:6s} {x['filter']:7s} trades {x.n_train}/{x.n_oos} | train Calmar {x.train_calmar:.2f} CAGR {x.train_cagr:.1f}% | valid Calmar {x.oos_calmar:.2f} CAGR {x.oos_cagr:.1f}% DD {x.oos_dd:.0f}% | corr {x['corr']:.2f} | BETTER={ok}")
     print(f"\nQ2 top 10 by TRAIN blend Calmar (50/50 with bot; bot train {B['train'][0]:.2f} valid {B['oos'][0]:.2f} DD {B['full'][2]:.1f}):");q2=[]
     for _,x in el.sort_values('blend_train',ascending=False).head(10).iterrows():
         ok=x.blend_train>=B['train'][0] and x.blend_oos>=B['oos'][0] and x.blend_dd<=B['full'][2];q2.append(dict(x,useful=bool(ok)))
-        print(f"  {x.tf} {x.fam:9s} {x.exit:6s} {x['filter']:7s} | alone train/valid Calmar {x.train_calmar:.2f}/{x.oos_calmar:.2f} | corr {x.corr:.2f} | BLEND train {x.blend_train:.2f} valid {x.blend_oos:.2f} full {x.blend_full:.2f} DD {x.blend_dd:.1f} | USEFUL={ok}")
+        print(f"  {x.tf} {x.fam:9s} {x.exit:6s} {x['filter']:7s} | alone train/valid Calmar {x.train_calmar:.2f}/{x.oos_calmar:.2f} | corr {x['corr']:.2f} | BLEND train {x.blend_train:.2f} valid {x.blend_oos:.2f} full {x.blend_full:.2f} DD {x.blend_dd:.1f} | USEFUL={ok}")
     fam=el.assign(both=(el.train_cagr>0)&(el.oos_cagr>0)).groupby('fam').both.mean().sort_values(ascending=False)*100
     print('\nshare of configs positive in BOTH periods by entry family (%):');print(fam.round(0).to_string())
     (OUT/'mtf_search.json').write_text(json.dumps(dict(notes=__doc__,bot={k:list(v) for k,v in B.items()},spearman=rho,q1=q1,q2=q2,family_both=fam.to_dict()),indent=1,default=float))

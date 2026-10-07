@@ -21,7 +21,7 @@ TIMEFRAMES 30m, 1h. One position per symbol, 5 symbols, risk 0.5% of equity per 
 SELECTION on TRAIN (< 2025-01-01) only: configs with >= 150 train trades, ranked by train Calmar (daily, compounded).
 VALIDATION 2025-01-01..2026-10-04 judges the TOP 10. A strategy is FOUND only if: validation return > 0, validation
   Calmar >= 0.5, and bot+strategy improves the bot (full Calmar >= bot + 0.05, full DD <= bot DD, validation Calmar
-  >= bot's). Also reported: Spearman rank correlation of train vs validation Calmar across all configs (persistence).
+  >= bot's). Daily returns are mark-to-market (fix after the first run, which booked P&L on exit day). Also reported: Spearman rank correlation of train vs validation Calmar across all configs (persistence).
 """
 from pathlib import Path
 import sys,json,itertools
@@ -140,11 +140,12 @@ def main():
         for fam,ex,fl in itertools.product(FAMS,EXITS,FILTS):
             res={}
             for costs,fee,slip in (('taker',.0006,.0002),('maker',.0002,0.)):
-                tr=[]
+                tr=[];ds=np.zeros(days)
+                from high_cagr.ideas import mtf_search as M   # same engine + mark-to-market daily returns (fix)
                 for s in S:
                     o,h,l,c,atr,sig,filt,fb=per[s];le,se,lx,sx=sig[fam];al,as_=filt[fl]
-                    tr.append(engine(o,h,l,c,atr,le,se,lx,sx,al,as_,EXITS[ex],fee,slip,fb,bm,300))
-                T=np.concatenate(tr);ds=daily_series(T,bm,days);trn=(T[:,1]*bm//1440)<split
+                    T=M.engine(o,h,l,c,atr,le,se,lx,sx,al,as_,EXITS[ex],fee,slip,fb,300);ds+=M.m2m(T,c,bm,days);tr.append(T)
+                T=np.concatenate(tr);trn=(T[:,1]*bm//1440)<split
                 res[costs]=dict(n_train=int(trn.sum()),n_oos=int((~trn).sum()),train=calmar(ds[:split]),oos=calmar(ds[split:]),full=calmar(ds),
                     priceR_train=float(T[trn,4].mean()) if trn.any() else 0.,priceR_oos=float(T[~trn,4].mean()) if (~trn).any() else 0.,win=float((T[:,3]>0).mean()*100) if len(T) else 0.)
                 if costs=='taker':store[(tf,fam,ex,fl)]=ds
