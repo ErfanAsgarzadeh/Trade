@@ -1,0 +1,62 @@
+{
+ "chosen": [
+  {
+   "symbol": "ETCUSDT",
+   "sep2021_quote_volume": 12533045007.57176
+  },
+  {
+   "symbol": "NEARUSDT",
+   "sep2021_quote_volume": 11281655316.8173
+  },
+  {
+   "symbol": "TRXUSDT",
+   "sep2021_quote_volume": 10584086418.88809
+  },
+  {
+   "symbol": "CELRUSDT",
+   "sep2021_quote_volume": 10285826175.64144
+  },
+  {
+   "symbol": "ICPUSDT",
+   "sep2021_quote_volume": 9940379062.5954
+  },
+  {
+   "symbol": "BCHUSDT",
+   "sep2021_quote_volume": 9022555478.43135
+  },
+  {
+   "symbol": "UNIUSDT",
+   "sep2021_quote_volume": 8497217075.417
+  },
+  {
+   "symbol": "ALICEUSDT",
+   "sep2021_quote_volume": 7610306275.0269
+  },
+  {
+   "symbol": "SUSHIUSDT",
+   "sep2021_quote_volume": 7209684390.984
+  },
+  {
+   "symbol": "C98USDT",
+   "sep2021_quote_volume": 7083392419.747499
+  }
+ ],
+ "skipped": [
+  [
+   "DYDXUSDT",
+   "no 2021-08/09 warm-up"
+  ],
+  [
+   "SRMUSDT",
+   "not on LBank"
+  ],
+  [
+   "OMGUSDT",
+   "not on LBank"
+  ],
+  [
+   "COTIUSDT",
+   "not on LBank"
+  ]
+ ]
+}
