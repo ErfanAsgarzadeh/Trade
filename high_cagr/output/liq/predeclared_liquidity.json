@@ -1,0 +1,21 @@
+{
+  "written_before_any_result": "2026-10-07",
+  "question": "Does a liquidity rule fixed in advance predict which symbols the deployed strategy works on?",
+  "strategy": "bot default: 4B + V2 stop-width + BTC Kumo gate B, DONCHIAN10 4h, risk 0.75%, initial stop 2.0 ATR, 2 bps, 2021-10-05..2026-10-05",
+  "liquidity_measure": "trailing quote volume = sum(volume*close) over the last 180 CLOSED 4h bars (30 days) at each signal bar; fewer than 180 bars of history => not eligible. Rank among the universe at that bar (point-in-time, no hindsight list).",
+  "T1_primary_clean": {
+    "universe": "U20 = NEW10 + HOLD10 (never used for tuning)",
+    "arms": ["ALL20 unfiltered", "TOP10 dynamic (rank 1..10)", "BOT10 dynamic (rank 11..20)"],
+    "slots": 4,
+    "null": "200 random static 10-symbol subsets of U20 (seed 20261007), same engine",
+    "pass_if_all": ["Calmar(TOP10) > Calmar(BOT10) on full", "Calmar(TOP10) > Calmar(ALL20) on full", "TOP10 beats BOT10 in >= 2 of 3 sub-periods H1/H2/Y2026", "Calmar(TOP10) >= 90th percentile of the random-subset null"]
+  },
+  "T2_per_symbol": {
+    "universe": "all 25 symbols, each run alone with 1 slot, BTC gate applied (BTC itself ungated)",
+    "test": "Spearman correlation between full-period Calmar and the symbol's average point-in-time liquidity rank among 25 (rank 1 = most liquid); reported also on the 20 untouched symbols only",
+    "pass_if": "on U20: rho < 0 (more liquid = better) with one-sided permutation p < 0.05 (10000 permutations)"
+  },
+  "T3_descriptive_only": "ALL25 with dynamic TOP5 / TOP8 / TOP10 by liquidity, 4 slots. Contaminated by OLD5 tuning; not a pass/fail test.",
+  "sensitivity_not_decisive": "liquidity window 90 days (540 bars) for T1",
+  "caveat": "All 25 symbols are ones still listed today (survivorship); delisted coins are absent, which flatters every arm equally but not the bottom tail."
+}
