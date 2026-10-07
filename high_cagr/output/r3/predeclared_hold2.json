@@ -1,0 +1,16 @@
+{
+ "declared_before_selection_and_download": "2026-10-07",
+ "candidate": "F4_short_neg (high_cagr/fb/r3_lead_funding_b2.py): block a SHORT signal when the mean of the last 9 funding prints (3 days) strictly before the signal bar is < 0. Longs untouched. Frozen, no parameter change.",
+ "secondary_reported_not_decisive": "F1_pct80_fix (already failed its neighbour test; reported only for completeness)",
+ "holdout HOLD2": "next 10 symbols in the Sep-2021 Binance USDT-M quote-volume ranking after every symbol already used or skipped in stage 2 and stage 3, same rules (listed on LBank as linear USDT swap, complete 1m history 2021-10..2026-10-04, 2021-08/09 warm-up) PLUS complete monthly funding files 2021-10..2026-09 checked at selection time.",
+ "engine": "identical to r3_harness baseline: deployed bot, 4 slots, R 0.75%, 2.0 ATR, 4B + V2 + BTC gate (BTC frame from the existing BTCUSDT data).",
+ "pass_if_all": [
+   "full@2bps Calmar(F4) > Calmar(baseline) on HOLD2",
+   "full@5bps Calmar(F4) > Calmar(baseline) on HOLD2",
+   "max DD(F4) <= baseline DD + 1.0 pt on HOLD2",
+   "Calmar(F4) >= baseline in at least 2 of 3 sub-periods H1/H2/Y2026 on HOLD2",
+   "Calmar(F4) above the 90th percentile of 30 random episode-thinnings of HOLD2 at the same share of removed root entries (rounded to 5%)"
+ ],
+ "if_pass": "Propose adding it to the bot as an option (default OFF until the user approves) with unit tests and paper-trading first.",
+ "if_fail": "F4 is rejected; no more variants of it are tried on HOLD2 (HOLD2 is then spent)."
+}
