@@ -7,6 +7,8 @@ With every new switch at its default this is bit-identical to high_cagr.kernel.
  #C chop tools  fail_exit_mode 1/2: exit when a closed bar is back inside the breakout level / the Kumo edge
                  (bars cols 8/9 and 10/11); partial_frac at partial_r; time_stop_bars without time_stop_mfe;
                  tight_after_r: trail on bars cols tight_cols/+1 once MFE reached it
+ #E reentry_bars>0: a symbol whose last root leg closed in profit may re-enter the same direction within
+    reentry_bars entry bars on signals[:,:,reentry_col] (side) / reentry_col+1 (stop); 0 = off
  #R risk_col>0: root risk is multiplied by signals[:,:,risk_col] (per-signal sizing); 0 = off
  #4 profit floor  floor_on (stop >= entry +/- 0.25R once base MFE>=2R), pyr_risk_mult, pyr_safe
 bars columns 0..3 are the original (low line, atr, close, high line); 4/5 and 6/7 are the
@@ -43,11 +45,11 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
              floor_on=False,floor_trigger=2.,floor_lock=.25,pyr_risk_mult=.5,pyr_safe=False,slip=.0002,
              vol_max_pct=0.,vol_mid_pct=0.,vol_mid_mult=1.,thr_trigger=0.,thr_resume=0.,thr_mult=1.,
              pilot_frac=1.,pilot_trigger=.5,short_risk_mult=1.,
-             fail_exit_mode=0,partial_frac=0.,partial_r=1.,time_stop_bars=0,time_stop_mfe=1.,tight_after_r=0.,tight_cols=6,risk_col=0):
+             fail_exit_mode=0,partial_frac=0.,partial_r=1.,time_stop_bars=0,time_stop_mfe=1.,tight_after_r=0.,tight_cols=6,risk_col=0,reentry_bars=0,reentry_col=0):
  ns=len(prices);capacity=signals.shape[1]*ns+10
  p=np.zeros((ns,3,7));trades=np.zeros((capacity,21));daily=np.zeros((capacity,2));marks=np.zeros(ns)
  eligible_ts=np.full(ns,-1.);added=np.zeros(ns)
- mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0;vol_rejects=0;throttled=False;throttled_units=0;pilot_rem=np.zeros(ns);pilot_adds=0;blevel=np.zeros(ns);pdone=np.zeros(ns);chop_exits=0;partials=0
+ last_root=np.full(ns,-1);mfe=np.zeros(ns);opened=np.zeros(ns);floored=np.zeros(ns);cap_rejects=0;stale_events=0;pyr_safe_rejects=0;floor_events=0;vol_rejects=0;throttled=False;throttled_units=0;pilot_rem=np.zeros(ns);pilot_adds=0;blevel=np.zeros(ns);pdone=np.zeros(ns);chop_exits=0;partials=0
  curve=np.full(((end-begin+59)//60+2,3),np.nan)
  balance=10000.;peak=10000.;dd=0.;nt=0;nd=0;first_daily=0
  rejects=0;slotreject=0;marginreject=0;proxies=0;maxopen=0;maxmargin=0.;maxgross=0.;adds=0
@@ -94,6 +96,10 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
    for j in range(first_daily,nd):dailypnl+=daily[j,1]
    for index in range(ns):
     s=order[index];sign=signals[s,b,0];trigger=signals[s,b,1];stop=signals[s,b,2]
+    if not sign and reentry_bars>0 and not p[s,0,0] and last_root[s]>=0:
+     k=last_root[s];rsd=signals[s,b,reentry_col]
+     if rsd and trades[k,2]>0 and trades[k,3]==rsd and trades[k,12]>0 and ts-trades[k,2]<=reentry_bars*entry_minutes*60000:
+      sign=rsd;stop=signals[s,b,reentry_col+1]
     if not sign:continue
     scale=False;leg=0
     if p[s,0,0]:
@@ -147,7 +153,7 @@ def simulate(prices,funding,signals,bars,start,begin,end,risk,slots,entry_minute
     trades[nt,17]=int(p[s,0,5]) if scale else nt;trades[nt,18]=leg
     if scale:added[s]=1;adds+=1
     else:
-     eligible_ts[s]=-1.;added[s]=0;mfe[s]=0.;opened[s]=ts;floored[s]=0.;newcount+=1;pdone[s]=0.
+     last_root[s]=nt;eligible_ts[s]=-1.;added[s]=0;mfe[s]=0.;opened[s]=ts;floored[s]=0.;newcount+=1;pdone[s]=0.
      if fail_exit_mode==1:blevel[s]=bars[s,b,8] if sign==1 else bars[s,b,9]
      elif fail_exit_mode==2:blevel[s]=bars[s,b,10] if sign==1 else bars[s,b,11]
      pilot_rem[s]=eq*full_risk*(1.-pilot_frac) if pilot_frac<1. else 0.
