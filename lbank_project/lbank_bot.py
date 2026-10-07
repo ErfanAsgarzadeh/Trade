@@ -68,7 +68,8 @@ SCHEMA = {
         "profit_floor_enabled": bool, "profit_floor_trigger_r": float, "profit_floor_lock_r": float,
         "safe_pyramid_enabled": bool, "pyramid_risk_fraction": float,
         "stop_width_filter_enabled": bool, "stop_width_skip_pct": float,
-        "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float},
+        "stop_width_mid_pct": float, "stop_width_mid_risk_fraction": float,
+        "initial_stop_atr_mult": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -77,7 +78,9 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     "profit_floor_lock_r": 0.25, "safe_pyramid_enabled": False, "pyramid_risk_fraction": 0.5,
     # Candidate "V2" (high_cagr/output/vol_throttle_results.json): in-sample evidence only, so it ships OFF.
     "stop_width_filter_enabled": False, "stop_width_skip_pct": 0.056,
-    "stop_width_mid_pct": 0.045, "stop_width_mid_risk_fraction": 0.5}
+    "stop_width_mid_pct": 0.045, "stop_width_mid_risk_fraction": 0.5,
+    # 2.5 passed in-sample and on untouched holdout symbols, but only together with V2 + the BTC gate.
+    "initial_stop_atr_mult": 2.0}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -186,6 +189,8 @@ def validate_config(c: dict) -> dict:
         if not (0.012 <= settings["stop_width_mid_pct"] < settings["stop_width_skip_pct"] <= 0.5
                 and 0.05 <= settings["stop_width_mid_risk_fraction"] <= 1):
             raise ConfigError("Invalid stop-width filter settings")
+        if not 1.0 <= settings["initial_stop_atr_mult"] <= 5.0:
+            raise ConfigError("initial_stop_atr_mult must be between 1 and 5")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
             raise ConfigError("Hybrid exit requires a positive hard_tp_rr")
         if settings["pyramid_enabled"] and (settings["exit_tp_mode"] != "STOP_TRAIL_DONCHIAN10"

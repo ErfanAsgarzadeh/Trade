@@ -103,6 +103,7 @@
     "stop_width_filter_enabled": false,
     "stop_width_skip_pct": 0.056,
     "stop_width_mid_pct": 0.045,
-    "stop_width_mid_risk_fraction": 0.5
+    "stop_width_mid_risk_fraction": 0.5,
+    "initial_stop_atr_mult": 2.0
   }
 }
