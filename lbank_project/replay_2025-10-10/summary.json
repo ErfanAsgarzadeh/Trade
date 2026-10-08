@@ -1,0 +1,27 @@
+{
+ "start": "2025-10-10",
+ "days": 3,
+ "bot_closed": 4,
+ "bot_pnl_closed": 458.2836447195682,
+ "c3_closed": 1,
+ "c3_pnl_closed": -20.841784239458416,
+ "bot_open": 0,
+ "c3_open": 1,
+ "final": [
+  1760313600,
+  458.28364471956775,
+  46.402863535540746
+ ],
+ "shots": [
+  "screen_01_2025-10-10_01h.png",
+  "screen_02_2025-10-10_10h.png",
+  "screen_03_2025-10-10_22h.png",
+  "screen_04_2025-10-11_10h.png",
+  "screen_05_2025-10-12_00h.png",
+  "screen_06_2025-10-12_12h.png",
+  "screen_07_2025-10-13_00h.png",
+  "final_bot_only.png",
+  "final_c3_only.png",
+  "final_c3_panel_and_history.png"
+ ]
+}
