@@ -109,6 +109,14 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         equity = max(0.0, engine.paper_seed + realized + total) if not errors else None
         engaged = sum(p["margin_usd"] for p in positions if p["state"] != PENDING)
         pending_margin = sum(p["margin_usd"] for p in positions if p["state"] == PENDING)
+        shared = None
+        if c["portfolio_risk"]["shared_c3_account"]:
+            try:
+                shared = engine.shared_paper_account().snapshot()
+                equity = shared["equity_usd"]
+            except Exception as exc:
+                errors.append({"symbol": "C3", "error": str(exc)})
+                equity = None
         allowed = equity * c["risk_and_exit"]["engaged_capital_pct"] if equity is not None else None
         daily, count = engine.db.history_summary(time.time())
         return {"auto_trade_enabled": c["bot_control"]["auto_trade_enabled"],
@@ -116,6 +124,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             "strategy_mode": c["strategy_mode"]["mode"],
             "open_positions_count": len(positions),
             "max_open_positions": c["risk_and_exit"]["max_open_positions"],
+            "shared_account_enabled": c["portfolio_risk"]["shared_c3_account"], "shared_account": shared,
             "equity_usd": equity, "engaged_margin_usd": engaged,
             "engaged_margin_pct": engaged / equity * 100 if equity else None,
             "allowed_margin_usd": allowed,
@@ -150,7 +159,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             conf = c3_sleeve.load(cfg)
             if payload.disable_auto_trade and conf["enabled"]:
                 c3_sleeve.write_config(cfg, {**conf, "enabled": False})
-            closed = c3_sleeve.Sleeve(conf, store, bot().data, base_equity=bot().paper_equity).close_all("emergency")
+            closed = c3_sleeve.Sleeve(conf, store, bot().data, base_equity=bot().main_paper_equity,shared_account=bot().shared_paper_account).close_all("emergency")
             result = {**result, "c3": closed}
             result["errors"] = list(result.get("errors", [])) + [c for c in closed if c["result"] == "error"]
         except Exception as exc:
@@ -171,7 +180,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     def c3_status():
         cfg, store = c3_paths()
         engine = bot()
-        view = c3_sleeve.summary(store, c3_sleeve.load(cfg), lambda s: engine.data.price(s, cached=True), engine.paper_equity())
+        view = c3_sleeve.summary(store, c3_sleeve.load(cfg), lambda s: engine.data.price(s, cached=True), engine.main_paper_equity(), net_costs=engine.config.read()["portfolio_risk"]["shared_c3_account"])
         view["in_bot"] = os.getenv("C3_IN_BOT", "1") != "0"
         return view
 
@@ -198,7 +207,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @application.post("/api/c3/close", dependencies=[Depends(authorized)])
     def c3_close(payload: C3Close):
         cfg, store = c3_paths()
-        sl = c3_sleeve.Sleeve(c3_sleeve.load(cfg), store, bot().data, base_equity=bot().paper_equity)
+        sl = c3_sleeve.Sleeve(c3_sleeve.load(cfg), store, bot().data, base_equity=bot().main_paper_equity,shared_account=bot().shared_paper_account)
         pos = {p["symbol"]: p for p in store.positions()}.get(payload.symbol)
         if not pos:
             raise HTTPException(404, "پوزیشن C3 پیدا نشد")
@@ -305,6 +314,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label><input id="atr_regime" type="checkbox">فیلتر رژیم ATR (2A): وقتی ATR کندل سیگنال از میانهٔ ATR شصت کندل ۴ساعتهٔ قبل کمتر است، ورود و افزودن انجام نشود</label>
 <label><input id="funding_short" type="checkbox">فیلتر funding: وقتی میانگین funding سه روز گذشته منفی است، شورت جدید باز نشود (نیازمند فایل‌های FUNDING_DIR)</label>
 <label class="field">ضریب ATR استاپ اولیه (۲٫۵ فقط همراه V2 و فیلتر BTC آزموده شده)<input id="stop_atr_mult" type="number" min="1" max="5" step="0.1"></label>
+<label><input id="shared_account" type="checkbox">مدیریت سرمایه و سقف مارجین مشترک ربات اصلی و C3</label>
 <label><input id="pyramid" type="checkbox">افزودن یک‌مرحله‌ای به برنده</label>
 <label class="field">ریسک واحد افزوده (کسری از ریسک هر معامله)<input id="pyramid_fraction" type="number" min="0.05" max="1" step="0.05"></label>
 <label><input id="safe_pyramid" type="checkbox">افزودن فقط اگر استاپ مشترک، سربه‌سر ترکیبی هر دو واحد (با کارمزد و لغزش) را پوشش دهد</label>
@@ -333,7 +343,7 @@ async function api(path,method='GET',body=null,match=null){
  const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));
  return {data,etag:response.headers.get('ETag')};
 }
-function fillControls(){if(!cfg)return;$('auto').checked=cfg.bot_control.auto_trade_enabled;$('dry').checked=cfg.bot_control.dry_run_mode;
+function fillControls(){if(!cfg)return;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('auto').checked=cfg.bot_control.auto_trade_enabled;$('dry').checked=cfg.bot_control.dry_run_mode;
  $('strategy').value=cfg.strategy_mode.mode;$('risk').value=cfg.risk_and_exit.risk_per_trade_pct*100;
  $('engaged').value=cfg.risk_and_exit.engaged_capital_pct*100;$('leverage').value=cfg.risk_and_exit.leverage_mode;$('max_positions').value=cfg.risk_and_exit.max_open_positions;
  const settings=cfg.strategy_settings;
@@ -344,8 +354,9 @@ function fillControls(){if(!cfg)return;$('auto').checked=cfg.bot_control.auto_tr
   $('width_filter').checked=!!settings.stop_width_filter_enabled;$('width_skip').value=settings.stop_width_skip_pct*100;$('width_mid').value=settings.stop_width_mid_pct*100;$('width_fraction').value=settings.stop_width_mid_risk_fraction;$('stop_atr_mult').value=settings.initial_stop_atr_mult;$('btc_gate').checked=!!settings.btc_regime_filter_enabled;$('funding_short').checked=!!settings.funding_short_filter_enabled;$('atr_regime').checked=!!settings.atr_regime_filter_enabled;}
  $('breakout').checked=cfg.al_brooks_filters.require_signal_bar_breakout;$('barb').checked=cfg.al_brooks_filters.enable_barb_wire_filter;$('h2').checked=cfg.al_brooks_filters.require_h2_l2_pullback;
 }
-async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
+async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
 function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);}catch(e){message('ابتدا JSON را اصلاح کنید.',true);fillControls();return;}
+ cfg.portfolio_risk.shared_c3_account=$('shared_account').checked;
  cfg.bot_control.auto_trade_enabled=$('auto').checked;cfg.strategy_mode.mode=$('strategy').value;cfg.risk_and_exit.risk_per_trade_pct=Number($('risk').value)/100;
  cfg.risk_and_exit.engaged_capital_pct=Number($('engaged').value)/100;cfg.risk_and_exit.leverage_mode=$('leverage').value;cfg.risk_and_exit.max_open_positions=Number($('max_positions').value);
  if(cfg.strategy_settings){Object.assign(cfg.strategy_settings,{trail_atr_buffer:Number($('atr_trail').value),exit_tp_mode:$('exit_tp').value,hybrid_trail_mode:$('hybrid_trail').value,hard_tp_rr:Number($('hard_tp').value),breakeven_trigger_rr:Number($('breakeven').value),ichimoku_preset:$('preset').value,donchian_entry_period:Number($('donchian_period').value),initial_stop_mode:$('initial_stop').value});}
@@ -355,7 +366,7 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
  cfg.al_brooks_filters.require_signal_bar_breakout=$('breakout').checked;cfg.al_brooks_filters.enable_barb_wire_filter=$('barb').checked;cfg.al_brooks_filters.require_h2_l2_pullback=$('h2').checked;
  $('editor').value=JSON.stringify(cfg,null,2);$('dirty').textContent='تغییرات ذخیره نشده است.';
 }
-for(const id of ['auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','atr_trail'])$(id).addEventListener('change',controlsChanged);
+for(const id of ['shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','atr_trail'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='تغییرات ذخیره نشده است.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('JSON نامعتبر است.',true);}});
 function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='هنوز fill ثبت نشده (فقط با PAPER_DATA_MODE=csv-lbank و دفتر سفارش زنده)'+(fq&&fq.last_error?' | خطا: '+fq.last_error:'');return;}
@@ -376,11 +387,11 @@ function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySel
  else if(useB){$('slots').textContent=bo+' / '+b.max_open_positions;$('updated_sub').textContent='پوزیشن‌ها و سفارش‌های در انتظار';}
  else{$('slots').textContent=co+' / '+c.coins;$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
  if(useC){const eq=c.equity_usd;$('equity').textContent=number(eq);$('equity_note').textContent=view==='c3'?'سرمایهٔ مشترک؛ C3 '+(c.realized_total_usd>=0?'+':'')+number(c.realized_total_usd)+' سود بسته‌شده':'سرمایهٔ مشترک ربات + C3';}
- else{$('equity').textContent=number(b.equity_usd);$('equity_note').textContent='سرمایهٔ paper ربات اصلی (بدون سود و زیان C3)';}
+ else{$('equity').textContent=number(b.equity_usd);$('equity_note').textContent=b.shared_account_enabled?'سرمایهٔ مشترک ربات اصلی و C3':'سرمایهٔ paper ربات اصلی (بدون سود و زیان C3)';}
  if(useB&&!useC){$('margin').textContent=number(b.engaged_margin_usd)+' / '+number(b.allowed_margin_usd);
   $('margin_pct').textContent=number(b.engaged_margin_pct)+'٪ از حساب / '+number(b.allowed_margin_pct)+'٪ مجاز؛ '+number(b.margin_budget_utilization_pct)+'٪ مصرف بودجه';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار: $'+number(b.reserved_pending_margin_usd);}
- else if(useC&&!useB){$('margin').textContent=number(c.notional_usd);$('margin_pct').textContent=c.equity_usd?number(c.notional_usd/c.equity_usd*100)+'٪ از سرمایه (نُوشنال باز C3)':'—';$('pending_margin').textContent='C3 سفارش در انتظار ندارد (ورود با قیمت لحظه‌ای)';}
- else{$('margin').textContent=number(b.engaged_margin_usd)+' + '+number(c.notional_usd);$('margin_pct').textContent='مارجین ربات + نُوشنال باز C3 (دلار)';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار ربات: $'+number(b.reserved_pending_margin_usd);}
+ else if(useC&&!useB){$('margin').textContent=number(c.engaged_margin_usd);$('margin_pct').textContent=c.equity_usd?number(c.engaged_margin_usd/c.equity_usd*100)+'٪ از سرمایه (مارجین C3)':'—';$('pending_margin').textContent='C3 سفارش در انتظار ندارد (ورود با قیمت لحظه‌ای)';}
+ else{const used=sumOf(b.engaged_margin_usd,c.engaged_margin_usd),eq=b.shared_account_enabled?b.equity_usd:c.equity_usd,allowed=eq*b.allowed_margin_pct/100;$('margin').textContent=number(used)+' / '+number(allowed);$('margin_pct').textContent=eq?number(used/eq*100)+'٪ از حساب / '+number(b.allowed_margin_pct)+'٪ مجاز؛ '+number(used/allowed*100)+'٪ مصرف بودجه':'—';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار ربات: $'+number(b.reserved_pending_margin_usd);}
  $('fq_main').closest('section').style.display=view==='c3'?'none':'';
  $('view_note').textContent=view==='all'?'جمع هر دو استراتژی (سرمایه مشترک است)':view==='bot'?'فقط ربات اصلی (Donchian + Kumo)':'فقط C3+D (پولبک روند ۴ساعته)';}
 function drawPositions(){const rows=$('positions');rows.replaceChildren();const items=[];

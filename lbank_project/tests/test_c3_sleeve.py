@@ -10,7 +10,7 @@ def cfg(**kw):
     c=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text());c.update(kw);return C.validate(c)
 
 def test_config_is_paper_only_and_validated():
-    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10 and cfg()['confirm_bars']==3 and cfg()['risk_per_trade_pct']==.002
+    assert cfg()['dry_run_mode'] is True and len(cfg()['symbols'])==10 and cfg()['confirm_bars']==3 and cfg()['risk_per_trade_pct']==.004
     with pytest.raises(ValueError):cfg(confirm_bars=-1)
     with pytest.raises(ValueError):cfg(confirm_bars=2.0)
     with pytest.raises(ValueError):cfg(dry_run_mode=False)
@@ -122,7 +122,7 @@ def test_runtime_config_upgrade(tmp_path):
     C.prepare_config(rt,shipped);assert json.loads(rt.read_text())==json.loads(shipped.read_text())   # seeded
     old={k:v for k,v in json.loads(shipped.read_text()).items() if k!='confirm_bars'};old['risk_per_trade_pct']=.0015
     rt.write_text(json.dumps(old));C.prepare_config(rt,shipped);new=json.loads(rt.read_text())
-    assert new['confirm_bars']==3 and new['risk_per_trade_pct']==.002          # missing key added, untouched old default upgraded
+    assert new['confirm_bars']==3 and new['risk_per_trade_pct']==.004          # missing key added, untouched old default upgraded
     new['risk_per_trade_pct']=.003;rt.write_text(json.dumps(new));C.prepare_config(rt,shipped)
     assert json.loads(rt.read_text())['risk_per_trade_pct']==.003               # a user's own choice is kept
 
@@ -134,7 +134,9 @@ def test_started_inside_the_bot(tmp_path,monkeypatch):
     import threading
     monkeypatch.setenv('C3_CONFIG',str(tmp_path/'c3_config.json'));monkeypatch.setenv('C3_DB',str(tmp_path/'c3.db'))
     monkeypatch.setattr(C.bot,'MarketData',lambda:None)
-    class E:paper_equity=staticmethod(lambda:12345.)
+    class E:
+        main_paper_equity=staticmethod(lambda:12345.)
+        shared_paper_account=staticmethod(lambda:None)
     stop=threading.Event();stop.set()
     t=C.start_in_bot(E(),stop);t.join(5);assert not t.is_alive() and (tmp_path/'c3_config.json').exists()
     monkeypatch.setenv('C3_IN_BOT','0');assert C.start_in_bot(E(),stop) is None

@@ -42,7 +42,7 @@ SCHEMA = {
     "bot_control": {"auto_trade_enabled": bool, "dry_run_mode": bool, "check_interval_seconds": int},
     "strategy_mode": {"mode": str, "htf_trend_timeframe": str, "ltf_entry_timeframe": str, "single_timeframe": str},
     "symbols": list,
-    "portfolio_risk": {"rank_by": str, "enforce_shared_margin": bool},
+    "portfolio_risk": {"rank_by": str, "enforce_shared_margin": bool, "shared_c3_account": bool},
     "ichimoku_params": {"tenkan": int, "kijun": int, "senkou_b": int, "displacement": int, "candle_fetch_limit": int},
     "filters_and_triggers": {"rsi_period": int, "long_rsi_min": float, "long_rsi_max": float,
         "short_rsi_min": float, "short_rsi_max": float, "atr_period": int,
@@ -149,6 +149,10 @@ def validate_config(c: dict) -> dict:
         raise ConfigError("Configuration must be a JSON object")
     c = copy.deepcopy(c)
     c.setdefault("portfolio_risk", {"rank_by": "LEGACY_RSI", "enforce_shared_margin": False})
+    if isinstance(c.get("portfolio_risk"), dict):
+        c["portfolio_risk"].setdefault("shared_c3_account", False)
+        if c["portfolio_risk"]["shared_c3_account"]:
+            c["portfolio_risk"]["enforce_shared_margin"] = True
     c.setdefault("archetype_strategy", copy.deepcopy(archetypes.DEFAULTS))
     c.setdefault("structural_filters", {"enable_htf_slope_filter": False,
                                        "adx_period": 14, "min_htf_adx": 0.0})
@@ -956,7 +960,7 @@ class Engine:
         if p is not None and not p["dry_run"]:
             raise LiveUnavailable(LIVE_LIMITATION)
 
-    def paper_equity(self) -> float:
+    def main_paper_equity(self) -> float:
         with self.db.connect() as db:
             realized = float(db.execute("SELECT COALESCE(SUM(pnl_usd),0) FROM trade_history WHERE dry_run=1").fetchone()[0])
         unrealized = 0.0
@@ -966,8 +970,24 @@ class Engine:
                 unrealized += net_pnl(p, self.data.price(p["symbol"], cached=True), p["qty"])
         return max(0.0, self.paper_seed + realized + unrealized)
 
+    def shared_paper_account(self):
+        if not self.config.read()["portfolio_risk"]["shared_c3_account"]:
+            return None
+        import c3_sleeve
+        from shared_paper_account import SharedPaperAccount
+        cfg, store = c3_sleeve.paths()
+        return SharedPaperAccount(self, store, lambda: c3_sleeve.load(cfg))
+
+    def paper_equity(self) -> float:
+        account = self.shared_paper_account()
+        return account.equity() if account is not None else self.main_paper_equity()
+
     def available_notional(self, equity: float, c: dict, exclude_symbol: str | None = None) -> float:
         leverage = c["risk_and_exit"]["default_isolated_leverage"]
+        account = self.shared_paper_account()
+        if account is not None:
+            return account.available_margin(equity, exclude_symbol, leverage,
+                c["risk_and_exit"]["lbank_round_trip_fee"], c["risk_and_exit"]["engaged_capital_pct"]) * leverage
         reserved = 0.0
         for p in self.db.positions():
             if p["symbol"] == exclude_symbol:

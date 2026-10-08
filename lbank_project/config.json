@@ -83,7 +83,8 @@
   },
   "portfolio_risk": {
     "rank_by": "BREAKOUT_DISTANCE",
-    "enforce_shared_margin": true
+    "enforce_shared_margin": true,
+    "shared_c3_account": true
   },
   "strategy_settings": {
     "ichimoku_preset": "standard",

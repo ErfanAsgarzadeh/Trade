@@ -29,7 +29,7 @@ def test_status_shows_positions_and_shared_equity(panel,system):
     assert s['equity_usd']==pytest.approx(system.paper_equity()+s['unrealized_pnl_usd'],rel=1e-3)
 
 def test_config_edit_validation_and_etag(panel):
-    client,store,sym,tmp=panel;r=client.get('/api/c3/config',headers=H);c=r.json();assert c['risk_per_trade_pct']==.002
+    client,store,sym,tmp=panel;r=client.get('/api/c3/config',headers=H);c=r.json();assert c['risk_per_trade_pct']==.004
     c.update(enabled=False,risk_per_trade_pct=.003,confirm_bars=0)
     ok=client.put('/api/c3/config',headers={**H,'If-Match':r.headers['ETag']},json=c);assert ok.status_code==200
     assert json.loads((tmp/'c3_config.json').read_text())['risk_per_trade_pct']==.003 and C.load(tmp/'c3_config.json')['enabled'] is False

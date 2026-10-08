@@ -3,7 +3,7 @@ import lbank_bot as lb
 from test_system import setup_position,cfg,system,bars_for
 
 def test_old_schema_normalizes_options(cfg):
- assert lb.validate_config(cfg)['portfolio_risk']==dict(rank_by='LEGACY_RSI',enforce_shared_margin=False)
+ assert lb.validate_config(cfg)['portfolio_risk']==dict(rank_by='LEGACY_RSI',enforce_shared_margin=False,shared_c3_account=False)
 
 def test_pending_margin_reserved(system):
  p=setup_position(system);c=system.config.read();c['risk_and_exit']['default_isolated_leverage']=5

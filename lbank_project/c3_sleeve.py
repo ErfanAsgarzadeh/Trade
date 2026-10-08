@@ -11,12 +11,12 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   trail: at every later closed candle, best close -/+ 4.5 x ATR14 of that candle; the stop only ratchets
   exit when the price touches the stop. One position per coin; own DB and config.
 Runs inside the main bot (lbank_bot.run starts it in its own thread; C3_IN_BOT=0 turns that off) or alone with
-`python c3_sleeve.py`. Inside the bot it sizes on the shared paper account: bot equity + C3 realized P&L.
+`python c3_sleeve.py`. Inside the bot it sizes on the shared paper account: one seed + both realized P&Ls + both net unrealized P&Ls.
 Sizing: risk_per_trade_pct of that equity / (stop distance + round-trip fee + slippage allowance),
 notional capped at max_notional_pct of equity.
 """
 from __future__ import annotations
-import json,math,os,sqlite3,sys,time,logging,argparse
+import json,math,os,sqlite3,sys,time,logging,argparse,contextlib
 from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
@@ -24,13 +24,14 @@ import lbank_bot as bot
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,
-    round_trip_fee=.0012,sizing_slippage_pct=.0004,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
+    round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
     stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[])
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
     if set(c)!=set(DEFAULTS):raise ValueError(f'Unknown C3 keys: {sorted(set(c)-set(DEFAULTS))}')
     if c['dry_run_mode'] is not True:raise ValueError('C3 sleeve is paper-only: dry_run_mode must be true')
+    if type(c['isolated_leverage']) is not int or not 1<=c['isolated_leverage']<=5:raise ValueError('isolated_leverage must be an integer 1..5')
     if c['timeframe']!='4h':raise ValueError('C3 was researched on 4h only')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['stop_atr']>0 and c['trail_atr']>0):raise ValueError('Invalid C3 risk settings')
     if not (type(c['confirm_bars']) is int and 0<=c['confirm_bars']<=12):raise ValueError('confirm_bars must be an int 0..12')
@@ -81,24 +82,38 @@ class Store:
             db.execute('CREATE TABLE IF NOT EXISTS trades(id INTEGER PRIMARY KEY,symbol TEXT,side TEXT,entry REAL,exit REAL,qty REAL,opened REAL,closed REAL,pnl REAL,reason TEXT)')
             db.execute('CREATE TABLE IF NOT EXISTS scanned(symbol TEXT PRIMARY KEY,candle_ts INTEGER)')
             db.execute('CREATE TABLE IF NOT EXISTS pending(symbol TEXT PRIMARY KEY,data TEXT)')
+            db.execute('CREATE TABLE IF NOT EXISTS position_margin(symbol TEXT PRIMARY KEY,opened REAL,isolated_leverage INTEGER NOT NULL)')
     def db(self):return sqlite3.connect(self.path,timeout=30)
     def positions(self)->list[dict]:
         with self.db() as db:
-            db.row_factory=sqlite3.Row;return [dict(r) for r in db.execute('SELECT * FROM positions')]
+            db.row_factory=sqlite3.Row;return [dict(r) for r in db.execute('SELECT p.*,COALESCE(m.isolated_leverage,5) AS isolated_leverage FROM positions p LEFT JOIN position_margin m ON p.symbol=m.symbol AND p.opened=m.opened')]
     def realized(self)->float:
         with self.db() as db:return float(db.execute('SELECT COALESCE(SUM(pnl),0) FROM trades').fetchone()[0])
 
 class Sleeve:
-    def __init__(self,config:dict,store:Store,data,base_equity=None):
-        self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity
+    def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
+        self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
+    @property
+    def shared_account(self):
+        return self._shared_account() if callable(self._shared_account) else self._shared_account
+
     def equity(self)->float:
+        if self.shared_account is not None:return self.shared_account.equity()
         base=self.base_equity() if self.base_equity else self.c['paper_capital']
         return base+self.store.realized()
 
+    def execution_lock(self):
+        return bot.file_lock(self.shared_account.lock_path) if self.shared_account is not None else contextlib.nullcontext()
+
     def close(self,p:dict,price:float,reason:str,now:float):
+        with self.execution_lock():return self._close(p,price,reason,now)
+
+    def _close(self,p:dict,price:float,reason:str,now:float):
         sign=1 if p['side']=='long' else -1;pnl=sign*(price-p['entry'])*p['qty']-(p['entry']+price)*p['qty']*self.c['round_trip_fee']/2
         with self.store.db() as db:
-            if db.execute('DELETE FROM positions WHERE symbol=?',(p['symbol'],)).rowcount:
+            if not db.execute('DELETE FROM positions WHERE symbol=? AND opened=?',(p['symbol'],p['opened'])).rowcount:return 0.0
+            else:
+                db.execute('DELETE FROM position_margin WHERE symbol=? AND opened=?',(p['symbol'],p['opened']))
                 db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,p['qty'],p['opened'],now,pnl,reason))
         LOG.info('C3 close %s %s at %.6g pnl %.2f (%s)',p['symbol'],p['side'],price,pnl,reason);return pnl
 
@@ -130,7 +145,9 @@ class Sleeve:
                     if stamp>pos['last_bar_ts']:
                         sign=1 if pos['side']=='long' else -1;best=max(pos['best'],b.close) if sign==1 else min(pos['best'],b.close)
                         new=best-sign*c['trail_atr']*b.atr;stop=max(pos['stop'],new) if sign==1 else min(pos['stop'],new)
-                        with self.store.db() as db:db.execute('UPDATE positions SET best=?,stop=?,last_bar_ts=? WHERE symbol=?',(best,stop,stamp,s))
+                        with self.execution_lock(), self.store.db() as db:
+                            ratchet='MAX' if sign==1 else 'MIN'
+                            db.execute(f'UPDATE positions SET best={ratchet}(best,?),stop={ratchet}(stop,?),last_bar_ts=? WHERE symbol=? AND opened=? AND last_bar_ts<?',(best,stop,stamp,s,pos['opened'],stamp))
                 side=signal(df,c)
                 if c['confirm_bars']>0:   # variant D: track signals (also while a position is open) and wait for confirmation
                     with self.store.db() as db:row=db.execute('SELECT data FROM pending WHERE symbol=?',(s,)).fetchone()
@@ -145,15 +162,24 @@ class Sleeve:
         self.watchdog(now);return ok
 
     def open(self,s:str,side:str,b:pd.Series,now:float):
+        with self.execution_lock():return self._open(s,side,b,now)
+
+    def _open(self,s:str,side:str,b:pd.Series,now:float):
+        if any(p['symbol']==s for p in self.store.positions()):return None
         c=self.c;sign=1 if side=='long' else -1;price=self.data.price(s);stop=price-sign*c['stop_atr']*b.atr;dist=sign*(price-stop)
         if dist<=0 or dist/price<c['min_stop_pct']:return None
         eq=self.equity()
         if eq<=0:return None
         notional=min(c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct']),c['max_notional_pct']*eq)
+        if self.shared_account is not None:
+            conf=self.shared_account.engine.config.read()
+            if not conf['portfolio_risk']['shared_c3_account']:return None
+            notional=min(notional,self.shared_account.available_margin(eq,leverage=c['isolated_leverage'],fee_rate=c['round_trip_fee'])*c['isolated_leverage'])
         cs=float(self.data.market(s).get('contractSize') or 1);qty=self.data.precision(s,notional/price/cs)*cs
         if qty<=0 or not self.data.tradable(s,qty/cs,price):return None
         with self.store.db() as db:
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,side,price,qty,stop,float(b.close),now,int(b.timestamp),int(b.timestamp),qty*dist))
+            db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
         LOG.info('C3 open %s %s at %.6g stop %.6g qty %.6g',s,side,price,stop,qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
@@ -166,13 +192,15 @@ def write_config(path:Path,c:dict)->dict:
         h.write(json.dumps(v,ensure_ascii=False,indent=2)+'\n');h.flush();os.fsync(h.fileno());tmp=Path(h.name)
     os.replace(tmp,path);return v
 
-def summary(store:Store,conf:dict,price,base_equity:float)->dict:
+def summary(store:Store,conf:dict,price,base_equity:float,net_costs:bool=False)->dict:
     """Dashboard view: open positions with live P&L, realized totals, equity of the shared paper account."""
     pos=[];unreal=0.;errors=[]
     for p in store.positions():
         sign=1 if p['side']=='long' else -1;px=None;pnl=None;r=None
         try:
-            px=price(p['symbol']);pnl=sign*(px-p['entry'])*p['qty'];unreal+=pnl;r=pnl/p['risk_usd'] if p['risk_usd'] else None
+            px=price(p['symbol']);pnl=sign*(px-p['entry'])*p['qty']
+            if net_costs:pnl-=(px+p['entry'])*p['qty']*conf['round_trip_fee']/2
+            unreal+=pnl;r=pnl/p['risk_usd'] if p['risk_usd'] else None
         except Exception as exc:errors.append(dict(symbol=p['symbol'],error=str(exc)))
         pos.append(dict(p,live_price=px,unrealized_pnl_usd=pnl,current_r=r))
     with store.db() as db:
@@ -180,7 +208,7 @@ def summary(store:Store,conf:dict,price,base_equity:float)->dict:
         day=db.execute('SELECT COALESCE(SUM(pnl),0),COUNT(*) FROM trades WHERE closed>=?',(time.time()-86400,)).fetchone()
         recent=[dict(zip(('symbol','side','entry','exit','pnl','reason','closed'),r)) for r in db.execute('SELECT symbol,side,entry,exit,pnl,reason,closed FROM trades ORDER BY id DESC LIMIT 20')]
     return dict(enabled=conf['enabled'],risk_per_trade_pct=conf['risk_per_trade_pct'],confirm_bars=conf['confirm_bars'],coins=len(conf['symbols']),
-        open_positions_count=len(pos),notional_usd=float(sum(p['qty']*p['entry'] for p in pos)),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
+        open_positions_count=len(pos),notional_usd=float(sum(p['qty']*p['entry'] for p in pos)),engaged_margin_usd=float(sum(p['qty']*p['entry']/p['isolated_leverage'] for p in pos)),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
         trades_total=int(n),win_rate_pct=float(wins/n*100) if n else None,daily_realized_pnl=float(day[0]),daily_trades_count=int(day[1]),recent_trades=recent,
         equity_usd=None if errors else base_equity+float(realized)+unreal)
 
@@ -192,7 +220,7 @@ def prepare_config(path:Path,shipped:Path)->Path:
     if not path.exists():
         path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
-    if cur.get('risk_per_trade_pct')==OLD_DEFAULT_RISK:new['risk_per_trade_pct']=ship['risk_per_trade_pct']
+    if cur.get('risk_per_trade_pct') in (OLD_DEFAULT_RISK,.002):new['risk_per_trade_pct']=ship['risk_per_trade_pct']
     if new!=cur:
         LOG.info('C3 runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
     return path
@@ -221,7 +249,7 @@ def start_in_bot(engine,stop):
     """Called by lbank_bot.run(): C3 in its own thread, own market-data client, sized on the bot's paper equity."""
     import threading
     if os.getenv('C3_IN_BOT','1')=='0':LOG.info('C3 disabled in the bot (C3_IN_BOT=0)');return None
-    cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.paper_equity)
+    cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.main_paper_equity,shared_account=engine.shared_paper_account)
     t=threading.Thread(target=loop,args=(sl,cfg,stop),name='c3-sleeve',daemon=True);t.start()
     LOG.info('C3 sleeve started inside the bot: %d coins, risk %.2f%%/trade, confirm_bars %d',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100,sl.c['confirm_bars'])
     return t
@@ -229,6 +257,7 @@ def start_in_bot(engine,stop):
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--once',action='store_true');a=ap.parse_args()
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s')
-    cfg,store=paths();loop(Sleeve(load(cfg),store,bot.MarketData()),cfg,once=a.once)
+    cfg,store=paths();data=bot.MarketData();engine=bot.Engine(bot.ConfigStore(),bot.Database(),data)
+    loop(Sleeve(load(cfg),store,data,base_equity=engine.main_paper_equity,shared_account=engine.shared_paper_account),cfg,once=a.once)
 
 if __name__=='__main__':main()

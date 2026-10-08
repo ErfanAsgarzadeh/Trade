@@ -3,7 +3,7 @@
   "dry_run_mode": true,
   "timeframe": "4h",
   "paper_capital": 10000.0,
-  "risk_per_trade_pct": 0.002,
+  "risk_per_trade_pct": 0.004,
   "max_notional_pct": 0.4,
   "round_trip_fee": 0.0012,
   "sizing_slippage_pct": 0.0004,
@@ -20,6 +20,17 @@
   "candle_fetch_limit": 1000,
   "check_interval_seconds": 15,
   "confirm_bars": 3,
-  "symbols": ["AAVE/USDT:USDT", "UNI/USDT:USDT", "AVAX/USDT:USDT", "KSM/USDT:USDT", "EGLD/USDT:USDT",
-              "DOT/USDT:USDT", "DOGE/USDT:USDT", "ONE/USDT:USDT", "TRX/USDT:USDT", "SUSHI/USDT:USDT"]
+  "symbols": [
+    "AAVE/USDT:USDT",
+    "UNI/USDT:USDT",
+    "AVAX/USDT:USDT",
+    "KSM/USDT:USDT",
+    "EGLD/USDT:USDT",
+    "DOT/USDT:USDT",
+    "DOGE/USDT:USDT",
+    "ONE/USDT:USDT",
+    "TRX/USDT:USDT",
+    "SUSHI/USDT:USDT"
+  ],
+  "isolated_leverage": 5
 }
