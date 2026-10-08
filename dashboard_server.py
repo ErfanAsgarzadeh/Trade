@@ -288,7 +288,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>مجموع سود و زیان بسته‌شدهٔ C3 ($)</p><strong id="c3_total">—</strong><p id="c3_win">—</p></section></div>
 <div class="fields" style="margin-top:18px"><label><input id="c3_enabled" type="checkbox">ورود جدید C3 فعال</label>
 <label class="field">ریسک هر معامله (%)<input id="c3_risk" type="number" min="0.01" max="1" step="0.01"></label>
-<label class="field">حداکثر پوزیشن C3<input id="c3_max_positions" type="number" min="1" max="100" step="1"></label>
+<label class="field">حداکثر پوزیشن C3 (۰ = بدون سقف تعداد)<input id="c3_max_positions" type="number" min="0" max="100" step="1"></label>
 <label class="field">سقف نُوشنال C3 (فقط در حالت PER_SLOT، ٪ سرمایه)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
 <label class="field">تأیید ورود D (تعداد کندل؛ صفر: بدون تأیید)<input id="c3_confirm" type="number" min="0" max="12" step="1"></label>
 <label><input id="c3_weekend" type="checkbox">ورود نکردن وقتی کندل سیگنال در آخر هفته بسته می‌شود</label>
@@ -385,9 +385,9 @@ function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySel
  const rl=(useB?b.daily_realized_pnl:0)+(useC?c.daily_realized_pnl:0),tr=(useB?b.daily_trades_count:0)+(useC?c.daily_trades_count:0);
  $('unrealized').textContent=number(un);$('unrealized').className=un<0?'bad':'';$('realized').textContent=number(rl);$('realized').className=rl<0?'bad':'good';$('trades').textContent=tr+' خروج ثبت‌شده در ۲۴ ساعت';
  const bo=b?b.open_positions_count:0,co=c?c.open_positions_count:0;
- if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+c.max_open_positions+' پوزیشن ('+c.coins+' ارز)';}
+ if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+(c.max_open_positions>0?c.max_open_positions:'بدون سقف تعداد')+' پوزیشن ('+c.coins+' ارز)';}
  else if(useB){$('slots').textContent=bo+' / '+b.max_open_positions;$('updated_sub').textContent='پوزیشن‌ها و سفارش‌های در انتظار';}
- else{$('slots').textContent=co+' / '+c.max_open_positions;$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
+ else{$('slots').textContent=co+' / '+(c.max_open_positions>0?c.max_open_positions:'بدون سقف تعداد');$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
  if(useC){const eq=c.equity_usd;$('equity').textContent=number(eq);$('equity_note').textContent=view==='c3'?'سرمایهٔ مشترک؛ C3 '+(c.realized_total_usd>=0?'+':'')+number(c.realized_total_usd)+' سود بسته‌شده':'سرمایهٔ مشترک ربات + C3';}
  else{$('equity').textContent=number(b.equity_usd);$('equity_note').textContent=b.shared_account_enabled?'سرمایهٔ مشترک ربات اصلی و C3':'سرمایهٔ paper ربات اصلی (بدون سود و زیان C3)';}
  if(useB&&!useC){$('margin').textContent=number(b.engaged_margin_usd)+' / '+number(b.allowed_margin_usd);

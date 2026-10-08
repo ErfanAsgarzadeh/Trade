@@ -46,7 +46,7 @@ def test_c3_four_slots_atomic_and_reopen_after_close(shared):
  assert sl.open(missing,'long',b,11) is None and len(a.store.positions())==4
  sl.c['max_open_positions']=4;p=a.store.positions()[0];sl.close(p,100,'test',12)
  assert sl.open(missing,'long',b,13) and len(a.store.positions())==4
-@pytest.mark.parametrize('value',[0,True,4.5,101])
+@pytest.mark.parametrize('value',[-1,True,4.5,101])
 def test_invalid_c3_count(value):
  c=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text());c['max_open_positions']=value
  with pytest.raises(ValueError):C.validate(c)
@@ -56,5 +56,28 @@ def test_invalid_pool_mode():
 def test_shipped_request():
  c=config();s=C.load(Path(__file__).parents[1]/'c3_config.json')
  assert c['risk_and_exit']['risk_per_trade_pct']==.0075 and s['risk_per_trade_pct']==.004
- assert c['risk_and_exit']['max_open_positions']==s['max_open_positions']==4
+ assert c['risk_and_exit']['max_open_positions']==4 and s['max_open_positions']==0
  assert c['bot_control']['dry_run_mode'] and s['dry_run_mode']
+
+
+def test_c3_unlimited_count_still_obeys_shared_margin(shared):
+ e,a,sl=pooled(shared);sl.c['max_open_positions']=0
+ syms=sl.c['symbols'][:6];b=pd.Series(dict(close=100.,atr=5.,timestamp=0))
+ for symbol in syms:e.data.prices[symbol]=100
+ with ThreadPoolExecutor(max_workers=6) as pool:
+  list(pool.map(lambda symbol:sl.open(symbol,'long',b,10),syms))
+ assert len(a.store.positions())==6
+ assert sl.open(syms[0],'long',b,11) is None  # one position per symbol remains
+ snap=a.snapshot();assert snap['reserved_margin_usd']<=snap['allowed_margin_usd']
+ # No free shared margin means no entry even with no position-count cap.
+ put(a,s='ONE/USDT:USDT',qty=300)
+ missing=sl.c['symbols'][6];e.data.prices[missing]=100
+ assert sl.open(missing,'long',b,12) is None
+
+def test_apply_removes_existing_runtime_four_cap(tmp_path):
+ from apply_shared_capital import apply
+ main=tmp_path/'main.json';sleeve=tmp_path/'c3.json'
+ main.write_text(json.dumps(config()));c=C.load(Path(__file__).parents[1]/'c3_config.json');c['max_open_positions']=4;sleeve.write_text(json.dumps(c))
+ apply(main,sleeve)
+ assert C.load(sleeve)['max_open_positions']==0
+ assert B.ConfigStore(main).read()['risk_and_exit']['max_open_positions']==4

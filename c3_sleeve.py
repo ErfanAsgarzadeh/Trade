@@ -23,7 +23,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
-DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=10,
+DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
     stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[])
 
@@ -32,7 +32,7 @@ def validate(c:dict)->dict:
     if set(c)!=set(DEFAULTS):raise ValueError(f'Unknown C3 keys: {sorted(set(c)-set(DEFAULTS))}')
     if c['dry_run_mode'] is not True:raise ValueError('C3 sleeve is paper-only: dry_run_mode must be true')
     if type(c['isolated_leverage']) is not int or not 1<=c['isolated_leverage']<=5:raise ValueError('isolated_leverage must be an integer 1..5')
-    if type(c['max_open_positions']) is not int or not 1<=c['max_open_positions']<=100:raise ValueError('max_open_positions must be an integer 1..100')
+    if type(c['max_open_positions']) is not int or not 0<=c['max_open_positions']<=100:raise ValueError('max_open_positions must be an integer 0..100; 0 disables the count cap')
     if c['timeframe']!='4h':raise ValueError('C3 was researched on 4h only')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['stop_atr']>0 and c['trail_atr']>0):raise ValueError('Invalid C3 risk settings')
     if not (type(c['confirm_bars']) is int and 0<=c['confirm_bars']<=12):raise ValueError('confirm_bars must be an int 0..12')
@@ -167,7 +167,8 @@ class Sleeve:
 
     def _open(self,s:str,side:str,b:pd.Series,now:float):
         positions=self.store.positions()
-        if len(positions)>=self.c['max_open_positions'] or any(p['symbol']==s for p in positions):return None
+        limit=self.c['max_open_positions']
+        if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None
         c=self.c;sign=1 if side=='long' else -1;price=self.data.price(s);stop=price-sign*c['stop_atr']*b.atr;dist=sign*(price-stop)
         if dist<=0 or dist/price<c['min_stop_pct']:return None
         eq=self.equity()

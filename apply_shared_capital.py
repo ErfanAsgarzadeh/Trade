@@ -11,7 +11,7 @@ def apply(main_path,c3_path):
     cfg['portfolio_risk'].update(shared_c3_account=True,enforce_shared_margin=True,margin_allocation_mode='SHARED_POOL')
     c3_path=Path(c3_path)
     if not c3_path.exists():c3.prepare_config(c3_path,Path(__file__).with_name('c3_config.json'))
-    conf=c3.load(c3_path);conf.update(risk_per_trade_pct=.004,isolated_leverage=5,max_open_positions=4,dry_run_mode=True)
+    conf=c3.load(c3_path);conf.update(risk_per_trade_pct=.004,isolated_leverage=5,max_open_positions=0,dry_run_mode=True)
     c3.write_config(c3_path,conf);store.write(cfg)
     return dict(main_risk=.0075,c3_risk=.004,shared_margin_cap=.6,dry_run_mode=True)
 if __name__=='__main__':
