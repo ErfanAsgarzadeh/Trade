@@ -239,6 +239,7 @@ HTML = r'''<!doctype html>
 <title>مرکز کنترل معاملات LBank</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+.view{background:#2a3650}.view.on{background:#315dc8;outline:2px solid #7fa1ff}.tag{display:inline-block;padding:1px 8px;border-radius:6px;background:#24324e;font-size:11px}.tag.c3{background:#3b2f58}
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141c30;--line:#29344d;--muted:#a4b3ce;--good:#4ee2ad;--bad:#ff7886}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf3ff;font-family:Tahoma,Arial,sans-serif;font-size:14px;line-height:1.8}
 main{max-width:1450px;margin:auto;padding:28px}header,.row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
@@ -262,13 +263,15 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <button id="connect">اتصال</button><span id="mode" class="badge">—</span><span id="active" class="badge">قطع</span></div></header>
 <div id="message" role="status" aria-live="polite"></div>
 <section class="panel note">این نسخه معاملات را شبیه‌سازی می‌کند. حالت پیش‌فرض DEMO از قیمت و کندل مصنوعی استفاده می‌کند. ارسال سفارش زندهٔ فیوچرز LBank در اتصال فعلی CCXT پشتیبانی نمی‌شود. سود و زیان با کارمزد تخمینی محاسبه می‌شود.</section>
-<div class="kpis"><section class="panel kpi"><p>سود و زیان باز ($)</p><strong id="unrealized">—</strong></section>
+<div class="row" style="margin-top:20px"><div id="views" style="display:flex;gap:8px" role="tablist" aria-label="نمای خلاصه"><button class="view" data-view="all">هر دو</button> <button class="view" data-view="bot">ربات اصلی</button> <button class="view" data-view="c3">C3+D</button></div><p id="view_note">خلاصه و جدول پوزیشن‌ها بر اساس نمای انتخاب‌شده</p></div>
+<div class="kpis"><section class="panel kpi"><p>سرمایهٔ حساب ($)</p><strong id="equity">—</strong><p id="equity_note">—</p></section>
+<section class="panel kpi"><p>سود و زیان باز ($)</p><strong id="unrealized">—</strong></section>
 <section class="panel kpi"><p>سود و زیان تحقق‌یافتهٔ ۲۴ ساعت ($)</p><strong id="realized">—</strong><p id="trades">—</p></section>
-<section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated">در انتظار اتصال</p></section>
+<section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated_sub">—</p><p id="updated">در انتظار اتصال</p></section>
 <section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
 <section class="panel kpi"><p>لغزش واقعی اندازه‌گیری‌شده با دفتر سفارش LBank (bps، میانه / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel"><div class="row"><h2>پوزیشن‌ها</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها (ربات + C3) + توقف ورود</button></div>
-<div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
+<section class="panel"><div class="row"><h2>پوزیشن‌ها (ربات اصلی و C3+D، یک جدول)</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها (ربات + C3) + توقف ورود</button></div>
+<div class="scroll"><table><thead><tr><th>استراتژی</th><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
 <section class="panel" id="c3panel"><div class="row"><h2>استراتژی دوم: C3+D (پولبک روند ۴ساعته روی ۱۰ ارز)</h2><span id="c3badge" class="badge">—</span></div>
 <p>در همین ربات اجرا می‌شود و فقط شبیه‌سازی است؛ سرمایهٔ حساب با ربات اصلی مشترک است. تغییر تنظیمات بدون ری‌استارت در چند ثانیه اعمال می‌شود. خاموش کردن فقط ورود جدید را می‌بندد و پوزیشن‌های باز مدیریت می‌شوند.</p>
 <div class="kpis"><section class="panel kpi"><p>سود و زیان باز C3 ($)</p><strong id="c3_unrealized">—</strong><p id="c3_positions">—</p></section>
@@ -282,7 +285,6 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label class="field" style="grid-column:span 2">نمادها (هر خط یکی، مثل AVAX/USDT:USDT)<textarea id="c3_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
 <details><summary>ویرایش کامل JSON تنظیمات C3</summary><textarea id="c3_editor" aria-label="C3 JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="c3_dirty">تنظیمات C3 بارگذاری نشده است.</p><button id="c3_save" disabled>ذخیره تنظیمات C3</button></div>
-<div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>قیمت زنده</th><th>حد ضرر</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="c3_rows"></tbody></table></div>
 <details><summary>۲۰ معاملهٔ اخیر C3</summary><div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>خروج</th><th>سود و زیان ($)</th><th>دلیل</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></section>
 <section class="panel"><div class="row"><h2>تنظیمات ربات اصلی</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">ورود خودکار</label><label><input id="dry" type="checkbox" checked disabled>حالت شبیه‌سازی (Dry-run)</label>
@@ -360,20 +362,41 @@ function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(
  const f=x=>x?Number(x.median_bps).toFixed(1)+' / '+Number(x.p90_bps).toFixed(1):'—';main.textContent='ورود '+f(fq.entry)+' | خروج '+f(fq.exit);
  const worst=Math.max(fq.entry?fq.entry.median_bps:0,fq.exit?fq.exit.median_bps:0);main.className=worst>fq.assumed_bps_per_fill*2.5?'bad':'';
  detail.textContent='بک‌تست '+fq.assumed_bps_per_fill+' bps فرض کرده؛ '+fq.total+' fill'+(fq.last_error?' | خطا: '+fq.last_error:'');}
-function render(s){$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';
- $('unrealized').textContent=number(s.total_unrealized_pnl);$('realized').textContent=number(s.daily_realized_pnl);$('realized').className=s.daily_realized_pnl<0?'bad':'good';
- $('trades').textContent=s.daily_trades_count+' خروج ثبت‌شده در ۲۴ ساعت';$('slots').textContent=s.open_positions_count+' / '+s.max_open_positions;
- $('margin').textContent=number(s.engaged_margin_usd)+' / '+number(s.allowed_margin_usd);
- $('margin_pct').textContent=number(s.engaged_margin_pct)+'٪ از حساب / '+number(s.allowed_margin_pct)+'٪ مجاز؛ '+number(s.margin_budget_utilization_pct)+'٪ مصرف بودجه';
- $('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار: $'+number(s.reserved_pending_margin_usd);
- renderFillQuality(s.fill_quality);
- $('updated').textContent='آخرین دریافت: '+new Date().toLocaleTimeString('fa-IR');const rows=$('positions');rows.replaceChildren();
- if(!s.positions.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=10;td.textContent='پوزیشن بازی وجود ندارد.';tr.append(td);rows.append(tr);}
- for(const p of s.positions){const tr=document.createElement('tr');const values=[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(p.unrealized_pnl_usd)];
-  values.forEach((v,index)=>{const td=document.createElement('td');td.textContent=v;if(index===0||index>=2)td.dir='ltr';if(index===8&&p.unrealized_pnl_usd!==null)td.className=p.unrealized_pnl_usd<0?'bad':'good';tr.append(td);});
-  const td=document.createElement('td'),button=document.createElement('button');button.className='danger';button.textContent=p.state==='STATE_PENDING_TRIGGER'?'لغو':'بستن آنی';
-  button.onclick=async()=>{if(!confirm('بستن / لغو '+p.symbol+'؟'))return;button.disabled=true;try{await api('/api/positions/close','POST',{symbol:p.symbol});await refresh();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);
- }
+let lastBot=null,lastC3=null,view='all';try{view=localStorage.getItem('view')||'all';}catch(e){}
+function setView(v){view=v;try{localStorage.setItem('view',v);}catch(e){}draw();}
+for(const b of document.querySelectorAll('.view'))b.onclick=()=>setView(b.dataset.view);
+const sumOf=(...x)=>x.some(v=>v===null||v===undefined)?null:x.reduce((p,c)=>p+c,0);
+function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.dataset.view===view);
+ const useB=view!=='c3'&&b,useC=view!=='bot'&&c;if(!(useB||useC))return;
+ const un=useB&&useC?sumOf(b.total_unrealized_pnl,c.unrealized_pnl_usd):useB?b.total_unrealized_pnl:c.unrealized_pnl_usd;
+ const rl=(useB?b.daily_realized_pnl:0)+(useC?c.daily_realized_pnl:0),tr=(useB?b.daily_trades_count:0)+(useC?c.daily_trades_count:0);
+ $('unrealized').textContent=number(un);$('unrealized').className=un<0?'bad':'';$('realized').textContent=number(rl);$('realized').className=rl<0?'bad':'good';$('trades').textContent=tr+' خروج ثبت‌شده در ۲۴ ساعت';
+ const bo=b?b.open_positions_count:0,co=c?c.open_positions_count:0;
+ if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+c.coins+' ارز';}
+ else if(useB){$('slots').textContent=bo+' / '+b.max_open_positions;$('updated_sub').textContent='پوزیشن‌ها و سفارش‌های در انتظار';}
+ else{$('slots').textContent=co+' / '+c.coins;$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
+ if(useC){const eq=c.equity_usd;$('equity').textContent=number(eq);$('equity_note').textContent=view==='c3'?'سرمایهٔ مشترک؛ C3 '+(c.realized_total_usd>=0?'+':'')+number(c.realized_total_usd)+' سود بسته‌شده':'سرمایهٔ مشترک ربات + C3';}
+ else{$('equity').textContent=number(b.equity_usd);$('equity_note').textContent='سرمایهٔ paper ربات اصلی (بدون سود و زیان C3)';}
+ if(useB&&!useC){$('margin').textContent=number(b.engaged_margin_usd)+' / '+number(b.allowed_margin_usd);
+  $('margin_pct').textContent=number(b.engaged_margin_pct)+'٪ از حساب / '+number(b.allowed_margin_pct)+'٪ مجاز؛ '+number(b.margin_budget_utilization_pct)+'٪ مصرف بودجه';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار: $'+number(b.reserved_pending_margin_usd);}
+ else if(useC&&!useB){$('margin').textContent=number(c.notional_usd);$('margin_pct').textContent=c.equity_usd?number(c.notional_usd/c.equity_usd*100)+'٪ از سرمایه (نُوشنال باز C3)':'—';$('pending_margin').textContent='C3 سفارش در انتظار ندارد (ورود با قیمت لحظه‌ای)';}
+ else{$('margin').textContent=number(b.engaged_margin_usd)+' + '+number(c.notional_usd);$('margin_pct').textContent='مارجین ربات + نُوشنال باز C3 (دلار)';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار ربات: $'+number(b.reserved_pending_margin_usd);}
+ $('fq_main').closest('section').style.display=view==='c3'?'none':'';
+ $('view_note').textContent=view==='all'?'جمع هر دو استراتژی (سرمایه مشترک است)':view==='bot'?'فقط ربات اصلی (Donchian + Kumo)':'فقط C3+D (پولبک روند ۴ساعته)';}
+function drawPositions(){const rows=$('positions');rows.replaceChildren();const items=[];
+ if(view!=='c3'&&lastBot)for(const p of lastBot.positions)items.push({kind:'bot',p});
+ if(view!=='bot'&&lastC3)for(const p of lastC3.positions)items.push({kind:'c3',p});
+ if(!items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent='پوزیشن بازی وجود ندارد.';tr.append(td);rows.append(tr);return;}
+ for(const {kind,p} of items){const tr=document.createElement('tr');const tag=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(kind==='c3'?' c3':'');sp.textContent=kind==='c3'?'C3+D':'ربات';tag.append(sp);tr.append(tag);
+  const pnl=p.unrealized_pnl_usd;
+  const values=kind==='c3'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),'—','تریل ATR',number(p.current_r),number(pnl)]
+   :[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(pnl)];
+  values.forEach((v,index)=>{const td=document.createElement('td');td.textContent=v;if(index===0||index>=2)td.dir='ltr';if(index===8&&pnl!==null)td.className=pnl<0?'bad':'good';tr.append(td);});
+  const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'لغو':'بستن آنی';
+  button.onclick=async()=>{if(!confirm('بستن / لغو '+p.symbol+(kind==='c3'?' (C3)':'')+'؟'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
+function draw(){drawSummary();drawPositions();}
+function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';
+ renderFillQuality(s.fill_quality);$('updated').textContent='آخرین دریافت: '+new Date().toLocaleTimeString('fa-IR');draw();
  const stamp=s.runtime.watchdog_at;$('health').textContent=stamp?'آخرین بررسی ربات: '+new Date(stamp*1000).toLocaleTimeString('fa-IR'):'ربات هنوز بررسی ثبت نکرده است';
  if(stamp&&Date.now()/1000-stamp>60)$('health').textContent+=' — بررسی ربات عقب افتاده است';
  if(s.price_errors.length)message('قیمت بعضی نمادها دریافت نشد؛ سود و زیان کامل در دسترس نیست.',true);
@@ -399,15 +422,11 @@ $('c3_editor').addEventListener('input',()=>{$('c3_dirty').textContent='تغیی
 $('c3_editor').addEventListener('blur',()=>{try{c3cfg=JSON.parse($('c3_editor').value);c3Fill();}catch(e){message('JSON تنظیمات C3 نامعتبر است.',true);}});
 $('c3_save').onclick=async()=>{const b=$('c3_save');b.disabled=true;try{const edited=JSON.parse($('c3_editor').value);const r=await api('/api/c3/config','PUT',edited,c3etag);c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='تنظیمات C3 ذخیره شد و در چند ثانیه اعمال می‌شود.';await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
 function cell(tr,v,cls,ltr){const td=document.createElement('td');td.textContent=v;if(cls)td.className=cls;if(ltr)td.dir='ltr';tr.append(td);return td;}
-function renderC3(s){$('c3badge').textContent=(s.in_bot?'داخل ربات':'خاموش در ربات (C3_IN_BOT=0)')+' / '+(s.enabled?'ورود فعال':'ورود متوقف');
+function renderC3(s){lastC3=s;$('c3badge').textContent=(s.in_bot?'داخل ربات':'خاموش در ربات (C3_IN_BOT=0)')+' / '+(s.enabled?'ورود فعال':'ورود متوقف');
  $('c3_unrealized').textContent=c3n(s.unrealized_pnl_usd);$('c3_positions').textContent=s.open_positions_count+' پوزیشن باز از '+s.coins+' ارز';
  $('c3_realized').textContent=c3n(s.daily_realized_pnl);$('c3_realized').className=s.daily_realized_pnl<0?'bad':'good';$('c3_trades').textContent=s.daily_trades_count+' خروج در ۲۴ ساعت';
  $('c3_total').textContent=c3n(s.realized_total_usd);$('c3_total').className=s.realized_total_usd<0?'bad':'good';$('c3_win').textContent=s.trades_total?(s.trades_total+' معامله، نرخ برد '+c3n(s.win_rate_pct,1)+'٪'):'هنوز معامله‌ای بسته نشده';
- const rows=$('c3_rows');rows.replaceChildren();if(!s.positions.length){const tr=document.createElement('tr');const td=cell(tr,'پوزیشن باز C3 وجود ندارد.');td.colSpan=8;rows.append(tr);}
- for(const p of s.positions){const tr=document.createElement('tr');cell(tr,p.symbol,'',1);cell(tr,p.side==='long'?'خرید':'فروش');cell(tr,c3n(p.entry,6),'',1);cell(tr,c3n(p.live_price,6),'',1);cell(tr,c3n(p.stop,6),'',1);cell(tr,c3n(p.current_r),'',1);
-  cell(tr,c3n(p.unrealized_pnl_usd),p.unrealized_pnl_usd<0?'bad':'good',1);const td=document.createElement('td'),b=document.createElement('button');b.className='danger';b.textContent='بستن آنی';
-  b.onclick=async()=>{if(!confirm('بستن '+p.symbol+' (C3)؟'))return;b.disabled=true;try{await api('/api/c3/close','POST',{symbol:p.symbol});await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};td.append(b);tr.append(td);rows.append(tr);}
- const h=$('c3_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}}
+ const h=$('c3_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
 async function refreshC3(){if(!connected)return;try{const r=await api('/api/c3/status');renderC3(r.data);}catch(e){message('C3: '+e.message,true);}}
 setInterval(()=>{refresh();refreshC3();},5000);
 </script></body></html>'''

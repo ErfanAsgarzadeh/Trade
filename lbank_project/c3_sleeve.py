@@ -180,7 +180,7 @@ def summary(store:Store,conf:dict,price,base_equity:float)->dict:
         day=db.execute('SELECT COALESCE(SUM(pnl),0),COUNT(*) FROM trades WHERE closed>=?',(time.time()-86400,)).fetchone()
         recent=[dict(zip(('symbol','side','entry','exit','pnl','reason','closed'),r)) for r in db.execute('SELECT symbol,side,entry,exit,pnl,reason,closed FROM trades ORDER BY id DESC LIMIT 20')]
     return dict(enabled=conf['enabled'],risk_per_trade_pct=conf['risk_per_trade_pct'],confirm_bars=conf['confirm_bars'],coins=len(conf['symbols']),
-        open_positions_count=len(pos),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
+        open_positions_count=len(pos),notional_usd=float(sum(p['qty']*p['entry'] for p in pos)),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
         trades_total=int(n),win_rate_pct=float(wins/n*100) if n else None,daily_realized_pnl=float(day[0]),daily_trades_count=int(day[1]),recent_trades=recent,
         equity_usd=None if errors else base_equity+float(realized)+unreal)
 

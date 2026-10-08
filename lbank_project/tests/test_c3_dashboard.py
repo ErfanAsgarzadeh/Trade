@@ -24,7 +24,7 @@ def test_requires_pin(panel):
 
 def test_status_shows_positions_and_shared_equity(panel,system):
     client,store,sym,_=panel;s=client.get('/api/c3/status',headers=H).json()
-    assert s['open_positions_count']==1 and s['positions'][0]['symbol']==sym and s['coins']==10 and s['in_bot'] is True
+    assert s['notional_usd']==pytest.approx(200.) and s['open_positions_count']==1 and s['positions'][0]['symbol']==sym and s['coins']==10 and s['in_bot'] is True
     px=system.data.price(sym,cached=True);assert s['unrealized_pnl_usd']==pytest.approx((px-100.)*2.)
     assert s['equity_usd']==pytest.approx(system.paper_equity()+s['unrealized_pnl_usd'],rel=1e-3)
 
@@ -53,3 +53,8 @@ def test_loop_applies_dashboard_edits_without_restart(tmp_path):
     sl=C.Sleeve(C.load(cfgp),C.Store(tmp_path/'d.db'),None);sl.scan=lambda now:True;sl.watchdog=lambda now=None:None
     C.write_config(cfgp,{**sl.c,'risk_per_trade_pct':.004});C.loop(sl,cfgp,once=True);assert sl.c['risk_per_trade_pct']==.004
     cfgp.write_text('{broken');C.loop(sl,cfgp,once=True);assert sl.c['risk_per_trade_pct']==.004                      # bad file keeps old settings
+
+def test_page_has_split_views_and_one_position_table():
+    from dashboard_server import HTML
+    for v in ('all','bot','c3'):assert f'data-view="{v}"' in HTML
+    assert HTML.count('id="positions"')==1 and 'id="c3_rows"' not in HTML and "/api/c3/close" in HTML
