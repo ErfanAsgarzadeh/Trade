@@ -1,0 +1,27 @@
+{
+ "start": "2026-09-15",
+ "days": 3,
+ "bot_closed": 3,
+ "bot_pnl_closed": -106.66448830976788,
+ "c3_closed": 2,
+ "c3_pnl_closed": -46.238848072751665,
+ "bot_open": 0,
+ "c3_open": 8,
+ "final": [
+  1789689600,
+  -106.66448830976879,
+  60.160287848919324
+ ],
+ "shots": [
+  "screen_01_2026-09-15_01h.png",
+  "screen_02_2026-09-15_10h.png",
+  "screen_03_2026-09-15_22h.png",
+  "screen_04_2026-09-16_10h.png",
+  "screen_05_2026-09-17_00h.png",
+  "screen_06_2026-09-17_12h.png",
+  "screen_07_2026-09-18_00h.png",
+  "final_bot_only.png",
+  "final_c3_only.png",
+  "final_c3_panel_and_history.png"
+ ]
+}
