@@ -13,6 +13,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
+import c3_sleeve
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        LIVE_LIMITATION, LiveUnavailable, MarketData, PENDING,
                        file_lock, net_pnl, position_margin, position_leverage)
@@ -28,6 +29,11 @@ class CloseRequest(BaseModel):
 class CloseAllRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     disable_auto_trade: bool = True
+
+
+class C3Close(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    symbol: str = Field(min_length=1, max_length=80)
 
 
 def revision(c: dict) -> str:
@@ -138,7 +144,69 @@ def create_app(engine: Engine | None = None) -> FastAPI:
 
     @application.post("/api/positions/close-all", dependencies=[Depends(authorized)])
     def close_all(payload: CloseAllRequest):
-        return bot().close_all(payload.disable_auto_trade)
+        result = bot().close_all(payload.disable_auto_trade)
+        try:   # emergency stop covers the second strategy too
+            cfg, store = c3_paths()
+            conf = c3_sleeve.load(cfg)
+            if payload.disable_auto_trade and conf["enabled"]:
+                c3_sleeve.write_config(cfg, {**conf, "enabled": False})
+            closed = c3_sleeve.Sleeve(conf, store, bot().data, base_equity=bot().paper_equity).close_all("emergency")
+            result = {**result, "c3": closed}
+            result["errors"] = list(result.get("errors", [])) + [c for c in closed if c["result"] == "error"]
+        except Exception as exc:
+            LOG.exception("C3 emergency close failed")
+            result = {**result, "errors": list(result.get("errors", [])) + [{"symbol": "C3", "error": str(exc)}]}
+        return result
+
+    # ---- C3+D (second strategy, same bot process): settings, status, manual close; paper-only like the main bot ----
+    def c3_paths():
+        here = os.path.dirname(os.path.abspath(c3_sleeve.__file__))
+        from pathlib import Path
+        cfg = Path(os.getenv("C3_CONFIG", os.path.join(here, "c3_config.json")))
+        if cfg.resolve() != Path(here, "c3_config.json").resolve():
+            c3_sleeve.prepare_config(cfg, Path(here, "c3_config.json"))
+        return cfg, c3_sleeve.Store(Path(os.getenv("C3_DB", os.path.join(here, "data", "c3_sleeve.db"))))
+
+    @application.get("/api/c3/status", dependencies=[Depends(authorized)])
+    def c3_status():
+        cfg, store = c3_paths()
+        engine = bot()
+        view = c3_sleeve.summary(store, c3_sleeve.load(cfg), lambda s: engine.data.price(s, cached=True), engine.paper_equity())
+        view["in_bot"] = os.getenv("C3_IN_BOT", "1") != "0"
+        return view
+
+    @application.get("/api/c3/config", dependencies=[Depends(authorized)])
+    def c3_get_config(response: Response):
+        cfg, _ = c3_paths()
+        c = c3_sleeve.load(cfg)
+        response.headers["ETag"] = revision(c)
+        return c
+
+    @application.put("/api/c3/config", dependencies=[Depends(authorized)])
+    def c3_put_config(payload: dict, response: Response, if_match: str | None = Header(default=None)):
+        cfg, _ = c3_paths()
+        with file_lock(cfg.with_suffix(".lock")):
+            if if_match is not None and if_match != revision(c3_sleeve.load(cfg)):
+                raise HTTPException(409, "کانفیگ C3 تغییر کرده است؛ دوباره بارگذاری کنید")
+            try:
+                value = c3_sleeve.write_config(cfg, payload)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc))
+        response.headers["ETag"] = revision(value)
+        return value
+
+    @application.post("/api/c3/close", dependencies=[Depends(authorized)])
+    def c3_close(payload: C3Close):
+        cfg, store = c3_paths()
+        sl = c3_sleeve.Sleeve(c3_sleeve.load(cfg), store, bot().data, base_equity=bot().paper_equity)
+        pos = {p["symbol"]: p for p in store.positions()}.get(payload.symbol)
+        if not pos:
+            raise HTTPException(404, "پوزیشن C3 پیدا نشد")
+        try:
+            return {"symbol": payload.symbol, "pnl": sl.close(pos, bot().data.price(payload.symbol), "manual", time.time())}
+        except Exception:
+            LOG.exception("C3 close failed for %s", payload.symbol)
+            raise HTTPException(503, "بستن پوزیشن C3 انجام نشد؛ پوزیشن حفظ شده است")
 
     @application.get("/api/config", dependencies=[Depends(authorized)])
     def get_config(response: Response):
@@ -199,9 +267,24 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated">در انتظار اتصال</p></section>
 <section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
 <section class="panel kpi"><p>لغزش واقعی اندازه‌گیری‌شده با دفتر سفارش LBank (bps، میانه / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel"><div class="row"><h2>پوزیشن‌ها</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها + توقف ربات</button></div>
+<section class="panel"><div class="row"><h2>پوزیشن‌ها</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها (ربات + C3) + توقف ورود</button></div>
 <div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
-<section class="panel"><div class="row"><h2>تنظیمات</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
+<section class="panel" id="c3panel"><div class="row"><h2>استراتژی دوم: C3+D (پولبک روند ۴ساعته روی ۱۰ ارز)</h2><span id="c3badge" class="badge">—</span></div>
+<p>در همین ربات اجرا می‌شود و فقط شبیه‌سازی است؛ سرمایهٔ حساب با ربات اصلی مشترک است. تغییر تنظیمات بدون ری‌استارت در چند ثانیه اعمال می‌شود. خاموش کردن فقط ورود جدید را می‌بندد و پوزیشن‌های باز مدیریت می‌شوند.</p>
+<div class="kpis"><section class="panel kpi"><p>سود و زیان باز C3 ($)</p><strong id="c3_unrealized">—</strong><p id="c3_positions">—</p></section>
+<section class="panel kpi"><p>سود و زیان تحقق‌یافتهٔ ۲۴ ساعت ($)</p><strong id="c3_realized">—</strong><p id="c3_trades">—</p></section>
+<section class="panel kpi"><p>مجموع سود و زیان بسته‌شدهٔ C3 ($)</p><strong id="c3_total">—</strong><p id="c3_win">—</p></section></div>
+<div class="fields" style="margin-top:18px"><label><input id="c3_enabled" type="checkbox">ورود جدید C3 فعال</label>
+<label class="field">ریسک هر معامله (%)<input id="c3_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field">سقف نُوشنال هر پوزیشن (٪ سرمایه)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
+<label class="field">تأیید ورود D (تعداد کندل؛ صفر: بدون تأیید)<input id="c3_confirm" type="number" min="0" max="12" step="1"></label>
+<label><input id="c3_weekend" type="checkbox">ورود نکردن وقتی کندل سیگنال در آخر هفته بسته می‌شود</label>
+<label class="field" style="grid-column:span 2">نمادها (هر خط یکی، مثل AVAX/USDT:USDT)<textarea id="c3_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
+<details><summary>ویرایش کامل JSON تنظیمات C3</summary><textarea id="c3_editor" aria-label="C3 JSON configuration" spellcheck="false"></textarea></details>
+<div class="row" style="margin-top:18px"><p id="c3_dirty">تنظیمات C3 بارگذاری نشده است.</p><button id="c3_save" disabled>ذخیره تنظیمات C3</button></div>
+<div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>قیمت زنده</th><th>حد ضرر</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="c3_rows"></tbody></table></div>
+<details><summary>۲۰ معاملهٔ اخیر C3</summary><div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>خروج</th><th>سود و زیان ($)</th><th>دلیل</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></section>
+<section class="panel"><div class="row"><h2>تنظیمات ربات اصلی</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">ورود خودکار</label><label><input id="dry" type="checkbox" checked disabled>حالت شبیه‌سازی (Dry-run)</label>
 <label class="field">حالت استراتژی<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
 <label class="field">ریسک هر معامله (%)<input id="risk" type="number" min="0.1" max="5" step="0.1"></label>
@@ -296,13 +379,37 @@ function render(s){$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'
  if(s.price_errors.length)message('قیمت بعضی نمادها دریافت نشد؛ سود و زیان کامل در دسترس نیست.',true);
 }
 async function refresh(){if(!connected||polling)return;polling=true;try{const result=await api('/api/status');render(result.data);}catch(e){message(e.message,true);}finally{polling=false;}}
-$('connect').onclick=async()=>{try{await loadConfig();connected=true;for(const id of ['save','panic','reload'])$(id).disabled=false;await refresh();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
-$('pin').addEventListener('input',()=>{connected=false;for(const id of ['save','panic','reload'])$(id).disabled=true;$('active').textContent='قطع';});
+$('connect').onclick=async()=>{try{await loadConfig();await loadC3();connected=true;for(const id of ['save','panic','reload','c3_save'])$(id).disabled=false;await refresh();await refreshC3();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
+$('pin').addEventListener('input',()=>{connected=false;for(const id of ['save','panic','reload','c3_save'])$(id).disabled=true;$('active').textContent='قطع';});
 $('save').onclick=async()=>{const b=$('save');b.disabled=true;try{const edited=JSON.parse($('editor').value);const result=await api('/api/config','PUT',edited,etag);cfg=result.data;etag=result.etag;fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';message('تنظیمات ذخیره شد.');await refresh();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
-$('reload').onclick=async()=>{try{await loadConfig();message('تنظیمات بارگذاری شد.');}catch(e){message(e.message,true);}};
+$('reload').onclick=async()=>{try{await loadConfig();await loadC3();message('تنظیمات بارگذاری شد.');}catch(e){message(e.message,true);}};
 $('panic').onclick=async()=>{if(!confirm('همهٔ پوزیشن‌ها بسته و ورود خودکار متوقف شود؟'))return;const b=$('panic');b.disabled=true;
  try{const result=await api('/api/positions/close-all','POST',{disable_auto_trade:true});const s=result.data;message(s.errors.length?'ورود متوقف شد؛ '+s.errors.length+' پوزیشن بسته نشد. دوباره تلاش کنید.':'همه پوزیشن‌ها بسته / لغو و ورود متوقف شد.',s.errors.length>0);await loadConfig();await refresh();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
-setInterval(refresh,5000);
+
+let c3cfg=null,c3etag=null;
+const c3n=(v,n=2)=>number(v,n);
+function c3Fill(){if(!c3cfg)return;$('c3_enabled').checked=c3cfg.enabled;$('c3_risk').value=+(c3cfg.risk_per_trade_pct*100).toFixed(4);$('c3_notional').value=+(c3cfg.max_notional_pct*100).toFixed(2);
+ $('c3_confirm').value=c3cfg.confirm_bars;$('c3_weekend').checked=c3cfg.skip_weekend;$('c3_symbols').value=c3cfg.symbols.join('\n');$('c3_editor').value=JSON.stringify(c3cfg,null,2);}
+async function loadC3(){const r=await api('/api/c3/config');c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='تنظیمات C3 ذخیره شده است.';}
+function c3Changed(){if(!c3cfg)return;try{c3cfg=JSON.parse($('c3_editor').value);}catch(e){message('ابتدا JSON تنظیمات C3 را اصلاح کنید.',true);c3Fill();return;}
+ Object.assign(c3cfg,{enabled:$('c3_enabled').checked,risk_per_trade_pct:Number($('c3_risk').value)/100,max_notional_pct:Number($('c3_notional').value)/100,confirm_bars:parseInt($('c3_confirm').value||'0',10),skip_weekend:$('c3_weekend').checked,
+  symbols:$('c3_symbols').value.split(/[\s,]+/).filter(Boolean)});$('c3_editor').value=JSON.stringify(c3cfg,null,2);$('c3_dirty').textContent='تغییرات C3 ذخیره نشده است.';}
+for(const id of ['c3_enabled','c3_risk','c3_notional','c3_confirm','c3_weekend','c3_symbols'])$(id).addEventListener('change',c3Changed);
+$('c3_editor').addEventListener('input',()=>{$('c3_dirty').textContent='تغییرات C3 ذخیره نشده است.';});
+$('c3_editor').addEventListener('blur',()=>{try{c3cfg=JSON.parse($('c3_editor').value);c3Fill();}catch(e){message('JSON تنظیمات C3 نامعتبر است.',true);}});
+$('c3_save').onclick=async()=>{const b=$('c3_save');b.disabled=true;try{const edited=JSON.parse($('c3_editor').value);const r=await api('/api/c3/config','PUT',edited,c3etag);c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='تنظیمات C3 ذخیره شد و در چند ثانیه اعمال می‌شود.';await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
+function cell(tr,v,cls,ltr){const td=document.createElement('td');td.textContent=v;if(cls)td.className=cls;if(ltr)td.dir='ltr';tr.append(td);return td;}
+function renderC3(s){$('c3badge').textContent=(s.in_bot?'داخل ربات':'خاموش در ربات (C3_IN_BOT=0)')+' / '+(s.enabled?'ورود فعال':'ورود متوقف');
+ $('c3_unrealized').textContent=c3n(s.unrealized_pnl_usd);$('c3_positions').textContent=s.open_positions_count+' پوزیشن باز از '+s.coins+' ارز';
+ $('c3_realized').textContent=c3n(s.daily_realized_pnl);$('c3_realized').className=s.daily_realized_pnl<0?'bad':'good';$('c3_trades').textContent=s.daily_trades_count+' خروج در ۲۴ ساعت';
+ $('c3_total').textContent=c3n(s.realized_total_usd);$('c3_total').className=s.realized_total_usd<0?'bad':'good';$('c3_win').textContent=s.trades_total?(s.trades_total+' معامله، نرخ برد '+c3n(s.win_rate_pct,1)+'٪'):'هنوز معامله‌ای بسته نشده';
+ const rows=$('c3_rows');rows.replaceChildren();if(!s.positions.length){const tr=document.createElement('tr');const td=cell(tr,'پوزیشن باز C3 وجود ندارد.');td.colSpan=8;rows.append(tr);}
+ for(const p of s.positions){const tr=document.createElement('tr');cell(tr,p.symbol,'',1);cell(tr,p.side==='long'?'خرید':'فروش');cell(tr,c3n(p.entry,6),'',1);cell(tr,c3n(p.live_price,6),'',1);cell(tr,c3n(p.stop,6),'',1);cell(tr,c3n(p.current_r),'',1);
+  cell(tr,c3n(p.unrealized_pnl_usd),p.unrealized_pnl_usd<0?'bad':'good',1);const td=document.createElement('td'),b=document.createElement('button');b.className='danger';b.textContent='بستن آنی';
+  b.onclick=async()=>{if(!confirm('بستن '+p.symbol+' (C3)؟'))return;b.disabled=true;try{await api('/api/c3/close','POST',{symbol:p.symbol});await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};td.append(b);tr.append(td);rows.append(tr);}
+ const h=$('c3_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}}
+async function refreshC3(){if(!connected)return;try{const r=await api('/api/c3/status');renderC3(r.data);}catch(e){message('C3: '+e.message,true);}}
+setInterval(()=>{refresh();refreshC3();},5000);
 </script></body></html>'''
 
 app = create_app()

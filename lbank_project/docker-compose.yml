@@ -36,6 +36,8 @@ services:
       OHLCV_DIR: /app/runtime/ohlcv
       BOT_CONFIG: /app/runtime/config.json
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+      C3_CONFIG: /app/runtime/c3_config.json
+      C3_DB: /app/runtime/c3_sleeve.db
     volumes:
       - ./runtime:/app/runtime
     ports:

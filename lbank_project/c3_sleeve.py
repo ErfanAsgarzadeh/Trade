@@ -102,6 +102,13 @@ class Sleeve:
                 db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,p['qty'],p['opened'],now,pnl,reason))
         LOG.info('C3 close %s %s at %.6g pnl %.2f (%s)',p['symbol'],p['side'],price,pnl,reason);return pnl
 
+    def close_all(self,reason:str='manual',now:float|None=None)->list[dict]:
+        now=now or time.time();out=[]
+        for p in self.store.positions():
+            try:out.append(dict(symbol=p['symbol'],result='closed',pnl=self.close(p,self.data.price(p['symbol']),reason,now)))
+            except Exception as exc:LOG.exception('C3 close failed for %s',p['symbol']);out.append(dict(symbol=p['symbol'],result='error',error=str(exc)))
+        return out
+
     def watchdog(self,now:float|None=None):
         now=now or time.time()
         for p in self.store.positions():
@@ -151,6 +158,32 @@ class Sleeve:
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
+def write_config(path:Path,c:dict)->dict:
+    """Validate (paper-only, ranges, unknown keys) then replace the file atomically; the running sleeve reloads it within seconds."""
+    import tempfile
+    v=validate(c);path.parent.mkdir(parents=True,exist_ok=True)
+    with tempfile.NamedTemporaryFile('w',dir=path.parent,prefix=path.name+'.',suffix='.tmp',delete=False) as h:
+        h.write(json.dumps(v,ensure_ascii=False,indent=2)+'\n');h.flush();os.fsync(h.fileno());tmp=Path(h.name)
+    os.replace(tmp,path);return v
+
+def summary(store:Store,conf:dict,price,base_equity:float)->dict:
+    """Dashboard view: open positions with live P&L, realized totals, equity of the shared paper account."""
+    pos=[];unreal=0.;errors=[]
+    for p in store.positions():
+        sign=1 if p['side']=='long' else -1;px=None;pnl=None;r=None
+        try:
+            px=price(p['symbol']);pnl=sign*(px-p['entry'])*p['qty'];unreal+=pnl;r=pnl/p['risk_usd'] if p['risk_usd'] else None
+        except Exception as exc:errors.append(dict(symbol=p['symbol'],error=str(exc)))
+        pos.append(dict(p,live_price=px,unrealized_pnl_usd=pnl,current_r=r))
+    with store.db() as db:
+        n,wins,realized=db.execute('SELECT COUNT(*),COALESCE(SUM(pnl>0),0),COALESCE(SUM(pnl),0) FROM trades').fetchone()
+        day=db.execute('SELECT COALESCE(SUM(pnl),0),COUNT(*) FROM trades WHERE closed>=?',(time.time()-86400,)).fetchone()
+        recent=[dict(zip(('symbol','side','entry','exit','pnl','reason','closed'),r)) for r in db.execute('SELECT symbol,side,entry,exit,pnl,reason,closed FROM trades ORDER BY id DESC LIMIT 20')]
+    return dict(enabled=conf['enabled'],risk_per_trade_pct=conf['risk_per_trade_pct'],confirm_bars=conf['confirm_bars'],coins=len(conf['symbols']),
+        open_positions_count=len(pos),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
+        trades_total=int(n),win_rate_pct=float(wins/n*100) if n else None,daily_realized_pnl=float(day[0]),daily_trades_count=int(day[1]),recent_trades=recent,
+        equity_usd=None if errors else base_equity+float(realized)+unreal)
+
 OLD_DEFAULT_RISK=.0015   # shipped default before the risk sweep; runtime copies still holding it are upgraded
 
 def prepare_config(path:Path,shipped:Path)->Path:
@@ -174,9 +207,10 @@ def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
     last=None
     while not (stop and stop.is_set()):
         try:
+            try:sl.c=load(cfg)   # dashboard edits apply within one cycle; an invalid file keeps the previous settings
+            except Exception:LOG.exception('C3 config unreadable; keeping previous settings')
             now=time.time();boundary=int(now)//H4*H4
             if now>=boundary+3 and boundary!=last:
-                sl.c=load(cfg)
                 if sl.scan(now):last=boundary
             else:sl.watchdog(now)
         except Exception:LOG.exception('C3 cycle failed; will retry')
