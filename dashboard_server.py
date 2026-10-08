@@ -385,7 +385,7 @@ function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySel
  const rl=(useB?b.daily_realized_pnl:0)+(useC?c.daily_realized_pnl:0),tr=(useB?b.daily_trades_count:0)+(useC?c.daily_trades_count:0);
  $('unrealized').textContent=number(un);$('unrealized').className=un<0?'bad':'';$('realized').textContent=number(rl);$('realized').className=rl<0?'bad':'good';$('trades').textContent=tr+' خروج ثبت‌شده در ۲۴ ساعت';
  const bo=b?b.open_positions_count:0,co=c?c.open_positions_count:0;
- if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+c.max_open_positions+' ارز';}
+ if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+c.max_open_positions+' پوزیشن ('+c.coins+' ارز)';}
  else if(useB){$('slots').textContent=bo+' / '+b.max_open_positions;$('updated_sub').textContent='پوزیشن‌ها و سفارش‌های در انتظار';}
  else{$('slots').textContent=co+' / '+c.max_open_positions;$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
  if(useC){const eq=c.equity_usd;$('equity').textContent=number(eq);$('equity_note').textContent=view==='c3'?'سرمایهٔ مشترک؛ C3 '+(c.realized_total_usd>=0?'+':'')+number(c.realized_total_usd)+' سود بسته‌شده':'سرمایهٔ مشترک ربات + C3';}
