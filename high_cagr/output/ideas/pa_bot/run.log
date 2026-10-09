@@ -1,0 +1,90 @@
+configs 228
+causal {'causal': True}
+TWO (bot 1% + C3+D 0.4%): {'full': [np.float64(3.48), np.float64(106.89), np.float64(30.71)], 'train': [np.float64(3.29), np.float64(101.13), np.float64(30.71)], 'oos': [np.float64(4.43), np.float64(117.94), np.float64(26.6)]}
+  coin ATOMUSDT
+  coin FILUSDT
+  coin LTCUSDT
+  coin AXSUSDT
+  coin LINKUSDT
+  coin XTZUSDT
+  coin ALGOUSDT
+  coin ETCUSDT
+  coin NEARUSDT
+  coin CELRUSDT
+  coin BCHUSDT
+  coin ALICEUSDT
+  coin C98USDT
+  coin 1000SHIBUSDT
+  coin THETAUSDT
+  coin IOSTUSDT
+  coin CVCUSDT
+  coin CRVUSDT
+  coin IOTAUSDT
+  coin VETUSDT
+OTHER20 done 234 s
+
+eligible 45 of 228; TWO train Calmar 3.29 valid 4.43 full 3.48 DD 30.7%
+  coin BTCUSDT
+  coin ETHUSDT
+  coin SOLUSDT
+  coin XRPUSDT
+  coin ADAUSDT
+  coin AAVEUSDT
+  coin UNIUSDT
+  coin AVAXUSDT
+  coin KSMUSDT
+  coin EGLDUSDT
+  coin DOTUSDT
+  coin DOGEUSDT
+  coin ONEUSDT
+  coin TRXUSDT
+  coin SUSHIUSDT
+  coin ATOMUSDT
+  coin FILUSDT
+  coin LTCUSDT
+  coin AXSUSDT
+  coin LINKUSDT
+  coin XTZUSDT
+  coin ALGOUSDT
+  coin ETCUSDT
+  coin NEARUSDT
+  coin CELRUSDT
+  coin BCHUSDT
+  coin ALICEUSDT
+  coin C98USDT
+  coin 1000SHIBUSDT
+  coin THETAUSDT
+  coin IOSTUSDT
+  coin CVCUSDT
+  coin CRVUSDT
+  coin IOTAUSDT
+  coin VETUSDT
+CAND 4h|CHOCH|TP1|none: PA train 0.24 valid 0.41 (CAGR 8.7%) | THREE train 3.95 valid 4.21 full 3.79 DD 29.9% | IN15 full -0.10 | 5bps 3.69 | {'V1': True, 'V2': False, 'V3': True, 'V4': False, 'V5': True, 'V6': True} PASS=False
+CAND 4h|CHOCH|TP1|HTF: PA train 0.20 valid 0.25 (CAGR 5.4%) | THREE train 3.84 valid 4.10 full 3.71 DD 29.6% | IN15 full -0.04 | 5bps 3.67 | {'V1': False, 'V2': False, 'V3': True, 'V4': False, 'V5': True, 'V6': True} PASS=False
+CAND 4h|KEYREV|TP2|none: PA train -0.02 valid 0.75 (CAGR 16.6%) | THREE train 3.80 valid 5.71 full 4.25 DD 26.6% | IN15 full 0.11 | 5bps 4.14 | {'V1': True, 'V2': True, 'V3': True, 'V4': True, 'V5': True, 'V6': True} PASS=True
+CAND 4h|CHOCH|TP2|none: PA train 0.25 valid 0.30 (CAGR 7.7%) | THREE train 3.65 valid 4.11 full 3.76 DD 30.0% | IN15 full 0.03 | 5bps 3.66 | {'V1': False, 'V2': False, 'V3': True, 'V4': False, 'V5': True, 'V6': True} PASS=False
+CAND 4h|CHOCH|TP2|HTF: PA train 0.36 valid -0.14 (CAGR -3.9%) | THREE train 3.59 valid 3.55 full 3.46 DD 31.1% | IN15 full 0.16 | 5bps 3.41 | {'V1': False, 'V2': False, 'V3': True, 'V4': False, 'V5': False, 'V6': True} PASS=False
+WINNER 4h|KEYREV|TP2|none risk pick {'risk': 0.0015, 'train': (np.float64(4.024589239537475), np.float64(101.31903290702944), np.float64(25.174999702248748)), 'oos': (np.float64(5.434035269406645), np.float64(129.60168563967764), np.float64(23.849989780031212)), 'full': (np.float64(4.402859264254623), np.float64(110.84198066665327), np.float64(25.174999702248748))}
+
+best per family:
+   fam tf  exit filter  n_train  n_valid  pa_train_cal  pa_valid_cal  pa_full_cagr  three_train_cal  three_valid_cal  corr_bot  corr_c3
+    H2 4h   TP1    HTF     1484      864          0.89         -0.55          2.21             3.38             3.35      0.27     0.31
+EMAREJ 4h   TP2   none     4900     2926         -0.37         -0.72        -42.01             1.17             0.93      0.29     0.32
+RETEST 4h   TP2    HTF     1974     1222         -0.23         -0.65        -26.02             1.85             1.52      0.33     0.45
+INSIDE 4h   TP1    HTF     4726     2604          0.01         -0.60        -11.45             2.40             2.32      0.32     0.45
+  FLAG 4h   TP1    HTF      371      220          0.19         -0.34         -1.38             3.04             4.04      0.21     0.17
+   BOS 4h   TP2   none     2006     1065          0.34         -0.44          1.12             2.88             2.61      0.43     0.29
+   FVG 4h   TP1   none     1768      959         -0.29         -0.50        -18.17             2.43             3.03      0.29     0.18
+   NR7 4h   TP2    HTF     6086     3550         -0.66         -0.77        -65.31             0.36             0.52      0.28     0.35
+   BOX 4h   TP1    HTF     1970     1230          0.09         -0.18         -0.37             3.06             2.73      0.31     0.45
+   PIN 4h TRAIL    HTF      916      475         -0.16         -0.61        -15.96             2.04             2.64      0.22     0.49
+ENGULF 4h TRAIL    HTF     1990     1214         -0.33         -0.56        -30.14             1.42             1.40      0.35     0.62
+DOUBLE 4h   TP1    HTF     1038      626          0.73         -0.44          2.08             3.37             3.47      0.22     0.47
+   SFP 4h   TP2   none     1407      902         -0.22         -0.47        -13.31             2.48             3.40     -0.03    -0.03
+ FAKEY 4h TRAIL    HTF     1998     1017         -0.05         -0.68        -25.44             1.98             1.04      0.37     0.58
+  TRAP 4h TRAIL    HTF     1675      991         -0.02          0.14          0.83             2.08             4.18      0.15     0.62
+ WEDGE 4h   TP1    HTF      597      370          0.06         -0.19         -0.25             3.31             4.07      0.05     0.36
+ CHOCH 4h   TP1   none     1927     1151          0.24          0.41          7.28             3.95             4.21      0.18     0.10
+KEYREV 4h   TP2   none     1104      828         -0.02          0.75          5.09             3.80             5.71      0.01     0.03
+CLIMAX 4h   TP1    HTF       21       23          0.89          0.26          0.78             3.33             4.48     -0.10     0.07
+spearman train/valid 0.81 share positive both 0.05 time 245 s

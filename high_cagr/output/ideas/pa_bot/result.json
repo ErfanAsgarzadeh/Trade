@@ -1,0 +1,1102 @@
+{
+ "notes": "Third bot: a stand-alone PRICE-ACTION strategy next to the main bot and C3+D. Written and committed BEFORE running;\none run, no tuning afterwards.\n\nQUESTION. Which price-action entry, if any, earns a place as a third bot that trades at the same time as the main bot\n(2A+5A, 5 coins, 1.0% risk) and C3+D (10 coins, 0.4% risk) on the same account, and makes the WHOLE account better?\n\nUNIVERSES. Deploy universe = OTHER20: the 20 tested coins that neither the main bot nor C3 trades (no symbol is ever held\nby two bots; coins are fixed in advance, never chosen by profit). Generalisation universe = IN15: the bot's 5 coins +\nC3's 10 coins (used only as a check, never for deployment).\nPERIODS. TRAIN 2021-10-05..2024-12-31 (all choices), VALIDATION 2025-01-01..2026-10-04 (judges only).\n\nENTRY FAMILIES (19), coded on closed bars only, long side; shorts are the exact mirror (same code on negated prices).\na = ATR14 (Wilder) of the signal bar, trend TR = EMA20 > EMA50 and close > EMA50, pivots = 3-bar fractals usable only\nafter the 3 later bars closed. STOP = buy-stop entry at the level, valid for the given bars; MKT = next bar open.\n Trend continuation\n  H2       Al Brooks High-2: in TR with EMA20 rising, second bar with a higher high after the last 21-bar high\n           (<= 15 bars ago); signal bar closes in its upper half. STOP above signal high, 1 bar; stop min(low, prev low)-0.1a\n  EMAREJ   pullback to EMA20 in TR (low <= EMA20+0.1a, close > EMA20), close in the top 40% of the bar; STOP above high\n  RETEST   break and retest: close broke the last pivot high L within the last 10 bars, no close below L-0.5a since,\n           signal bar tests L (low <= L+0.3a), closes above L and up; STOP above high, stop low-0.2a\n  INSIDE   inside bar in TR; STOP above the mother bar high, 2 bars; stop mother low-0.1a\n  FLAG     pole close[t-5]-close[t-15] >= 4a, flag = last 5 bars within 2a and above the pole's 50% retrace; STOP above\n           the flag high, 3 bars; stop flag low-0.1a\n  BOS      Dow structure: last two pivot highs and lows both rising; first close above the last pivot high; MKT,\n           stop last pivot low-0.2a\n  FVG      bullish fair-value gap (low[i] > high[i-2], displacement body >= 1a) in the last 20 bars, unfilled; signal bar\n           trades into the gap and closes above its bottom, close > EMA50; STOP above high, stop min(low, gap bottom)-0.2a\n Breakout\n  NR7      narrowest range of the last 7 bars, in TR; STOP above its high, 2 bars; stop its low-0.2a\n  BOX      last 20 bars range < 4a and close breaks above it; MKT, stop box middle\n Reversal / failure\n  PIN      pin bar at support: lower wick >= 2x body and >= 60% of range, close in the top third, low = lowest of 5 bars,\n           within 0.5a of one of the last two pivot lows; STOP above high, stop low-0.1a\n  ENGULF   bullish engulfing at support (same support test on min(low, prev low)); STOP above high\n  DOUBLE   double bottom: last two pivot lows within 0.5a, 5..60 bars apart; first close above the neckline (highest\n           high between them) within 30 bars of the second low; MKT, stop lower low-0.2a\n  SFP      swing failure / liquidity sweep: low takes out the last pivot low (>= 5 bars old), close back above it in the\n           upper half of the bar; STOP above high, stop low-0.1a\n  FAKEY    inside bar, then a false break of its low that closes back inside the mother bar; STOP above the inside high,\n           2 bars; stop low-0.1a\n  TRAP     failed breakdown: one of the last 3 bars closed below the prior 20-bar low, now close back above that level\n           (first close); MKT, stop lowest low since the breakdown-0.2a\n  WEDGE    three falling pivot lows with shrinking pushes, newest <= 10 bars old; bull bar closing above the prior high;\n           STOP above high, stop min(low, last pivot)-0.1a\n  CHOCH    change of character: last two pivot highs and lows both falling; first close above the last pivot high; MKT,\n           stop lowest low since the last pivot low-0.2a\n  KEYREV   outside bar making a new 10-bar low, closing up and in the top 25% of its range; STOP above high\n  CLIMAX   climactic bear bar (range > 2a, close < EMA20-3a), next bar bull closing above its middle; STOP above high,\n           stop min(both lows)-0.1a\nTIMEFRAMES 1h, 4h. EXITS (3): TP1 = fixed 1R target, TP2 = fixed 2R target (both with a 30-bar time stop at a bar\n  close), TRAIL = after +1R (bar close) stop to entry + costs, then 3 ATR chandelier on closes; no target.\nFILTERS (2): none | HTF = last completed higher-timeframe bar (4h for 1h, 1d for 4h) closed beyond its EMA50 on the\n  trade side. -> 19 x 2 x 3 x 2 = 228 configs.\nSIMULATION on real 1-minute prices (fills, stops, targets and stop-entry triggers minute by minute; a minute touching both\n  stop and target counts as the stop). One position per coin, no new signal while in a trade. Taker 0.06%/side + 2 bps\n  slippage on every fill (targets included) + observed funding. Risk 0.5% of a fixed 1e4 base per trade (stop\n  distance + cost allowance), notional <= 1.0 x base, skip trades whose stop is < 0.4% of the fill price. Daily\n  mark-to-market at UTC day close, series combined by sum (as risk_sweep / c3_portfolio).\nACCOUNT. TWO = main bot at 1.0% (risk_sweep.bot_series) + C3+D at 0.4% (risk_sweep.c3_series) = the deployed pair.\n  THREE(x) = TWO + PA series at x% risk (PA series scaled by x/0.5).\nSELECTION (TRAIN only):\n  S1 eligible: >= 200 TRAIN trades on OTHER20 and TRAIN PA net > 0.\n  S2 rank eligible configs by TRAIN Calmar of THREE(0.25); the top 5 go to validation.\nVALIDATION gates (each of the 5; all must hold):\n  V1 PA alone (OTHER20): validation net > 0 and validation Calmar >= 0.3\n  V2 THREE(0.25) validation Calmar >= TWO validation Calmar + 0.05\n  V3 THREE(0.25) full-period max DD <= TWO full max DD + 1.0 pp\n  V4 IN15 generalisation: PA alone on IN15 has full-period Calmar > 0 AND validation net > 0\n  V5 cost stress: PA leg at 5 bps slippage per fill (other two unchanged): THREE(0.25) full Calmar >= TWO full Calmar\n  V6 causal: signals on data truncated at 40% / 70% equal the full-data signals before the cut (3 coins, both tfs)\nWINNER = highest TRAIN THREE(0.25) Calmar among configs passing V1..V6. PA risk for the winner chosen on TRAIN from\n  {0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5}%: highest THREE train Calmar with THREE train DD <= TWO train DD + 2 pp.\n  If nothing passes, nothing is added to the bot.\nAlso reported (information, no decisions): best config of every family, train/validation persistence, correlations of\nthe PA series with the bot and C3+D, peak combined notional.\n",
+ "causal": {
+  "causal": true
+ },
+ "two": {
+  "full": [
+   3.4809705239604134,
+   106.88671251261863,
+   30.706009079045614
+  ],
+  "train": [
+   3.293491622749437,
+   101.12998366990489,
+   30.706009079045614
+  ],
+  "oos": [
+   4.433744268275584,
+   117.93910300008332,
+   26.600339546861907
+  ]
+ },
+ "bot": {
+  "full": [
+   2.3454412023638205,
+   53.89963428647977,
+   22.98059496531304
+  ],
+  "train": [
+   2.183785661941539,
+   46.74424959079466,
+   21.405145388323387
+  ],
+  "oos": [
+   2.9600394247368786,
+   68.02346710123632,
+   22.980594965313006
+  ]
+ },
+ "c3": {
+  "full": [
+   1.7033027155012046,
+   37.742768927580904,
+   22.15857967236019
+  ],
+  "train": [
+   1.8107266231870047,
+   40.12313014475297,
+   22.15857967236019
+  ],
+  "oos": [
+   2.2712877878560347,
+   33.458366246548856,
+   14.731011378409086
+  ]
+ },
+ "candidates": {
+  "4h|CHOCH|TP1|none": {
+   "pa": {
+    "full": [
+     0.2627703890184107,
+     7.2817541245327355,
+     27.711471417057375
+    ],
+    "train": [
+     0.23534551712826463,
+     6.5217705710324925,
+     27.711471417057375
+    ],
+    "oos": [
+     0.40691863174892645,
+     8.697593022547911,
+     21.374280615183107
+    ]
+   },
+   "three": {
+    "full": [
+     3.79402026801874,
+     113.52312083753785,
+     29.921590507691278
+    ],
+    "train": [
+     3.9451285509683323,
+     107.11191785791043,
+     27.150425258416433
+    ],
+    "oos": [
+     4.206725996018516,
+     125.87193263092571,
+     29.921590507691263
+    ]
+   },
+   "in15": {
+    "full": [
+     -0.10370293272674753,
+     -3.1879880831979346,
+     30.7415422049648
+    ],
+    "train": [
+     -0.0844823635556483,
+     -2.5971181448211422,
+     30.7415422049648
+    ],
+    "oos": [
+     -0.24486084011400824,
+     -4.268307404833305,
+     17.43156399710939
+    ]
+   },
+   "three_5bps": {
+    "full": [
+     3.6936718499329797,
+     110.90867207394557,
+     30.02667171853882
+    ],
+    "train": [
+     3.75809111410253,
+     104.41668386666927,
+     27.784500347753017
+    ],
+    "oos": [
+     4.110578992559521,
+     123.4270059827065,
+     30.026671718538754
+    ]
+   },
+   "n": [
+    1927,
+    1151
+   ],
+   "gates": {
+    "V1": true,
+    "V2": false,
+    "V3": true,
+    "V4": false,
+    "V5": true,
+    "V6": true
+   },
+   "passed": false
+  },
+  "4h|CHOCH|TP1|HTF": {
+   "pa": {
+    "full": [
+     0.18772820192800843,
+     4.975558110032985,
+     26.50405244887528
+    ],
+    "train": [
+     0.20483908609280602,
+     4.7397114582344635,
+     23.138706331110328
+    ],
+    "oos": [
+     0.24661384436306572,
+     5.4119088951466665,
+     21.94487056930687
+    ]
+   },
+   "three": {
+    "full": [
+     3.7148328950460447,
+     109.91997317088465,
+     29.589479870674563
+    ],
+    "train": [
+     3.839770675128793,
+     104.01049501916715,
+     27.087684088237495
+    ],
+    "oos": [
+     4.0984517566300696,
+     121.27105575373656,
+     29.58947987067464
+    ]
+   },
+   "in15": {
+    "full": [
+     -0.04091172358189894,
+     -1.1582841604760752,
+     28.311790828303028
+    ],
+    "train": [
+     0.05200676050742799,
+     1.0257533301091248,
+     19.723461336581792
+    ],
+    "oos": [
+     -0.23425412622033784,
+     -5.063086227118873,
+     21.61364800189931
+    ]
+   },
+   "three_5bps": {
+    "full": [
+     3.669055049167988,
+     108.79508494002566,
+     29.652072122683613
+    ],
+    "train": [
+     3.7640874063447303,
+     102.85630477869003,
+     27.325695095527237
+    ],
+    "oos": [
+     4.053927390022523,
+     120.20734734907043,
+     29.652072122683627
+    ]
+   },
+   "n": [
+    1006,
+    650
+   ],
+   "gates": {
+    "V1": false,
+    "V2": false,
+    "V3": true,
+    "V4": false,
+    "V5": true,
+    "V6": true
+   },
+   "passed": false
+  },
+  "4h|KEYREV|TP2|none": {
+   "pa": {
+    "full": [
+     0.13192363531203222,
+     5.092995802005773,
+     38.60563567672746
+    ],
+    "train": [
+     -0.016626323191792452,
+     -0.6418697757858638,
+     38.60563567672746
+    ],
+    "oos": [
+     0.748038911093375,
+     16.551667166625926,
+     22.126746244300442
+    ]
+   },
+   "three": {
+    "full": [
+     4.252159034747984,
+     113.0654684607518,
+     26.590131633553295
+    ],
+    "train": [
+     3.804163395399489,
+     101.15320543921746,
+     26.590131633553295
+    ],
+    "oos": [
+     5.708088652892838,
+     136.91544541450992,
+     23.98621565646527
+    ]
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "three_5bps": {
+    "full": [
+     4.142407100190652,
+     110.20274314509484,
+     26.603552108633366
+    ],
+    "train": [
+     3.7212028268960444,
+     98.9972133121227,
+     26.603552108633366
+    ],
+    "oos": [
+     5.466528515524262,
+     132.5494545444021,
+     24.247464212064042
+    ]
+   },
+   "n": [
+    1104,
+    828
+   ],
+   "gates": {
+    "V1": true,
+    "V2": true,
+    "V3": true,
+    "V4": true,
+    "V5": true,
+    "V6": true
+   },
+   "passed": true
+  },
+  "4h|CHOCH|TP2|none": {
+   "pa": {
+    "full": [
+     0.2504515447074627,
+     7.914616494958127,
+     31.60138822143306
+    ],
+    "train": [
+     0.253331367917678,
+     8.005622906233235,
+     31.60138822143306
+    ],
+    "oos": [
+     0.29632561774392424,
+     7.7469801957671836,
+     26.143471005810547
+    ]
+   },
+   "three": {
+    "full": [
+     3.7612997861905426,
+     113.01002605611718,
+     30.045471640157174
+    ],
+    "train": [
+     3.64963532962332,
+     107.48929013076682,
+     29.45206313033495
+    ],
+    "oos": [
+     4.11308933658638,
+     123.57970901583872,
+     30.045471640157118
+    ]
+   },
+   "in15": {
+    "full": [
+     0.02820338156018033,
+     0.7245881256388254,
+     25.69153362311184
+    ],
+    "train": [
+     0.17405709556070503,
+     4.471793722939044,
+     25.69153362311184
+    ],
+    "oos": [
+     -0.29831119957849334,
+     -5.837201765670463,
+     19.56749117672515
+    ]
+   },
+   "three_5bps": {
+    "full": [
+     3.664898583682281,
+     110.57953626643683,
+     30.172604709659613
+    ],
+    "train": [
+     3.5484155318431934,
+     105.64931830778575,
+     29.77366020402552
+    ],
+    "oos": [
+     3.9765911167076795,
+     119.98411185636475,
+     30.172604709659623
+    ]
+   },
+   "n": [
+    1856,
+    1103
+   ],
+   "gates": {
+    "V1": false,
+    "V2": false,
+    "V3": true,
+    "V4": false,
+    "V5": true,
+    "V6": true
+   },
+   "passed": false
+  },
+  "4h|CHOCH|TP2|HTF": {
+   "pa": {
+    "full": [
+     0.11596331278134649,
+     3.7848752844097167,
+     32.63855777858168
+    ],
+    "train": [
+     0.35954807796225297,
+     8.20028432512303,
+     22.807198335194368
+    ],
+    "oos": [
+     -0.13542409666238867,
+     -3.891050243609595,
+     28.73233301537138
+    ]
+   },
+   "three": {
+    "full": [
+     3.4627512692273066,
+     107.8153539128378,
+     31.135748868527934
+    ],
+    "train": [
+     3.586806422657624,
+     106.3581869192054,
+     29.652614160426282
+    ],
+    "oos": [
+     3.549930839987852,
+     110.52975513450387,
+     31.135748868527845
+    ]
+   },
+   "in15": {
+    "full": [
+     0.1585696429934806,
+     3.7139303760808096,
+     23.421446286749248
+    ],
+    "train": [
+     0.5255368487858821,
+     9.569072354722374,
+     18.20818535718144
+    ],
+    "oos": [
+     -0.2679633605727977,
+     -6.2760894564726115,
+     23.42144628674928
+    ]
+   },
+   "three_5bps": {
+    "full": [
+     3.40731622534657,
+     106.30880356743711,
+     31.200157700838016
+    ],
+    "train": [
+     3.5058689150431643,
+     105.26621837859773,
+     30.025714289235395
+    ],
+    "oos": [
+     3.469389064318456,
+     108.24548593229895,
+     31.200157700838094
+    ]
+   },
+   "n": [
+    999,
+    646
+   ],
+   "gates": {
+    "V1": false,
+    "V2": false,
+    "V3": true,
+    "V4": false,
+    "V5": false,
+    "V6": true
+   },
+   "passed": false
+  }
+ },
+ "winner": {
+  "config": "4h|KEYREV|TP2|none",
+  "risk_grid": [
+   {
+    "risk": 0.001,
+    "train": [
+     3.7452142895396916,
+     101.31451133372602,
+     27.051726150008403
+    ],
+    "oos": [
+     5.078012666004609,
+     125.80057140563943,
+     24.773583620188088
+    ],
+    "full": [
+     4.051684040086299,
+     109.60504709877421,
+     27.051726150008403
+    ]
+   },
+   {
+    "risk": 0.0015,
+    "train": [
+     4.024589239537475,
+     101.31903290702944,
+     25.174999702248748
+    ],
+    "oos": [
+     5.434035269406645,
+     129.60168563967764,
+     23.849989780031212
+    ],
+    "full": [
+     4.402859264254623,
+     110.84198066665327,
+     25.174999702248748
+    ]
+   },
+   {
+    "risk": 0.002,
+    "train": [
+     3.982672358784532,
+     101.26520766540827,
+     25.426447004119947
+    ],
+    "oos": [
+     5.691870205026044,
+     133.30856065861065,
+     23.420871498597474
+    ],
+    "full": [
+     4.404697933044373,
+     111.99581856370942,
+     25.426447004119947
+    ]
+   },
+   {
+    "risk": 0.0025,
+    "train": [
+     3.804163395399489,
+     101.15320543921746,
+     26.590131633553295
+    ],
+    "oos": [
+     5.708088652892838,
+     136.91544541450992,
+     23.98621565646527
+    ],
+    "full": [
+     4.252159034747984,
+     113.0654684607518,
+     26.590131633553295
+    ]
+   },
+   {
+    "risk": 0.003,
+    "train": [
+     3.640499620379776,
+     100.9832426787661,
+     27.73884170003884
+    ],
+    "oos": [
+     5.715656961368455,
+     140.41670033905135,
+     24.567027253054817
+    ],
+    "full": [
+     4.11156065346011,
+     114.04993010643824,
+     27.73884170003884
+    ]
+   },
+   {
+    "risk": 0.004,
+    "train": [
+     3.3499179070076073,
+     100.47053184646022,
+     29.99193849983264
+    ],
+    "oos": [
+     5.706634400542185,
+     147.08040232547702,
+     25.77358071361694
+    ],
+    "full": [
+     3.8596957272146133,
+     115.7597568786875,
+     29.99193849983264
+    ]
+   },
+   {
+    "risk": 0.005,
+    "train": [
+     3.098454143350326,
+     99.72972159404617,
+     32.18692837784246
+    ],
+    "oos": [
+     5.668320458696604,
+     153.25729781915754,
+     27.037514716378286
+    ],
+    "full": [
+     3.63871911055808,
+     117.11919139861955,
+     32.18692837784246
+    ]
+   }
+  ],
+  "risk_pick": {
+   "risk": 0.0015,
+   "train": [
+    4.024589239537475,
+    101.31903290702944,
+    25.174999702248748
+   ],
+   "oos": [
+    5.434035269406645,
+    129.60168563967764,
+    23.849989780031212
+   ],
+   "full": [
+    4.402859264254623,
+    110.84198066665327,
+    25.174999702248748
+   ]
+  }
+ },
+ "family_best": [
+  {
+   "tf": "4h",
+   "fam": "H2",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 1484,
+   "n_valid": 864,
+   "pa_train_cal": 0.8887046646771769,
+   "pa_train_cagr": 14.531451197918344,
+   "pa_train_dd": 16.351271435260117,
+   "pa_valid_cal": -0.5451594441649259,
+   "pa_valid_cagr": -17.14342893623887,
+   "pa_full_cal": 0.06478869391850064,
+   "pa_full_cagr": 2.209729227236523,
+   "pa_full_dd": 34.10671050131368,
+   "pa_train_net": 0.49807479762395157,
+   "pa_valid_net": -0.29971808329742655,
+   "three_train_cal": 3.383306838640131,
+   "three_valid_cal": 3.3548181331738487,
+   "three_full_cal": 3.2032220471230306,
+   "three_full_cagr": 106.69851666862611,
+   "three_full_dd": 33.30974721669927,
+   "corr_bot": 0.2672428540745888,
+   "corr_c3": 0.31157585736952825
+  },
+  {
+   "tf": "4h",
+   "fam": "EMAREJ",
+   "exit": "TP2",
+   "filter": "none",
+   "n_train": 4900,
+   "n_valid": 2926,
+   "pa_train_cal": -0.3693530409823154,
+   "pa_train_cagr": -32.34451610634175,
+   "pa_train_dd": 87.57073184051679,
+   "pa_valid_cal": -0.7208595734557419,
+   "pa_valid_cagr": -56.3605236424765,
+   "pa_full_cal": -0.4379981862043065,
+   "pa_full_cagr": -42.010099479589016,
+   "pa_full_dd": 95.91386631905637,
+   "pa_train_net": -0.7666576772988694,
+   "pa_valid_net": -1.1797251147016887,
+   "three_train_cal": 1.171128851561305,
+   "three_valid_cal": 0.9296433331424286,
+   "three_full_cal": 1.0250190459466313,
+   "three_full_cagr": 55.85465857937972,
+   "three_full_dd": 54.4913373075878,
+   "corr_bot": 0.2897727582580179,
+   "corr_c3": 0.3187666126957998
+  },
+  {
+   "tf": "4h",
+   "fam": "RETEST",
+   "exit": "TP2",
+   "filter": "HTF",
+   "n_train": 1974,
+   "n_valid": 1222,
+   "pa_train_cal": -0.22674624575755814,
+   "pa_train_cagr": -14.97183765164769,
+   "pa_train_dd": 66.02904317831967,
+   "pa_valid_cal": -0.645036184455833,
+   "pa_valid_cagr": -42.76240748553206,
+   "pa_full_cal": -0.3173990941883519,
+   "pa_full_cagr": -26.0171063031968,
+   "pa_full_dd": 81.96969298140988,
+   "pa_train_net": -0.3658824727581985,
+   "pa_valid_net": -0.8789009382825188,
+   "three_train_cal": 1.851429741302697,
+   "three_valid_cal": 1.520144596446652,
+   "three_full_cal": 1.6772339953109001,
+   "three_full_cagr": 73.87987137537215,
+   "three_full_dd": 44.04863697129954,
+   "corr_bot": 0.332979873908161,
+   "corr_c3": 0.4527887305157968
+  },
+  {
+   "tf": "4h",
+   "fam": "INSIDE",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 4726,
+   "n_valid": 2604,
+   "pa_train_cal": 0.009024413857414653,
+   "pa_train_cagr": 0.6251906990760281,
+   "pa_train_dd": 69.27770700169718,
+   "pa_valid_cal": -0.6044928493806394,
+   "pa_valid_cagr": -30.049558833953938,
+   "pa_full_cal": -0.157664374478882,
+   "pa_full_cagr": -11.450680513374078,
+   "pa_full_dd": 72.6269364986306,
+   "pa_train_net": 0.2625115043560425,
+   "pa_valid_net": -0.511426377917599,
+   "three_train_cal": 2.3968849013559264,
+   "three_valid_cal": 2.323951903665737,
+   "three_full_cal": 2.2186984493345254,
+   "three_full_cagr": 89.94783499626851,
+   "three_full_dd": 40.54081122346634,
+   "corr_bot": 0.32435007445892283,
+   "corr_c3": 0.45303487173755774
+  },
+  {
+   "tf": "4h",
+   "fam": "FLAG",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 371,
+   "n_valid": 220,
+   "pa_train_cal": 0.19346525065926018,
+   "pa_train_cagr": 2.5521588334153744,
+   "pa_train_dd": 13.191820364218032,
+   "pa_valid_cal": -0.3395752270147685,
+   "pa_valid_cagr": -8.248735032334498,
+   "pa_full_cal": -0.05154849918230755,
+   "pa_full_cagr": -1.3830457905097182,
+   "pa_full_dd": 26.829991414850085,
+   "pa_train_net": 0.09814324239661516,
+   "pa_valid_net": -0.1400543417281689,
+   "three_train_cal": 3.043295106970335,
+   "three_valid_cal": 4.043236548020323,
+   "three_full_cal": 3.0943318361430365,
+   "three_full_cagr": 104.5025276523194,
+   "three_full_dd": 33.77224331007036,
+   "corr_bot": 0.212528521843843,
+   "corr_c3": 0.1669196170522006
+  },
+  {
+   "tf": "4h",
+   "fam": "BOS",
+   "exit": "TP2",
+   "filter": "none",
+   "n_train": 2006,
+   "n_valid": 1065,
+   "pa_train_cal": 0.3360138338903119,
+   "pa_train_cagr": 11.880287785398025,
+   "pa_train_dd": 35.35654365134329,
+   "pa_valid_cal": -0.4367529860489279,
+   "pa_valid_cagr": -16.07271455967193,
+   "pa_full_cal": 0.02853192306972774,
+   "pa_full_cagr": 1.1247943948847094,
+   "pa_full_dd": 39.42231275949681,
+   "pa_train_net": 0.5015557020172827,
+   "pa_valid_net": -0.23867106073195682,
+   "three_train_cal": 2.8762612815972695,
+   "three_valid_cal": 2.605650021044479,
+   "three_full_cal": 2.7582134514286776,
+   "three_full_cagr": 103.68622618054175,
+   "three_full_dd": 37.59180643790827,
+   "corr_bot": 0.4278404046196742,
+   "corr_c3": 0.29155502671670125
+  },
+  {
+   "tf": "4h",
+   "fam": "FVG",
+   "exit": "TP1",
+   "filter": "none",
+   "n_train": 1768,
+   "n_valid": 959,
+   "pa_train_cal": -0.29319238448509516,
+   "pa_train_cagr": -17.216784150105447,
+   "pa_train_dd": 58.72179859085216,
+   "pa_valid_cal": -0.5038398472378259,
+   "pa_valid_cagr": -19.906248052989074,
+   "pa_full_cal": -0.26418859803105615,
+   "pa_full_cagr": -18.17250920962922,
+   "pa_full_dd": 68.78612228182908,
+   "pa_train_net": -0.5467464978626192,
+   "pa_valid_net": -0.35212863647034465,
+   "three_train_cal": 2.4289866332895294,
+   "three_valid_cal": 3.0282818250750334,
+   "three_full_cal": 2.5448235712174965,
+   "three_full_cagr": 85.36222668710987,
+   "three_full_dd": 33.543475332661586,
+   "corr_bot": 0.28844692683803996,
+   "corr_c3": 0.18097897232657087
+  },
+  {
+   "tf": "4h",
+   "fam": "NR7",
+   "exit": "TP2",
+   "filter": "HTF",
+   "n_train": 6086,
+   "n_valid": 3550,
+   "pa_train_cal": -0.6633419034757734,
+   "pa_train_cagr": -64.42718170025509,
+   "pa_train_dd": 97.12514973450355,
+   "pa_valid_cal": -0.7715854034137369,
+   "pa_valid_cagr": -66.87040181599583,
+   "pa_full_cal": -0.6556847409058093,
+   "pa_full_cagr": -65.30607308385102,
+   "pa_full_dd": 99.59980614103141,
+   "pa_train_net": -2.6558992079164403,
+   "pa_valid_net": -1.5827442417196271,
+   "three_train_cal": 0.3647506254040907,
+   "three_valid_cal": 0.5209273689992278,
+   "three_full_cal": 0.3890146485499264,
+   "three_full_cagr": 21.054185253257817,
+   "three_full_dd": 54.121831483052006,
+   "corr_bot": 0.27536266467478143,
+   "corr_c3": 0.35253501696117573
+  },
+  {
+   "tf": "4h",
+   "fam": "BOX",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 1970,
+   "n_valid": 1230,
+   "pa_train_cal": 0.0907914878123719,
+   "pa_train_cagr": 3.1599964197348784,
+   "pa_train_dd": 34.80498553196168,
+   "pa_valid_cal": -0.17986938931905233,
+   "pa_valid_cagr": -6.559089874975377,
+   "pa_full_cal": -0.010071319604119618,
+   "pa_full_cagr": -0.367259213438742,
+   "pa_full_dd": 36.46584835700345,
+   "pa_train_net": 0.19441253983268317,
+   "pa_valid_net": -0.04726514059503989,
+   "three_train_cal": 3.063570366703515,
+   "three_valid_cal": 2.7277477285162,
+   "three_full_cal": 2.640894478541611,
+   "three_full_cagr": 102.47247827162394,
+   "three_full_dd": 38.802185814032455,
+   "corr_bot": 0.30840105211827185,
+   "corr_c3": 0.4517133179032663
+  },
+  {
+   "tf": "4h",
+   "fam": "PIN",
+   "exit": "TRAIL",
+   "filter": "HTF",
+   "n_train": 916,
+   "n_valid": 475,
+   "pa_train_cal": -0.16201927744646,
+   "pa_train_cagr": -10.857668104605212,
+   "pa_train_dd": 67.01466810449872,
+   "pa_valid_cal": -0.6058694587201735,
+   "pa_valid_cagr": -24.614106467439377,
+   "pa_full_cal": -0.2241145957006502,
+   "pa_full_cagr": -15.959134728664349,
+   "pa_full_dd": 71.20970715348214,
+   "pa_train_net": -0.22566141201651252,
+   "pa_valid_net": -0.44464755799592615,
+   "three_train_cal": 2.037337609867209,
+   "three_valid_cal": 2.640092986894929,
+   "three_full_cal": 2.036456954823097,
+   "three_full_cagr": 86.31202192643535,
+   "three_full_dd": 42.38342564620184,
+   "corr_bot": 0.2220724403402381,
+   "corr_c3": 0.48664358037607164
+  },
+  {
+   "tf": "4h",
+   "fam": "ENGULF",
+   "exit": "TRAIL",
+   "filter": "HTF",
+   "n_train": 1990,
+   "n_valid": 1214,
+   "pa_train_cal": -0.3259302192575201,
+   "pa_train_cagr": -25.876069087992548,
+   "pa_train_dd": 79.39143890044653,
+   "pa_valid_cal": -0.5604027512123236,
+   "pa_valid_cagr": -37.36807851404341,
+   "pa_full_cal": -0.33777088471386263,
+   "pa_full_cagr": -30.138919186156432,
+   "pa_full_dd": 89.2288842825756,
+   "pa_train_net": -0.5946896642352255,
+   "pa_valid_net": -0.5708743474144762,
+   "three_train_cal": 1.4167008940753267,
+   "three_valid_cal": 1.4003276097586148,
+   "three_full_cal": 1.3990436557411807,
+   "three_full_cagr": 66.58979120620707,
+   "three_full_dd": 47.596649992261575,
+   "corr_bot": 0.3490514992921892,
+   "corr_c3": 0.6184974109800923
+  },
+  {
+   "tf": "4h",
+   "fam": "DOUBLE",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 1038,
+   "n_valid": 626,
+   "pa_train_cal": 0.7311405518096143,
+   "pa_train_cagr": 8.181028342623353,
+   "pa_train_dd": 11.189405815851472,
+   "pa_valid_cal": -0.4422131608231092,
+   "pa_valid_cagr": -8.274116052611635,
+   "pa_full_cal": 0.10058541603769112,
+   "pa_full_cagr": 2.0837413447325925,
+   "pa_full_dd": 20.716137853938765,
+   "pa_train_net": 0.28023755666085853,
+   "pa_valid_net": -0.13369639277054363,
+   "three_train_cal": 3.3711356903192033,
+   "three_valid_cal": 3.467084958206346,
+   "three_full_cal": 3.3616767871875646,
+   "three_full_cagr": 106.79624541225073,
+   "three_full_dd": 31.76874285454381,
+   "corr_bot": 0.21966053115171452,
+   "corr_c3": 0.4731961230821045
+  },
+  {
+   "tf": "4h",
+   "fam": "SFP",
+   "exit": "TP2",
+   "filter": "none",
+   "n_train": 1407,
+   "n_valid": 902,
+   "pa_train_cal": -0.22073055434054928,
+   "pa_train_cagr": -10.155170487802678,
+   "pa_train_dd": 46.007090038540824,
+   "pa_valid_cal": -0.4741328755824914,
+   "pa_valid_cagr": -18.840520545916085,
+   "pa_full_cal": -0.23996687638607933,
+   "pa_full_cagr": -13.309976144684688,
+   "pa_full_dd": 55.46588906408255,
+   "pa_train_net": -0.298667420178796,
+   "pa_valid_net": -0.3367751058492221,
+   "three_train_cal": 2.4776962105558646,
+   "three_valid_cal": 3.3968996847990764,
+   "three_full_cal": 2.523767287248516,
+   "three_full_cagr": 93.71740074550605,
+   "three_full_dd": 37.133931174644665,
+   "corr_bot": -0.026088500402489275,
+   "corr_c3": -0.025125686791652765
+  },
+  {
+   "tf": "4h",
+   "fam": "FAKEY",
+   "exit": "TRAIL",
+   "filter": "HTF",
+   "n_train": 1998,
+   "n_valid": 1017,
+   "pa_train_cal": -0.05039939585949574,
+   "pa_train_cagr": -3.856135600402133,
+   "pa_train_dd": 76.511544129464,
+   "pa_valid_cal": -0.6846006045082341,
+   "pa_valid_cagr": -53.35253492634862,
+   "pa_full_cal": -0.2865502727440948,
+   "pa_full_cagr": -25.44272855250962,
+   "pa_full_dd": 88.78975514091164,
+   "pa_train_net": 0.45710938900770265,
+   "pa_valid_net": -1.182870391866987,
+   "three_train_cal": 1.978174757839511,
+   "three_valid_cal": 1.0377416009345721,
+   "three_full_cal": 1.591170544644828,
+   "three_full_cagr": 72.23817460516942,
+   "three_full_dd": 45.39939156634778,
+   "corr_bot": 0.36687710894154413,
+   "corr_c3": 0.5821888503892584
+  },
+  {
+   "tf": "4h",
+   "fam": "TRAP",
+   "exit": "TRAIL",
+   "filter": "HTF",
+   "n_train": 1675,
+   "n_valid": 991,
+   "pa_train_cal": -0.0221774697079244,
+   "pa_train_cagr": -1.4589455011949082,
+   "pa_train_dd": 65.78502960027046,
+   "pa_valid_cal": 0.13983381978143583,
+   "pa_valid_cagr": 5.206314070647511,
+   "pa_full_cal": 0.012691642719141532,
+   "pa_full_cagr": 0.8349200919547828,
+   "pa_full_dd": 65.78502960027046,
+   "pa_train_net": 0.2946116723833926,
+   "pa_valid_net": 0.27795568972427476,
+   "three_train_cal": 2.081302917223695,
+   "three_valid_cal": 4.180556625188224,
+   "three_full_cal": 2.2562519254650075,
+   "three_full_cagr": 103.50524048497935,
+   "three_full_dd": 45.87485968068358,
+   "corr_bot": 0.15061848143557433,
+   "corr_c3": 0.6190810115239483
+  },
+  {
+   "tf": "4h",
+   "fam": "WEDGE",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 597,
+   "n_valid": 370,
+   "pa_train_cal": 0.05952041320224411,
+   "pa_train_cagr": 0.8161091562309597,
+   "pa_train_dd": 13.711416173437952,
+   "pa_valid_cal": -0.1893091585551661,
+   "pa_valid_cagr": -2.1949917889850235,
+   "pa_full_cal": -0.018450404968721107,
+   "pa_full_cagr": -0.25298118109460255,
+   "pa_full_dd": 13.711416173437952,
+   "pa_train_net": 0.04045308621402509,
+   "pa_valid_net": -0.031121922663897038,
+   "three_train_cal": 3.3108890959005244,
+   "three_valid_cal": 4.071549707742018,
+   "three_full_cal": 3.460575353603566,
+   "three_full_cagr": 105.84479847032848,
+   "three_full_dd": 30.58589617478209,
+   "corr_bot": 0.04570913482090201,
+   "corr_c3": 0.3597080539046413
+  },
+  {
+   "tf": "4h",
+   "fam": "CHOCH",
+   "exit": "TP1",
+   "filter": "none",
+   "n_train": 1927,
+   "n_valid": 1151,
+   "pa_train_cal": 0.23534551712826463,
+   "pa_train_cagr": 6.5217705710324925,
+   "pa_train_dd": 27.711471417057375,
+   "pa_valid_cal": 0.40691863174892645,
+   "pa_valid_cagr": 8.697593022547911,
+   "pa_full_cal": 0.2627703890184107,
+   "pa_full_cagr": 7.2817541245327355,
+   "pa_full_dd": 27.711471417057375,
+   "pa_train_net": 0.24201909816045555,
+   "pa_valid_net": 0.17095960181894013,
+   "three_train_cal": 3.9451285509683323,
+   "three_valid_cal": 4.206725996018516,
+   "three_full_cal": 3.79402026801874,
+   "three_full_cagr": 113.52312083753785,
+   "three_full_dd": 29.921590507691278,
+   "corr_bot": 0.1808796645330165,
+   "corr_c3": 0.10204080508815568
+  },
+  {
+   "tf": "4h",
+   "fam": "KEYREV",
+   "exit": "TP2",
+   "filter": "none",
+   "n_train": 1104,
+   "n_valid": 828,
+   "pa_train_cal": -0.016626323191792452,
+   "pa_train_cagr": -0.6418697757858638,
+   "pa_train_dd": 38.60563567672746,
+   "pa_valid_cal": 0.748038911093375,
+   "pa_valid_cagr": 16.551667166625926,
+   "pa_full_cal": 0.13192363531203222,
+   "pa_full_cagr": 5.092995802005773,
+   "pa_full_dd": 38.60563567672746,
+   "pa_train_net": 0.026363603928600404,
+   "pa_valid_net": 0.32899958615152725,
+   "three_train_cal": 3.804163395399489,
+   "three_valid_cal": 5.708088652892838,
+   "three_full_cal": 4.252159034747984,
+   "three_full_cagr": 113.0654684607518,
+   "three_full_dd": 26.590131633553295,
+   "corr_bot": 0.0067006070185517495,
+   "corr_c3": 0.030056207036403153
+  },
+  {
+   "tf": "4h",
+   "fam": "CLIMAX",
+   "exit": "TP1",
+   "filter": "HTF",
+   "n_train": 21,
+   "n_valid": 23,
+   "pa_train_cal": 0.8914292751168117,
+   "pa_train_cagr": 1.0354880373605102,
+   "pa_train_dd": 1.1616042531526927,
+   "pa_valid_cal": 0.2627946594264829,
+   "pa_valid_cagr": 0.3029110333427676,
+   "pa_full_cal": 0.6691734635776848,
+   "pa_full_cagr": 0.7773147413887571,
+   "pa_full_dd": 1.1616042531526927,
+   "pa_train_net": 0.03359829950480353,
+   "pa_valid_net": 0.005516652046922898,
+   "three_train_cal": 3.3277507924118868,
+   "three_valid_cal": 4.4777439811295014,
+   "three_full_cal": 3.5075618119349263,
+   "three_full_cagr": 107.71445092905046,
+   "three_full_dd": 30.709209617500765,
+   "corr_bot": -0.09797202012975946,
+   "corr_c3": 0.06878463169532748
+  }
+ ],
+ "persistence_spearman": 0.809925714580779,
+ "share_positive_both": 0.04824561403508772
+}
