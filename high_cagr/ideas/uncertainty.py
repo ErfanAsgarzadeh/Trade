@@ -3,7 +3,8 @@
 
 U1 LUCK (sampling): stationary block bootstrap of the account's daily returns (mean block 20 days, 4000 paths) for a
    5-year and a 1-year horizon -> spread of CAGR / max drawdown that the same edge could have produced.
-U2 CONCENTRATION: remove the K best legs (by realised P&L in the base run) and replay: how much rests on a few trades.
+U2 CONCENTRATION: remove the K best legs (by realised $ P&L in the base run; U2R: by R multiple, which does not favour
+   late large-equity trades) and replay: how much rests on a few trades.
 U3 COSTS: extra slippage per fill on top of the 2 bps already in the ledgers (total 5 / 10 / 20 bps per fill).
 U4 LIQUIDITY: square-root market impact per fill = 0.7 x daily volatility x sqrt(order notional / daily dollar volume),
    daily volume = 30-day causal mean of Binance futures 4h volume x close, scaled by a venue factor (1.0 = Binance,
@@ -21,18 +22,18 @@ import numpy as np,pandas as pd
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
 from high_cagr import run_suite as rs, ablation_fixes as ab
 from high_cagr.kernel_fixes import simulate
-from high_cagr.ideas import three_bots_replay as T, pabench as PB, xuni as X, c3bench_d as BD, c3r2_a4_sizing as S
+from high_cagr.ideas import three_bots_replay as T, pabench as PB, pa_bot as PBOT, xuni as X, c3bench_d as BD, c3r2_a4_sizing as S
 OUT=T.OUT;DAYS=T.DAYS;MIN0=T.MIN0
 
 # ------------------------------------------------------------------ ledgers on other coin lists
 def main_legs(symbols):
-    F={s:X.frame(s,PB.prep_dir(s)) for s in symbols};case=dict(symbols=symbols,entry_timeframe='4h',preset='standard',lookback=10,trail='DONCHIAN10',risk=.01,max_open_positions=4)
+    F={s:X.frame(s,PBOT.prep_dir(s)) for s in symbols};case=dict(symbols=symbols,entry_timeframe='4h',preset='standard',lookback=10,trail='DONCHIAN10',risk=.01,max_open_positions=4)
     fk={(s,'4h','standard'):F[s] for s in symbols};ss,bb,step=rs.inputs(case,fk);bb=np.concatenate([bb,ab.channel_columns(case,fk)],axis=2)
     bnd=rs.START+np.arange((rs.END-rs.START)//(step*60000)+1)*step*60000
     for j,s in enumerate(symbols):
         f=F[s];ix=(np.searchsorted(f.timestamp.to_numpy(np.int64)+step*60000,bnd,side='right')-1)[:ss.shape[1]]
         ar=(f.atr/f.atr.rolling(60).median().shift(1)).to_numpy()[ix];low=~(ar>=1.)&(ss[j,:,0]!=0);ss[j,low,0]=0;ss[j,low,3]=-np.inf
-    prices=np.stack([np.load(PB.prep_dir(s)/s/'prices.npy') for s in symbols]);funding=np.stack([np.load(PB.prep_dir(s)/s/'funding.npy') for s in symbols])
+    prices=np.stack([np.load(PBOT.prep_dir(s)/s/'prices.npy') for s in symbols]);funding=np.stack([np.load(PBOT.prep_dir(s)/s/'funding.npy') for s in symbols])
     a,t,curve=simulate(prices,funding,np.ascontiguousarray(ss),np.ascontiguousarray(bb),rs.START,0,(rs.END-rs.START)//60000,.01,4,step,True,slip=2e-4,floor_on=True,floor_trigger=1.,floor_lock=.1,legacy_cap=100.)
     return [dict(bot='main',coin=symbols[int(r[0])],side=int(r[3]),em=MIN0(r[1]),xm=MIN0(r[2]),entry=float(r[4]),unit=float(r[12]/r[5]),stop_frac=float(r[7]/r[4]),
                  risk_scale=float(r[15]/r[14])/.01,root=('main',int(r[17])),is_add=int(r[18])!=0) for r in t if r[2]>0]
@@ -117,6 +118,9 @@ def main():
     t=pd.read_csv(OUT/'trades.csv').sort_values('pnl',ascending=False);res['U2']={}
     for K in (10,25,50,100):
         ex=frozenset((r.bot,r.coin,int(r.entry_min)) for r in t.head(K).itertuples());x=replay(base_legs,exclude=ex);res['U2'][K]=brief(x);print('U2 drop top',K,res['U2'][K],flush=True)
+    rk=sorted(base_legs,key=lambda l:-l['unit']/(l['entry']*l['stop_frac']));res['U2R']={}   # by R multiple (size-free ranking)
+    for K in (10,25,50,100):
+        ex=frozenset((l['bot'],l['coin'],l['em']) for l in rk[:K]);x=replay(base_legs,exclude=ex);res['U2R'][K]=brief(x);print('U2R drop top-R',K,res['U2R'][K],flush=True)
     res['U3']={}
     for tot in (5,10,20):x=replay(base_legs,extra_bps=tot-2);res['U3'][tot]=brief(x);print('U3 total bps',tot,res['U3'][tot],flush=True)
     res['U4']={}
