@@ -1,0 +1,119 @@
+{
+ "notes": "Price-action checklist test (things the bot cannot see). Written and committed BEFORE any scoring; one run.\n\nSample: main bot (2A+5A) root trades, random seed 11: 200 TRAIN trades (entry < 2025-01-01) and 120 VALIDATION trades,\nnatural win/loss mix. One PNG per trade, shuffled ids: last 180 closed 4h candles up to the signal bar, Ichimoku cloud,\nDonchian-10, EMA50, LONG/SHORT arrow; no symbol, dates, price axis or outcome. id->trade key written only after scoring.\nEach chart is reviewed TWICE (passes A and B, different subagents, Sonnet), 25 charts per agent, yes/no answers:\n  Q1 level    entry runs straight into a prior major swing high (long) / swing low (short) within ~1-2 candle ranges ahead\n  Q2 double   double top (long) / double bottom (short) against the trade in the last ~40 candles near current price\n  Q3 wedge    the move into the entry is the 3rd push of a wedge / clearly decelerating pushes in the trade direction\n  Q4 climax   a climactic, unusually large candle in the trade direction within the last 3 candles after an extended run\n  Q5 tlbreak  the trend in the trade direction already broke its trendline/channel (sign of reversal) before the entry\n  Q6 range    the last ~20 candles were a tight sideways range / barb wire before the signal\nAgreement: Cohen's kappa between passes per item. An answer counts as YES when both passes say yes.\nRule choice on TRAIN only: per item, mean net R of YES vs NO (n_yes >= 20). Candidate = largest |difference|; multiplier 0.5x\non YES if YES is worse, 1.5x on YES if YES is better.\nVALIDATION gates (all): kappa >= 0.4; YES-vs-NO difference has the same sign in validation; weighted R >= flat R at the same\nmean multiplier x 1.10. Otherwise nothing is adopted.\n",
+ "n_train": 199,
+ "n_valid": 120,
+ "items": {
+  "level": {
+   "kappa": 0.09159159159159173,
+   "train": {
+    "n_yes": 19,
+    "yes_R": 0.044758380588716486,
+    "no_R": 0.084965686567423,
+    "yes_win": 47.368421052631575,
+    "no_win": 47.22222222222222
+   },
+   "valid": {
+    "n_yes": 7,
+    "yes_R": -0.43330236126115196,
+    "no_R": 0.26784189516586127,
+    "yes_win": 28.57142857142857,
+    "no_win": 45.13274336283185
+   }
+  },
+  "double": {
+   "kappa": 0.09769364664926186,
+   "train": {
+    "n_yes": 1,
+    "yes_R": 2.2671884600443035,
+    "no_R": 0.07008608259231032,
+    "yes_win": 100.0,
+    "no_win": 46.96969696969697
+   },
+   "valid": {
+    "n_yes": 1,
+    "yes_R": -0.9960097928432337,
+    "no_R": 0.23721871779628143,
+    "yes_win": 0.0,
+    "no_win": 44.537815126050425
+   }
+  },
+  "wedge": {
+   "kappa": 0.23653300931551235,
+   "train": {
+    "n_yes": 12,
+    "yes_R": 0.3305263093865382,
+    "no_R": 0.06512255134055238,
+    "yes_win": 50.0,
+    "no_win": 47.05882352941176
+   },
+   "valid": {
+    "n_yes": 6,
+    "yes_R": 0.29185624325595666,
+    "no_R": 0.22352526460858343,
+    "yes_win": 50.0,
+    "no_win": 43.859649122807014
+   }
+  },
+  "climax": {
+   "kappa": 0.37120555073720735,
+   "train": {
+    "n_yes": 68,
+    "yes_R": -0.02516758531032688,
+    "no_R": 0.13630250850705325,
+    "yes_win": 47.05882352941176,
+    "no_win": 47.32824427480916
+   },
+   "valid": {
+    "n_yes": 31,
+    "yes_R": 0.13823760483812148,
+    "no_R": 0.257838785111601,
+    "yes_win": 32.25806451612903,
+    "no_win": 48.31460674157304
+   }
+  },
+  "tlbreak": {
+   "kappa": 0.1806056321432781,
+   "train": {
+    "n_yes": 25,
+    "yes_R": -0.1634303872301721,
+    "no_R": 0.11626432467859801,
+    "yes_win": 44.0,
+    "no_win": 47.701149425287355
+   },
+   "valid": {
+    "n_yes": 15,
+    "yes_R": 0.08881279921182443,
+    "no_R": 0.24667452987368477,
+    "yes_win": 40.0,
+    "no_win": 44.761904761904766
+   }
+  },
+  "range": {
+   "kappa": 0.42058526740665975,
+   "train": {
+    "n_yes": 20,
+    "yes_R": -0.038200889932122395,
+    "no_R": 0.09445950062549832,
+    "yes_win": 55.00000000000001,
+    "no_win": 46.36871508379888
+   },
+   "valid": {
+    "n_yes": 18,
+    "yes_R": 1.6524800115806895,
+    "no_R": -0.024623750819001474,
+    "yes_win": 77.77777777777779,
+    "no_win": 38.23529411764706
+   }
+  }
+ },
+ "pick": "tlbreak",
+ "multiplier": 0.5,
+ "valid_weighted_R": 26.566921630825576,
+ "valid_flat_R": 25.530954023357115,
+ "gates": {
+  "kappa": false,
+  "same_sign": true,
+  "weighted": false
+ },
+ "passed": false
+}
