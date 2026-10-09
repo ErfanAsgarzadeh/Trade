@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 import c3_sleeve
+import pa_sleeve
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        LIVE_LIMITATION, LiveUnavailable, MarketData, PENDING,
                        file_lock, net_pnl, position_margin, position_leverage)
@@ -165,7 +166,28 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         except Exception as exc:
             LOG.exception("C3 emergency close failed")
             result = {**result, "errors": list(result.get("errors", [])) + [{"symbol": "C3", "error": str(exc)}]}
+        try:   # ... and the third (PA)
+            cfg, store = pa_paths()
+            conf = pa_sleeve.load(cfg)
+            if payload.disable_auto_trade and conf["enabled"]:
+                pa_sleeve.write_config(cfg, {**conf, "enabled": False})
+            closed = pa_sleeve.Sleeve(conf, store, bot().data, base_equity=bot().main_paper_equity, shared_account=bot().shared_paper_account).close_all("emergency")
+            result = {**result, "pa": closed}
+            result["errors"] = list(result.get("errors", [])) + [c for c in closed if c["result"] == "error"]
+        except Exception as exc:
+            LOG.exception("PA emergency close failed")
+            result = {**result, "errors": list(result.get("errors", [])) + [{"symbol": "PA", "error": str(exc)}]}
         return result
+
+    def shared_equity(engine, view):
+        """On the shared account the equity shown with a sleeve is the whole account (main + C3 + PA)."""
+        if view.get("equity_usd") is not None and engine.config.read()["portfolio_risk"]["shared_c3_account"]:
+            try:
+                view["equity_usd"] = engine.shared_paper_account().equity()
+            except Exception as exc:
+                view["equity_usd"] = None
+                view["price_errors"] = list(view.get("price_errors", [])) + [{"symbol": "shared", "error": str(exc)}]
+        return view
 
     # ---- C3+D (second strategy, same bot process): settings, status, manual close; paper-only like the main bot ----
     def c3_paths():
@@ -182,7 +204,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         engine = bot()
         view = c3_sleeve.summary(store, c3_sleeve.load(cfg), lambda s: engine.data.price(s, cached=True), engine.main_paper_equity(), net_costs=engine.config.read()["portfolio_risk"]["shared_c3_account"])
         view["in_bot"] = os.getenv("C3_IN_BOT", "1") != "0"
-        return view
+        return shared_equity(engine, view)
 
     @application.get("/api/c3/config", dependencies=[Depends(authorized)])
     def c3_get_config(response: Response):
@@ -217,6 +239,54 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             LOG.exception("C3 close failed for %s", payload.symbol)
             raise HTTPException(503, "بستن پوزیشن C3 انجام نشد؛ پوزیشن حفظ شده است")
 
+    # ---- PA (third strategy, 4h price-action key reversal): same API shape as C3 ----
+    def pa_paths():
+        return pa_sleeve.paths()
+
+    @application.get("/api/pa/status", dependencies=[Depends(authorized)])
+    def pa_status():
+        cfg, store = pa_paths()
+        engine = bot()
+        view = pa_sleeve.summary(store, pa_sleeve.load(cfg), lambda s: engine.data.price(s, cached=True), engine.main_paper_equity(), net_costs=engine.config.read()["portfolio_risk"]["shared_c3_account"])
+        view["in_bot"] = pa_sleeve.in_bot()
+        return shared_equity(engine, view)
+
+    @application.get("/api/pa/config", dependencies=[Depends(authorized)])
+    def pa_get_config(response: Response):
+        cfg, _ = pa_paths()
+        c = pa_sleeve.load(cfg)
+        response.headers["ETag"] = revision(c)
+        return c
+
+    @application.put("/api/pa/config", dependencies=[Depends(authorized)])
+    def pa_put_config(payload: dict, response: Response, if_match: str | None = Header(default=None)):
+        cfg, _ = pa_paths()
+        with file_lock(cfg.with_suffix(".lock")):
+            if if_match is not None and if_match != revision(pa_sleeve.load(cfg)):
+                raise HTTPException(409, "کانفیگ PA تغییر کرده است؛ دوباره بارگذاری کنید")
+            try:
+                value = pa_sleeve.write_config(cfg, payload)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc))
+        response.headers["ETag"] = revision(value)
+        return value
+
+    @application.post("/api/pa/close", dependencies=[Depends(authorized)])
+    def pa_close(payload: C3Close):
+        cfg, store = pa_paths()
+        sl = pa_sleeve.Sleeve(pa_sleeve.load(cfg), store, bot().data, base_equity=bot().main_paper_equity, shared_account=bot().shared_paper_account)
+        if payload.symbol in store.orders():   # unfilled stop order: cancel
+            store.set_order(payload.symbol, None)
+            return {"symbol": payload.symbol, "result": "cancelled"}
+        pos = {p["symbol"]: p for p in store.positions()}.get(payload.symbol)
+        if not pos:
+            raise HTTPException(404, "پوزیشن PA پیدا نشد")
+        try:
+            return {"symbol": payload.symbol, "pnl": sl.close(pos, bot().data.price(payload.symbol), "manual", time.time())}
+        except Exception:
+            LOG.exception("PA close failed for %s", payload.symbol)
+            raise HTTPException(503, "بستن پوزیشن PA انجام نشد؛ پوزیشن حفظ شده است")
+
     @application.get("/api/config", dependencies=[Depends(authorized)])
     def get_config(response: Response):
         c = bot().config.read()
@@ -248,7 +318,7 @@ HTML = r'''<!doctype html>
 <title>مرکز کنترل معاملات LBank</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-.view{background:#2a3650}.view.on{background:#315dc8;outline:2px solid #7fa1ff}.tag{display:inline-block;padding:1px 8px;border-radius:6px;background:#24324e;font-size:11px}.tag.c3{background:#3b2f58}
+.view{background:#2a3650}.view.on{background:#315dc8;outline:2px solid #7fa1ff}.tag{display:inline-block;padding:1px 8px;border-radius:6px;background:#24324e;font-size:11px}.tag.c3{background:#3b2f58}.tag.pa{background:#5a3b22}
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141c30;--line:#29344d;--muted:#a4b3ce;--good:#4ee2ad;--bad:#ff7886}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf3ff;font-family:Tahoma,Arial,sans-serif;font-size:14px;line-height:1.8}
 main{max-width:1450px;margin:auto;padding:28px}header,.row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
@@ -279,7 +349,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>پوزیشن‌ها و سفارش‌های در انتظار</p><strong id="slots">—</strong><p id="updated_sub">—</p><p id="updated">در انتظار اتصال</p></section>
 <section class="panel kpi"><p>مارجین درگیر فعلی / بودجه مجاز ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
 <section class="panel kpi"><p>لغزش واقعی اندازه‌گیری‌شده با دفتر سفارش LBank (bps، میانه / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel"><div class="row"><h2>پوزیشن‌ها (ربات اصلی و C3+D، یک جدول)</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها (ربات + C3) + توقف ورود</button></div>
+<section class="panel"><div class="row"><h2>پوزیشن‌ها (ربات اصلی، C3+D و PA، یک جدول)</h2><button class="danger" id="panic" disabled>🚨 بستن اضطراری همه پوزیشن‌ها (ربات + C3 + PA) + توقف ورود</button></div>
 <div class="scroll"><table><thead><tr><th>استراتژی</th><th>نماد</th><th>جهت</th><th>ورود / تریگر</th><th>قیمت زنده</th><th>حد ضرر</th><th>هدف اول</th><th>وضعیت</th><th>R</th><th>سود و زیان ($)</th><th>عملیات</th></tr></thead><tbody id="positions"><tr><td colspan="10">ابتدا PIN را وارد کنید.</td></tr></tbody></table></div></section>
 <section class="panel" id="c3panel"><div class="row"><h2>استراتژی دوم: C3+D (پولبک روند ۴ساعته روی ۱۰ ارز)</h2><span id="c3badge" class="badge">—</span></div>
 <p>در همین ربات اجرا می‌شود و فقط شبیه‌سازی است؛ سرمایهٔ حساب با ربات اصلی مشترک است. تغییر تنظیمات بدون ری‌استارت در چند ثانیه اعمال می‌شود. خاموش کردن فقط ورود جدید را می‌بندد و پوزیشن‌های باز مدیریت می‌شوند.</p>
@@ -296,6 +366,18 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <details><summary>ویرایش کامل JSON تنظیمات C3</summary><textarea id="c3_editor" aria-label="C3 JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="c3_dirty">تنظیمات C3 بارگذاری نشده است.</p><button id="c3_save" disabled>ذخیره تنظیمات C3</button></div>
 <details><summary>۲۰ معاملهٔ اخیر C3</summary><div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>خروج</th><th>سود و زیان ($)</th><th>دلیل</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></section>
+<section class="panel" id="papanel"><div class="row"><h2>استراتژی سوم: PA (پرایس‌اکشن Key Reversal ۴ساعته روی ۲۰ ارز)</h2><span id="pabadge" class="badge">—</span></div>
+<p>کندل Outside که کف/سقف ۱۱ کندل را می‌زند و برمی‌گردد؛ ورود با سفارش Stop بالای/پایین کندل سیگنال (فقط تا کندل بعد)، استاپ پشت کندل سیگنال، هدف ۲R و خروج زمانی پس از ۳۰ کندل. فقط شبیه‌سازی، سرمایهٔ مشترک.</p>
+<div class="kpis"><section class="panel kpi"><p>سود و زیان باز PA ($)</p><strong id="pa_unrealized">—</strong><p id="pa_positions">—</p></section>
+<section class="panel kpi"><p>سود و زیان تحقق‌یافتهٔ ۲۴ ساعت ($)</p><strong id="pa_realized">—</strong><p id="pa_trades">—</p></section>
+<section class="panel kpi"><p>مجموع سود و زیان بسته‌شدهٔ PA ($)</p><strong id="pa_total">—</strong><p id="pa_win">—</p></section></div>
+<div class="fields" style="margin-top:18px"><label><input id="pa_enabled" type="checkbox">ورود جدید PA فعال</label>
+<label class="field">ریسک هر معامله (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field" style="grid-column:span 2">نمادها (هر خط یکی، مثل LINK/USDT:USDT)<textarea id="pa_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
+<details><summary>ویرایش کامل JSON تنظیمات PA</summary><textarea id="pa_editor" aria-label="PA JSON configuration" spellcheck="false"></textarea></details>
+<div class="row" style="margin-top:18px"><p id="pa_dirty">تنظیمات PA بارگذاری نشده است.</p><button id="pa_save" disabled>ذخیره تنظیمات PA</button></div>
+<details><summary>سفارش‌های Stop در انتظار و ۲۰ معاملهٔ اخیر PA</summary><div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>سطح ورود</th><th>حد ضرر</th></tr></thead><tbody id="pa_orders"></tbody></table>
+<table><thead><tr><th>نماد</th><th>جهت</th><th>ورود</th><th>خروج</th><th>سود و زیان ($)</th><th>دلیل</th></tr></thead><tbody id="pa_hist"></tbody></table></div></details></section>
 <section class="panel"><div class="row"><h2>تنظیمات ربات اصلی</h2><button class="subtle" id="reload" disabled>بارگذاری مجدد</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">ورود خودکار</label><label><input id="dry" type="checkbox" checked disabled>حالت شبیه‌سازی (Dry-run)</label>
 <label class="field">حالت استراتژی<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
@@ -375,7 +457,7 @@ function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(
  const f=x=>x?Number(x.median_bps).toFixed(1)+' / '+Number(x.p90_bps).toFixed(1):'—';main.textContent='ورود '+f(fq.entry)+' | خروج '+f(fq.exit);
  const worst=Math.max(fq.entry?fq.entry.median_bps:0,fq.exit?fq.exit.median_bps:0);main.className=worst>fq.assumed_bps_per_fill*2.5?'bad':'';
  detail.textContent='بک‌تست '+fq.assumed_bps_per_fill+' bps فرض کرده؛ '+fq.total+' fill'+(fq.last_error?' | خطا: '+fq.last_error:'');}
-let lastBot=null,lastC3=null,view='all';try{view=localStorage.getItem('view')||'all';}catch(e){}
+let lastBot=null,lastC3=null,lastPA=null,view='all';try{view=localStorage.getItem('view')||'all';}catch(e){}
 function setView(v){view=v;try{localStorage.setItem('view',v);}catch(e){}draw();}
 for(const b of document.querySelectorAll('.view'))b.onclick=()=>setView(b.dataset.view);
 const sumOf=(...x)=>x.some(v=>v===null||v===undefined)?null:x.reduce((p,c)=>p+c,0);
@@ -395,18 +477,20 @@ function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySel
  else if(useC&&!useB){$('margin').textContent=number(c.engaged_margin_usd);$('margin_pct').textContent=c.equity_usd?number(c.engaged_margin_usd/c.equity_usd*100)+'٪ از سرمایه (مارجین C3)':'—';$('pending_margin').textContent='C3 سفارش در انتظار ندارد (ورود با قیمت لحظه‌ای)';}
  else{const used=sumOf(b.engaged_margin_usd,c.engaged_margin_usd),eq=b.shared_account_enabled?b.equity_usd:c.equity_usd,allowed=eq*b.allowed_margin_pct/100;$('margin').textContent=number(used)+' / '+number(allowed);$('margin_pct').textContent=eq?number(used/eq*100)+'٪ از حساب / '+number(b.allowed_margin_pct)+'٪ مجاز؛ '+number(used/allowed*100)+'٪ مصرف بودجه':'—';$('pending_margin').textContent='مارجین رزروشدهٔ سفارش‌های در انتظار ربات: $'+number(b.reserved_pending_margin_usd);}
  $('fq_main').closest('section').style.display=view==='c3'?'none':'';
- $('view_note').textContent=view==='all'?'جمع هر دو استراتژی (سرمایه مشترک است)':view==='bot'?'فقط ربات اصلی (Donchian + Kumo)':'فقط C3+D (پولبک روند ۴ساعته)';}
+ $('view_note').textContent=view==='all'?'ربات اصلی + C3+D (سرمایهٔ مشترک شامل PA هم هست؛ PA در پنل خودش)':view==='bot'?'فقط ربات اصلی (Donchian + Kumo)':'فقط C3+D (پولبک روند ۴ساعته)';}
 function drawPositions(){const rows=$('positions');rows.replaceChildren();const items=[];
  if(view!=='c3'&&lastBot)for(const p of lastBot.positions)items.push({kind:'bot',p});
  if(view!=='bot'&&lastC3)for(const p of lastC3.positions)items.push({kind:'c3',p});
+ if(view==='all'&&lastPA)for(const p of lastPA.positions)items.push({kind:'pa',p});
  if(!items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent='پوزیشن بازی وجود ندارد.';tr.append(td);rows.append(tr);return;}
- for(const {kind,p} of items){const tr=document.createElement('tr');const tag=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(kind==='c3'?' c3':'');sp.textContent=kind==='c3'?'C3+D':'ربات';tag.append(sp);tr.append(tag);
+ for(const {kind,p} of items){const tr=document.createElement('tr');const tag=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(kind==='bot'?'':' '+kind);sp.textContent=kind==='c3'?'C3+D':kind==='pa'?'PA':'ربات';tag.append(sp);tr.append(tag);
   const pnl=p.unrealized_pnl_usd;
   const values=kind==='c3'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),'—','تریل ATR',number(p.current_r),number(pnl)]
+   :kind==='pa'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),number(p.target,6),'هدف 2R',number(p.current_r),number(pnl)]
    :[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(pnl)];
   values.forEach((v,index)=>{const td=document.createElement('td');td.textContent=v;if(index===0||index>=2)td.dir='ltr';if(index===8&&pnl!==null)td.className=pnl<0?'bad':'good';tr.append(td);});
   const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'لغو':'بستن آنی';
-  button.onclick=async()=>{if(!confirm('بستن / لغو '+p.symbol+(kind==='c3'?' (C3)':'')+'؟'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
+  button.onclick=async()=>{if(!confirm('بستن / لغو '+p.symbol+(kind==='bot'?'':' ('+kind.toUpperCase()+')')+'؟'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':kind==='pa'?'/api/pa/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();await refreshPA();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
 function draw(){drawSummary();drawPositions();}
 function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'ورود فعال':'ورود متوقف';
  renderFillQuality(s.fill_quality);$('updated').textContent='آخرین دریافت: '+new Date().toLocaleTimeString('fa-IR');draw();
@@ -415,10 +499,10 @@ function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_
  if(s.price_errors.length)message('قیمت بعضی نمادها دریافت نشد؛ سود و زیان کامل در دسترس نیست.',true);
 }
 async function refresh(){if(!connected||polling)return;polling=true;try{const result=await api('/api/status');render(result.data);}catch(e){message(e.message,true);}finally{polling=false;}}
-$('connect').onclick=async()=>{try{await loadConfig();await loadC3();connected=true;for(const id of ['save','panic','reload','c3_save'])$(id).disabled=false;await refresh();await refreshC3();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
-$('pin').addEventListener('input',()=>{connected=false;for(const id of ['save','panic','reload','c3_save'])$(id).disabled=true;$('active').textContent='قطع';});
+$('connect').onclick=async()=>{try{await loadConfig();await loadC3();await loadPA();connected=true;for(const id of ['save','panic','reload','c3_save','pa_save'])$(id).disabled=false;await refresh();await refreshC3();await refreshPA();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
+$('pin').addEventListener('input',()=>{connected=false;for(const id of ['save','panic','reload','c3_save','pa_save'])$(id).disabled=true;$('active').textContent='قطع';});
 $('save').onclick=async()=>{const b=$('save');b.disabled=true;try{const edited=JSON.parse($('editor').value);const result=await api('/api/config','PUT',edited,etag);cfg=result.data;etag=result.etag;fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';message('تنظیمات ذخیره شد.');await refresh();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
-$('reload').onclick=async()=>{try{await loadConfig();await loadC3();message('تنظیمات بارگذاری شد.');}catch(e){message(e.message,true);}};
+$('reload').onclick=async()=>{try{await loadConfig();await loadC3();await loadPA();message('تنظیمات بارگذاری شد.');}catch(e){message(e.message,true);}};
 $('panic').onclick=async()=>{if(!confirm('همهٔ پوزیشن‌ها بسته و ورود خودکار متوقف شود؟'))return;const b=$('panic');b.disabled=true;
  try{const result=await api('/api/positions/close-all','POST',{disable_auto_trade:true});const s=result.data;message(s.errors.length?'ورود متوقف شد؛ '+s.errors.length+' پوزیشن بسته نشد. دوباره تلاش کنید.':'همه پوزیشن‌ها بسته / لغو و ورود متوقف شد.',s.errors.length>0);await loadConfig();await refresh();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
 
@@ -441,7 +525,23 @@ function renderC3(s){lastC3=s;$('c3badge').textContent=(s.in_bot?'داخل رب�
  $('c3_total').textContent=c3n(s.realized_total_usd);$('c3_total').className=s.realized_total_usd<0?'bad':'good';$('c3_win').textContent=s.trades_total?(s.trades_total+' معامله، نرخ برد '+c3n(s.win_rate_pct,1)+'٪'):'هنوز معامله‌ای بسته نشده';
  const h=$('c3_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
 async function refreshC3(){if(!connected)return;try{const r=await api('/api/c3/status');renderC3(r.data);}catch(e){message('C3: '+e.message,true);}}
-setInterval(()=>{refresh();refreshC3();},5000);
+let pacfg=null,paetag=null;
+function paFill(){if(!pacfg)return;$('pa_enabled').checked=pacfg.enabled;$('pa_risk').value=+(pacfg.risk_per_trade_pct*100).toFixed(4);$('pa_symbols').value=pacfg.symbols.join('\n');$('pa_editor').value=JSON.stringify(pacfg,null,2);}
+async function loadPA(){const r=await api('/api/pa/config');pacfg=r.data;paetag=r.etag;paFill();$('pa_dirty').textContent='تنظیمات PA ذخیره شده است.';}
+function paChanged(){if(!pacfg)return;try{pacfg=JSON.parse($('pa_editor').value);}catch(e){message('ابتدا JSON تنظیمات PA را اصلاح کنید.',true);paFill();return;}
+ Object.assign(pacfg,{enabled:$('pa_enabled').checked,risk_per_trade_pct:Number($('pa_risk').value)/100,symbols:$('pa_symbols').value.split(/[\s,]+/).filter(Boolean)});$('pa_editor').value=JSON.stringify(pacfg,null,2);$('pa_dirty').textContent='تغییرات PA ذخیره نشده است.';}
+for(const id of ['pa_enabled','pa_risk','pa_symbols'])$(id).addEventListener('change',paChanged);
+$('pa_editor').addEventListener('input',()=>{$('pa_dirty').textContent='تغییرات PA ذخیره نشده است.';});
+$('pa_editor').addEventListener('blur',()=>{try{pacfg=JSON.parse($('pa_editor').value);paFill();}catch(e){message('JSON تنظیمات PA نامعتبر است.',true);}});
+$('pa_save').onclick=async()=>{const b=$('pa_save');b.disabled=true;try{const edited=JSON.parse($('pa_editor').value);const r=await api('/api/pa/config','PUT',edited,paetag);pacfg=r.data;paetag=r.etag;paFill();$('pa_dirty').textContent='تنظیمات PA ذخیره شد و در چند ثانیه اعمال می‌شود.';await refreshPA();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
+function renderPA(s){lastPA=s;$('pabadge').textContent=(s.in_bot?'داخل ربات':'خاموش در ربات (PA_IN_BOT=0)')+' / '+(s.enabled?'ورود فعال':'ورود متوقف');
+ $('pa_unrealized').textContent=c3n(s.unrealized_pnl_usd);$('pa_positions').textContent=s.open_positions_count+' پوزیشن باز، '+s.pending_orders.length+' سفارش Stop، '+s.coins+' ارز';
+ $('pa_realized').textContent=c3n(s.daily_realized_pnl);$('pa_realized').className=s.daily_realized_pnl<0?'bad':'good';$('pa_trades').textContent=s.daily_trades_count+' خروج در ۲۴ ساعت';
+ $('pa_total').textContent=c3n(s.realized_total_usd);$('pa_total').className=s.realized_total_usd<0?'bad':'good';$('pa_win').textContent=s.trades_total?(s.trades_total+' معامله، نرخ برد '+c3n(s.win_rate_pct,1)+'٪'):'هنوز معامله‌ای بسته نشده';
+ const o=$('pa_orders');o.replaceChildren();for(const x of s.pending_orders){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.level,6),'',1);cell(tr,c3n(x.stop,6),'',1);o.append(tr);}
+ const h=$('pa_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'خرید':'فروش');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
+async function refreshPA(){if(!connected)return;try{const r=await api('/api/pa/status');renderPA(r.data);}catch(e){message('PA: '+e.message,true);}}
+setInterval(()=>{refresh();refreshC3();refreshPA();},5000);
 </script></body></html>'''
 
 app = create_app()

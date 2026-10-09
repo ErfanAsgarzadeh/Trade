@@ -1,4 +1,4 @@
-"""One paper equity pool and entry-margin budget for the main bot and C3.
+"""One paper equity pool and entry-margin budget for the main bot, C3 and the PA sleeve.
 
 Callers serialize entries/exits with engine.db.trade_lock. This does not route live orders.
 """
@@ -6,21 +6,25 @@ import math
 import lbank_bot as bot
 
 class SharedPaperAccount:
-    def __init__(self, engine, store, config_reader):
+    def __init__(self, engine, store, config_reader, extra_sleeves=()):
+        # store/config_reader = C3; extra_sleeves = further (store, config_reader) pairs with the same schema (PA)
         self.engine, self.store, self.config_reader = engine, store, config_reader
+        self.sleeves = [(store, config_reader), *extra_sleeves]
         self.lock_path = engine.db.trade_lock
 
     def c3_component(self):
-        conf = self.config_reader()
-        value = self.store.realized()
-        margin = 0.0
-        for p in self.store.positions():
-            price = self.engine.data.price(p['symbol'], cached=True)
-            if not math.isfinite(price) or price <= 0:
-                raise ValueError('Invalid C3 price: shared entries blocked')
-            sign = 1 if p['side'] == 'long' else -1
-            value += sign * (price-p['entry']) * p['qty'] - (price+p['entry']) * p['qty'] * conf['round_trip_fee']/2
-            margin += p['qty'] * p['entry'] / p['isolated_leverage']
+        """Realized + net unrealized P&L and margin of every sleeve (C3 and PA) on the shared account."""
+        value = margin = 0.0
+        for store, reader in self.sleeves:
+            conf = reader()
+            value += store.realized()
+            for p in store.positions():
+                price = self.engine.data.price(p['symbol'], cached=True)
+                if not math.isfinite(price) or price <= 0:
+                    raise ValueError('Invalid sleeve price: shared entries blocked')
+                sign = 1 if p['side'] == 'long' else -1
+                value += sign * (price-p['entry']) * p['qty'] - (price+p['entry']) * p['qty'] * conf['round_trip_fee']/2
+                margin += p['qty'] * p['entry'] / p['isolated_leverage']
         return value, margin
 
     def equity(self):
