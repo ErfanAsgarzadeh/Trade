@@ -1,7 +1,8 @@
 """Three bots on ONE paper account, 2021-10-05 .. 2026-10-04, as if the bot had been switched on at the start.
 
 Bots (deployed defaults): Shahin = main bot (2A+5A Donchian10+Kumo 4h, 5 coins, 1.0%), Mojsavar = C3+D (4h pullback,
-10 coins, 0.4%), Ghoghnous = PA C1 (4h key reversal, no target, signal range >= 1.1 ATR, 20 coins, 0.25%).
+10 coins, 0.4%), Ghoghnous = PA C2 (4h key reversal, no target, signal range >= 1.1 ATR, low-volatility gate volrank < 0.354, exit on an
+opposite key reversal; 20 coins, 0.4%; high_cagr/ideas/pa2_final.py F3_vol_opp). Until 2026-10-09 it was C1 at 0.25%.
 
 Method (two steps, so that every risk level can be replayed quickly):
 1. Trade ledgers from the research engines that were verified against the live code: Shahin = high_cagr.kernel_fixes
@@ -25,7 +26,7 @@ from high_cagr import run_suite as rs
 from high_cagr.kernel_fixes import simulate
 from high_cagr.ideas import bench, htf_confirm as hc, c3bench_d as BD, c3r2_a4_sizing as S, pabench as PB, xuni as X
 OUT=X.OUT/'three_bots';NAMES={'main':'Shahin','c3':'Mojsavar','pa':'Ghoghnous'}
-DEFAULT=dict(main=.01,c3=.004,pa=.0025);FEE_RT=.0012;SLIP_ALLOW=.0004;LEV=5;SEED=10000.;DAYS=PB.days()
+DEFAULT=dict(main=.01,c3=.004,pa=.004);FEE_RT=.0012;SLIP_ALLOW=.0004;LEV=5;SEED=10000.;DAYS=PB.days()
 MIN0=lambda ts:int((ts-rs.START)//60000)
 
 @functools.lru_cache(1)
@@ -48,10 +49,10 @@ def ledgers():
             e,x=int(r[0]),int(r[1])
             legs.append(dict(bot='c3',coin=s,side=int(r[2]),em=e*240,xm=min(x*240+239,DAYS*1440-1),entry=float(r[6]),unit=float(r[3]*1e4/r[5]),
                              stop_frac=float(2*d['atr'][e-1]/r[6]),risk_scale=1.,root=('c3',s,i),is_add=False))
-    # Ghoghnous (C1)
+    # Ghoghnous (C2)
+    from high_cagr.ideas import pa2_final as F
     for s in PB.OTHER20:
-        d=PB.coin(s);n=d['n'];side=d['sig']['side'][:n].copy();side[(d['h'][:n]-d['l'][:n])<1.1*d['atr'][:n]]=0
-        T=PB.run(d,side=side,target_r=0.)
+        d=PB.coin(s);T=F.run(d,'vol',True)
         for i,r in enumerate(T):
             dist=PB.RISK*1e4/r[5]-r[6]*(2*PB.FEE+2*PB.SLIP)
             legs.append(dict(bot='pa',coin=s,side=int(r[2]),em=int(r[0]),xm=int(r[1]),entry=float(r[6]),unit=float(r[3]*1e4/r[5]),
@@ -111,7 +112,7 @@ def main():
     print('BASE',json.dumps({k:v for k,v in base.items()},default=float),flush=True)
     res['alone']={b:replay(bots=(b,)) for b in ('main','c3','pa')}
     res['cap60']=replay(margin_cap=.6);res['cap100']=replay(margin_cap=1.)
-    grid={'main':[.005,.0075,.01,.0125,.015,.02,.025],'c3':[.002,.004,.006,.008,.01,.015],'pa':[.0015,.0025,.004,.005,.0075,.01]}
+    grid={'main':[.005,.0075,.01,.0125,.015,.02,.025],'c3':[.002,.004,.006,.008,.01,.015],'pa':[.0025,.004,.005,.0075,.01,.015]}
     res['grid']={b:[replay(risk={b:x}) for x in xs] for b,xs in grid.items()}
     res['scale']=[replay(risk={b:DEFAULT[b]*k for b in DEFAULT}) for k in (.5,.75,1.,1.25,1.5,2.,2.5)]
     (OUT/'result.json').write_text(json.dumps(res,indent=1,default=float))

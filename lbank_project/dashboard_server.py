@@ -409,7 +409,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <div class="fields" style="margin-top:18px">
 <label class="field">ریسک هر معامله (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
 <label class="field" style="grid-column:span 3">نمادها (هر خط یکی، مثل LINK/USDT:USDT)<textarea id="pa_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
-<p class="muted">ورود با سفارش Stop روی سقف/کف کندل سیگنال تا بسته‌شدن کندل بعد؛ کندل سیگنال کوچک‌تر از 1.1 ATR رد می‌شود؛ خروج با استاپ یا بعد از ۳۰ کندل (بدون هدف ثابت).</p>
+<p class="muted">نسخهٔ C2: ورود با سفارش Stop روی سقف/کف کندل سیگنال تا بسته‌شدن کندل بعد، فقط وقتی بازار آن ارز در حالت کم‌نوسان است (رتبهٔ ATR کمتر از ۰٫۳۵۴ در ۵۰۰ کندل اخیر)؛ کندل سیگنال کوچک‌تر از 1.1 ATR رد می‌شود؛ خروج با استاپ، با ظاهر شدن Key Reversal مخالف، یا بعد از ۳۰ کندل (بدون هدف ثابت).</p>
 <details><summary>ویرایش کامل JSON تنظیمات ققنوس</summary><textarea id="pa_editor" aria-label="Ghoghnous JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="pa_dirty">تنظیمات ققنوس بارگذاری نشده است.</p><button id="pa_save" disabled>ذخیره تنظیمات ققنوس</button></div>
 <details><summary>سفارش‌های Stop در انتظار و ۲۰ معاملهٔ اخیر ققنوس</summary><div class="scroll"><table><thead><tr><th>نماد</th><th>جهت</th><th>سطح ورود</th><th>حد ضرر</th></tr></thead><tbody id="pa_orders"></tbody></table>
@@ -534,7 +534,7 @@ function drawPositions(){const rows=$('positions');rows.replaceChildren();const 
  for(const {kind,p} of items){const tr=document.createElement('tr');const tag=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(kind==='bot'?'':' '+kind);sp.textContent=BOTNAME[kind];tag.append(sp);tr.append(tag);
   const pnl=p.unrealized_pnl_usd;
   const values=kind==='c3'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),'—','تریل ATR',number(p.current_r),number(pnl)]
-   :kind==='pa'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),p.target?number(p.target,6):'—','خروج: استاپ یا ۳۰ کندل',number(p.current_r),number(pnl)]
+   :kind==='pa'?[p.symbol,p.side==='long'?'خرید':'فروش',number(p.entry,6),number(p.live_price,6),number(p.stop,6),p.target?number(p.target,6):'—','خروج: استاپ، برگشت مخالف یا ۳۰ کندل',number(p.current_r),number(pnl)]
    :[p.symbol,p.side==='long'?'خرید':'فروش',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(pnl)];
   values.forEach((v,index)=>{const td=document.createElement('td');td.textContent=v;if(index===0||index>=2)td.dir='ltr';if(index===8&&pnl!==null)td.className=pnl<0?'bad':'good';tr.append(td);});
   const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'لغو':'بستن آنی';

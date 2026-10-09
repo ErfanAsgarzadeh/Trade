@@ -41,10 +41,10 @@ cumdata=json.dumps([[str(dates[i].date())]+[round(float(cum[b][i]),0) for b in (
 
 # ---------- risk frontier (CAGR vs DD) ----------
 G=R['grid'];SC=R['scale'];SCK=[.5,.75,1.,1.25,1.5,2.,2.5]
-FW,FH=920,380;fx0,fx1,fy0,fy1=10,60,40,320
+FW,FH=920,380;fx0,fx1,fy0,fy1=10,60,40,400
 fx=lambda v:PL+(FW-PL-PR)*(v-fx0)/(fx1-fx0);fy=lambda v:PT+(FH-PT-PB)*(1-(v-fy0)/(fy1-fy0))
 fgrid=''.join(f'<line x1="{fx(v):.1f}" x2="{fx(v):.1f}" y1="{PT}" y2="{FH-PB}" class="g"/><text x="{fx(v):.1f}" y="{FH-10}" class="ax" text-anchor="middle">{v}٪</text>' for v in range(10,61,10))
-fgrid+=''.join(f'<line x1="{PL}" x2="{FW-PR}" y1="{fy(v):.1f}" y2="{fy(v):.1f}" class="g"/><text x="{PL-8}" y="{fy(v)+4:.1f}" class="ax" text-anchor="end">{v}٪</text>' for v in range(50,321,50))
+fgrid+=''.join(f'<line x1="{PL}" x2="{FW-PR}" y1="{fy(v):.1f}" y2="{fy(v):.1f}" class="g"/><text x="{PL-8}" y="{fy(v)+4:.1f}" class="ax" text-anchor="end">{v}٪</text>' for v in range(50,401,50))
 series=[('main','شاهین',[(r['dd'],r['cagr'],f"{r['risk']['main']*100:.2f}٪") for r in G['main']]),('c3','موج‌سوار',[(r['dd'],r['cagr'],f"{r['risk']['c3']*100:.2f}٪") for r in G['c3']]),
         ('pa','ققنوس',[(r['dd'],r['cagr'],f"{r['risk']['pa']*100:.2f}٪") for r in G['pa']]),('all','هر سه با هم',[(r['dd'],r['cagr'],f"×{k}") for k,r in zip(SCK,SC)])]
 front=''

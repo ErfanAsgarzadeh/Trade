@@ -10,7 +10,7 @@ def pcfg(**kw):
     c=json.loads((Path(__file__).parents[1]/'pa_config.json').read_text());c.update(kw);return P.validate(c)
 
 def test_config_is_paper_only_and_validated():
-    c=pcfg();assert c['dry_run_mode'] is True and len(c['symbols'])==20 and c['risk_per_trade_pct']==.0025 and c['target_r']==0. and c['min_range_atr']==1.1 and c['time_stop_bars']==30 and c['enabled'] is True
+    c=pcfg();assert c['dry_run_mode'] is True and len(c['symbols'])==20 and c['risk_per_trade_pct']==.004 and c['target_r']==0. and c['min_range_atr']==1.1 and c['vol_rank_max']==.354 and c['opposite_exit'] is True and c['time_stop_bars']==30 and c['enabled'] is True
     for bad in (dict(dry_run_mode=False),dict(timeframe='1h'),dict(time_stop_bars=2.5),dict(risk_per_trade_pct=.05),dict(candle_fetch_limit=50),dict(symbols=[])):
         with pytest.raises(ValueError):pcfg(**bad)
     with pytest.raises(ValueError):P.validate({**pcfg(),'surprise':1})
@@ -21,7 +21,7 @@ def test_signals_match_the_backtest(coin,min_range):
     p=ROOT/'high_cagr/prepared_stage2'/coin/'prices.npy'
     if not p.exists():pytest.skip('research data not restored')
     sys.path.insert(0,str(ROOT));from high_cagr.ideas import pa_bot as R, ltf_search as L;from high_cagr import run_suite as rs
-    px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg(min_range_atr=min_range)
+    px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg(min_range_atr=min_range,vol_rank_max=1.)
     if min_range:   # same filter as high_cagr/ideas/pa_opt_combo.py fn: skip signal bars whose range < min_range x ATR
         g=dict(g);g['side']=np.where((h-l)>=min_range*g['atr'],g['side'],0)
     ts=rs.START+np.arange(n)*240*60000;rows=np.column_stack([ts,o,h,l,c,np.zeros(n)])
@@ -44,17 +44,18 @@ class FakeData:
     def tradable(self,s,q,p):return q>0
 
 START=1_700_006_400_000
-def rows_with_keyrev(side='long',n=120):
+def rows_with_keyrev(side='long',n=120,drift=.2):
     """Slow drift, then an outside bar at a fresh 11-bar low that closes near its high (mirror for short); +1 forming candle."""
     out=[];base=100.
     for i in range(n-1):
-        cl=base-.2*i if side=='long' else base+.2*i;out.append([START+i*H4*1000,cl+.1,cl+.6,cl-.6,cl,1.])
+        cl=base-drift*i if side=='long' else base+drift*i;out.append([START+i*H4*1000,cl+.1,cl+.6,cl-.6,cl,1.])
     p=out[-1]
     if side=='long':out.append([START+(n-1)*H4*1000,p[4],p[2]+1.,p[3]-1.,p[2]+.8,1.])
     else:out.append([START+(n-1)*H4*1000,p[4],p[2]+1.,p[3]-1.,p[3]-.8,1.])
     out.append([START+n*H4*1000,out[-1][4],out[-1][4],out[-1][4],out[-1][4],1.]);return out
 
 def sleeve(tmp_path,rows,price,db='pa.db',**kw):
+    kw={'vol_rank_max':1.,'candle_fetch_limit':300,**kw}   # short synthetic histories; the C2 volatility gate is tested separately
     st=P.Store(tmp_path/db);return P.Sleeve(pcfg(symbols=['LINK/USDT:USDT'],**kw),st,FakeData(rows,price)),st
 
 def scan_time(rows):return (rows[-1][0])/1000+3   # just after the signal candle closed
@@ -141,6 +142,48 @@ def test_min_range_filter(tmp_path):
 def test_runtime_config_upgrades_untouched_old_defaults(tmp_path):
     shipped=Path(__file__).parents[1]/'pa_config.json';old={**json.loads(shipped.read_text()),'target_r':2.,'risk_per_trade_pct':.0015};old.pop('min_range_atr')
     rt=tmp_path/'pa.json';rt.write_text(json.dumps(old));P.prepare_config(rt,shipped);c=P.load(rt)
-    assert (c['target_r'],c['min_range_atr'],c['risk_per_trade_pct'])==(0.,1.1,.0025)
+    assert (c['target_r'],c['min_range_atr'],c['risk_per_trade_pct'])==(0.,1.1,.004)
     own={**old,'risk_per_trade_pct':.003};rt.write_text(json.dumps(own));P.prepare_config(rt,shipped);c=P.load(rt)
     assert (c['target_r'],c['min_range_atr'],c['risk_per_trade_pct'])==(2.,1.1,.003)   # a value the owner changed is kept
+
+@pytest.mark.parametrize('coin',['LINKUSDT','ATOMUSDT'])
+def test_c2_volatility_gate_matches_the_research(coin):
+    """Live vol_rank gate (800 fetched candles) agrees with high_cagr/ideas/pa2_final.py (prank of ATR/close over 500 bars)."""
+    p=ROOT/'high_cagr/prepared_stage2'/coin/'prices.npy'
+    if not p.exists():pytest.skip('research data not restored')
+    sys.path.insert(0,str(ROOT));from high_cagr.ideas import pa_bot as R, ltf_search as L, pa2_confluence as CF;from high_cagr import run_suite as rs
+    px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg()
+    side=np.where((h-l)>=1.1*g['atr'],g['side'],0);vr=CF.prank(g['atr']/c,500);want=side*((vr<.354)&np.isfinite(vr))
+    ts=rs.START+np.arange(n)*240*60000;rows=np.column_stack([ts,o,h,l,c,np.zeros(n)]);idx=[t for t in np.where(side!=0)[0] if t>900];bad=0
+    for t in idx:
+        win=rows[t-799:t+2].tolist();now=(ts[t]+240*60000)/1000+3;raw,sig=P.tradable_signal(P.features(win,now,conf),conf)
+        assert raw and raw['side']==('long' if side[t]>0 else 'short')
+        bad+=(sig is not None)!=(want[t]!=0)
+    assert len(idx)>50 and bad<=max(1,len(idx)//100),(bad,len(idx))   # ATR warm-up differences may flip a borderline rank
+
+def test_opposite_reversal_closes_the_position(tmp_path):
+    rows=rows_with_keyrev('long');sig=rows[-2];sl,st=sleeve(tmp_path,rows,sig[4]);now=scan_time(rows)
+    sl.scan(now);sl.data.px=sig[2]+.05;sl.watchdog(now+60);assert st.positions()
+    later=rows[:-1];p0=later[-1]
+    for k in range(12):later.append([p0[0]+(k+1)*H4*1000,p0[4]+.3*k,p0[4]+.3*k+.5,p0[4]+.3*k-.5,p0[4]+.3*k+.2,1.])
+    q=later[-1];later.append([q[0]+H4*1000,q[4],q[2]+1.,q[3]-1.,q[3]-.8,1.])          # bearish key reversal at a new 11-bar high
+    later.append([later[-1][0]+H4*1000,later[-1][4],later[-1][4],later[-1][4],later[-1][4],1.])
+    sl.data.rows=later;sl.data.px=later[-2][4];sl.scan(later[-1][0]/1000+3)
+    with st.db() as db:assert db.execute('SELECT reason FROM trades').fetchone()[0]=='opposite'
+    assert st.orders()['LINK/USDT:USDT']['side']=='short'                            # and the opposite setup is armed
+
+def test_volatility_gate_blocks_high_volatility(tmp_path):
+    base=rows_with_keyrev('long',n=700,drift=.02)
+    calm=[r[:] for r in base]
+    for r in calm[:-60]:r[2]=r[4]+6.                                                 # older candles much wider -> current ATR low
+    sl,st=sleeve(tmp_path,calm,calm[-2][4],vol_rank_max=.354,candle_fetch_limit=800);sl.scan(scan_time(calm));assert st.orders()
+    wild=[r[:] for r in base]
+    for r in wild[-40:-4]:r[2]=r[4]+6.                                               # recent candles much wider -> current ATR high
+    c=pcfg(vol_rank_max=1.,min_range_atr=0.);raw,_=P.tradable_signal(P.features(wild,scan_time(wild),c),c);assert raw   # the setup itself is still there
+    sl2,st2=sleeve(tmp_path,wild,wild[-2][4],db='w.db',vol_rank_max=.354,min_range_atr=0.,candle_fetch_limit=800);sl2.scan(scan_time(wild));assert st2.orders()=={}
+
+def test_short_gap_is_filled_and_stale_feed_is_retried(tmp_path):
+    rows=rows_with_keyrev('long');gap=rows[:50]+rows[51:]                             # one missing candle
+    sl,st=sleeve(tmp_path,gap,rows[-2][4]);assert sl.scan(scan_time(rows)) and st.orders()
+    stale=rows[:-1]                                                                  # producer has not appended the newest candle yet
+    sl2,st2=sleeve(tmp_path,stale,rows[-2][4],db='s.db');assert sl2.scan(scan_time(rows)) is False and st2.orders()=={}

@@ -11,10 +11,14 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   entry : buy-stop at the signal high (sell-stop at the signal low), valid until the NEXT 4h candle closes; the order
           is cancelled when the price reaches the stop level first
   stop  : signal low - 0.1 x ATR14 (signal high + 0.1 x ATR14 for shorts); skip stops < 0.4% of the fill price
-  filter: skip signal candles whose range is < 1.1 x ATR14 (min_range_atr)
-  exit  : the stop, or at the close of the 30th 4h candle after entry (time stop); no target (target_r=0; a positive
-          target_r restores the original 2R target)
-Defaults = variant C1 of the 12-agent study (high_cagr/ideas/pa_opt_combo.py), risk 0.25% per trade.
+  filter: skip signal candles whose range is < 1.1 x ATR14 (min_range_atr), and (C2) trade only in a LOW-VOLATILITY
+          regime: volrank < 0.354, volrank = share of the previous 500 4h candles whose ATR14/close is below the signal
+          candle's (vol_rank_max / vol_rank_window; 1.0 turns the gate off)
+  exit  : the stop, or at the close of the 30th 4h candle after entry (time stop), or (C2) at the close of a candle that
+          prints an opposite key reversal (opposite_exit; the raw signal, before the volatility gate); no target
+          (target_r=0; a positive target_r restores the original 2R target)
+Defaults = variant C2 of the second 12-agent meeting (high_cagr/ideas/pa2_final.py, winner F3_vol_opp), risk 0.4%.
+History: C1 (pa_opt_combo.py, 0.25%) -> C2.
 One position per coin; own DB and config. Runs inside the main bot (lbank_bot.run starts it in its own thread;
 PA_IN_BOT=0 turns that off). Sizing as C3: risk_per_trade_pct of the shared paper equity / (stop distance + round-trip
 fee + slippage allowance), notional capped at max_notional_pct of equity (PER_SLOT) or by the shared free margin.
@@ -28,9 +32,11 @@ import lbank_bot as bot
 import c3_sleeve as c3
 
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
-DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=1.,max_open_positions=0,
+C1_RISK=.0025;OLD_FETCH=300   # C1 defaults (upgraded to C2 when untouched)
+DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.004,max_notional_pct=1.,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,atr_period=14,lookback=10,close_frac=.75,stop_buffer_atr=.1,
-    target_r=0.,min_range_atr=1.1,time_stop_bars=30,min_stop_pct=.004,candle_fetch_limit=300,check_interval_seconds=15,symbols=[])
+    target_r=0.,min_range_atr=1.1,vol_rank_max=.354,vol_rank_window=500,opposite_exit=True,time_stop_bars=30,min_stop_pct=.004,
+    candle_fetch_limit=800,check_interval_seconds=15,max_gap_bars=3,symbols=[])
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -42,7 +48,10 @@ def validate(c:dict)->dict:
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['target_r']>=0 and c['stop_buffer_atr']>=0 and 0<=c['min_range_atr']<=5):raise ValueError('Invalid PA risk settings')
     if not (type(c['time_stop_bars']) is int and 1<=c['time_stop_bars']<=500):raise ValueError('time_stop_bars must be an int 1..500')
     if not (type(c['lookback']) is int and 2<=c['lookback']<=100 and 0<c['close_frac']<1):raise ValueError('Invalid PA signal settings')
-    if c['candle_fetch_limit']<max(100,c['lookback']+10*c['atr_period']):raise ValueError('candle_fetch_limit too small for the ATR warm-up')
+    if not (0<c['vol_rank_max']<=1 and type(c['vol_rank_window']) is int and 50<=c['vol_rank_window']<=2000 and type(c['opposite_exit']) is bool):raise ValueError('Invalid PA volatility/exit settings')
+    if not (type(c['max_gap_bars']) is int and 0<=c['max_gap_bars']<=12):raise ValueError('max_gap_bars must be an int 0..12')
+    need=max(100,c['lookback']+10*c['atr_period'])+(c['vol_rank_window']+1 if c['vol_rank_max']<1 else 0)
+    if c['candle_fetch_limit']<need:raise ValueError(f'candle_fetch_limit too small for the ATR warm-up and the volatility window (need >= {need})')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('PA needs a list of distinct symbols')
     return c
 
@@ -51,9 +60,27 @@ def features(rows:list,now:float,c:dict)->pd.DataFrame:
     df=pd.DataFrame(rows,columns=['timestamp','open','high','low','close','volume']).astype(float).iloc[:-1]
     df=df[df.timestamp+H4*1000<=now*1000].reset_index(drop=True)
     if len(df)<c['lookback']+3*c['atr_period']:raise ValueError('Not enough closed candles')
-    if (np.diff(df.timestamp.to_numpy())!=H4*1000).any():raise ValueError('Gaps in candle history')
+    steps=np.diff(df.timestamp.to_numpy())//(H4*1000)
+    if (steps<1).any() or (steps-1).max(initial=0)>c['max_gap_bars']:raise ValueError('Gaps in candle history')
+    if (steps>1).any():   # short exchange gaps: flat candles at the previous close (as the minute data used in research)
+        full=np.arange(df.timestamp.iloc[0],df.timestamp.iloc[-1]+1,H4*1000);df=df.set_index('timestamp').reindex(full)
+        df['close']=df.close.ffill()
+        for k in ('open','high','low'):df[k]=df[k].fillna(df.close)
+        df['volume']=df.volume.fillna(0.);df=df.rename_axis('timestamp').reset_index()
     tr=pd.concat([df.high-df.low,(df.high-df.close.shift()).abs(),(df.low-df.close.shift()).abs()],axis=1).max(axis=1)
     df['atr']=tr.ewm(alpha=1/c['atr_period'],adjust=False).mean();return df
+
+def vol_rank(df:pd.DataFrame,window:int)->float:
+    """Share of the previous `window` candles whose ATR/close is below the last candle's (pa2_confluence.prank)."""
+    x=(df.atr/df.close).to_numpy()
+    if len(x)<window+1:return float('nan')
+    prev=x[-window-1:-1];prev=prev[np.isfinite(prev)];return float((prev<x[-1]).mean()) if len(prev) else float('nan')
+
+def tradable_signal(df:pd.DataFrame,c:dict)->tuple[dict|None,dict|None]:
+    """(raw key-reversal signal, the same signal if it passes the volatility gate else None)."""
+    sig=signal(df,c)
+    if sig is None or c['vol_rank_max']>=1:return sig,sig
+    vr=vol_rank(df,c['vol_rank_window']);return sig,(sig if vr==vr and vr<c['vol_rank_max'] else None)
 
 def signal(df:pd.DataFrame,c:dict)->dict|None:
     """Key reversal on the last closed candle -> pending stop order {side, level, stop}; None if no signal."""
@@ -127,12 +154,15 @@ class Sleeve(c3.Sleeve):
         for s in c['symbols']:
             try:
                 df=features(self.data.candles(s,c['timeframe'],c['candle_fetch_limit']),now,c);b=df.iloc[-1];stamp=int(b.timestamp)
+                if stamp<(int(now)//H4-1)*H4*1000:raise ValueError(f'stale candles for {s}: last closed {stamp}')   # retried, never skipped
                 with self.store.db() as db:prev=db.execute('SELECT candle_ts FROM scanned WHERE symbol=?',(s,)).fetchone()
                 if prev and stamp<=prev[0]:continue
                 pos={p['symbol']:p for p in self.store.positions()}.get(s)
                 if pos and pos['entry_bar_ts'] is not None and (stamp-pos['entry_bar_ts'])//(H4*1000)>=c['time_stop_bars']:
                     self.close(pos,self.data.price(s),'time',now);pos=None
-                sig=signal(df,c)
+                raw,sig=tradable_signal(df,c)
+                if pos and c['opposite_exit'] and raw and raw['side']!=pos['side']:
+                    self.close(pos,self.data.price(s),'opposite',now);pos=None
                 if not pos and c['enabled'] and sig:   # valid until the next candle (stamp + 4h) has closed
                     self.store.set_order(s,dict(sig,signal_ts=stamp,expires=stamp+2*H4*1000,atr=float(b.atr)))
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
@@ -165,7 +195,7 @@ class Sleeve(c3.Sleeve):
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
             db.execute('INSERT OR REPLACE INTO exits VALUES(?,?,?,?)',(s,now,target,entry_bar))
-        LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %.6g qty %.6g',s,order['side'],price,stop,target,qty);return True
+        LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %s qty %.6g',s,order['side'],price,stop,'none' if target is None else f'{target:.6g}',qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
@@ -187,7 +217,10 @@ def prepare_config(path:Path,shipped:Path)->Path:
         path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
     if cur.get('target_r')==2. and cur.get('min_range_atr',0.)==0. and cur.get('risk_per_trade_pct')==OLD_RISK:
-        new.update(target_r=ship['target_r'],min_range_atr=ship['min_range_atr'],risk_per_trade_pct=ship['risk_per_trade_pct'])   # untouched old defaults -> C1
+        new.update(target_r=ship['target_r'],min_range_atr=ship['min_range_atr'],risk_per_trade_pct=ship['risk_per_trade_pct'])   # untouched first defaults -> current
+    elif 'vol_rank_max' not in cur and cur.get('risk_per_trade_pct')==C1_RISK:new['risk_per_trade_pct']=ship['risk_per_trade_pct']   # untouched C1 -> C2 risk
+    if cur.get('candle_fetch_limit',OLD_FETCH)==OLD_FETCH:new['candle_fetch_limit']=ship['candle_fetch_limit']   # C2 needs 500+ candles
+    if '1000SHIB/USDT:USDT' in new.get('symbols',[]):new['symbols']=['SHIB/USDT:USDT' if x=='1000SHIB/USDT:USDT' else x for x in new['symbols']]   # LBank lists SHIBUSDT
     if new!=cur:
         LOG.info('%s runtime config upgraded: %s',NAME,{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
     return path

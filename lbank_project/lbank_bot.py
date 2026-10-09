@@ -806,7 +806,7 @@ class MarketData:
                  "AAVE": 150, "UNI": 8, "AVAX": 30, "KSM": 30, "EGLD": 40, "DOT": 6, "DOGE": 0.15, "ONE": 0.02, "TRX": 0.12, "SUSHI": 1.0,
                  # PA sleeve coins (pa_sleeve.py), synthetic demo only
                  "ATOM": 6, "FIL": 4, "LTC": 80, "AXS": 5, "LINK": 15, "XTZ": 0.8, "ALGO": 0.2, "ETC": 20, "NEAR": 3,
-                 "CELR": 0.01, "BCH": 400, "ALICE": 0.5, "C98": 0.1, "1000SHIB": 0.015, "THETA": 1.0, "IOST": 0.005,
+                 "CELR": 0.01, "BCH": 400, "ALICE": 0.5, "C98": 0.1, "SHIB": 0.000015, "THETA": 1.0, "IOST": 0.005,
                  "CVC": 0.1, "CRV": 0.5, "IOTA": 0.2, "VET": 0.03}
         if symbol not in [key + "/USDT:USDT" for key in bases]:
             raise ValueError(f"No synthetic demo market for {symbol}")
