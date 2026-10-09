@@ -1,0 +1,380 @@
+{
+ "notes": "Coded price-action rules for the main bot. Written and committed BEFORE running; one run, no tuning afterwards.\n\nBaseline: main bot as deployed (2A+5A, Donchian10+Kumo 4h, 5 coins) at the new default risk 1.0%.\nFlags are computed for EVERY signal bar from closed 4h rows <= ix[sym][b] (causal), side-adjusted (\"against\" = above for\nlongs, below for shorts). Pivots: 3-bar fractals, usable only once 3 later bars have closed.\n  barb     last 3 bars: any doji (body <= 0.25 range) and every overlap >= 0.65 (same as lbank_bot Barb Wire)\n  noh2     no H2/L2 two-legged pullback in the last 8 bars (lbank_bot logic)\n  badsb    signal bar fails lbank_bot's quality test (close in the top/bottom 40%, tail or body condition)\n  room1    nearest pivot against the trade (last 200 bars) is less than 1 ATR beyond the close\n  room2    same, less than 2 ATR (= less room than the initial stop distance)\n  double   two pivots against the trade in the last 40 bars within 0.5 ATR of each other, 0..1.5 ATR beyond the close\n  climax   a bar in the last 3 has range > 2 ATR and the close is > 3 ATR beyond EMA20 in the trade direction\n  wedge    last three pivots in the trade direction rising (falling) with shrinking increments, newest within 30 bars\n  tlbreak  trendline through the last two pivots on the trade side (rising lows / falling highs) was closed through after\n           the second pivot\n  range    high-low of the last 20 bars < 4 ATR\n  failbo   in the last 20 bars a close beyond the prior 10-bar extreme in the trade direction was followed within 5 bars\n           by a close back inside that level\n  htf      prior-day or prior-week high (long) / low (short) is 0..1 ATR beyond the close\nPHASE A (TRAIN trades): per flag n, mean net R YES vs NO.\nPHASE B: candidate = flag with n_yes >= 30 in TRAIN and |mean R YES - NO| >= 0.15 R. Action: YES worse -> 'skip' and\n  'half' (0.5x risk); YES better -> '1.5x'. Simulate each candidate/action on TRAIN; keep the 2 best by TRAIN Calmar that\n  beat the baseline TRAIN Calmar. Plus one entry-mechanics variant 'confirm': enter only after a 4h close beyond the signal\n  bar's high (long) / low (short) on the next bar (lbank_bot's signal-bar breakout approximated as a close confirmation).\nVALIDATION gates (each kept candidate and 'confirm'): V1 valid Calmar >= baseline + 0.10; V2 valid max DD <= baseline;\n  V3 valid CAGR >= baseline - 3 pp; V4 for '1.5x' only: valid Calmar above the flat control at the same mean multiplier.\n",
+ "flags": {
+  "barb": {
+   "train": {
+    "n_yes": 6,
+    "yes_R": -0.3331897802556199,
+    "no_R": 0.24292884909304305
+   },
+   "valid": {
+    "n_yes": 6,
+    "yes_R": -0.09071349233779409,
+    "no_R": 0.33808983136661075
+   }
+  },
+  "noh2": {
+   "train": {
+    "n_yes": 94,
+    "yes_R": 0.18569307648205083,
+    "no_R": 0.24642603245548178
+   },
+   "valid": {
+    "n_yes": 48,
+    "yes_R": 1.2614670113207203,
+    "no_R": 0.1758236563492277
+   }
+  },
+  "badsb": {
+   "train": {
+    "n_yes": 159,
+    "yes_R": 0.35286088132672977,
+    "no_R": 0.19976203486366542
+   },
+   "valid": {
+    "n_yes": 57,
+    "yes_R": 0.4317241240516455,
+    "no_R": 0.30983992199063426
+   }
+  },
+  "room1": {
+   "train": {
+    "n_yes": 394,
+    "yes_R": 0.20641939184264668,
+    "no_R": 0.28664090661529984
+   },
+   "valid": {
+    "n_yes": 242,
+    "yes_R": 0.2885879794941985,
+    "no_R": 0.4371069704286878
+   }
+  },
+  "room2": {
+   "train": {
+    "n_yes": 468,
+    "yes_R": 0.18570136568614767,
+    "no_R": 0.37546152215176515
+   },
+   "valid": {
+    "n_yes": 278,
+    "yes_R": 0.2847877864160546,
+    "no_R": 0.5456347221128508
+   }
+  },
+  "double": {
+   "train": {
+    "n_yes": 58,
+    "yes_R": 0.2897258833886638,
+    "no_R": 0.23239823515918986
+   },
+   "valid": {
+    "n_yes": 45,
+    "yes_R": 0.3144291732840344,
+    "no_R": 0.3329251384607529
+   }
+  },
+  "climax": {
+   "train": {
+    "n_yes": 76,
+    "yes_R": 0.17169073310949945,
+    "no_R": 0.2463749495132144
+   },
+   "valid": {
+    "n_yes": 34,
+    "yes_R": 0.8811381367485714,
+    "no_R": 0.2686625629665675
+   }
+  },
+  "wedge": {
+   "train": {
+    "n_yes": 77,
+    "yes_R": 0.20989349497169504,
+    "no_R": 0.2413186383192368
+   },
+   "valid": {
+    "n_yes": 32,
+    "yes_R": 0.06711856658219567,
+    "no_R": 0.3580841281891513
+   }
+  },
+  "tlbreak": {
+   "train": {
+    "n_yes": 65,
+    "yes_R": 0.700541511514322,
+    "no_R": 0.18558595646182527
+   },
+   "valid": {
+    "n_yes": 35,
+    "yes_R": -0.11243352152804359,
+    "no_R": 0.38178353139669846
+   }
+  },
+  "range": {
+   "train": {
+    "n_yes": 132,
+    "yes_R": 0.10104233547460713,
+    "no_R": 0.2727575756976165
+   },
+   "valid": {
+    "n_yes": 99,
+    "yes_R": 0.16597435911050643,
+    "no_R": 0.3988739146066439
+   }
+  },
+  "failbo": {
+   "train": {
+    "n_yes": 289,
+    "yes_R": 0.28434483120799037,
+    "no_R": 0.19947552343864383
+   },
+   "valid": {
+    "n_yes": 184,
+    "yes_R": 0.4358251699749134,
+    "no_R": 0.20373609119566882
+   }
+  },
+  "htf": {
+   "train": {
+    "n_yes": 118,
+    "yes_R": 0.34213254801488435,
+    "no_R": 0.21410233150964153
+   },
+   "valid": {
+    "n_yes": 61,
+    "yes_R": 0.2913336198997816,
+    "no_R": 0.33910182034215464
+   }
+  }
+ },
+ "baseline": {
+  "train": {
+   "cagr": 46.70375481923392,
+   "dd": 23.174030772626107,
+   "calmar": 2.015348787505791
+  },
+  "oos": {
+   "cagr": 67.9636234873161,
+   "dd": 23.502968286891036,
+   "calmar": 2.8917038332227736
+  },
+  "full": {
+   "cagr": 53.85271381864458,
+   "dd": 23.50896216236081,
+   "calmar": 2.2907312303588565
+  }
+ },
+ "candidates": {
+  "badsb:1.5x": {
+   "stats": {
+    "train": {
+     "cagr": 57.561119407188,
+     "dd": 21.842381348118728,
+     "calmar": 2.6352950481814434
+    },
+    "oos": {
+     "cagr": 74.63802195655134,
+     "dd": 24.197842250765785,
+     "calmar": 3.084490806373006
+    },
+    "full": {
+     "cagr": 63.370521822363536,
+     "dd": 24.199566401691445,
+     "calmar": 2.6186635235718194
+    }
+   }
+  },
+  "room2:skip": {
+   "stats": {
+    "train": {
+     "cagr": 27.250122726024316,
+     "dd": 20.542375856023877,
+     "calmar": 1.3265321848365192
+    },
+    "oos": {
+     "cagr": 33.18305243075699,
+     "dd": 20.083336915108323,
+     "calmar": 1.6522678761512979
+    },
+    "full": {
+     "cagr": 29.30746373504398,
+     "dd": 20.542375856023877,
+     "calmar": 1.426683259056903
+    }
+   }
+  },
+  "room2:half": {
+   "stats": {
+    "train": {
+     "cagr": 36.98680485920563,
+     "dd": 17.528691141791228,
+     "calmar": 2.110072255824231
+    },
+    "oos": {
+     "cagr": 43.65119989137338,
+     "dd": 17.73828755170288,
+     "calmar": 2.4608463339057134
+    },
+    "full": {
+     "cagr": 39.293358483561256,
+     "dd": 17.740370263657812,
+     "calmar": 2.2149119719364596
+    }
+   }
+  },
+  "tlbreak:1.5x": {
+   "stats": {
+    "train": {
+     "cagr": 52.25343426406668,
+     "dd": 24.592260085597413,
+     "calmar": 2.1247918687501675
+    },
+    "oos": {
+     "cagr": 65.86156057678562,
+     "dd": 24.649922653799063,
+     "calmar": 2.671876966990604
+    },
+    "full": {
+     "cagr": 56.90666846321655,
+     "dd": 24.653329234025012,
+     "calmar": 2.308275199792386
+    }
+   }
+  },
+  "range:skip": {
+   "stats": {
+    "train": {
+     "cagr": 41.47455988548758,
+     "dd": 24.420209175215895,
+     "calmar": 1.6983703779073347
+    },
+    "oos": {
+     "cagr": 53.20922016960563,
+     "dd": 26.318181352975532,
+     "calmar": 2.021766605221367
+    },
+    "full": {
+     "cagr": 45.49871160417851,
+     "dd": 26.32025654954859,
+     "calmar": 1.7286576032618057
+    }
+   }
+  },
+  "range:half": {
+   "stats": {
+    "train": {
+     "cagr": 45.178347963174836,
+     "dd": 23.485943541705705,
+     "calmar": 1.923633507972475
+    },
+    "oos": {
+     "cagr": 63.52561150367742,
+     "dd": 22.679994846793342,
+     "calmar": 2.800953524584205
+    },
+    "full": {
+     "cagr": 51.384522444000865,
+     "dd": 23.485943541705705,
+     "calmar": 2.187884099812878
+    }
+   }
+  },
+  "confirm": {
+   "stats": {
+    "train": {
+     "cagr": 14.033614042997478,
+     "dd": 21.03641960386045,
+     "calmar": 0.667110387949389
+    },
+    "oos": {
+     "cagr": 14.98139805772809,
+     "dd": 17.501851418660205,
+     "calmar": 0.8559893293206199
+    },
+    "full": {
+     "cagr": 14.369631468009093,
+     "dd": 21.03641960386045,
+     "calmar": 0.6830835160452915
+    }
+   }
+  }
+ },
+ "validated": {
+  "badsb:1.5x": {
+   "stats": {
+    "train": {
+     "cagr": 57.561119407188,
+     "dd": 21.842381348118728,
+     "calmar": 2.6352950481814434
+    },
+    "oos": {
+     "cagr": 74.63802195655134,
+     "dd": 24.197842250765785,
+     "calmar": 3.084490806373006
+    },
+    "full": {
+     "cagr": 63.370521822363536,
+     "dd": 24.199566401691445,
+     "calmar": 2.6186635235718194
+    }
+   },
+   "gates": {
+    "V1": true,
+    "V2": false,
+    "V3": true,
+    "V4": true
+   },
+   "passed": false
+  },
+  "tlbreak:1.5x": {
+   "stats": {
+    "train": {
+     "cagr": 52.25343426406668,
+     "dd": 24.592260085597413,
+     "calmar": 2.1247918687501675
+    },
+    "oos": {
+     "cagr": 65.86156057678562,
+     "dd": 24.649922653799063,
+     "calmar": 2.671876966990604
+    },
+    "full": {
+     "cagr": 56.90666846321655,
+     "dd": 24.653329234025012,
+     "calmar": 2.308275199792386
+    }
+   },
+   "gates": {
+    "V1": false,
+    "V2": false,
+    "V3": true,
+    "V4": false
+   },
+   "passed": false
+  },
+  "confirm": {
+   "stats": {
+    "train": {
+     "cagr": 14.033614042997478,
+     "dd": 21.03641960386045,
+     "calmar": 0.667110387949389
+    },
+    "oos": {
+     "cagr": 14.98139805772809,
+     "dd": 17.501851418660205,
+     "calmar": 0.8559893293206199
+    },
+    "full": {
+     "cagr": 14.369631468009093,
+     "dd": 21.03641960386045,
+     "calmar": 0.6830835160452915
+    }
+   },
+   "gates": {
+    "V1": false,
+    "V2": true,
+    "V3": false
+   },
+   "passed": false
+  }
+ }
+}
