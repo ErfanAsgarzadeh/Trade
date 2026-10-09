@@ -11,6 +11,9 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
           is cancelled when the price reaches the stop level first
   stop  : signal low - 0.1 x ATR14 (signal high + 0.1 x ATR14 for shorts); skip stops < 0.4% of the fill price
   exit  : target = 2R from the fill, or the stop, or at the close of the 30th 4h candle after entry (time stop)
+Optional upgrade from the 12-agent study (high_cagr/ideas/pa_opt_combo.py, variant C1; off by default):
+  min_range_atr=1.1 skips signal candles whose range is < 1.1 x ATR14, target_r=0 removes the target (stop or time stop
+  only); researched together with risk_per_trade_pct=0.0025.
 One position per coin; own DB and config. Runs inside the main bot (lbank_bot.run starts it in its own thread;
 PA_IN_BOT=0 turns that off). Sizing as C3: risk_per_trade_pct of the shared paper equity / (stop distance + round-trip
 fee + slippage allowance), notional capped at max_notional_pct of equity (PER_SLOT) or by the shared free margin.
@@ -26,7 +29,7 @@ import c3_sleeve as c3
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0015,max_notional_pct=1.,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,atr_period=14,lookback=10,close_frac=.75,stop_buffer_atr=.1,
-    target_r=2.,time_stop_bars=30,min_stop_pct=.004,candle_fetch_limit=300,check_interval_seconds=15,symbols=[])
+    target_r=2.,min_range_atr=0.,time_stop_bars=30,min_stop_pct=.004,candle_fetch_limit=300,check_interval_seconds=15,symbols=[])
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -35,7 +38,7 @@ def validate(c:dict)->dict:
     if c['timeframe']!='4h':raise ValueError('PA was researched on 4h only')
     if type(c['isolated_leverage']) is not int or not 1<=c['isolated_leverage']<=5:raise ValueError('isolated_leverage must be an integer 1..5')
     if type(c['max_open_positions']) is not int or not 0<=c['max_open_positions']<=100:raise ValueError('max_open_positions must be an integer 0..100; 0 disables the count cap')
-    if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['target_r']>0 and c['stop_buffer_atr']>=0):raise ValueError('Invalid PA risk settings')
+    if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['target_r']>=0 and c['stop_buffer_atr']>=0 and 0<=c['min_range_atr']<=5):raise ValueError('Invalid PA risk settings')
     if not (type(c['time_stop_bars']) is int and 1<=c['time_stop_bars']<=500):raise ValueError('time_stop_bars must be an int 1..500')
     if not (type(c['lookback']) is int and 2<=c['lookback']<=100 and 0<c['close_frac']<1):raise ValueError('Invalid PA signal settings')
     if c['candle_fetch_limit']<max(100,c['lookback']+10*c['atr_period']):raise ValueError('candle_fetch_limit too small for the ATR warm-up')
@@ -56,6 +59,7 @@ def signal(df:pd.DataFrame,c:dict)->dict|None:
     h,l,cl=df.high.to_numpy(),df.low.to_numpy(),df.close.to_numpy();a=float(df.atr.iloc[-1]);n=c['lookback']
     if len(df)<n+2 or not a>0:return None
     rng=max(h[-1]-l[-1],1e-12);outside=h[-1]>h[-2] and l[-1]<l[-2]
+    if c['min_range_atr']>0 and not rng>=c['min_range_atr']*a:return None   # skip small signal bars (high_cagr/ideas/pa_opt_combo.py)
     if outside and l[-1]<=l[-n-1:-1].min() and cl[-1]>cl[-2] and (cl[-1]-l[-1])/rng>=c['close_frac']:
         return dict(side='long',level=float(h[-1]),stop=float(l[-1]-c['stop_buffer_atr']*a))
     if outside and h[-1]>=h[-n-1:-1].max() and cl[-1]<cl[-2] and (h[-1]-cl[-1])/rng>=c['close_frac']:
@@ -154,7 +158,7 @@ class Sleeve(c3.Sleeve):
         else:notional=min(notional,c['max_notional_pct']*eq)
         cs=float(self.data.market(s).get('contractSize') or 1);qty=self.data.precision(s,notional/price/cs)*cs
         if qty<=0 or not self.data.tradable(s,qty/cs,price):return None
-        target=price+sign*c['target_r']*dist;entry_bar=int(now*1000)//(H4*1000)*(H4*1000)
+        target=price+sign*c['target_r']*dist if c['target_r']>0 else None;entry_bar=int(now*1000)//(H4*1000)*(H4*1000)
         with self.store.db() as db:
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))

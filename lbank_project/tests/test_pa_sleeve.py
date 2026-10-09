@@ -15,13 +15,15 @@ def test_config_is_paper_only_and_validated():
         with pytest.raises(ValueError):pcfg(**bad)
     with pytest.raises(ValueError):P.validate({**pcfg(),'surprise':1})
 
-@pytest.mark.parametrize('coin',['LINKUSDT','ATOMUSDT'])
-def test_signals_match_the_backtest(coin):
+@pytest.mark.parametrize('coin,min_range',[('LINKUSDT',0.),('ATOMUSDT',0.),('LINKUSDT',1.1)])
+def test_signals_match_the_backtest(coin,min_range):
     """Every 4h key-reversal signal, entry level and stop equals high_cagr/ideas/pa_bot.py on real data."""
     p=ROOT/'high_cagr/prepared_stage2'/coin/'prices.npy'
     if not p.exists():pytest.skip('research data not restored')
     sys.path.insert(0,str(ROOT));from high_cagr.ideas import pa_bot as R, ltf_search as L;from high_cagr import run_suite as rs
-    px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg()
+    px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg(min_range_atr=min_range)
+    if min_range:   # same filter as high_cagr/ideas/pa_opt_combo.py fn: skip signal bars whose range < min_range x ATR
+        g=dict(g);g['side']=np.where((h-l)>=min_range*g['atr'],g['side'],0)
     ts=rs.START+np.arange(n)*240*60000;rows=np.column_stack([ts,o,h,l,c,np.zeros(n)])
     want=np.where(g['side']!=0)[0];rng=np.random.default_rng(2)
     check=sorted(set(want[want>400].tolist())|set(rng.choice(np.arange(400,n-1),300,replace=False).tolist()));hits=0
@@ -126,3 +128,12 @@ def test_dashboard_pa_api_and_panic(system,monkeypatch):
         assert api.post('/api/pa/close',headers=HDR,json={'symbol':'LINK/USDT:USDT'}).json()['result']=='cancelled'
         res=api.post('/api/positions/close-all',headers=HDR,json={'disable_auto_trade':True}).json()
     assert [x['result'] for x in res['pa']]==['closed'] and st.positions()==[] and P.load(P.paths()[0])['enabled'] is False
+
+def test_no_target_option_exits_only_by_stop_or_time(tmp_path):
+    rows=rows_with_keyrev('long');sig=rows[-2];sl,st=sleeve(tmp_path,rows,sig[4],target_r=0.);now=scan_time(rows)
+    sl.scan(now);sl.data.px=sig[2]+.05;sl.watchdog(now+60);p=st.positions()[0];assert p['target'] is None
+    sl.data.px=p['entry']+10*(p['entry']-p['stop']);sl.watchdog(now+120);assert st.positions()   # far beyond 2R: still open
+
+def test_min_range_filter(tmp_path):
+    rows=rows_with_keyrev('long');sl,st=sleeve(tmp_path,rows,rows[-2][4],min_range_atr=5.);sl.scan(scan_time(rows));assert st.orders()=={}
+    sl2,st2=sleeve(tmp_path,rows,rows[-2][4],db='b.db',min_range_atr=1.1);sl2.scan(scan_time(rows));assert st2.orders()
