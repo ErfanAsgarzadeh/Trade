@@ -1,0 +1,160 @@
+{
+ "notes": "Out-of-sample check of the two near-miss rules from pa_rules.py on 30 coins the bot never traded.\nWritten and committed BEFORE running; one run, no tuning.\n\nCoins: NEW10 + H10 + H2 (xuni / holdout_test lists), sorted, in 6 groups of 5 -> 6 independent bot portfolios exactly as\nxuni.bot_daily (2A+5A, Donchian10+Kumo 4h, 4 slots, floor 1R/+0.1R) at 1.0% risk; group daily returns averaged.\nRules (definitions unchanged from pa_rules.flags_at):\n  R1 room2:half  -> 0.5x risk when the nearest pivot against the trade is < 2 ATR beyond the close\n  R2 badsb:1.5x  -> 1.5x risk when the signal bar fails the Al Brooks quality test\nGates, each rule separately (all must hold to recommend adding it to the bot):\n  G1 trade level (baseline trades): mean net R of YES vs NO has the same sign as on the bot's 5 coins\n     (R1: YES worse, R2: YES better) with n_yes >= 50\n  G2 combined 30-coin Calmar (full period) with the rule >= baseline Calmar + 0.05\n  G3 at least 4 of the 6 groups have a higher full-period Calmar with the rule\n  G4 the rule beats a flat risk multiplier equal to its realised mean multiplier on combined Calmar\n",
+ "groups": [
+  [
+   "1000SHIBUSDT",
+   "AAVEUSDT",
+   "ALGOUSDT",
+   "ALICEUSDT",
+   "ATOMUSDT"
+  ],
+  [
+   "AVAXUSDT",
+   "AXSUSDT",
+   "BCHUSDT",
+   "C98USDT",
+   "CELRUSDT"
+  ],
+  [
+   "CRVUSDT",
+   "CVCUSDT",
+   "DOGEUSDT",
+   "DOTUSDT",
+   "EGLDUSDT"
+  ],
+  [
+   "ETCUSDT",
+   "FILUSDT",
+   "IOSTUSDT",
+   "IOTAUSDT",
+   "KSMUSDT"
+  ],
+  [
+   "LINKUSDT",
+   "LTCUSDT",
+   "NEARUSDT",
+   "ONEUSDT",
+   "SUSHIUSDT"
+  ],
+  [
+   "THETAUSDT",
+   "TRXUSDT",
+   "UNIUSDT",
+   "VETUSDT",
+   "XTZUSDT"
+  ]
+ ],
+ "rules": {
+  "R1_room2_half": {
+   "n_yes": 4490,
+   "yes_R": 0.04325262172621396,
+   "no_R": -0.035937896487665745,
+   "stats": {
+    "full": [
+     0.038619493180742405,
+     0.8771110526083703,
+     22.71161479264936
+    ],
+    "train": [
+     0.11178476981751387,
+     2.5388126317803517,
+     22.71161479264936
+    ],
+    "oos": [
+     -0.1183198986458512,
+     -2.1171554687758,
+     17.893486159185755
+    ]
+   },
+   "control": {
+    "full": [
+     0.09044013952961358,
+     2.074189934874515,
+     22.934395564431277
+    ],
+    "train": [
+     0.17575941308602172,
+     4.030935903887101,
+     22.934395564431277
+    ],
+    "oos": [
+     -0.06866013575961323,
+     -1.4384950080553405,
+     20.950949078977523
+    ]
+   },
+   "groups_better": 1.0,
+   "gates": {
+    "G1": false,
+    "G2": 0.0,
+    "G3": 0.0,
+    "G4": 0.0
+   },
+   "passed": false
+  },
+  "R2_badsb_1.5x": {
+   "n_yes": 1427,
+   "yes_R": 0.03897329011906388,
+   "no_R": 0.01760800435051615,
+   "stats": {
+    "full": [
+     0.09237015392013022,
+     2.8841747776289894,
+     31.22409842602245
+    ],
+    "train": [
+     0.1944531920819104,
+     6.0716256088198195,
+     31.22409842602245
+    ],
+    "oos": [
+     -0.0916804274231583,
+     -2.745154188499388,
+     29.942641691981986
+    ]
+   },
+   "control": {
+    "full": [
+     0.0687821350136931,
+     2.356818921872361,
+     34.26498641548663
+    ],
+    "train": [
+     0.15339677553651018,
+     5.256138429937973,
+     34.26498641548663
+    ],
+    "oos": [
+     -0.0865439017777684,
+     -2.7823799899397095,
+     32.14992544575167
+    ]
+   },
+   "groups_better": 3.0,
+   "gates": {
+    "G1": true,
+    "G2": 0.0,
+    "G3": 0.0,
+    "G4": 1.0
+   },
+   "passed": false
+  }
+ },
+ "baseline": {
+  "full": [
+   0.08342880476271652,
+   2.581950843665215,
+   30.947954378690344
+  ],
+  "train": [
+   0.15786234209703287,
+   4.885516561332182,
+   30.947954378690344
+  ],
+  "oos": [
+   -0.055886905311317674,
+   -1.5345005600400086,
+   27.457246943484925
+  ]
+ }
+}
