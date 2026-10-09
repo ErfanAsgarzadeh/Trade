@@ -1,0 +1,416 @@
+{
+ "notes": "Which main-bot trades deserve 2x risk? Written and committed BEFORE running; one run, no tuning afterwards.\n\nBaseline = bot 2A+5A (htf_confirm.build, 5 coins, 0.75% risk). Ledger of root trades; features at the SIGNAL bar\n(closed 4h frame row ix[sym][b], causal), side-adjusted so that \"higher = more with the trade\":\n  adx      ADX14\n  ema_gap  side*(EMA50-EMA200)/ATR\n  kumo     side*(close - Kumo edge in trade direction)/ATR\n  brk      breakout rank score (sig col 3)\n  atr_rel  ATR / median ATR of the prior 60 bars\n  htf      side*(close/EMA300 - 1)*100  (~50-day trend on 4h bars)\n  btc      side*(BTC close/BTC EMA300 - 1)*100  (market trend)\n  rsi      side-adjusted RSI14 (100-RSI for shorts)\nPHASE A (TRAIN trades only, entry < 2025-01-01): terciles of each feature -> n, win %, mean net R.\nPHASE B rule choice (TRAIN only): for each feature, candidate rule = \"top tercile\" (thresholds from TRAIN). Simulate 2x\n  risk (sig col 4 = 2) on signals meeting it; pick the ONE feature with the highest TRAIN Calmar among those whose top\n  tercile mean R >= 1.5 x the overall TRAIN mean R.\nGATES on VALIDATION (2025-01-01..2026-10-04) for the picked rule, all must hold:\n  V1 valid Calmar >= baseline valid Calmar\n  V2 valid CAGR >= baseline + 3 pp\n  V3 valid max DD <= baseline + 3 pp\n  V4 beats the leverage control: flat risk multiplier = realised mean multiplier of the rule, on ALL trades, valid Calmar\n  V5 causal (features from rows <= ix; checked by bench.check_causal-style truncation)\nAlso reported for every feature: VALID mean R by TRAIN terciles (does the ordering hold out of sample?).\n",
+ "features": {
+  "adx": {
+   "q1": 21.083692996627594,
+   "q2": 28.611123676443277,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 48.148148148148145,
+     "meanR": 0.1812428958803771
+    },
+    "mid": {
+     "n": 215,
+     "win": 46.97674418604651,
+     "meanR": 0.3842064443427156
+    },
+    "high": {
+     "n": 215,
+     "win": 45.58139534883721,
+     "meanR": 0.15559086792600182
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 133,
+     "win": 44.3609022556391,
+     "meanR": 0.418234928482707
+    },
+    "mid": {
+     "n": 122,
+     "win": 45.08196721311475,
+     "meanR": 0.26319360602335273
+    },
+    "high": {
+     "n": 85,
+     "win": 44.70588235294118,
+     "meanR": 0.29738528682299614
+    }
+   }
+  },
+  "ema_gap": {
+   "q1": -0.7543789862549386,
+   "q2": 1.536553011834247,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 48.148148148148145,
+     "meanR": 0.32562685312828255
+    },
+    "mid": {
+     "n": 215,
+     "win": 47.906976744186046,
+     "meanR": 0.11933133690192305
+    },
+    "high": {
+     "n": 215,
+     "win": 44.651162790697676,
+     "meanR": 0.2754104648293637
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 106,
+     "win": 34.90566037735849,
+     "meanR": 0.02045689663892415
+    },
+    "mid": {
+     "n": 119,
+     "win": 47.05882352941176,
+     "meanR": 0.5091360981248041
+    },
+    "high": {
+     "n": 115,
+     "win": 51.30434782608696,
+     "meanR": 0.4370172876732704
+    }
+   }
+  },
+  "kumo": {
+   "q1": 1.595406505384504,
+   "q2": 3.617593477354553,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 44.907407407407405,
+     "meanR": 0.05746915165324719
+    },
+    "mid": {
+     "n": 215,
+     "win": 52.55813953488372,
+     "meanR": 0.4174246704399434
+    },
+    "high": {
+     "n": 215,
+     "win": 43.25581395348837,
+     "meanR": 0.2467220778895183
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 133,
+     "win": 44.3609022556391,
+     "meanR": 0.2974890022505091
+    },
+    "mid": {
+     "n": 113,
+     "win": 50.442477876106196,
+     "meanR": 0.5120791851041905
+    },
+    "high": {
+     "n": 94,
+     "win": 38.297872340425535,
+     "meanR": 0.16576201688204809
+    }
+   }
+  },
+  "brk": {
+   "q1": 0.00630220129445779,
+   "q2": 0.01762837413155262,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 45.83333333333333,
+     "meanR": 0.23140662604212595
+    },
+    "mid": {
+     "n": 215,
+     "win": 46.97674418604651,
+     "meanR": 0.2565594262285647
+    },
+    "high": {
+     "n": 215,
+     "win": 47.906976744186046,
+     "meanR": 0.2328408362032329
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 129,
+     "win": 49.6124031007752,
+     "meanR": 0.6083880741463944
+    },
+    "mid": {
+     "n": 114,
+     "win": 42.98245614035088,
+     "meanR": 0.03533449430972639
+    },
+    "high": {
+     "n": 97,
+     "win": 40.20618556701031,
+     "meanR": 0.3144579472867017
+    }
+   }
+  },
+  "atr_rel": {
+   "q1": 1.0614776711848384,
+   "q2": 1.1597484125506328,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 51.388888888888886,
+     "meanR": 0.2649719597942249
+    },
+    "mid": {
+     "n": 215,
+     "win": 46.04651162790698,
+     "meanR": 0.046740905694339946
+    },
+    "high": {
+     "n": 215,
+     "win": 43.25581395348837,
+     "meanR": 0.40893790515395356
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 142,
+     "win": 46.478873239436616,
+     "meanR": 0.3789749479534143
+    },
+    "mid": {
+     "n": 91,
+     "win": 51.64835164835166,
+     "meanR": 0.5101480162267876
+    },
+    "high": {
+     "n": 107,
+     "win": 36.44859813084112,
+     "meanR": 0.11938974501851624
+    }
+   }
+  },
+  "htf": {
+   "q1": 2.226429883969794,
+   "q2": 10.579390519514686,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 49.074074074074076,
+     "meanR": 0.41232487299279025
+    },
+    "mid": {
+     "n": 215,
+     "win": 47.44186046511628,
+     "meanR": 0.08778967577582744
+    },
+    "high": {
+     "n": 215,
+     "win": 44.18604651162791,
+     "meanR": 0.21985085948693064
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 122,
+     "win": 39.34426229508197,
+     "meanR": 0.2263716367276483
+    },
+    "mid": {
+     "n": 117,
+     "win": 51.28205128205128,
+     "meanR": 0.7243986086946853
+    },
+    "high": {
+     "n": 101,
+     "win": 43.56435643564357,
+     "meanR": 0.0063429495539849565
+    }
+   }
+  },
+  "btc": {
+   "q1": 0.83522132459658,
+   "q2": 9.122623285942188,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 48.61111111111111,
+     "meanR": 0.12943639067748902
+    },
+    "mid": {
+     "n": 216,
+     "win": 45.83333333333333,
+     "meanR": 0.16748786988161757
+    },
+    "high": {
+     "n": 214,
+     "win": 46.26168224299065,
+     "meanR": 0.425557230687704
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 116,
+     "win": 37.93103448275862,
+     "meanR": 0.00802935892369303
+    },
+    "mid": {
+     "n": 169,
+     "win": 50.887573964497044,
+     "meanR": 0.6180591101478542
+    },
+    "high": {
+     "n": 55,
+     "win": 40.0,
+     "meanR": 0.13871308277941813
+    }
+   }
+  },
+  "rsi": {
+   "q1": 65.12093989686223,
+   "q2": 70.70583866204237,
+   "train": {
+    "low": {
+     "n": 216,
+     "win": 43.98148148148148,
+     "meanR": 0.032709053068830506
+    },
+    "mid": {
+     "n": 215,
+     "win": 47.906976744186046,
+     "meanR": 0.28913547954943214
+    },
+    "high": {
+     "n": 215,
+     "win": 48.837209302325576,
+     "meanR": 0.39988653061367624
+    }
+   },
+   "valid": {
+    "low": {
+     "n": 152,
+     "win": 44.07894736842105,
+     "meanR": 0.2131623141210723
+    },
+    "mid": {
+     "n": 91,
+     "win": 48.35164835164835,
+     "meanR": 0.4129500607534926
+    },
+    "high": {
+     "n": 97,
+     "win": 42.2680412371134,
+     "meanR": 0.4436442013199271
+    }
+   }
+  }
+ },
+ "rules": {
+  "atr_rel": {
+   "stats": {
+    "train": {
+     "cagr": 49.47296628509159,
+     "dd": 25.887827688441273,
+     "calmar": 1.9110512817257705
+    },
+    "oos": {
+     "cagr": 55.65055999696202,
+     "dd": 25.676789977882702,
+     "calmar": 2.1673488019685454
+    },
+    "full": {
+     "cagr": 51.62036821378677,
+     "dd": 25.887827688441273,
+     "calmar": 1.9940015375193063
+    }
+   },
+   "share_2x": 0.3328173374613003,
+   "mult": 1.3328173374613004
+  },
+  "btc": {
+   "stats": {
+    "train": {
+     "cagr": 53.26490792670802,
+     "dd": 26.01752276402282,
+     "calmar": 2.047270541850473
+    },
+    "oos": {
+     "cagr": 54.65391335416976,
+     "dd": 20.638303065972007,
+     "calmar": 2.6481786404368663
+    },
+    "full": {
+     "cagr": 53.7562037220358,
+     "dd": 26.01752276402282,
+     "calmar": 2.0661538075550445
+    }
+   },
+   "share_2x": 0.33126934984520123,
+   "mult": 1.3312693498452013
+  },
+  "rsi": {
+   "stats": {
+    "train": {
+     "cagr": 60.42524175780615,
+     "dd": 24.65170610795687,
+     "calmar": 2.45115861324919
+    },
+    "oos": {
+     "cagr": 64.99469669869671,
+     "dd": 27.39196264892097,
+     "calmar": 2.372765235252575
+    },
+    "full": {
+     "cagr": 62.02032989244313,
+     "dd": 27.40009730348912,
+     "calmar": 2.2635076512865333
+    }
+   },
+   "share_2x": 0.3328173374613003,
+   "mult": 1.3328173374613004
+  }
+ },
+ "baseline": {
+  "train": {
+   "cagr": 35.969693625766006,
+   "dd": 17.938074467182904,
+   "calmar": 2.0052148680490394
+  },
+  "oos": {
+   "cagr": 51.44724411923336,
+   "dd": 18.312505149755896,
+   "calmar": 2.809405032162907
+  },
+  "full": {
+   "cagr": 41.22556256988983,
+   "dd": 18.314497487568982,
+   "calmar": 2.2509797278288306
+  }
+ },
+ "pick": "rsi",
+ "control": {
+  "train": {
+   "cagr": 45.752676145661056,
+   "dd": 22.67516141955307,
+   "calmar": 2.0177442311924607
+  },
+  "oos": {
+   "cagr": 66.73080722910359,
+   "dd": 23.07529116797197,
+   "calmar": 2.8918728150968938
+  },
+  "full": {
+   "cagr": 52.809949935797974,
+   "dd": 23.079801096070405,
+   "calmar": 2.2881457996962316
+  }
+ },
+ "gates": {
+  "V1": false,
+  "V2": true,
+  "V3": false,
+  "V4": false
+ },
+ "passed": false
+}
