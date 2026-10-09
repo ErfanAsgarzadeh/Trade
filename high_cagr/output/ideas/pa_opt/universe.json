@@ -1,0 +1,632 @@
+{
+ "name": "universe",
+ "notes": "pa_opt_universe: which coin universe suits the PA sleeve, and is choosing coins by past results trustworthy?\n\nHYPOTHESIS. KEYREV is a generic bar pattern; any edge should be about equally (weakly) present across liquid perps, so\nper-coin differences are mostly noise and a drop-coin rule decided on TRAIN will NOT persist into validation (rank\ncorrelation of per-coin train vs valid net ~0). Larger universes just diversify (more trades, lower variance).\nMECHANISM. If an edge is coin-specific (liquidity / microstructure), train-losers stay losers; if not, removing them only\nshrinks the sample and lowers diversification.\n\nPART 1 (descriptive, no parameters picked): PA alone on OTHER20, MAIN5, MAIN10, IN15, ALL35 (train/valid/full Calmar,\nCAGR, DD, trades) and THREE = TWO + PA*0.3 for each universe. Per-coin net (sum of net_frac*1e4 = $ on 1e4 base) in\nTRAIN vs VALID for all 35 coins, Spearman of per-coin train vs valid net (ALL35, OTHER20, IN15) and top-half-by-train vs\nbottom-half valid sums. Overlap with the other bots' positions cannot be measured: their trades are not stored as ledgers\n(only daily series). Practical constraint: LBank holds ONE net position per symbol, so on MAIN5/MAIN10 a PA entry on a\ncoin where the main/C3 bot is already long would be netted (adds to / opposes that position, e.g. a PA long against a bot\nshort nets out) and the stop/target of the sleeve would no longer be separately enforceable. OTHER20 avoids this by design.\n\nTRAIN-ONLY DIAGNOSTIC (baseline trades with entry < 2025-01-01 on OTHER20, net $ on 1e4 base per coin, decided BEFORE\nvariants): ATOM -770, THETA -593, CRV -448, CELR -388, XTZ -366, IOTA -177, ALGO -158, BCH -92, SHIB -91 (the 9 negative);\npositives: NEAR 944, IOST 591, AXS 503, LINK 383, FIL 233, ALICE 215, VET 167, LTC 143, ETC 98, CVC 60, C98 10.\n\nVARIANTS (fixed, deployed on OTHER20 only, coin lists fixed from the TRAIN diagnostic above; evaluate() scores on OTHER20):\n A drop_neg9      drop the 9 train-negative coins\n B drop_worst5    drop ATOM THETA CRV CELR XTZ\n C drop_worst3    drop ATOM THETA CRV\n D keep_top10     keep NEAR IOST AXS LINK FIL ALICE VET LTC ETC CVC\n E rand_drop5     CONTROL: drop 5 random coins (RandomState(7).choice)\n F rand_drop9     CONTROL: drop 9 random coins (RandomState(11).choice)\nNote: coin lists chosen on train make P1 (train Calmar) in-sample by construction; only P2 (valid) is informative.\n",
+ "baseline": {
+  "pa": {
+   "full": [
+    0.13192363531203222,
+    5.092995802005773,
+    38.60563567672746
+   ],
+   "train": [
+    -0.016626323191792452,
+    -0.6418697757858638,
+    38.60563567672746
+   ],
+   "oos": [
+    0.748038911093375,
+    16.551667166625926,
+    22.126746244300442
+   ]
+  },
+  "three": {
+   "full": [
+    4.402859264254623,
+    110.84198066665327,
+    25.174999702248748
+   ],
+   "train": [
+    4.024589239537475,
+    101.31903290702944,
+    25.174999702248748
+   ],
+   "oos": [
+    5.434035269406645,
+    129.60168563967764,
+    23.849989780031212
+   ]
+  },
+  "trades": {
+   "roots": 1932,
+   "legs": 1932,
+   "train_legs": 1104,
+   "win_legs": 39.90683229813665,
+   "net_per_leg_bp": 1.8393539859219867
+  },
+  "corr_two": 0.02031365249213667,
+  "yearly": {
+   "2021": 0.11,
+   "2022": 8.1,
+   "2023": -10.3,
+   "2024": 2.88,
+   "2025": 8.3,
+   "2026": 1.57
+  },
+  "in15": {
+   "full": [
+    0.1055596231302309,
+    2.38761868267221,
+    22.618673806049493
+   ],
+   "train": [
+    0.11913558921179522,
+    2.6946890310731053,
+    22.618673806049493
+   ],
+   "oos": [
+    0.11616423155207377,
+    1.8237143631522734,
+    15.69944843421741
+   ]
+  }
+ },
+ "variants": {
+  "A_drop_neg9": {
+   "variant": {
+    "drop": [
+     "ATOMUSDT",
+     "XTZUSDT",
+     "ALGOUSDT",
+     "CELRUSDT",
+     "BCHUSDT",
+     "1000SHIBUSDT",
+     "THETAUSDT",
+     "CRVUSDT",
+     "IOTAUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.5797916655261006,
+     11.09456311110717,
+     19.135430484396508
+    ],
+    "train": [
+     0.5329700704392206,
+     10.198611733153617,
+     19.135430484396508
+    ],
+    "oos": [
+     0.9913446872821695,
+     12.766058193639607,
+     12.87751713144145
+    ]
+   },
+   "three": {
+    "full": [
+     4.299571124332724,
+     113.84654638407508,
+     26.478581954320756
+    ],
+    "train": [
+     4.05664604780945,
+     107.41423483659393,
+     26.478581954320756
+    ],
+    "oos": [
+     4.988589585499635,
+     126.23698837970485,
+     25.305146117178833
+    ]
+   },
+   "trades": {
+    "roots": 1049,
+    "legs": 1049,
+    "train_legs": 590,
+    "win_legs": 42.61201143946616,
+    "net_per_leg_bp": 5.415422616795723
+   },
+   "corr_two": 0.016376950297986397,
+   "yearly": {
+    "2021": -0.27,
+    "2022": 7.47,
+    "2023": -4.64,
+    "2024": 7.48,
+    "2025": 6.11,
+    "2026": 0.89
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": false,
+     "P3": false,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  },
+  "B_drop_worst5": {
+   "variant": {
+    "drop": [
+     "ATOMUSDT",
+     "THETAUSDT",
+     "CRVUSDT",
+     "CELRUSDT",
+     "XTZUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.3141865998007284,
+     8.336045947399274,
+     26.532149851987253
+    ],
+    "train": [
+     0.3049747601174656,
+     8.091636036510463,
+     26.532149851987253
+    ],
+    "oos": [
+     0.4830052142712939,
+     8.78824604418773,
+     18.19492996042804
+    ]
+   },
+   "three": {
+    "full": [
+     4.34162573857241,
+     112.44786028053038,
+     25.899943258928825
+    ],
+    "train": [
+     4.105984131191605,
+     106.34475601992474,
+     25.899943258928825
+    ],
+    "oos": [
+     5.11555125735472,
+     124.18080081092904,
+     24.275155220542864
+    ]
+   },
+   "trades": {
+    "roots": 1399,
+    "legs": 1399,
+    "train_legs": 801,
+    "win_legs": 40.9578270192995,
+    "net_per_leg_bp": 3.3236196699363605
+   },
+   "corr_two": 0.012446118492765492,
+   "yearly": {
+    "2021": -0.11,
+    "2022": 8.17,
+    "2023": -5.71,
+    "2024": 6.13,
+    "2025": 4.56,
+    "2026": 0.9
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": false,
+     "P3": true,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  },
+  "C_drop_worst3": {
+   "variant": {
+    "drop": [
+     "ATOMUSDT",
+     "THETAUSDT",
+     "CRVUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.3027709641839306,
+     9.327232011074527,
+     30.80623016878302
+    ],
+    "train": [
+     0.173150716885717,
+     5.3341208382711836,
+     30.80623016878302
+    ],
+    "oos": [
+     1.0542574454350295,
+     17.0927178984035,
+     16.213039777348072
+    ]
+   },
+   "three": {
+    "full": [
+     4.386321779637844,
+     113.11688558983661,
+     25.788551609448064
+    ],
+    "train": [
+     4.063160417533518,
+     104.78302212502966,
+     25.788551609448064
+    ],
+    "oos": [
+     5.44523537442672,
+     129.3861847858087,
+     23.761357570228192
+    ]
+   },
+   "trades": {
+    "roots": 1590,
+    "legs": 1590,
+    "train_legs": 913,
+    "win_legs": 40.943396226415096,
+    "net_per_leg_bp": 3.321638569865843
+   },
+   "corr_two": 0.024412074500272263,
+   "yearly": {
+    "2021": -0.41,
+    "2022": 8.5,
+    "2023": -7.31,
+    "2024": 5.45,
+    "2025": 6.84,
+    "2026": 2.78
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": true,
+     "P3": true,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  },
+  "D_keep_top10": {
+   "variant": {
+    "drop": [
+     "ATOMUSDT",
+     "XTZUSDT",
+     "ALGOUSDT",
+     "CELRUSDT",
+     "BCHUSDT",
+     "C98USDT",
+     "1000SHIBUSDT",
+     "THETAUSDT",
+     "CRVUSDT",
+     "IOTAUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.5743222747300956,
+     10.158443109447624,
+     17.68770524218587
+    ],
+    "train": [
+     0.5807511847864721,
+     10.272155775553337,
+     17.68770524218587
+    ],
+    "oos": [
+     0.6447660306211414,
+     9.94903748313849,
+     15.430461610320867
+    ]
+   },
+   "three": {
+    "full": [
+     4.195469234506717,
+     113.20994127360429,
+     26.98385685741179
+    ],
+    "train": [
+     3.9780089077658296,
+     107.34202294466218,
+     26.98385685741179
+    ],
+    "oos": [
+     4.9320337509101995,
+     124.47078209444177,
+     25.23721214832946
+    ]
+   },
+   "trades": {
+    "roots": 950,
+    "legs": 950,
+    "train_legs": 530,
+    "win_legs": 42.63157894736842,
+    "net_per_leg_bp": 5.47189939803603
+   },
+   "corr_two": 0.02729646858180675,
+   "yearly": {
+    "2021": 0.04,
+    "2022": 6.36,
+    "2023": -4.26,
+    "2024": 7.87,
+    "2025": 4.46,
+    "2026": 1.13
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": false,
+     "P3": false,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  },
+  "E_rand_drop5": {
+   "variant": {
+    "drop": [
+     "FILUSDT",
+     "CRVUSDT",
+     "LTCUSDT",
+     "XTZUSDT",
+     "ALICEUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.13396816115804355,
+     4.271843842417855,
+     31.887008118132776
+    ],
+    "train": [
+     0.01773243099783797,
+     0.5654341711822886,
+     31.887008118132776
+    ],
+    "oos": [
+     0.5917481894798138,
+     11.469321441059588,
+     19.382098069690567
+    ]
+   },
+   "three": {
+    "full": [
+     4.293767948048234,
+     110.03204775940291,
+     25.6259884303759
+    ],
+    "train": [
+     3.974175023522441,
+     101.84216317307495,
+     25.6259884303759
+    ],
+    "oos": [
+     5.119823865058081,
+     126.01762787396243,
+     24.613664687570814
+    ]
+   },
+   "trades": {
+    "roots": 1472,
+    "legs": 1472,
+    "train_legs": 836,
+    "win_legs": 39.809782608695656,
+    "net_per_leg_bp": 1.880907481652201
+   },
+   "corr_two": 0.017295138258327535,
+   "yearly": {
+    "2021": 0.04,
+    "2022": 7.6,
+    "2023": -8.34,
+    "2024": 2.15,
+    "2025": 5.58,
+    "2026": 1.26
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": false,
+     "P3": true,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  },
+  "F_rand_drop9": {
+   "variant": {
+    "drop": [
+     "AXSUSDT",
+     "XTZUSDT",
+     "BCHUSDT",
+     "ALGOUSDT",
+     "THETAUSDT",
+     "VETUSDT",
+     "IOSTUSDT",
+     "CELRUSDT",
+     "IOTAUSDT"
+    ]
+   },
+   "pa": {
+    "full": [
+     0.11656858691802419,
+     2.643995735065152,
+     22.681888877356972
+    ],
+    "train": [
+     0.083885589874537,
+     1.9026836279457893,
+     22.681888877356972
+    ],
+    "oos": [
+     0.19737979324549654,
+     4.025323614669585,
+     20.393797908497035
+    ]
+   },
+   "three": {
+    "full": [
+     4.0707007629365695,
+     108.76620364175005,
+     26.719282496040563
+    ],
+    "train": [
+     3.8367921220977546,
+     102.51633258891286,
+     26.719282496040563
+    ],
+    "oos": [
+     4.643168007693268,
+     120.80269844421107,
+     26.017300740368
+    ]
+   },
+   "trades": {
+    "roots": 1011,
+    "legs": 1011,
+    "train_legs": 552,
+    "win_legs": 40.0593471810089,
+    "net_per_leg_bp": 1.673684929571828
+   },
+   "corr_two": 0.028136006930747404,
+   "yearly": {
+    "2021": 0.28,
+    "2022": 5.65,
+    "2023": -5.46,
+    "2024": 1.86,
+    "2025": 3.13,
+    "2026": -0.38
+   },
+   "in15": {
+    "full": [
+     0.1055596231302309,
+     2.38761868267221,
+     22.618673806049493
+    ],
+    "train": [
+     0.11913558921179522,
+     2.6946890310731053,
+     22.618673806049493
+    ],
+    "oos": [
+     0.11616423155207377,
+     1.8237143631522734,
+     15.69944843421741
+    ]
+   },
+   "causal": {
+    "causal": true
+   },
+   "verdict": {
+    "checks": {
+     "P1": false,
+     "P2": false,
+     "P3": false,
+     "P4": true
+    },
+    "passed": false
+   },
+   "passed": false
+  }
+ }
+}
