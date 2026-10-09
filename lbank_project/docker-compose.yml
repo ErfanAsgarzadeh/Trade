@@ -15,6 +15,8 @@ services:
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
       C3_CONFIG: /app/runtime/c3_config.json
       C3_DB: /app/runtime/c3_sleeve.db
+      PA_CONFIG: /app/runtime/pa_config.json
+      PA_DB: /app/runtime/pa_sleeve.db
     volumes:
       - ./runtime:/app/runtime
     stop_grace_period: 30s
@@ -38,6 +40,8 @@ services:
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
       C3_CONFIG: /app/runtime/c3_config.json
       C3_DB: /app/runtime/c3_sleeve.db
+      PA_CONFIG: /app/runtime/pa_config.json
+      PA_DB: /app/runtime/pa_sleeve.db
     volumes:
       - ./runtime:/app/runtime
     ports:

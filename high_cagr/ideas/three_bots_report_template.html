@@ -1,0 +1,178 @@
+<title>سه ربات از ۲۰۲۱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column; charts and wide tables sit in their own horizontally scrollable frames. Verdict first, then evidence. */
+:root{
+  --bg:#f5f6f3;--surface:#ffffff;--fg:#1b211e;--muted:#5b6862;--line:#d8ded9;--grid:#e6ebe7;
+  --accent:#255f8f;--accent-soft:#e3edf5;--neg:#a8402f;--neg-soft:#f7e6e2;--warn-soft:#f6efd8;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#c98500;
+  --font-body:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;--font-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121514;--surface:#1a1e1c;--fg:#e5ebe7;--muted:#9eaca4;--line:#2d3632;--grid:#252d29;
+  --accent:#7db4e3;--accent-soft:#1c2c3a;--neg:#f08f7c;--neg-soft:#3d221d;--warn-soft:#3a3218;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121514;--surface:#1a1e1c;--fg:#e5ebe7;--muted:#9eaca4;--line:#2d3632;--grid:#252d29;
+  --accent:#7db4e3;--accent-soft:#1c2c3a;--neg:#f08f7c;--neg-soft:#3d221d;--warn-soft:#3a3218;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.95;direction:rtl}
+.wrap{max-width:1000px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+.col{max-width:74ch}
+h1{font-size:30px;font-weight:800;margin:0 0 4px;text-wrap:balance}
+h2{font-size:21px;font-weight:800;margin:46px 0 10px;padding-top:18px;border-top:1px solid var(--line);text-wrap:balance}
+h3{font-size:16.5px;font-weight:700;margin:24px 0 6px}
+p{margin:8px 0}.sub{color:var(--muted);font-size:14px}.sm{color:var(--muted);font-size:11.5px}
+.verdict{background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--accent);border-radius:10px;padding:16px 20px;margin:22px 0}
+.verdict h2{border:0;margin:0 0 6px;padding:0;font-size:19px}
+ul,ol{padding-inline-start:22px;margin:8px 0}li{margin:4px 0}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}
+.kv div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.kv span{display:block;color:var(--muted);font-size:13px}.kv b{font-family:var(--font-num);font-size:22px;direction:ltr;display:inline-block}
+.kv small{display:block;color:var(--muted);font-size:12px}
+.bots{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:14px 0}
+.bot{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.bot b{font-size:18px}.bot .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:6px}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 12px 6px;margin:14px 0;overflow-x:auto;position:relative}
+.fig figcaption{font-size:13.5px;color:var(--muted);margin-bottom:4px}
+svg{display:block;min-width:640px;width:100%;height:auto;direction:ltr}
+svg .g{stroke:var(--grid);stroke-width:1}svg .ax{fill:var(--muted);font-size:11px;font-family:var(--font-num)}
+svg .ln{fill:none;stroke-width:2;stroke-linejoin:round}svg .eq{fill:none;stroke:var(--s1);stroke-width:2}
+svg .dd{fill:var(--neg-soft);stroke:var(--neg);stroke-width:1.5}
+svg .s1{stroke:var(--s1)}svg .s2{stroke:var(--s2)}svg .s3{stroke:var(--s3)}svg .s4{stroke:var(--s4)}
+svg circle.pt{stroke:var(--surface);stroke-width:2}svg circle.s1{fill:var(--s1)}svg circle.s2{fill:var(--s2)}svg circle.s3{fill:var(--s3)}svg circle.s4{fill:var(--s4)}
+svg circle.cur{fill:none;stroke:var(--fg);stroke-width:2}
+svg .lab{fill:var(--fg);font-size:12px;font-family:var(--font-body)}
+svg .hl{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:6px;white-space:nowrap;font-family:var(--font-num);direction:ltr}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:2px 4px 6px}.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-inline-end:6px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:780px;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:center}
+th{font-weight:700;color:var(--muted);font-size:12px;background:var(--bg);line-height:1.5}
+td{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+td:first-child{font-family:var(--font-body)}
+tr.cur td{background:var(--accent-soft);font-weight:600}
+td.neg{color:var(--neg)}
+.mt table{min-width:700px}.mt td{font-size:12px;padding:5px 6px}
+.note{color:var(--muted);font-size:14px}
+.warn{background:var(--warn-soft);border-radius:8px;padding:12px 14px;margin:12px 0}
+code{font-family:var(--font-num);font-size:13px;background:var(--accent-soft);padding:1px 6px;border-radius:4px;direction:ltr;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header class="col">
+<h1>سه ربات از ۲۰۲۱</h1>
+<p class="sub">بک‌تست مشترک شاهین، موج‌سوار و ققنوس روی یک حساب paper، انگار ربات ۵ اکتبر ۲۰۲۱ با ۱۰٬۰۰۰ دلار روشن شده و تا ۴ اکتبر ۲۰۲۶ کار کرده است · سقف مجموع مارجین ۸۰٪، اهرم ایزولهٔ ۵ · قیمت دقیقه‌ای واقعی، کارمزد ۰٫۰۶٪ هر طرف، لغزش ۲bps و Funding</p>
+</header>
+
+<section class="verdict col">
+<h2>جمع‌بندی</h2>
+<ul>
+<li>با تنظیمات پیش‌فرض جدید، ۱۰٬۰۰۰ دلار در پنج سال به <b>{{FINAL}}</b> رسید: CAGR <b>{{CAGR}}٪</b> و بیشترین افت <b>{{DD}}٪</b> (Calmar {{CALMAR}}). هر سه ربات سودده بودند و هیچ سال کاملی منفی نشد.</li>
+<li>سقف مارجین ۸۰٪ در ریسک‌های پیش‌فرض هیچ‌وقت محدودیت نشد: مارجین درگیر به‌طور میانگین {{MAVG}}٪ و در اوج {{MPEAK}}٪ سرمایه بود و هیچ ورودی رد یا کوچک نشد. با سقف ۱۰۰٪ نتیجه دقیقاً همین است؛ با سقف ۶۰٪ چهار ورود رد می‌شد و CAGR به ۱۴۵٫۷٪ می‌رسید.</li>
+<li><b>افزایش ریسک:</b> بالا بردن ریسک <b>شاهین</b> (تا ۱٫۵٪) و <b>موج‌سوار</b> (تا ۰٫۶٪) بیشترین بهبود را در هر واحد افت می‌دهد. ققنوس در ۰٫۴٪ بهترین است و بالاتر از آن Calmar پایین می‌آید. بالا بردن یکنواخت هر سه تا ×۱٫۵ ‏CAGR را به ۲۴۷٪ و افت را به ۳۵٪ می‌رساند. در ×۲، افت به ۴۴٪ می‌رسد و سقف مارجین ده‌ها ورود را رد یا کوچک می‌کند.</li>
+<li>این اعداد خوش‌بینانه‌اند. در سرمایهٔ چندصدهزار دلاری، اندازهٔ سفارش روی ارزهای کم‌حجم لغزش واقعی را خیلی بیشتر از ۲bps می‌کند (بخش «محدودیت‌ها»).</li>
+</ul>
+</section>
+
+<div class="kv">
+<div><span>سرمایهٔ پایانی</span><b>{{FINAL}}</b><small>از ۱۰٬۰۰۰ دلار</small></div>
+<div><span>CAGR</span><b>{{CAGR}}%</b><small>Train {{TRAIN}} · Valid {{VALID}}</small></div>
+<div><span>بیشترین افت</span><b>{{DD}}%</b><small>{{DDPEAK}} تا {{DDTROUGH}}</small></div>
+<div><span>Calmar</span><b>{{CALMAR}}</b><small>CAGR ÷ بیشترین افت</small></div>
+<div><span>مارجین درگیر</span><b>{{MAVG}}% / {{MPEAK}}%</b><small>میانگین / اوج (سقف ۸۰٪)</small></div>
+</div>
+
+<h2>تنظیمات این بک‌تست (پیش‌فرض‌های فعلی)</h2>
+<div class="bots">
+<div class="bot"><b><span class="dot" style="background:var(--s1)"></span>شاهین</b><p class="sub">شکست Donchian10 + Kumo روی ۴ساعته، فیلتر ATR، کف سود 1R، افزودن یک‌مرحله‌ای · BTC ETH SOL XRP ADA · حداکثر ۴ پوزیشن · <b>ریسک ۱٪</b></p></div>
+<div class="bot"><b><span class="dot" style="background:var(--s2)"></span>موج‌سوار</b><p class="sub">پولبک در روند ۴ساعته (EMA50/200 و RSI) با تأیید ۳ کندل، استاپ 2ATR و تریل 4.5ATR · ۱۰ ارز · <b>ریسک ۰٫۴٪</b></p></div>
+<div class="bot"><b><span class="dot" style="background:var(--s3)"></span>ققنوس</b><p class="sub">Key Reversal ۴ساعته (نسخهٔ C2) با سفارش Stop، فقط در رژیم کم‌نوسان، رد کندل سیگنال کوچک‌تر از 1.1 ATR، خروج با استاپ، برگشت مخالف یا بعد از ۳۰ کندل · ۲۰ ارز · <b>ریسک ۰٫۴٪</b></p></div>
+</div>
+<p class="col note">اندازهٔ هر سفارش مثل ربات زنده حساب شد: ریسک × سرمایهٔ لحظه‌ای کل حساب ÷ (فاصلهٔ استاپ + ۰٫۱۲٪ کارمزد + ۰٫۰۴٪ ذخیرهٔ لغزش). سرمایه شامل سود و زیان باز هر سه ربات است. اگر مارجین آزاد کافی نبود، سفارش کوچک یا رد می‌شد.</p>
+
+<h2>منحنی سرمایه</h2>
+<figure class="fig" id="f-eq"><figcaption>سرمایهٔ کل حساب، مقیاس لگاریتمی (خطوط افقی: ۱۰، ۳۰، ۱۰۰ و ۳۰۰ هزار دلار)</figcaption>
+<svg viewBox="0 0 {{W}} {{H}}" role="img" aria-label="منحنی سرمایهٔ کل حساب">{{EQGRID}}<path d="{{EQPATH}}" class="eq"/><line class="hl" id="eq-hl" y1="14" y2="270" x1="-10" x2="-10"/></svg>
+<div class="tip" id="eq-tip" hidden></div></figure>
+<figure class="fig"><figcaption>افت از سقف قبلی (بیشترین افت {{DD}}٪، از {{DDPEAK}} تا {{DDTROUGH}}؛ طولانی‌ترین دورهٔ زیر سقف {{LONGUW}} روز)</figcaption>
+<svg viewBox="0 0 {{W}} {{H2}}" role="img" aria-label="نمودار افت سرمایه">{{DDGRID}}<path d="{{DDPATH}}" class="dd"/></svg></figure>
+<figure class="fig" id="f-cum"><figcaption>سود تحقق‌یافتهٔ هر ربات (تجمعی، دلار). جهش روز آخر بسته شدن پوزیشن‌های باز در پایان داده است. شاهین تا آخر ۵۱۹ هزار، موج‌سوار ۳۰۴ هزار و ققنوس ۱۱۵ هزار دلار سود داد.</figcaption>
+<div class="legend"><span><i style="background:var(--s1)"></i>شاهین</span><span><i style="background:var(--s2)"></i>موج‌سوار</span><span><i style="background:var(--s3)"></i>ققنوس</span></div>
+<svg viewBox="0 0 {{W}} {{H}}" role="img" aria-label="سود تجمعی هر ربات">{{CGRID}}{{BOTPATHS}}<line class="hl" id="cum-hl" y1="14" y2="270" x1="-10" x2="-10"/></svg>
+<div class="tip" id="cum-tip" hidden></div></figure>
+
+<h2>بازده سالانه و ماهانه</h2>
+<div class="tw"><table><tr><th>کل حساب</th>{{YH}}</tr><tr><td>هر سه ربات</td>{{YR}}</tr>{{YRSALONE}}</table></div>
+<p class="note col">* ۲۰۲۱ فقط از ۵ اکتبر و ۲۰۲۶ تا ۴ اکتبر است. ردیف‌های تک‌ربات: هر ربات به‌تنهایی روی حساب ۱۰٬۰۰۰ دلاری با همان ریسک.</p>
+<details><summary>جدول ماهانهٔ کل حساب ({{NEGM}} ماه منفی از {{NM}} ماه؛ بدترین ماه {{WORSTM}}٪ در {{WORSTMD}})</summary>
+<div class="tw mt"><table><tr><th>سال</th><th>ژانویه</th><th>فوریه</th><th>مارس</th><th>آوریل</th><th>مه</th><th>ژوئن</th><th>ژوئیه</th><th>اوت</th><th>سپتامبر</th><th>اکتبر</th><th>نوامبر</th><th>دسامبر</th></tr>{{MTAB}}</table></div></details>
+
+<h2>سهم هر ربات</h2>
+<div class="tw"><table style="min-width:640px"><tr><th>ربات</th><th>معامله</th><th>نرخ برد</th><th>سود در حساب مشترک</th><th>سهم از سود</th><th>به‌تنهایی: CAGR</th><th>به‌تنهایی: افت</th><th>به‌تنهایی: Calmar</th></tr>{{ALONE}}</table></div>
+<p class="col">هیچ ربات تنهایی به کیفیت ترکیب نمی‌رسد. بهترین ربات تنها (شاهین) Calmar 2.34 دارد و ترکیب سه ربات {{CALMAR}}. دلیلش همبستگی پایین بین ربات‌هاست: افت‌های آن‌ها هم‌زمان نیستند، پس افت کل حساب ({{DD}}٪) تقریباً به اندازهٔ افت تک‌تک ربات‌هاست، ولی سودشان روی هم جمع می‌شود. ققنوس (نسخهٔ C2) کمترین سهم سود را دارد، ولی به‌تنهایی کمترین افت (۱۲٪) را هم دارد. در هر سال کامل مثبت بوده، هرچند بخش بزرگ سودش مال ۲۰۲۵ است.</p>
+
+<h2>اثر افزایش ریسک</h2>
+<section class="col">
+<p>هر خط یک ربات است که ریسکش بالا و پایین می‌رود و دو ربات دیگر روی پیش‌فرض می‌مانند. خط چهارم ریسک هر سه را با هم چند برابر می‌کند. بالاتر و سمت راست یعنی سود بیشتر با افت بیشتر. خطی که تندتر بالا می‌رود، به ازای هر واحد افت سود بیشتری می‌دهد.</p>
+</section>
+<figure class="fig" id="f-front"><figcaption>CAGR (محور عمودی) در برابر بیشترین افت (محور افقی)، حساب سه‌ربات</figcaption>
+<div class="legend"><span><i style="background:var(--s1)"></i>ریسک شاهین ۰٫۵ تا ۲٫۵٪</span><span><i style="background:var(--s2)"></i>ریسک موج‌سوار ۰٫۲ تا ۱٫۵٪</span><span><i style="background:var(--s3)"></i>ریسک ققنوس ۰٫۲۵ تا ۱٫۵٪</span><span><i style="background:var(--s4)"></i>هر سه با هم ×۰٫۵ تا ×۲٫۵</span></div>
+<svg viewBox="0 0 {{FW}} {{FH}}" role="img" aria-label="سود در برابر افت برای سطوح مختلف ریسک">{{FGRID}}{{FRONT}}</svg>
+<div class="tip" id="front-tip" hidden></div></figure>
+
+<section class="col">
+<h3>چه چیزی از این نمودار بیرون می‌آید</h3>
+<ul>
+<li><b>موج‌سوار:</b> با بالا رفتن ریسک، Calmar کل حساب بهتر می‌شود (5.87 در ۰٫۴٪، 6.39 در ۰٫۶٪). ولی افت سریع بالا می‌رود: ۰٫۶٪ ← ۲۸٫۷٪، ۰٫۸٪ ← ۳۴٫۵٪ و ۱٪ ← ۳۹٫۸٪. ۰٫۶٪ گزینهٔ معقول بعدی است.</li>
+<li><b>شاهین:</b> بهترین Calmar در ۱٫۵٪ است (6.47 با افت ۲۹٫۱٪). از ۲٪ به بعد سقف مارجین ورودها را کوچک یا رد می‌کند و Calmar پایین می‌آید.</li>
+<li><b>ققنوس:</b> ۰٫۴٪ و ۰٫۵٪ بهترین‌اند (Calmar 5.87 و 5.86). بالاتر از آن افت سریع‌تر از سود رشد می‌کند (۱٪ ← افت ۳۵٫۸٪).</li>
+<li><b>هر سه با هم:</b> ×۱٫۲۵ (یعنی ۱٫۲۵٪ / ۰٫۵٪ / ۰٫۵٪) به CAGR ‏۱۹۷٪ با افت ۳۰٫۵٪ می‌رسد. ×۱٫۵ به CAGR ‏۲۴۷٪ با افت ۳۵٫۲٪. در ×۲ و ×۲٫۵، سقف ۸۰٪ ده‌ها ورود را رد یا کوچک می‌کند و افت به ۴۴ تا ۵۳٪ می‌رسد.</li>
+<li>در همهٔ حالت‌ها اعداد Validation (۲۰۲۵ تا ۲۰۲۶) بالاتر از Train هستند. پس بهبود فقط مال یک دوره نیست. ولی ریسک بالاتر، اثر هر دورهٔ بد آینده را هم به همان نسبت بزرگ‌تر می‌کند.</li>
+</ul>
+</section>
+
+<h3>همه با هم</h3>
+<div class="tw"><table>{{SCALEHEAD}}{{SCALEROWS}}</table></div>
+{{GRIDTABS}}
+<p class="note col">ردیف رنگی همان تنظیمات پیش‌فرض است. «مارجین» یعنی مارجین درگیر به نسبت سرمایه. «ورود رد / کوچک‌شده» تعداد سفارش‌هایی است که سقف ۸۰٪ رد یا کوچکشان کرد.</p>
+
+<h2>محدودیت‌ها</h2>
+<ul class="col">
+<li><b>اندازهٔ سرمایه و نقدشوندگی:</b> سود مرکب، سرمایه را به چندصدهزار دلار می‌رساند و پوزیشن‌ها تا ۴۱۵ هزار دلار نُوشنال (شاهین) و ۱۶۶ هزار دلار (ققنوس). روی BTC و ETH مشکلی نیست، ولی روی ارزهای کم‌حجم موج‌سوار و ققنوس (مثل ONE، CVC، C98، CELR) لغزش واقعی خیلی بیشتر از ۲bps فرض‌شده است. عددهای سال‌های آخر خوش‌بینانه‌اند.</li>
+<li><b>روش شبیه‌سازی:</b> معامله‌ها با موتورهای تحقیقی ساخته شدند که سیگنال‌هایشان با کد زنده تطبیق داده شده، سپس روی یک حساب مشترک بازپخش شدند. توقف ورود بعد از ۲٪ زیان روزانهٔ شاهین، حداقل حجم سفارش صرافی و تأخیر بررسی قیمت ربات زنده (هر ۱۵ ثانیه) مدل نشده‌اند.</li>
+<li><b>دادهٔ دیده‌شده:</b> قواعد هر سه ربات (و پیش‌فرض ققنوس) با نگاه به همین دوره انتخاب شده‌اند. بازهٔ ۲۰۲۵ تا ۲۰۲۶ برای آن‌ها کاملاً تازه نیست. تنها آزمون واقعاً تازه، اجرای paper از امروز به بعد است.</li>
+<li><b>Funding و قیمت LBank:</b> داده از بایننس است. قیمت، Funding و نقدشوندگی LBank کمی فرق دارد.</li>
+</ul>
+
+<h2>پیشنهاد</h2>
+<ol class="col">
+<li>با پیش‌فرض فعلی (۱٪ / ۰٫۴٪ / ۰٫۴٪، سقف ۸۰٪) چند ماه paper اجرا کنید و لغزش واقعی (کارت لغزش داشبورد) را با ۲bps مقایسه کنید.</li>
+<li>اگر افت بیشتر از ۲۵٪ قابل قبول است، اول ریسک <b>موج‌سوار</b> را به ۰٫۶٪ ببرید (CAGR ‏۱۸۴٪، افت ۲۸٫۷٪).</li>
+<li>ریسک ققنوس را بالاتر از ۰٫۵٪ نبرید؛ ظرفیت ارزهای کم‌حجمش هم محدود است. ریسک شاهین را بالاتر از ۱٫۵٪ نبرید.</li>
+<li>تا وقتی لغزش واقعی اندازه‌گیری نشده، ضریب کلی بالاتر از ×۱٫۵ را امتحان نکنید.</li>
+</ol>
+<p class="note col">کد: <code>high_cagr/ideas/three_bots_replay.py</code> · خروجی: <code>high_cagr/output/ideas/three_bots/</code> (result.json، trades.csv، daily_equity.npy)</p>
+</div>
+
+<script>
+(function(){
+ function hover(figId,svgSel,data,fmt,hlId,tipId,x0,x1){
+  const fig=document.getElementById(figId);if(!fig)return;const svg=fig.querySelector('svg'),tip=document.getElementById(tipId),hl=document.getElementById(hlId);
+  function move(e){const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal,x=(e.clientX-r.left)/r.width*vb.width;
+   if(x<x0||x>x1){tip.hidden=true;hl.setAttribute('x1',-10);hl.setAttribute('x2',-10);return;}
+   const i=Math.round((x-x0)/(x1-x0)*(data.length-1)),d=data[Math.max(0,Math.min(data.length-1,i))];
+   const px=x0+(x1-x0)*i/(data.length-1);hl.setAttribute('x1',px);hl.setAttribute('x2',px);
+   tip.textContent=fmt(d);tip.hidden=false;const fr=fig.getBoundingClientRect();let left=e.clientX-fr.left+12;if(left>fr.width-200)left-=220;tip.style.left=left+'px';tip.style.top=(e.clientY-fr.top-28)+'px';}
+  svg.addEventListener('mousemove',move);svg.addEventListener('mouseleave',()=>{tip.hidden=true;});}
+ const money=v=>'$'+Math.round(v).toLocaleString('en-US');
+ hover('f-eq','svg',{{EQDATA}},d=>d[0]+'  '+money(d[1]),'eq-hl','eq-tip',{{PL}},{{W}}-{{PR}});
+ hover('f-cum','svg',{{CUMDATA}},d=>d[0]+'  Shahin '+money(d[1])+' · Mojsavar '+money(d[2])+' · Ghoghnous '+money(d[3]),'cum-hl','cum-tip',{{PL}},{{W}}-{{PR}});
+ const ff=document.getElementById('f-front'),ft=document.getElementById('front-tip');
+ if(ff)ff.querySelectorAll('circle.pt').forEach(c=>{c.addEventListener('mouseenter',e=>{ft.textContent=c.dataset.tip;ft.hidden=false;const fr=ff.getBoundingClientRect(),cr=c.getBoundingClientRect();let left=cr.left-fr.left+12;if(left>fr.width-260)left-=280;ft.style.left=left+'px';ft.style.top=(cr.top-fr.top-30)+'px';});c.addEventListener('mouseleave',()=>{ft.hidden=true;});});
+})();
+</script>

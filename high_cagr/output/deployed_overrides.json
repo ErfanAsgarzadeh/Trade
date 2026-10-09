@@ -1,10 +1,11 @@
 {
- "note": "Defaults added to lbank_project/config.json on top of the audited winner + verified_fixes.json (4B). Used by test_structural to keep the deployed config traceable. 2026-10-07: replaced by 2A+5A at the owner's request (V2, BTC gate and 4B safe pyramid switched off; floor 1R/+0.1R). 2026-10-09: main-bot risk 0.75% -> 1.0% (x1.33 uniform) at the owner's request, after conviction_2x showed no selective 2x rule beats uniform risk.",
+ "note": "Defaults added to lbank_project/config.json on top of the audited winner + verified_fixes.json (4B). Used by test_structural to keep the deployed config traceable. 2026-10-07: replaced by 2A+5A at the owner's request (V2, BTC gate and 4B safe pyramid switched off; floor 1R/+0.1R). 2026-10-09: main-bot risk 0.75% -> 1.0% (x1.33 uniform) at the owner's request, after conviction_2x showed no selective 2x rule beats uniform risk. 2026-10-09: shared margin cap (engaged_capital_pct) 60% -> 80% at the owner's request for all three bots.",
  "evidence": {
   "atr_regime_filter_enabled": "high_cagr/output/ideas/posthoc_atr_combos.json (2A+5A, chosen post-hoc) + idea2_atr_regime.json; same ATR filter failed on untouched NEW10/HOLD10: high_cagr/output/atr_expansion_untouched.json",
   "profit_floor_trigger_r": "high_cagr/output/ideas/idea5_giveback.json (variant A)",
   "initial_stop_atr_mult": "kept 2.0 (tested value)",
-  "risk_per_trade_pct": "high_cagr/output/ideas/conviction_2x/result.json (flat x1.33 control: valid CAGR 66.7% DD 23.1% Calmar 2.89 vs 0.75%: 51.4% / 18.3% / 2.81)"
+  "risk_per_trade_pct": "high_cagr/output/ideas/conviction_2x/result.json (flat x1.33 control: valid CAGR 66.7% DD 23.1% Calmar 2.89 vs 0.75%: 51.4% / 18.3% / 2.81)",
+  "engaged_capital_pct": "high_cagr/output/ideas/three_bots/result.json (80% cap: peak margin use 59.5%, no rejected entries at default risks)"
  },
  "config_overrides": {
   "strategy_settings": {
@@ -22,7 +23,8 @@
    "atr_regime_min_ratio": 1.0
   },
   "risk_and_exit": {
-   "risk_per_trade_pct": 0.01
+   "risk_per_trade_pct": 0.01,
+   "engaged_capital_pct": 0.8
   }
  }
 }

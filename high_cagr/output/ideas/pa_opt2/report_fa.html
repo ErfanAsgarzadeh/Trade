@@ -1,0 +1,181 @@
+<title>بازسازی ققنوس</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; verdict, then what the meeting found, then the decision and its limits. */
+:root{
+  --bg:#f7f5f1;--surface:#ffffff;--fg:#1f1d1a;--muted:#655f57;--line:#ddd8cf;
+  --accent:#b4532a;--accent-soft:#f6e7de;--good:#1d7a45;--good-soft:#e1f3e7;--bad:#a8402f;--bad-soft:#f7e6e2;--warn-soft:#f6efd8;
+  --font-body:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;--font-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151311;--surface:#1d1a17;--fg:#ece7e1;--muted:#a89f94;--line:#332e29;--accent:#e9895c;--accent-soft:#3a2418;
+  --good:#6fd39a;--good-soft:#173826;--bad:#f08f7c;--bad-soft:#3d221d;--warn-soft:#3a3218;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151311;--surface:#1d1a17;--fg:#ece7e1;--muted:#a89f94;--line:#332e29;--accent:#e9895c;--accent-soft:#3a2418;
+  --good:#6fd39a;--good-soft:#173826;--bad:#f08f7c;--bad-soft:#3d221d;--warn-soft:#3a3218;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.95;direction:rtl}
+.wrap{max-width:1000px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+.col{max-width:74ch}
+h1{font-size:30px;font-weight:800;margin:0 0 4px;text-wrap:balance}
+h2{font-size:21px;font-weight:800;margin:44px 0 10px;padding-top:18px;border-top:1px solid var(--line);text-wrap:balance}
+h3{font-size:17px;font-weight:700;margin:24px 0 6px}
+p{margin:8px 0}.sub{color:var(--muted);font-size:14px}.note{color:var(--muted);font-size:14px}
+.verdict{background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--accent);border-radius:10px;padding:16px 20px;margin:22px 0}
+.verdict h2{border:0;margin:0 0 6px;padding:0;font-size:19px}
+ul,ol{padding-inline-start:22px;margin:8px 0}li{margin:5px 0}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.kv div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.kv span{display:block;color:var(--muted);font-size:13px}.kv b{font-family:var(--font-num);font-size:21px;direction:ltr;display:inline-block}
+.kv small{display:block;color:var(--muted);font-size:12px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13.5px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
+th{color:var(--muted);font-size:12px;background:var(--bg);line-height:1.5}
+td{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+td.l,th.l{text-align:right;font-family:var(--font-body)}
+tr.base td{background:var(--accent-soft)}tr.win td{background:var(--good-soft);font-weight:600}
+.chip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;font-family:var(--font-body);white-space:nowrap}
+.ok{background:var(--good-soft);color:var(--good);border:1px solid var(--good)}.no{background:var(--bad-soft);color:var(--bad)}.mid{background:var(--warn-soft)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.box h3{margin-top:0}
+code{font-family:var(--font-num);font-size:13px;background:var(--accent-soft);padding:1px 6px;border-radius:4px;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+a{color:var(--accent)}.src{font-size:13px;color:var(--muted)}.src a{overflow-wrap:anywhere}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header class="col">
+<h1>بازسازی ققنوس</h1>
+<p class="sub">جلسهٔ دوم ۱۲ نفره روی ققنوس: ۴ تشخیص‌دهنده (کد، داده و هزینه، کالبدشکافی معاملات، شواهد علمی)، ۸ سازنده با ۶۴ نسخهٔ از پیش ثبت‌شده، بازرس مستقل برای هر نسخهٔ پاس‌شده، و یک آزمون ترکیبی نهایی · قیمت دقیقه‌ای واقعی ۲۰۲۱-۱۰ تا ۲۰۲۶-۱۰ · میز ثابت <code>high_cagr/ideas/pabench2.py</code></p>
+</header>
+
+<section class="verdict col">
+<h2>جمع‌بندی</h2>
+<ul>
+<li><b>ققنوس بهتر شد و نسخهٔ جدید (C2) پیش‌فرض است.</b> همان ورود Key Reversal، با دو تغییر: فقط در <b>بازار کم‌نوسان</b> وارد می‌شود، و با ظاهر شدن <b>Key Reversal مخالف</b> بیرون می‌آید. ققنوس به‌تنهایی: افت از ۳۵٫۹٪ به ۱۴٫۸٪، Calmar از 0.56 به 1.82، روی ۱۵ ارزی که در طراحی استفاده نشده‌اند از 0.60 به 1.21، و سال ۲۰۲۳ از ۱۵٪ زیان به ۵٪ سود.</li>
+<li><b>کل حساب سه‌ربات</b> (سرمایهٔ مشترک، سود مرکب، سقف مارجین ۸۰٪): با ریسک ققنوس ۰٫۴٪، CAGR از ۱۲۷٪ به ۱۴۹٪ و Calmar از 5.17 به 5.87، با افت تقریباً برابر (۲۵٫۳٪).</li>
+<li><b>درصدهای «کلفت» پرایس‌اکشن:</b> شواهد علمی و داده‌های کارگزاری‌ها نشان می‌دهند ۷۴ تا ۹۷٪ معامله‌گران خرد زیان می‌کنند. درصدهای بزرگی که دیده می‌شود معمولاً از اهرم بالا، بازهٔ کوتاه و دیده شدنِ فقط برنده‌هاست. خود Key Reversal در آزمون مستقل روی ۳۸ کریپتو از معیار ساده بدتر بوده است. با این حال ققنوس C2 به‌تنهایی با ریسک ۱٪ در بک‌تست به CAGR ‏۵۲٪ با افت ۲۸٪ می‌رسد. این از هر نسخهٔ قبلی بهتر است، ولی معجزه نیست.</li>
+<li><b>چهار باگ ربات زنده اصلاح شد.</b> مهم‌ترینشان: اگر فایل کندل دیر به‌روز می‌شد، سیگنال بی‌صدا گم می‌شد. یکی هم این بود که ارز 1000SHIB در LBank وجود ندارد.</li>
+</ul>
+</section>
+
+<div class="kv">
+<div><span>ققنوس به‌تنهایی: Calmar</span><b>0.56 → 1.82</b><small>ریسک ۰٫۵٪ روی پایهٔ ثابت</small></div>
+<div><span>ققنوس به‌تنهایی: افت</span><b>35.9% → 14.8%</b><small>CAGR ۲۰٫۱٪ ← ۲۷٫۰٪</small></div>
+<div><span>روی ۱۵ ارز دیگر (تعمیم)</span><b>0.60 → 1.21</b><small>Calmar کل دوره</small></div>
+<div><span>کل حساب سه‌ربات</span><b>127% → 149%</b><small>CAGR؛ افت ۲۴٫۶٪ ← ۲۵٫۳٪</small></div>
+</div>
+
+<h2>۱. تشخیص: قبل از تغییر، چه چیزی خراب یا ضعیف بود؟</h2>
+
+<div class="box col"><h3>بازبینی کد ربات زنده</h3>
+<p>کلاس واقعی ربات روی یک سال دادهٔ تاریخی بازپخش شد. با بررسی قیمت در هر دقیقه، دقیقاً همان معاملات تحقیق را ساخت (LINK ‏۱۸ از ۱۸، CRV ‏۲۲ از ۲۲). روی ۲۰ ارز، نتیجهٔ واقعی‌تر (با لغزش و Funding) Calmar 0.51 در برابر 0.56 تحقیق بود؛ پس خود منطق ربات مشکلی نداشت. باگ‌های پیداشده و وضعیتشان:</p>
+<ul>
+<li><span class="chip no">مهم</span> اگر CSV کندل‌ها با تأخیر به‌روز می‌شد، سیگنال آن کندل برای همیشه گم می‌شد و خروج زمانی ۴ ساعت دیر می‌شد. <b>اصلاح شد:</b> حالا ربات کندل عقب‌مانده را تشخیص می‌دهد و دوباره اسکن می‌کند.</li>
+<li><span class="chip mid">متوسط</span> <code>1000SHIB</code> در LBank وجود ندارد (نامش SHIBUSDT است). همین یک نماد باعث می‌شد هر ۱۵ ثانیه کل ۲۰ ارز دوباره اسکن و خطا ثبت شود. <b>اصلاح شد:</b> <code>SHIB/USDT:USDT</code>.</li>
+<li><span class="chip mid">متوسط</span> یک کندل گم‌شده در تاریخچه، آن ارز را حدود ۵۰ روز قفل می‌کرد. <b>اصلاح شد:</b> شکاف تا ۳ کندل با کندل صاف پر می‌شود، همان‌طور که دادهٔ تحقیق این کار را می‌کند.</li>
+<li><span class="chip mid">متوسط</span> سود و زیان paper لغزش و Funding را حساب نمی‌کند و ققنوس را حدود ۱ واحد درصد در سال بهتر نشان می‌دهد. <b>هنوز باز است</b> و در README ثبت شده.</li>
+<li><span class="chip ok">کم</span> بدون هدف، پیام log هر ورود خطا می‌داد و ثبت نمی‌شد. <b>اصلاح شد.</b> چند مورد کم‌اهمیت دیگر (ترتیب بررسی استاپ در لحظهٔ اسکن، نبود بررسی در زمان خاموشی ربات) برای کارهای بعدی ثبت شد.</li>
+</ul></div>
+
+<div class="box col"><h3>داده، ارزها و هزینه</h3>
+<ul>
+<li>داده قابل اعتماد است. فقط CVC خراب بود (۸۹۹ روز بدون معامله)، و ققنوس در آن بازه معامله‌ای نداشت.</li>
+<li>هر ۲۰ ارز در LBank به‌صورت قرارداد دائمی USDT فعال‌اند (بررسی مستقیم API).</li>
+<li><b>لبهٔ ققنوس بیشتر در ارزهای کم‌حجم است:</b> ۸ ارز با حجم کمتر از ۲ میلیون دلار در هر کندل ۴ساعته ۵۹٪ سود را ساخته‌اند. حذف ارزهای کم‌حجم ققنوس را <b>ضعیف‌تر</b> می‌کند (Calmar 0.56 ← 0.41). پیامد: ظرفیت. در دفتر سفارش نازک LBank، ققنوس تا حدود ۱۰۰ تا ۱۵۰ هزار دلار سرمایه خوب کار می‌کند.</li>
+<li>هزینه‌ها (جمع درصدهای روزانه با ریسک ۰٫۵٪): کارمزد ۱۹٫۴ واحد درصد و Funding فقط ۳ واحد، در برابر سود خالص ۱۰۵٫۷ واحد. با لغزش بدبینانه، Calmar از 0.56 به 0.42 می‌رسد.</li>
+</ul></div>
+
+<div class="box col"><h3>کالبدشکافی معاملات (فقط دورهٔ Train)</h3>
+<ul>
+<li><b>سود از دُم توزیع است:</b> نرخ برد ۳۸٪، میانهٔ هر معامله −۰٫۹۸R، و ۵٪ بهترین معاملات ۲۶۹٪ سود خالص را ساخته‌اند. همهٔ سود از معاملاتی است که تا کندل ۳۰ می‌مانند (۳۸۱ خروج زمانی = +۵۳۱R؛ ۴۶۰ استاپ = −۴۵۸R).</li>
+<li><b>قوی‌ترین و پایدارترین عامل، رژیم نوسان است.</b> وقتی نوسان آن ارز نسبت به ۵۰۰ کندل قبل کم است، میانگین هر معامله +۰٫۴۴R است (در Validation هم +۰٫۴۷). وقتی زیاد است، −۰٫۱۰R (در Validation ‏−۰٫۳۴). Key Reversal در بازار آرام یک چرخش واقعی است و در بازار پرنوسان فقط نویز.</li>
+<li>عامل دوم: وقتی EMA50 از قبل در جهت معامله حرکت کرده باشد، نتیجه بد است. یعنی ققنوس به‌عنوان «برگشت از خستگی» کار می‌کند، نه «ادامهٔ روند».</li>
+<li>سربه‌سر کردن استاپ، تریل، خروج بخشی و هدف ثابت همه همان دُم سودده را می‌بُرند.</li>
+</ul></div>
+
+<div class="box col"><h3>شواهد علمی: آیا پرایس‌اکشن «درصد کلفت» می‌دهد؟</h3>
+<ul>
+<li><b>معامله‌گران خرد:</b> در برزیل ۹۷٪ روزمعامله‌گرانی که بیش از ۳۰۰ روز ادامه دادند زیان کردند. در تایوان کمتر از ۱٪ بعد از کارمزد سود پایدار داشتند. در اروپا ۷۴ تا ۸۹٪ حساب‌های CFD زیان‌ده‌اند. در پراپ‌فرم‌ها فقط حدود ۷٪ حساب‌ها هرگز برداشت داشته‌اند.</li>
+<li><b>الگوها:</b> در آزمون‌های علمی، الگوهای شمعی بعد از هزینه معمولاً سود پایدار نداشتند و نتیجه بیشتر به قاعدهٔ خروج بستگی داشت. آزمون Bulkowski روی ۳۸ کریپتو: Key Reversal با نرخ برد ۳۸٪ از معیار بدون الگو بدتر بود.</li>
+<li><b>چیزی که در کریپتو شواهد محکم دارد:</b> روند و مومنتوم (شکست کانال، قیمت نسبت به میانگین). این همان کاری است که شاهین و موج‌سوار می‌کنند. پیشنهاد مدیریت نوسان هم از همین ادبیات آمده، و در C2 دقیقاً همین جواب داد.</li>
+<li><b>چرا «درصدهای کلفت» زیاد دیده می‌شود:</b> فقط برنده‌ها حرف می‌زنند، اهرم بالا در کوتاه‌مدت عدد را بزرگ می‌کند، و بازه‌های چندماهه انتخابی‌اند.</li>
+</ul>
+<p class="src">منابع اصلی: <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3423101">Chague et al.</a> · <a href="https://ideas.repec.org/a/eee/finmar/v18y2014icp1-24.html">Barber et al. 2014</a> · <a href="https://www.esma.europa.eu/node/84933">ESMA</a> · <a href="https://thepatternsite.com/KRD.html">Bulkowski: Key Reversal</a> · <a href="https://ideas.repec.org/p/sin/wpaper/14-a010.html">Lu, Chen, Hsu</a> · <a href="https://ideas.repec.org/a/bla/jecsur/v21y2007i4p786-826.html">Park &amp; Irwin</a> · <a href="https://hull-repository.worktribe.com/output/2328042">Hudson &amp; Urquhart</a> · <a href="https://ideas.repec.org/a/bla/finmgt/v50y2021i1p107-137.html">Detzel et al.</a> · <a href="https://concretumgroup.com/catching-crypto-trends-a-tactical-approach-for-bitcoin-and-altcoins/">Zarattini et al.</a> · <a href="https://link.springer.com/article/10.1007/s11408-025-00474-9">crypto momentum crashes</a></p>
+</div>
+
+<h2>۲. هشت مطالعهٔ سازنده</h2>
+<p class="col">هر سازنده حداکثر ۸ نسخه را <b>قبل از دیدن نتیجه</b> ثبت کرد و یک بار اجرا کرد. شرط قبولی (Q1 تا Q6): ققنوس به‌تنهایی در Train بهتر، در Validation بدتر نشود، روی ۱۵ ارز دیگر بدتر نشود، کل حساب بهتر شود، با لغزش ۵bps سالم بماند، و از دادهٔ آینده استفاده نکند. پایه (C1): Calmar تنها 0.56، IN15 ‏0.60، حساب 5.02.</p>
+<div class="tw"><table>
+<tr><th class="l">مطالعه</th><th class="l">بهترین نسخه</th><th>Calmar تنها</th><th>افت</th><th>IN15</th><th>نتیجه</th><th class="l">درس</th></tr>
+<tr><td class="l">بررسی دوبارهٔ ۱۹ الگو با خروج C1</td><td class="l">C1 + CHoCH</td><td>0.99</td><td>32٪</td><td>0.29</td><td><span class="chip no">۰ از ۸</span></td><td class="l">بهترین‌های Train (Inside Bar، H2) در Validation فرو ریختند</td></tr>
+<tr><td class="l">تایم‌فریم بالاتر (۸h/۱۲h/روزانه)</td><td class="l">Key Reversal ۱۲ساعته</td><td>1.33</td><td>13.9٪</td><td><b>2.07</b></td><td><span class="chip no">۰ از ۸</span></td><td class="l">Key Reversal در تایم بالاتر تعمیم خوبی دارد ولی کل حساب را بهتر نکرد</td></tr>
+<tr><td class="l">موقعیت در تایم بالا</td><td class="l">نزدیک سقف/کف ۲۰ روزه یا هفتگی</td><td>1.06</td><td>19٪</td><td>0.68</td><td><span class="chip no">۰ از ۸</span></td><td class="l">مکان واقعی است ولی برای کل حساب کافی نبود</td></tr>
+<tr><td class="l">ورود در ۱ساعته</td><td class="l">پولبک و بازپس‌گیری</td><td>1.25</td><td>17٪</td><td>0.27</td><td><span class="chip no">۰ از ۸</span></td><td class="l">فقط روی همان ارزها خوب بود؛ تعمیم نداشت</td></tr>
+<tr><td class="l">شیوهٔ ورود و کارمزد</td><td class="l">تأیید با Close</td><td>1.04</td><td>19.7٪</td><td>1.40</td><td><span class="chip no">۰ از ۸</span></td><td class="l">سفارش Limit بدترین بود (فقط وقتی پر می‌شود که برگشت شکست خورده)</td></tr>
+<tr><td class="l">مهندسی خروج</td><td class="l">خروج با Key Reversal مخالف</td><td>0.83</td><td>30.6٪</td><td>1.00</td><td><span class="chip mid">همه به‌جز Q1</span></td><td class="l">پایدارترین بهبود خروج</td></tr>
+<tr><td class="l">امتیاز هم‌گرایی (A+)</td><td class="l">tilt / skip_le2 / lin</td><td>1.43</td><td>16.7–31.5٪</td><td>0.67–0.76</td><td><span class="chip ok">۳ از ۸</span></td><td class="l">بازرس‌ها: واقعی ولی متوسط؛ فقط عامل نوسان و EMA50 در Validation پایدار ماندند</td></tr>
+<tr><td class="l">ارزها</td><td class="l">بدون CVC</td><td>0.57</td><td>35.9٪</td><td>0.60</td><td><span class="chip no">۰ از ۸</span></td><td class="l">فیلتر حجم بدتر می‌کند؛ قانون «یک پوزیشن در هر نماد» روی ارزهای دیگر لبه را از بین می‌برد</td></tr>
+</table></div>
+
+<h2>۳. آزمون نهایی و انتخاب C2</h2>
+<p class="col">دو عاملی که در Validation پایدار ماندند (نوسان کم و EMA50 خلاف جهت) با خروج Key Reversal مخالف ترکیب شدند. قاعدهٔ انتخاب <b>قبل از اجرا</b> نوشته شد: از بین نسخه‌های پاس‌شده، ساده‌ترین (کمترین عامل) برنده است.</p>
+<div class="tw"><table>
+<tr><th class="l">نسخه</th><th>Calmar Train</th><th>Calmar Valid</th><th>Calmar کل</th><th>CAGR</th><th>افت</th><th>IN15</th><th>معامله</th><th>نتیجه</th></tr>
+<tr class="base"><td class="l">C1 (قبلی)</td><td>0.28</td><td>1.67</td><td>0.56</td><td>20.1٪</td><td>35.9٪</td><td>0.60</td><td>1460</td><td>—</td></tr>
+<tr><td class="l">F1: نوسان کم + EMA50</td><td>1.13</td><td>2.98</td><td>1.59</td><td>21.2٪</td><td>13.3٪</td><td>0.83</td><td>508</td><td><span class="chip no">Q4</span></td></tr>
+<tr><td class="l">F2: F1 + خروج مخالف</td><td>1.57</td><td>4.35</td><td>2.14</td><td>26.7٪</td><td>12.5٪</td><td>1.01</td><td>553</td><td><span class="chip ok">پاس</span></td></tr>
+<tr class="win"><td class="l">F3: نوسان کم + خروج مخالف (C2)</td><td>1.27</td><td>3.75</td><td>1.82</td><td>27.0٪</td><td>14.8٪</td><td>1.21</td><td>666</td><td><span class="chip ok">پاس · برنده</span></td></tr>
+<tr><td class="l">F4: امتیاز ۴ عاملی + خروج مخالف</td><td>1.22</td><td>3.00</td><td>1.77</td><td>28.5٪</td><td>16.1٪</td><td>1.09</td><td>929</td><td><span class="chip ok">پاس</span></td></tr>
+<tr><td class="l">F5: tilt + خروج مخالف</td><td>1.20</td><td>3.23</td><td>1.70</td><td>47.9٪</td><td>28.1٪</td><td>1.11</td><td>1488</td><td><span class="chip ok">پاس</span></td></tr>
+<tr><td class="l">F6: lin + خروج مخالف</td><td>0.69</td><td>3.34</td><td>1.40</td><td>37.2٪</td><td>26.6٪</td><td>1.09</td><td>1604</td><td><span class="chip ok">پاس</span></td></tr>
+</table></div>
+<p class="note col">ققنوس به‌تنهایی با ریسک ۰٫۵٪ روی پایهٔ ثابت ۱۰٬۰۰۰ دلار. پنج نسخه از شش پاس شدند. F3 با یک عامل ساده‌ترین بود و طبق قاعده برنده شد.</p>
+
+<h3>آزمون پایداری C2 (بعد از انتخاب، فقط برای اطمینان)</h3>
+<div class="tw"><table>
+<tr><th class="l">آستانهٔ رتبهٔ نوسان</th><th>Calmar Train</th><th>Valid</th><th>کل</th><th>CAGR</th><th>افت</th><th>IN15</th><th>۲۰۲۲</th><th>۲۰۲۳</th><th>۲۰۲۴</th><th>۲۰۲۵</th></tr>
+<tr><td class="l">۰٫۲۵</td><td>1.13</td><td>4.75</td><td>2.13</td><td>23.4٪</td><td>11.0٪</td><td>1.22</td><td>+14.7</td><td>+8.9</td><td>+14.3</td><td>+65.6</td></tr>
+<tr><td class="l">۰٫۳۰</td><td>1.43</td><td>3.41</td><td>1.68</td><td>24.3٪</td><td>14.5٪</td><td>1.21</td><td>+14.4</td><td>+6.4</td><td>+17.8</td><td>+76.6</td></tr>
+<tr class="win"><td class="l">۰٫۳۵۴ (C2)</td><td>1.27</td><td>3.75</td><td>1.82</td><td>27.0٪</td><td>14.8٪</td><td>1.21</td><td>+13.7</td><td>+5.1</td><td>+22.9</td><td>+82.5</td></tr>
+<tr><td class="l">۰٫۴۰</td><td>0.76</td><td>4.18</td><td>1.80</td><td>28.5٪</td><td>15.8٪</td><td>1.23</td><td>+14.8</td><td>+3.1</td><td>+18.9</td><td>+91.2</td></tr>
+<tr><td class="l">۰٫۵۰</td><td>0.99</td><td>4.73</td><td>2.12</td><td>35.1٪</td><td>16.5٪</td><td>1.29</td><td>+22.2</td><td>+12.2</td><td>+14.8</td><td>+103.9</td></tr>
+<tr><td class="l">۰٫۶۰</td><td>0.57</td><td>4.28</td><td>1.38</td><td>31.4٪</td><td>22.7٪</td><td>1.46</td><td>+16.8</td><td>+9.7</td><td>+14.5</td><td>+101.5</td></tr>
+<tr class="base"><td class="l">بدون فیلتر نوسان (فقط خروج مخالف)</td><td>0.31</td><td>2.69</td><td>0.86</td><td>26.4٪</td><td>30.6٪</td><td>1.01</td><td>+21.2</td><td>−7.4</td><td>+18.8</td><td>+98.2</td></tr>
+</table></div>
+<p class="col">همهٔ آستانه‌ها از ۰٫۲۵ تا ۰٫۶ بهتر از C1 هستند و در هر چهار سال کامل مثبت‌اند. پس نتیجه به یک عدد خاص وابسته نیست. اعداد سالانه درصد با ریسک ۰٫۵٪ است.</p>
+
+<h2>۴. اثر روی پول</h2>
+<div class="tw"><table style="min-width:640px">
+<tr><th class="l">حالت (سرمایهٔ مشترک، سود مرکب، از ۱۰٬۰۰۰ دلار)</th><th>CAGR</th><th>بیشترین افت</th><th>Calmar</th><th>سود ققنوس</th></tr>
+<tr class="base"><td class="l">سه ربات، ققنوس C1 با ۰٫۲۵٪ (قبلی)</td><td>127.2٪</td><td>24.6٪</td><td>5.17</td><td>$39k</td></tr>
+<tr><td class="l">سه ربات، ققنوس C2 با ۰٫۲۵٪</td><td>133.3٪</td><td>24.3٪</td><td>5.49</td><td>$61k</td></tr>
+<tr class="win"><td class="l">سه ربات، ققنوس C2 با ۰٫۴٪ (پیش‌فرض جدید)</td><td>148.6٪</td><td>25.3٪</td><td>5.87</td><td>$115k</td></tr>
+<tr><td class="l">سه ربات، ققنوس C2 با ۰٫۵٪</td><td>158.8٪</td><td>27.1٪</td><td>5.86</td><td>$159k</td></tr>
+<tr><td class="l">سه ربات، ققنوس C2 با ۰٫۷۵٪</td><td>180.1٪</td><td>31.5٪</td><td>5.71</td><td>$265k</td></tr>
+<tr><td class="l">ققنوس C2 تنها، ریسک ۰٫۵٪</td><td>26.0٪</td><td>14.9٪</td><td>1.75</td><td>—</td></tr>
+<tr><td class="l">ققنوس C2 تنها، ریسک ۱٪</td><td>52.3٪</td><td>27.8٪</td><td>1.88</td><td>—</td></tr>
+<tr><td class="l">ققنوس C2 تنها، ریسک ۲٪</td><td>83.9٪</td><td>48.2٪</td><td>1.74</td><td>—</td></tr>
+<tr><td class="l">ققنوس C1 تنها، ریسک ۰٫۵٪ (مقایسه)</td><td>19.6٪</td><td>35.6٪</td><td>0.55</td><td>—</td></tr>
+</table></div>
+<p class="col">قاعدهٔ از پیش تعیین‌شده ریسک ۰٫۵٪ را برگزیده بود. من ۰٫۴٪ را پیش‌فرض کردم: Calmar تقریباً برابر است (5.87 در برابر 5.86) ولی افت ۲ واحد کمتر است. ظرفیت محدود ارزهای کم‌حجم هم دلیل دیگری برای احتیاط است.</p>
+
+<h2>۵. محدودیت‌ها</h2>
+<ul class="col">
+<li><b>سال ۲۰۲۵ سهم بزرگی دارد</b> (+۸۲٫۵٪ از کل سود C2 با ریسک ۰٫۵٪). سال‌های دیگر مثبت ولی کوچک‌ترند (+۵ تا +۲۳٪).</li>
+<li><b>تعداد آزمون‌ها زیاد بوده:</b> روی ققنوس در مجموع نزدیک ۴۰۰ حالت آزموده شده است (۲۲۸ + ۹۶ + ۶۴ + ۶). قواعد انتخاب و دورهٔ Validation از پیش تعیین شده بودند و نتیجه روی ۱۵ ارز دیگر هم تکرار شد، ولی Validation دیگر کاملاً دست‌نخورده نیست. تنها آزمون تازه، اجرای paper از امروز است.</li>
+<li><b>ظرفیت:</b> لبهٔ ققنوس در ارزهای کم‌حجم است. بالاتر از حدود ۱۰۰ تا ۱۵۰ هزار دلار سرمایه، لغزش واقعی بخشی از سود را می‌خورد.</li>
+<li><b>معاملات کمتر:</b> C2 در پنج سال ۶۶۶ معامله دارد، در برابر ۱۴۶۰ معاملهٔ C1. ممکن است چند هفته پشت سر هم معامله‌ای نباشد. این طبیعی است، چون ربات منتظر بازار آرام است.</li>
+</ul>
+
+<h2>۶. چه چیزی در ربات عوض شد</h2>
+<ul class="col">
+<li><code>pa_sleeve.py</code>: فیلتر نوسان (<code>vol_rank_max=0.354</code>، <code>vol_rank_window=500</code>)، خروج با برگشت مخالف (<code>opposite_exit</code>)، ریسک ۰٫۴٪، ۸۰۰ کندل تاریخچه، پر کردن شکاف کوتاه، تشخیص CSV عقب‌مانده، و اصلاح log.</li>
+<li><code>pa_config.json</code>: SHIB به‌جای 1000SHIB. تنظیمات runtime که دست نخورده‌اند خودکار ارتقا می‌یابند.</li>
+<li>داشبورد: توضیح قواعد جدید در پنل ققنوس و ستون وضعیت.</li>
+<li>تست‌ها: ۲۸۵ تست پاس. سیگنال و فیلتر نوسان ربات زنده روی دادهٔ واقعی با کد تحقیق مقایسه شد، با اختلاف ≤۱٪ در موارد مرزی ناشی از گرم شدن ATR.</li>
+</ul>
+<p class="note col">فایل‌ها: <code>high_cagr/ideas/pa2_*.py</code> (هر مطالعه)، <code>high_cagr/ideas/pa2_final.py</code> (آزمون نهایی)، <code>high_cagr/output/ideas/pa_opt2/</code> (نتایج و <code>c2_account.json</code>).</p>
+</div>

@@ -803,7 +803,11 @@ class MarketData:
     def demo_base(symbol: str) -> float:
         bases = {"BTC": 60000, "ETH": 3000, "BNB": 600, "SOL": 150, "XRP": 0.5, "ADA": 0.4,
                  # C3 sleeve coins (c3_sleeve.py), synthetic demo only
-                 "AAVE": 150, "UNI": 8, "AVAX": 30, "KSM": 30, "EGLD": 40, "DOT": 6, "DOGE": 0.15, "ONE": 0.02, "TRX": 0.12, "SUSHI": 1.0}
+                 "AAVE": 150, "UNI": 8, "AVAX": 30, "KSM": 30, "EGLD": 40, "DOT": 6, "DOGE": 0.15, "ONE": 0.02, "TRX": 0.12, "SUSHI": 1.0,
+                 # PA sleeve coins (pa_sleeve.py), synthetic demo only
+                 "ATOM": 6, "FIL": 4, "LTC": 80, "AXS": 5, "LINK": 15, "XTZ": 0.8, "ALGO": 0.2, "ETC": 20, "NEAR": 3,
+                 "CELR": 0.01, "BCH": 400, "ALICE": 0.5, "C98": 0.1, "SHIB": 0.000015, "THETA": 1.0, "IOST": 0.005,
+                 "CVC": 0.1, "CRV": 0.5, "IOTA": 0.2, "VET": 0.03}
         if symbol not in [key + "/USDT:USDT" for key in bases]:
             raise ValueError(f"No synthetic demo market for {symbol}")
         return float(bases[symbol.split("/")[0]])
@@ -986,8 +990,10 @@ class Engine:
             return None
         import c3_sleeve
         from shared_paper_account import SharedPaperAccount
+        import pa_sleeve
         cfg, store = c3_sleeve.paths()
-        return SharedPaperAccount(self, store, lambda: c3_sleeve.load(cfg))
+        pa_cfg, pa_store = pa_sleeve.paths()
+        return SharedPaperAccount(self, store, lambda: c3_sleeve.load(cfg), [(pa_store, lambda: pa_sleeve.load(pa_cfg))])
 
     def paper_equity(self) -> float:
         account = self.shared_paper_account()
@@ -1575,6 +1581,13 @@ def run():
     except Exception as exc:
         LOG.exception("C3 sleeve failed to start; main bot continues")
         db.runtime_set("c3_error", str(exc))
+    pa_thread = None
+    try:   # third strategy (4h price-action key reversal on 20 other coins), paper-only; never stops the main bot
+        import pa_sleeve
+        pa_thread = pa_sleeve.start_in_bot(engine, stop)
+    except Exception as exc:
+        LOG.exception("PA sleeve failed to start; main bot continues")
+        db.runtime_set("pa_error", str(exc))
     LOG.info("Started PAPER engine. %s", LIVE_LIMITATION)
     while not stop.is_set():
         interval = 15
@@ -1588,6 +1601,8 @@ def run():
     thread.join(timeout=12)
     if c3_thread:
         c3_thread.join(timeout=12)
+    if pa_thread:
+        pa_thread.join(timeout=12)
 
 
 def probe_book(symbol: str, contracts: float):

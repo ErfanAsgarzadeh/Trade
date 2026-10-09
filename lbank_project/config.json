@@ -63,7 +63,7 @@
     "trail_atr_buffer": 0.0,
     "trail_timeframe": "ENTRY",
     "hard_tp_rr": 0.0,
-    "engaged_capital_pct": 0.6,
+    "engaged_capital_pct": 0.8,
     "leverage_mode": "FIXED_LEVERAGE"
   },
   "structural_filters": {

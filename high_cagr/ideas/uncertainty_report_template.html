@@ -1,0 +1,160 @@
+<title>سود چقدر قطعی است؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; answer first, then the ranked causes, then the fixes. */
+:root{
+  --bg:#f6f5f2;--surface:#ffffff;--fg:#1d1f22;--muted:#5f6670;--line:#dcdcd6;
+  --accent:#2f5d8a;--accent-soft:#e4ecf4;--base:#2a78d6;--cost:#c98500;--conc:#8a5bd0;--sel:#d4553a;
+  --good:#1d7a45;--good-soft:#e1f3e7;--bad:#a8402f;--bad-soft:#f7e6e2;--warn-soft:#f6efd8;
+  --font-body:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;--font-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#131416;--surface:#1b1d20;--fg:#e7e9ec;--muted:#a1a8b2;--line:#2e3136;--accent:#82b1de;--accent-soft:#1d2a38;
+  --base:#3987e5;--cost:#c98500;--conc:#9d7be6;--sel:#e0704f;--good:#6fd39a;--good-soft:#173826;--bad:#f08f7c;--bad-soft:#3d221d;--warn-soft:#3a3218;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131416;--surface:#1b1d20;--fg:#e7e9ec;--muted:#a1a8b2;--line:#2e3136;--accent:#82b1de;--accent-soft:#1d2a38;
+  --base:#3987e5;--cost:#c98500;--conc:#9d7be6;--sel:#e0704f;--good:#6fd39a;--good-soft:#173826;--bad:#f08f7c;--bad-soft:#3d221d;--warn-soft:#3a3218;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.95;direction:rtl}
+.wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+.col{max-width:74ch}
+h1{font-size:30px;font-weight:800;margin:0 0 4px;text-wrap:balance}
+h2{font-size:21px;font-weight:800;margin:44px 0 10px;padding-top:18px;border-top:1px solid var(--line);text-wrap:balance}
+h3{font-size:17px;font-weight:700;margin:24px 0 6px}
+p{margin:8px 0}.sub{color:var(--muted);font-size:14px}
+.verdict{background:var(--surface);border:1px solid var(--line);border-inline-start:5px solid var(--accent);border-radius:10px;padding:16px 20px;margin:22px 0}
+.verdict h2{border:0;margin:0 0 6px;padding:0;font-size:19px}
+ul,ol{padding-inline-start:22px;margin:8px 0}li{margin:5px 0}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;margin:14px 0;overflow-x:auto}
+.fig figcaption{font-size:13.5px;color:var(--muted);margin-bottom:6px}
+svg{display:block;min-width:700px;width:100%;height:auto;direction:ltr}
+svg .lb{fill:var(--fg);font-size:13px;font-family:var(--font-body);direction:rtl;unicode-bidi:embed}svg .v{fill:var(--muted);font-size:12px;font-family:var(--font-num);direction:ltr}
+svg .b.base{fill:var(--base)}svg .b.cost{fill:var(--cost)}svg .b.conc{fill:var(--conc)}svg .b.sel{fill:var(--sel)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 4px 8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-inline-end:6px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{color:var(--muted);font-size:12.5px;background:var(--bg)}
+td.n{font-family:var(--font-num);font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap}
+.rank{display:inline-block;min-width:24px;text-align:center;border-radius:6px;background:var(--accent-soft);font-family:var(--font-num);font-size:12px}
+.chip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;white-space:nowrap}
+.hi{background:var(--bad-soft);color:var(--bad)}.mid{background:var(--warn-soft)}.lo{background:var(--good-soft);color:var(--good)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.box h3{margin-top:0}
+.ltr{direction:ltr;unicode-bidi:isolate;font-family:var(--font-num);font-size:13px}
+code{font-family:var(--font-num);font-size:13px;background:var(--accent-soft);padding:1px 6px;border-radius:4px;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+.note{color:var(--muted);font-size:14px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header class="col">
+<h1>سود چقدر قطعی است؟</h1>
+<p class="sub">تحقیق روی عدم قطعیت بک‌تست سه ربات (شاهین، موج‌سوار، ققنوس) روی یک حساب، ریسک ۱٪ / ۰٫۴٪ / ۰٫۲۵٪ و سقف مارجین ۸۰٪. هر آزمون فقط یک چیز را عوض می‌کند و همان حساب را دوباره اجرا می‌کند. کد: <code>high_cagr/ideas/uncertainty.py</code></p>
+</header>
+
+<section class="verdict col">
+<h2>جواب کوتاه</h2>
+<p>CAGR ‏{{B_CAGR}}٪ بک‌تست <b>سقف خوش‌بینانه</b> است، نه انتظار. شش عامل آن را نامطمئن می‌کنند. بزرگ‌ترینش <b>انتخاب ارزها</b> است: قواعد شاهین و موج‌سوار روی همان ارزهایی که با آن‌ها انتخاب شدند عالی‌اند، ولی روی ارزهای دیگر خیلی ضعیف‌ترند. اگر هر سه ربات روی ارزهای انتخاب‌نشده اجرا شوند، CAGR به <b>{{SA}}٪</b> با افت <b>{{SAD}}٪</b> می‌رسد.</p>
+<ul>
+<li><b>اگر لبهٔ ربات‌ها واقعی باشد</b> و فقط هزینهٔ واقعی را اضافه کنیم: حدود ۱۰۰ تا ۱۱۵٪ در سال، با افتی که می‌تواند تا ۴۶٪ برسد.</li>
+<li><b>اگر انتخاب ارزها بیشتر شانس بوده باشد:</b> حدود ۱۵ تا ۲۵٪ در سال با افت ۴۰ تا ۵۵٪.</li>
+<li>حقیقت احتمالاً جایی بین این دو است. <b>هیچ بک‌تست دیگری این را مشخص نمی‌کند؛ فقط دادهٔ آینده (اجرای paper) آن را مشخص می‌کند.</b> پایین‌تر آمده که چطور با ریسک کمتر و قواعد توقف از پیش تعیین‌شده، از هر دو حالت جان سالم به در ببرید.</li>
+</ul>
+</section>
+
+<h2>هر عامل چقدر از سود کم می‌کند؟</h2>
+<figure class="fig"><figcaption>CAGR و بیشترین افت حساب سه‌ربات (۵ سال، ۱۰٬۰۰۰ دلار) وقتی فقط یک عامل عوض می‌شود. در ردیف‌های قرمز فقط ارزهای همان ربات عوض شده و دو ربات دیگر روی ارزهای خودشان مانده‌اند، به‌جز ردیف آخر.</figcaption>
+<div class="legend"><span><i style="background:var(--base)"></i>بک‌تست</span><span><i style="background:var(--cost)"></i>هزینهٔ اجرا</span><span><i style="background:var(--conc)"></i>وابستگی به چند معاملهٔ بزرگ</span><span><i style="background:var(--sel)"></i>انتخاب ارز</span></div>
+<svg viewBox="0 0 {{W}} {{H}}" role="img" aria-label="اثر هر عامل بر CAGR">{{BARS}}</svg></figure>
+
+<div class="tw"><table>
+<tr><th>رتبه</th><th>عامل</th><th>اثر</th><th>شدت</th><th>قابل اصلاح؟</th></tr>
+<tr><td><span class="rank">۱</span></td><td><b>انتخاب ارز (بیش‌برازش)</b></td><td>هر سه روی ارزهای دیگر: CAGR ‏{{SA}}٪، افت {{SAD}}٪. شاهین تنها روی ۱۰ ارز دیگر: {{SM}}٪ با افت {{SMD}}٪</td><td><span class="chip hi">خیلی زیاد</span></td><td>با داده‌های بیشتر نه؛ فقط با آزمون آینده و ریسک محتاطانه مدیریت می‌شود</td></tr>
+<tr><td><span class="rank">۲</span></td><td><b>وابستگی به چند معاملهٔ بزرگ</b></td><td>بدون ۲۵ معاملهٔ برتر (۰٫۷٪ معاملات): {{R25}}٪. بدون ۱۰۰ معامله: {{R100}}٪</td><td><span class="chip hi">زیاد</span></td><td>ذاتی روندگیری است؛ اصلاح یعنی هیچ‌وقت آن معاملات را از دست ندهید</td></tr>
+<tr><td><span class="rank">۳</span></td><td><b>شانس (ترتیب روزها)</b></td><td>با همان لبه، CAGR پنج‌ساله ۹۰٪ مواقع بین {{U1C5}}٪ و {{U1C95}}٪؛ میانهٔ بیشترین افت {{U1D50}}٪، نه ۲۴٫۶٪</td><td><span class="chip mid">متوسط</span></td><td>با ریسک کمتر، دامنهٔ افت کوچک می‌شود</td></tr>
+<tr><td><span class="rank">۴</span></td><td><b>لغزش و کارمزد واقعی</b></td><td>۵bps: {{C5}}٪ · ۱۰bps: {{C10}}٪ · ۲۰bps: {{C20}}٪</td><td><span class="chip mid">متوسط</span></td><td>بله: اندازه‌گیری لغزش، سفارش Limit، حذف ارزهای کم‌حجم</td></tr>
+<tr><td><span class="rank">۵</span></td><td><b>نقدشوندگی ارزهای کوچک</b></td><td>اگر حجم LBank ۲۰٪ بایننس باشد: {{LV}}٪. سود ققنوس از ۳۹ به {{LVPA}} هزار دلار می‌رسد</td><td><span class="chip mid">متوسط (برای ققنوس زیاد)</span></td><td>بله: سقف اندازهٔ سفارش به نسبت حجم روزانه</td></tr>
+<tr><td><span class="rank">۶</span></td><td><b>چیزهای اندازه‌نگرفتنی</b></td><td>اجرای زندهٔ LBank هنوز ساخته نشده، Funding و قیمت LBank، تغییر رفتار بازار، دادهٔ معیوب CVC</td><td><span class="chip mid">نامعلوم</span></td><td>بخشی با اجرای paper و تست پیش از پول واقعی</td></tr>
+</table></div>
+
+<h2>هر عامل از کجا می‌آید و چطور درست می‌شود</h2>
+
+<div class="box col"><h3>۱. انتخاب ارز: بزرگ‌ترین منبع عدم قطعیت</h3>
+<p><b>چرا:</b> شاهین از بین صدها حالت روی همین ۵ ارز انتخاب شد. ۱۰ ارز موج‌سوار هم از بین ۳۰ ارز بر اساس سود دورهٔ Train انتخاب شدند. وقتی قاعده‌ای را روی داده‌ای انتخاب می‌کنید که بعداً با همان داده می‌سنجید، بخشی از سود «یادگرفتن نویز» است.</p>
+<ul>
+<li><b>شاهین:</b> روی ۵ ارز خودش، مجموع R معاملات: <span class="ltr">{{M5R}}</span>. روی ۱۰ ارز دیگر با همان قواعد: <span class="ltr">{{N10R}}</span>. یعنی روی ارزهای دیگر لبه تقریباً صفر بود و حساب شاهین به‌تنهایی {{SM}}٪ در سال با افت {{SMD}}٪ داشت. قبلاً روی ۲۰ ارز دیگر هم آزموده شده بود: CAGR منفی ۹٫۷٪. روی آن ۱۰ ارز، شش تا مثبت و چهار تا منفی بودند و الگوی روشنی (مثلاً «ارزهای بزرگ‌تر بهترند») دیده نمی‌شود. ممکن است ۵ ارز اصلی واقعاً روند تمیزتری داشته باشند، ولی با این داده قابل اثبات نیست.</li>
+<li><b>موج‌سوار:</b> روی ۲۰ ارزی که برایش انتخاب نشدند: {{SC}}٪ با افت {{SCD}}٪ (روی ارزهای خودش حدود ۳۸٪).</li>
+<li><b>ققنوس:</b> روی ۱۵ ارز دیگر هم کار کرد ({{SP}}٪ با افت {{SPD}}٪). این تنها رباتی است که لبه‌اش به ارز وابسته نبود.</li>
+</ul>
+<p><b>چطور درست می‌شود:</b></p>
+<ol>
+<li><b>دیگر قاعده‌ها را با همین داده بهینه نکنید.</b> هر فیلتر یا پارامتر تازه‌ای که روی ۲۰۲۱ تا ۲۰۲۶ تنظیم شود، این مشکل را بدتر می‌کند. از امروز قواعد را ثابت نگه دارید.</li>
+<li><b>آیندهٔ داوری:</b> اجرای paper از امروز، تنها دادهٔ کاملاً دست‌نخورده است. بازه‌های قبول و رد را <b>از قبل</b> بنویسید (بخش «قواعد توقف»).</li>
+<li><b>ریسک را برای حالت بد تنظیم کنید، نه برای حالت خوب.</b> با نصف ریسک (۰٫۵٪ / ۰٫۲٪ / ۰٫۱۲۵٪): اگر لبه واقعی باشد CAGR ‏{{H5}}٪ با افت {{H5D}}٪؛ اگر انتخاب ارز شانس بوده باشد {{A5}}٪ با افت {{A5D}}٪. در هر دو حالت حساب زنده می‌ماند.</li>
+</ol></div>
+
+<div class="box col"><h3>۲. وابستگی به چند معاملهٔ بزرگ</h3>
+<p><b>چرا:</b> هر سه ربات روندگیرند: بیشتر معاملات کوچک می‌بازند و چند روند بزرگ کل سود را می‌سازد. از ۳٬۷۸۵ معامله، حذف ۱۰ معاملهٔ برتر (بر اساس R، یعنی بازده به نسبت ریسک) CAGR را به {{R10}}٪ می‌رساند، ۲۵ تا به {{R25}}٪، ۵۰ تا به {{R50}}٪ و ۱۰۰ تا به {{R100}}٪. این طبیعی است، ولی یعنی نتیجه به این بستگی دارد که در آینده چند روند بزرگ پیش بیاید و ربات در آن‌ها باشد.</p>
+<p><b>چطور درست می‌شود:</b> این را نمی‌شود حذف کرد؛ فقط می‌شود از دست ندادن آن معاملات را تضمین کرد:</p>
+<ul>
+<li>ربات باید همیشه روشن باشد: سرور پایدار، ری‌استارت خودکار، هشدار قطعی.</li>
+<li>بعد از چند ضرر پشت سر هم ربات را خاموش نکنید و سیگنال‌ها را دستی رد نکنید. بیشتر روندهای بزرگ بعد از یک سری ضرر کوچک می‌آیند.</li>
+<li>سقف تعداد پوزیشن را تنگ‌تر نکنید. این آزمون نشان داد معاملات شلوغ از بقیه بدتر نیستند.</li>
+</ul></div>
+
+<div class="box col"><h3>۳. شانس: ترتیب روزهای خوب و بد</h3>
+<p><b>چرا:</b> حتی اگر لبه دقیقاً همین باشد، آینده همان ترتیب گذشته را تکرار نمی‌کند. با شبیه‌سازی بلوکی (۴٬۰۰۰ مسیر ممکن از همان روزها):</p>
+<div class="tw"><table style="min-width:600px">
+<tr><th>بازه</th><th>بازدهی ۹۰٪ مواقع بین</th><th>میانه</th><th>احتمال ضرر</th><th>افت بیش از ۳۰٪</th></tr>
+<tr><td>۳ ماه</td><td class="n">{{Q90L}}٪ تا +{{Q90H}}٪</td><td class="n">—</td><td class="n">{{Q90PL}}٪</td><td class="n">بیشترین افت (P95): {{Q90DD}}٪</td></tr>
+<tr><td>۶ ماه</td><td class="n">{{Q180L}}٪ تا +{{Q180H}}٪</td><td class="n">—</td><td class="n">{{Q180PL}}٪</td><td class="n">بیشترین افت (P95): {{Q180DD}}٪</td></tr>
+<tr><td>۱ سال</td><td class="n">+{{Y1C5}}٪ تا +{{Y1C95}}٪</td><td class="n">+{{Y1C50}}٪</td><td class="n">{{Y1PL}}٪</td><td class="n">—</td></tr>
+<tr><td>۵ سال (CAGR)</td><td class="n">{{U1C5}}٪ تا {{U1C95}}٪</td><td class="n">{{U1C50}}٪</td><td class="n">~۰٪</td><td class="n">{{U1P30}}٪ (بیش از ۴۰٪: {{U1P40}}٪)</td></tr>
+</table></div>
+<p>یعنی بیشترین افت ۲۴٫۶٪ بک‌تست کمی خوش‌شانس بوده و افت نزدیک ۳۳٪ (میانه) یا حتی ۴۶٪ (P95) در پنج سال عادی است. در بک‌تست هیچ دورهٔ ۱۲ ماهه‌ای منفی نبود (بدترین +{{W12}}٪)، ولی این هم با همان نمونهٔ خوش‌شانس سنجیده شده است.</p>
+<p><b>چطور درست می‌شود:</b> ریسک کمتر. افت تقریباً با ریسک متناسب است، پس نصف ریسک یعنی تقریباً نصف افت.</p></div>
+
+<div class="box col"><h3>۴ و ۵. هزینهٔ اجرا و نقدشوندگی</h3>
+<p><b>چرا:</b> بک‌تست برای هر fill فقط ۲bps لغزش فرض کرده است. در بازار واقعی، و مخصوصاً وقتی سرمایه بزرگ می‌شود و سفارش‌ها روی ارزهای کم‌حجم بزرگ می‌شوند، لغزش بیشتر است. با مدل اثر بازار (لغزش متناسب با جذر اندازهٔ سفارش به حجم روزانه):</p>
+<ul>
+<li>با حجم بایننس: CAGR ‏{{LB}}٪. با فرض حجم LBank برابر ۲۰٪ بایننس: {{LV}}٪.</li>
+<li>بیشترین آسیب به <b>ققنوس</b> است. ارزهایش کم‌حجم‌اند و سودش از ۳۹ هزار به {{LVPA}} هزار دلار می‌رسد. با ۲۰bps لغزش، سود ققنوس تقریباً صفر می‌شود ({{C20PA}} هزار).</li>
+<li><b>دادهٔ معیوب:</b> CVC از نوامبر ۲۰۲۲ تا مه ۲۰۲۵ در بایننس معامله نمی‌شد (۸۹۸ روز بدون حجم، قیمت ثابت). در آن بازه سیگنالی ساخته نمی‌شد، ولی این ارز برای اجرای واقعی مناسب نیست.</li>
+</ul>
+<p><b>چطور درست می‌شود:</b></p>
+<ol>
+<li><b>سقف اندازه به نسبت حجم:</b> هر سفارش حداکثر ۰٫۵٪ حجم روزانهٔ همان ارز در LBank. در آزمون، CAGR را از {{LV}}٪ به {{LC05}}٪ برگرداند و سود ققنوس از {{LVPA}} به {{LC05PA}} هزار رسید.</li>
+<li><b>اندازه‌گیری به‌جای حدس:</b> کارت «لغزش واقعی» داشبورد را در اجرای paper با دادهٔ زندهٔ LBank روشن کنید و میانهٔ واقعی را با ۲bps مقایسه کنید.</li>
+<li><b>حذف ارزهای کم‌حجم یا مرده</b> از ققنوس (CVC و کم‌حجم‌ترین‌ها بر اساس حجم واقعی LBank، نه بر اساس سود گذشته).</li>
+<li>جایی که ممکن است <b>سفارش Limit</b> (کارمزد maker حدود ۰٫۰۲٪ به‌جای ۰٫۰۶٪)، مخصوصاً برای ورود.</li>
+</ol></div>
+
+<div class="box col"><h3>۶. چیزهایی که بک‌تست نمی‌تواند نشان دهد</h3>
+<ul>
+<li><b>اجرای زنده هنوز وجود ندارد.</b> اتصال فعلی به LBank فقط paper است. قبل از پول واقعی باید سفارش فیوچرز، استاپ سمت صرافی و بازیابی بعد از قطعی ساخته و تست شود.</li>
+<li><b>LBank با بایننس فرق دارد:</b> قیمت، Funding، حداقل حجم سفارش و ارزهای موجود.</li>
+<li><b>بازار تغییر می‌کند:</b> ۲۰۲۱ تا ۲۰۲۶ پر از روندهای بزرگ کریپتو بود. یک دورهٔ طولانی بی‌روند برای هر سه ربات بد است.</li>
+</ul></div>
+
+<h2>قواعد توقف: چطور بفهمیم مشکل جدی است</h2>
+<section class="col">
+<p>این بازه‌ها از شبیه‌سازی همان بک‌تست آمده‌اند. اگر نتیجهٔ paper یا واقعی <b>بیرون از آن‌ها</b> بیفتد، احتمالاً مشکل فقط بدشانسی نیست:</p>
+<ul>
+<li><b>بعد از ۳ ماه:</b> بازدهی پایین‌تر از {{Q90L}}٪ یا افت بیشتر از {{Q90DD}}٪ ← ربات‌ها را متوقف و بررسی کنید.</li>
+<li><b>بعد از ۶ ماه:</b> بازدهی پایین‌تر از {{Q180L}}٪ یا افت بیشتر از {{Q180DD}}٪ ← متوقف و بررسی.</li>
+<li><b>هر زمان:</b> افت بیشتر از ۴۰٪ (در پنج سال فقط {{U1P40}}٪ احتمال دارد اگر لبه واقعی باشد) ← نشانهٔ جدی خرابی لبه.</li>
+<li><b>برای هر ربات جدا:</b> اگر یکی از ربات‌ها ۶ ماه منفی بود در حالی که دو تای دیگر مثبت بودند، ریسک همان یکی را نصف کنید.</li>
+</ul>
+</section>
+
+<h2>پیشنهاد نهایی</h2>
+<ol class="col">
+<li>قواعد را <b>از امروز ثابت</b> نگه دارید و ۳ تا ۶ ماه <b>paper با دادهٔ زندهٔ LBank</b> اجرا کنید.</li>
+<li>در همین مدت لغزش واقعی را اندازه بگیرید و <b>سقف سفارش به نسبت حجم</b> و حذف ارزهای مرده یا کم‌حجم را اضافه کنید.</li>
+<li>برای پول واقعی با <b>نصف ریسک</b> (×۰٫۵) شروع کنید. حتی در حالت بد (انتخاب ارز شانس بوده)، افت حدود ۳۰٪ می‌ماند.</li>
+<li>برای درآمد ماهانه روی عدد بک‌تست حساب نکنید. با سناریوی محتاطانه (۱۵ تا ۲۵٪ در سال) برنامه‌ریزی کنید و هر چه بیشتر شد، سود اضافه حساب کنید.</li>
+</ol>
+<p class="note col">داده‌ها: <code>high_cagr/output/ideas/three_bots/uncertainty.json</code> و <code>uncertainty_extra.json</code>. حذف «معاملات برتر» بر اساس R انجام شده (بازده به نسبت ریسک) تا معاملات سال‌های آخر که حساب بزرگ‌تر بود، بیش از حد وزن نگیرند. با رتبه‌بندی دلاری اثر حتی کمی بزرگ‌تر بود.</p>
+</div>
