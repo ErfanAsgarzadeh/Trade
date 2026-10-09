@@ -1,4 +1,5 @@
-"""PA sleeve: third strategy, 4h price-action KEY REVERSAL on 20 other coins, run next to the main bot and C3. PAPER ONLY.
+"""Ghoghnous (ققنوس, the PA sleeve): third bot, 4h price-action KEY REVERSAL on 20 other coins, run next to Shahin (main
+bot) and Mojsavar (C3). PAPER ONLY.
 
 Research: high_cagr/ideas/pa_bot.py (pre-declared test of 19 price-action entries x 1h/4h x 3 exits x 2 filters = 228
 configs); result in high_cagr/output/ideas/pa_bot/. 4h KEYREV with a 2R target was the only config passing all gates.
@@ -10,10 +11,10 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   entry : buy-stop at the signal high (sell-stop at the signal low), valid until the NEXT 4h candle closes; the order
           is cancelled when the price reaches the stop level first
   stop  : signal low - 0.1 x ATR14 (signal high + 0.1 x ATR14 for shorts); skip stops < 0.4% of the fill price
-  exit  : target = 2R from the fill, or the stop, or at the close of the 30th 4h candle after entry (time stop)
-Optional upgrade from the 12-agent study (high_cagr/ideas/pa_opt_combo.py, variant C1; off by default):
-  min_range_atr=1.1 skips signal candles whose range is < 1.1 x ATR14, target_r=0 removes the target (stop or time stop
-  only); researched together with risk_per_trade_pct=0.0025.
+  filter: skip signal candles whose range is < 1.1 x ATR14 (min_range_atr)
+  exit  : the stop, or at the close of the 30th 4h candle after entry (time stop); no target (target_r=0; a positive
+          target_r restores the original 2R target)
+Defaults = variant C1 of the 12-agent study (high_cagr/ideas/pa_opt_combo.py), risk 0.25% per trade.
 One position per coin; own DB and config. Runs inside the main bot (lbank_bot.run starts it in its own thread;
 PA_IN_BOT=0 turns that off). Sizing as C3: risk_per_trade_pct of the shared paper equity / (stop distance + round-trip
 fee + slippage allowance), notional capped at max_notional_pct of equity (PER_SLOT) or by the shared free margin.
@@ -26,10 +27,10 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
 import c3_sleeve as c3
 
-LOG=logging.getLogger('pa_sleeve');H4=c3.H4
-DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0015,max_notional_pct=1.,max_open_positions=0,
+LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
+DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=1.,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,atr_period=14,lookback=10,close_frac=.75,stop_buffer_atr=.1,
-    target_r=2.,min_range_atr=0.,time_stop_bars=30,min_stop_pct=.004,candle_fetch_limit=300,check_interval_seconds=15,symbols=[])
+    target_r=0.,min_range_atr=1.1,time_stop_bars=30,min_stop_pct=.004,candle_fetch_limit=300,check_interval_seconds=15,symbols=[])
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -91,6 +92,7 @@ class Store(c3.Store):
             else:db.execute('INSERT INTO pending VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET data=excluded.data',(s,json.dumps(order)))
 
 class Sleeve(c3.Sleeve):
+    NAME=NAME;LOG=LOG
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
 
@@ -110,7 +112,7 @@ class Sleeve(c3.Sleeve):
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
                 if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now)
                 elif p['target'] is not None and sign*(price-p['target'])>=0:self.close(p,price,'target',now)
-            except Exception:LOG.exception('PA watchdog failed for %s',p['symbol'])
+            except Exception:LOG.exception('Ghoghnous watchdog failed for %s',p['symbol'])
         held={p['symbol'] for p in self.store.positions()}
         for s,o in self.store.orders().items():
             try:
@@ -118,7 +120,7 @@ class Sleeve(c3.Sleeve):
                 step=order_step(o,self.data.price(s))
                 if step=='cancel' or (step=='fill' and not self.c['enabled']):self.store.set_order(s,None)
                 elif step=='fill':self.open(s,o,now);self.store.set_order(s,None)
-            except Exception:LOG.exception('PA order check failed for %s',s)
+            except Exception:LOG.exception('Ghoghnous order check failed for %s',s)
 
     def scan(self,now:float|None=None)->bool:
         now=now or time.time();ok=True;c=self.c
@@ -135,7 +137,7 @@ class Sleeve(c3.Sleeve):
                     self.store.set_order(s,dict(sig,signal_ts=stamp,expires=stamp+2*H4*1000,atr=float(b.atr)))
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
-                ok=False;LOG.exception('PA scan failed for %s',s)
+                ok=False;LOG.exception('Ghoghnous scan failed for %s',s)
         self.watchdog(now);return ok
 
     def open(self,s:str,order:dict,now:float):
@@ -163,7 +165,7 @@ class Sleeve(c3.Sleeve):
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
             db.execute('INSERT OR REPLACE INTO exits VALUES(?,?,?,?)',(s,now,target,entry_bar))
-        LOG.info('PA open %s %s at %.6g stop %.6g target %.6g qty %.6g',s,order['side'],price,stop,target,qty);return True
+        LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %.6g qty %.6g',s,order['side'],price,stop,target,qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
@@ -184,7 +186,10 @@ def prepare_config(path:Path,shipped:Path)->Path:
     if not path.exists():
         path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
-    if new!=cur:path.write_text(json.dumps(new,indent=2))
+    if cur.get('target_r')==2. and cur.get('min_range_atr',0.)==0. and cur.get('risk_per_trade_pct')==OLD_RISK:
+        new.update(target_r=ship['target_r'],min_range_atr=ship['min_range_atr'],risk_per_trade_pct=ship['risk_per_trade_pct'])   # untouched old defaults -> C1
+    if new!=cur:
+        LOG.info('%s runtime config upgraded: %s',NAME,{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
     return path
 
 def paths()->tuple[Path,Store]:
@@ -200,21 +205,21 @@ def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
     while not (stop and stop.is_set()):
         try:
             try:sl.c=load(cfg)
-            except Exception:LOG.exception('PA config unreadable; keeping previous settings')
+            except Exception:LOG.exception('Ghoghnous config unreadable; keeping previous settings')
             now=time.time();boundary=int(now)//H4*H4
             if now>=boundary+3 and boundary!=last:
                 if sl.scan(now):last=boundary
             else:sl.watchdog(now)
-        except Exception:LOG.exception('PA cycle failed; will retry')
+        except Exception:LOG.exception('Ghoghnous cycle failed; will retry')
         if once:break
         (stop.wait if stop else time.sleep)(sl.c['check_interval_seconds'])
 
 def start_in_bot(engine,stop):
     import threading
-    if not in_bot():LOG.info('PA disabled in the bot (PA_IN_BOT=0)');return None
+    if not in_bot():LOG.info('Ghoghnous disabled in the bot (PA_IN_BOT=0)');return None
     cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.main_paper_equity,shared_account=engine.shared_paper_account)
     t=threading.Thread(target=loop,args=(sl,cfg,stop),name='pa-sleeve',daemon=True);t.start()
-    LOG.info('PA sleeve started inside the bot: %d coins, risk %.2f%%/trade',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100)
+    LOG.info('Ghoghnous (PA) started inside the bot: %d coins, risk %.2f%%/trade',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100)
     return t
 
 def main():

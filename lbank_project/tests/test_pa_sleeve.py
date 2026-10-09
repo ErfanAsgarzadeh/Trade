@@ -10,7 +10,7 @@ def pcfg(**kw):
     c=json.loads((Path(__file__).parents[1]/'pa_config.json').read_text());c.update(kw);return P.validate(c)
 
 def test_config_is_paper_only_and_validated():
-    c=pcfg();assert c['dry_run_mode'] is True and len(c['symbols'])==20 and c['risk_per_trade_pct']==.0015 and c['target_r']==2. and c['time_stop_bars']==30
+    c=pcfg();assert c['dry_run_mode'] is True and len(c['symbols'])==20 and c['risk_per_trade_pct']==.0025 and c['target_r']==0. and c['min_range_atr']==1.1 and c['time_stop_bars']==30 and c['enabled'] is True
     for bad in (dict(dry_run_mode=False),dict(timeframe='1h'),dict(time_stop_bars=2.5),dict(risk_per_trade_pct=.05),dict(candle_fetch_limit=50),dict(symbols=[])):
         with pytest.raises(ValueError):pcfg(**bad)
     with pytest.raises(ValueError):P.validate({**pcfg(),'surprise':1})
@@ -59,8 +59,8 @@ def sleeve(tmp_path,rows,price,db='pa.db',**kw):
 
 def scan_time(rows):return (rows[-1][0])/1000+3   # just after the signal candle closed
 
-def test_long_order_fill_target_and_pnl(tmp_path):
-    rows=rows_with_keyrev('long');sig=rows[-2];sl,st=sleeve(tmp_path,rows,sig[4]);now=scan_time(rows)
+def test_long_order_fill_target_and_pnl(tmp_path):   # optional 2R target (the first shipped rule set)
+    rows=rows_with_keyrev('long');sig=rows[-2];sl,st=sleeve(tmp_path,rows,sig[4],target_r=2.,risk_per_trade_pct=.0015);now=scan_time(rows)
     sl.scan(now);o=st.orders()['LINK/USDT:USDT'];assert o['side']=='long' and o['level']==sig[2] and o['stop']<sig[3]
     assert st.positions()==[]                                  # price below the level: still waiting
     sl.data.px=sig[2]+.05;sl.watchdog(now+60);p=st.positions()[0];assert st.orders()=={}
@@ -137,3 +137,10 @@ def test_no_target_option_exits_only_by_stop_or_time(tmp_path):
 def test_min_range_filter(tmp_path):
     rows=rows_with_keyrev('long');sl,st=sleeve(tmp_path,rows,rows[-2][4],min_range_atr=5.);sl.scan(scan_time(rows));assert st.orders()=={}
     sl2,st2=sleeve(tmp_path,rows,rows[-2][4],db='b.db',min_range_atr=1.1);sl2.scan(scan_time(rows));assert st2.orders()
+
+def test_runtime_config_upgrades_untouched_old_defaults(tmp_path):
+    shipped=Path(__file__).parents[1]/'pa_config.json';old={**json.loads(shipped.read_text()),'target_r':2.,'risk_per_trade_pct':.0015};old.pop('min_range_atr')
+    rt=tmp_path/'pa.json';rt.write_text(json.dumps(old));P.prepare_config(rt,shipped);c=P.load(rt)
+    assert (c['target_r'],c['min_range_atr'],c['risk_per_trade_pct'])==(0.,1.1,.0025)
+    own={**old,'risk_per_trade_pct':.003};rt.write_text(json.dumps(own));P.prepare_config(rt,shipped);c=P.load(rt)
+    assert (c['target_r'],c['min_range_atr'],c['risk_per_trade_pct'])==(2.,1.1,.003)   # a value the owner changed is kept

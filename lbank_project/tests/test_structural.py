@@ -124,7 +124,7 @@ def test_deployed_config_matches_eligible_winner():
     assert c['risk_and_exit']['min_stop_policy']=='REJECT'
     assert c['risk_and_exit']['min_stop_distance_pct']==.012
     assert c['risk_and_exit']['risk_per_trade_pct']==.005
-    assert c['risk_and_exit']['engaged_capital_pct']==.60
+    assert c['risk_and_exit']['engaged_capital_pct']==.80
     assert c['strategy_settings']['exit_tp_mode']=='CLOSE_TRAIL_KIJUN'
     assert c['strategy_settings']['breakeven_trigger_rr']==0
     assert c['strategy_settings']['hard_tp_rr']==0

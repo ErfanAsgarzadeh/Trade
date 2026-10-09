@@ -3,7 +3,7 @@
   "dry_run_mode": true,
   "timeframe": "4h",
   "paper_capital": 10000.0,
-  "risk_per_trade_pct": 0.0015,
+  "risk_per_trade_pct": 0.0025,
   "max_notional_pct": 1.0,
   "round_trip_fee": 0.0012,
   "sizing_slippage_pct": 0.0004,
@@ -11,7 +11,7 @@
   "lookback": 10,
   "close_frac": 0.75,
   "stop_buffer_atr": 0.1,
-  "target_r": 2.0,
+  "target_r": 0.0,
   "time_stop_bars": 30,
   "min_stop_pct": 0.004,
   "candle_fetch_limit": 300,
@@ -39,5 +39,6 @@
     "VET/USDT:USDT"
   ],
   "isolated_leverage": 5,
-  "max_open_positions": 0
+  "max_open_positions": 0,
+  "min_range_atr": 1.1
 }

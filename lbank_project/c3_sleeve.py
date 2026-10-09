@@ -1,4 +1,4 @@
-"""C3 sleeve: 4h trend-pullback strategy on 10 coins, run next to the main bot. PAPER ONLY.
+"""Mojsavar (موج‌سوار, the C3 sleeve): 4h trend-pullback bot on 10 coins, run next to Shahin (main bot). PAPER ONLY.
 
 Research: high_cagr/ideas/mtf_search.py (4h PULL, exit TRAILW, filter NOWKND), cross-universe and holdout checks in
 high_cagr/output/ideas/xuni.json and holdout_test.json, coin choice in c3_per_coin.csv, portfolio in c3_combo.json.
@@ -92,6 +92,7 @@ class Store:
         with self.db() as db:return float(db.execute('SELECT COALESCE(SUM(pnl),0) FROM trades').fetchone()[0])
 
 class Sleeve:
+    NAME='Mojsavar';LOG=LOG
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
     @property
@@ -116,13 +117,13 @@ class Sleeve:
             else:
                 db.execute('DELETE FROM position_margin WHERE symbol=? AND opened=?',(p['symbol'],p['opened']))
                 db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,p['qty'],p['opened'],now,pnl,reason))
-        LOG.info('C3 close %s %s at %.6g pnl %.2f (%s)',p['symbol'],p['side'],price,pnl,reason);return pnl
+        self.LOG.info('%s close %s %s at %.6g pnl %.2f (%s)',self.NAME,p['symbol'],p['side'],price,pnl,reason);return pnl
 
     def close_all(self,reason:str='manual',now:float|None=None)->list[dict]:
         now=now or time.time();out=[]
         for p in self.store.positions():
             try:out.append(dict(symbol=p['symbol'],result='closed',pnl=self.close(p,self.data.price(p['symbol']),reason,now)))
-            except Exception as exc:LOG.exception('C3 close failed for %s',p['symbol']);out.append(dict(symbol=p['symbol'],result='error',error=str(exc)))
+            except Exception as exc:self.LOG.exception('%s close failed for %s',self.NAME,p['symbol']);out.append(dict(symbol=p['symbol'],result='error',error=str(exc)))
         return out
 
     def watchdog(self,now:float|None=None):
@@ -131,7 +132,7 @@ class Sleeve:
             try:
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
                 if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now)
-            except Exception:LOG.exception('C3 watchdog failed for %s',p['symbol'])
+            except Exception:LOG.exception('Mojsavar watchdog failed for %s',p['symbol'])
 
     def scan(self,now:float|None=None)->bool:
         now=now or time.time();ok=True;c=self.c
@@ -159,7 +160,7 @@ class Sleeve:
                 if not pos and c['enabled'] and side:self.open(s,side,b,now)
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
-                ok=False;LOG.exception('C3 scan failed for %s',s)
+                ok=False;LOG.exception('Mojsavar scan failed for %s',s)
         self.watchdog(now);return ok
 
     def open(self,s:str,side:str,b:pd.Series,now:float):
@@ -186,7 +187,7 @@ class Sleeve:
         with self.store.db() as db:
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,side,price,qty,stop,float(b.close),now,int(b.timestamp),int(b.timestamp),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
-        LOG.info('C3 open %s %s at %.6g stop %.6g qty %.6g',s,side,price,stop,qty);return True
+        LOG.info('Mojsavar open %s %s at %.6g stop %.6g qty %.6g',s,side,price,stop,qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
@@ -228,7 +229,7 @@ def prepare_config(path:Path,shipped:Path)->Path:
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
     if cur.get('risk_per_trade_pct') in (OLD_DEFAULT_RISK,.002):new['risk_per_trade_pct']=ship['risk_per_trade_pct']
     if new!=cur:
-        LOG.info('C3 runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
+        LOG.info('Mojsavar runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
     return path
 
 def paths()->tuple[Path,Store]:
@@ -242,22 +243,22 @@ def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
     while not (stop and stop.is_set()):
         try:
             try:sl.c=load(cfg)   # dashboard edits apply within one cycle; an invalid file keeps the previous settings
-            except Exception:LOG.exception('C3 config unreadable; keeping previous settings')
+            except Exception:LOG.exception('Mojsavar config unreadable; keeping previous settings')
             now=time.time();boundary=int(now)//H4*H4
             if now>=boundary+3 and boundary!=last:
                 if sl.scan(now):last=boundary
             else:sl.watchdog(now)
-        except Exception:LOG.exception('C3 cycle failed; will retry')
+        except Exception:LOG.exception('Mojsavar cycle failed; will retry')
         if once:break
         (stop.wait if stop else time.sleep)(sl.c['check_interval_seconds'])
 
 def start_in_bot(engine,stop):
     """Called by lbank_bot.run(): C3 in its own thread, own market-data client, sized on the bot's paper equity."""
     import threading
-    if os.getenv('C3_IN_BOT','1')=='0':LOG.info('C3 disabled in the bot (C3_IN_BOT=0)');return None
+    if os.getenv('C3_IN_BOT','1')=='0':LOG.info('Mojsavar disabled in the bot (C3_IN_BOT=0)');return None
     cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.main_paper_equity,shared_account=engine.shared_paper_account)
     t=threading.Thread(target=loop,args=(sl,cfg,stop),name='c3-sleeve',daemon=True);t.start()
-    LOG.info('C3 sleeve started inside the bot: %d coins, risk %.2f%%/trade, confirm_bars %d',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100,sl.c['confirm_bars'])
+    LOG.info('Mojsavar (C3) started inside the bot: %d coins, risk %.2f%%/trade, confirm_bars %d',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100,sl.c['confirm_bars'])
     return t
 
 def main():
