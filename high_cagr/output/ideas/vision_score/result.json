@@ -1,0 +1,14 @@
+{
+ "notes": "Blind chart-scoring test: would a visual 1-10 score before entry have flagged the losing trades? Written BEFORE running.\n\nSample: main bot (2A+5A) root trades from the VALIDATION period (entry >= 2025-01-01), random seed 7: 40 losers (net R<0)\nand 40 winners (net R>0). One PNG per trade, shuffled ids, showing ONLY what was known at the signal bar: last 120 closed\n4h candles up to the signal bar, Ichimoku cloud (current), Donchian-10 channel, EMA50, and an arrow with the trade side.\nNo symbol, no dates, no price axis (prices normalised), no outcome. The id->trade key is written only after scoring.\nScorers: 4 subagents, 20 images each, same rubric (score 1-10 = how likely the trade ends in profit), no other files.\nPre-declared read-out:\n  - share of losers scored < 5 and share of winners scored < 5 (a coin flip gives about the same share for both)\n  - AUC of score vs outcome (0.5 = no skill)\n  - effect of \"skip if score < 5\" on the validation trades: net R kept vs net R of all 80 sampled trades\nVerdict \"useful\" only if losers<5 share exceeds winners<5 share by >= 20 pp AND skipped trades have negative total R.\n",
+ "n": 80,
+ "losers_below5": 42.5,
+ "winners_below5": 47.5,
+ "auc": 0.47625,
+ "R_all": 48.460382966668675,
+ "R_kept": 25.22385774981533,
+ "R_skipped": 23.23652521685335,
+ "n_skipped": 36,
+ "mean_score_losers": 4.8,
+ "mean_score_winners": 4.7,
+ "useful": false
+}
