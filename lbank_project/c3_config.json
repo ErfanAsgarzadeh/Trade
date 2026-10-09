@@ -32,5 +32,6 @@
     "TRX/USDT:USDT",
     "SUSHI/USDT:USDT"
   ],
-  "isolated_leverage": 5
+  "isolated_leverage": 5,
+  "max_open_positions": 0
 }

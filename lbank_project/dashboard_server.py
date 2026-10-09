@@ -288,7 +288,8 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>مجموع سود و زیان بسته‌شدهٔ C3 ($)</p><strong id="c3_total">—</strong><p id="c3_win">—</p></section></div>
 <div class="fields" style="margin-top:18px"><label><input id="c3_enabled" type="checkbox">ورود جدید C3 فعال</label>
 <label class="field">ریسک هر معامله (%)<input id="c3_risk" type="number" min="0.01" max="1" step="0.01"></label>
-<label class="field">سقف نُوشنال هر پوزیشن (٪ سرمایه)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
+<label class="field">حداکثر پوزیشن C3 (۰ = بدون سقف تعداد)<input id="c3_max_positions" type="number" min="0" max="100" step="1"></label>
+<label class="field">سقف نُوشنال C3 (فقط در حالت PER_SLOT، ٪ سرمایه)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
 <label class="field">تأیید ورود D (تعداد کندل؛ صفر: بدون تأیید)<input id="c3_confirm" type="number" min="0" max="12" step="1"></label>
 <label><input id="c3_weekend" type="checkbox">ورود نکردن وقتی کندل سیگنال در آخر هفته بسته می‌شود</label>
 <label class="field" style="grid-column:span 2">نمادها (هر خط یکی، مثل AVAX/USDT:USDT)<textarea id="c3_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
@@ -314,6 +315,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label><input id="atr_regime" type="checkbox">فیلتر رژیم ATR (2A): وقتی ATR کندل سیگنال از میانهٔ ATR شصت کندل ۴ساعتهٔ قبل کمتر است، ورود و افزودن انجام نشود</label>
 <label><input id="funding_short" type="checkbox">فیلتر funding: وقتی میانگین funding سه روز گذشته منفی است، شورت جدید باز نشود (نیازمند فایل‌های FUNDING_DIR)</label>
 <label class="field">ضریب ATR استاپ اولیه (۲٫۵ فقط همراه V2 و فیلتر BTC آزموده شده)<input id="stop_atr_mult" type="number" min="1" max="5" step="0.1"></label>
+<label class="field">بودجه مارجین<select id="margin_allocation"><option value="SHARED_POOL">مشترک بدون تقسیم اسلات</option><option value="PER_SLOT">سهم ثابت اسلات</option></select></label>
 <label><input id="shared_account" type="checkbox">مدیریت سرمایه و سقف مارجین مشترک ربات اصلی و C3</label>
 <label><input id="pyramid" type="checkbox">افزودن یک‌مرحله‌ای به برنده</label>
 <label class="field">ریسک واحد افزوده (کسری از ریسک هر معامله)<input id="pyramid_fraction" type="number" min="0.05" max="1" step="0.05"></label>
@@ -343,7 +345,7 @@ async function api(path,method='GET',body=null,match=null){
  const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));
  return {data,etag:response.headers.get('ETag')};
 }
-function fillControls(){if(!cfg)return;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('auto').checked=cfg.bot_control.auto_trade_enabled;$('dry').checked=cfg.bot_control.dry_run_mode;
+function fillControls(){if(!cfg)return;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('margin_allocation').value=cfg.portfolio_risk.margin_allocation_mode;$('auto').checked=cfg.bot_control.auto_trade_enabled;$('dry').checked=cfg.bot_control.dry_run_mode;
  $('strategy').value=cfg.strategy_mode.mode;$('risk').value=cfg.risk_and_exit.risk_per_trade_pct*100;
  $('engaged').value=cfg.risk_and_exit.engaged_capital_pct*100;$('leverage').value=cfg.risk_and_exit.leverage_mode;$('max_positions').value=cfg.risk_and_exit.max_open_positions;
  const settings=cfg.strategy_settings;
@@ -354,9 +356,9 @@ function fillControls(){if(!cfg)return;$('shared_account').checked=!!cfg.portfol
   $('width_filter').checked=!!settings.stop_width_filter_enabled;$('width_skip').value=settings.stop_width_skip_pct*100;$('width_mid').value=settings.stop_width_mid_pct*100;$('width_fraction').value=settings.stop_width_mid_risk_fraction;$('stop_atr_mult').value=settings.initial_stop_atr_mult;$('btc_gate').checked=!!settings.btc_regime_filter_enabled;$('funding_short').checked=!!settings.funding_short_filter_enabled;$('atr_regime').checked=!!settings.atr_regime_filter_enabled;}
  $('breakout').checked=cfg.al_brooks_filters.require_signal_bar_breakout;$('barb').checked=cfg.al_brooks_filters.enable_barb_wire_filter;$('h2').checked=cfg.al_brooks_filters.require_h2_l2_pullback;
 }
-async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
+async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('margin_allocation').value=cfg.portfolio_risk.margin_allocation_mode;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='تنظیمات ذخیره شده است.';}
 function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);}catch(e){message('ابتدا JSON را اصلاح کنید.',true);fillControls();return;}
- cfg.portfolio_risk.shared_c3_account=$('shared_account').checked;
+ cfg.portfolio_risk.shared_c3_account=$('shared_account').checked;cfg.portfolio_risk.margin_allocation_mode=$('margin_allocation').value;
  cfg.bot_control.auto_trade_enabled=$('auto').checked;cfg.strategy_mode.mode=$('strategy').value;cfg.risk_and_exit.risk_per_trade_pct=Number($('risk').value)/100;
  cfg.risk_and_exit.engaged_capital_pct=Number($('engaged').value)/100;cfg.risk_and_exit.leverage_mode=$('leverage').value;cfg.risk_and_exit.max_open_positions=Number($('max_positions').value);
  if(cfg.strategy_settings){Object.assign(cfg.strategy_settings,{trail_atr_buffer:Number($('atr_trail').value),exit_tp_mode:$('exit_tp').value,hybrid_trail_mode:$('hybrid_trail').value,hard_tp_rr:Number($('hard_tp').value),breakeven_trigger_rr:Number($('breakeven').value),ichimoku_preset:$('preset').value,donchian_entry_period:Number($('donchian_period').value),initial_stop_mode:$('initial_stop').value});}
@@ -366,7 +368,7 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
  cfg.al_brooks_filters.require_signal_bar_breakout=$('breakout').checked;cfg.al_brooks_filters.enable_barb_wire_filter=$('barb').checked;cfg.al_brooks_filters.require_h2_l2_pullback=$('h2').checked;
  $('editor').value=JSON.stringify(cfg,null,2);$('dirty').textContent='تغییرات ذخیره نشده است.';
 }
-for(const id of ['shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','atr_trail'])$(id).addEventListener('change',controlsChanged);
+for(const id of ['margin_allocation','shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','atr_trail'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='تغییرات ذخیره نشده است.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('JSON نامعتبر است.',true);}});
 function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='هنوز fill ثبت نشده (فقط با PAPER_DATA_MODE=csv-lbank و دفتر سفارش زنده)'+(fq&&fq.last_error?' | خطا: '+fq.last_error:'');return;}
@@ -383,9 +385,9 @@ function drawSummary(){const b=lastBot,c=lastC3;for(const x of document.querySel
  const rl=(useB?b.daily_realized_pnl:0)+(useC?c.daily_realized_pnl:0),tr=(useB?b.daily_trades_count:0)+(useC?c.daily_trades_count:0);
  $('unrealized').textContent=number(un);$('unrealized').className=un<0?'bad':'';$('realized').textContent=number(rl);$('realized').className=rl<0?'bad':'good';$('trades').textContent=tr+' خروج ثبت‌شده در ۲۴ ساعت';
  const bo=b?b.open_positions_count:0,co=c?c.open_positions_count:0;
- if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+c.coins+' ارز';}
+ if(useB&&useC){$('slots').textContent=(bo+co)+' پوزیشن';$('updated_sub').textContent='ربات: '+bo+' / '+b.max_open_positions+' · C3: '+co+' / '+(c.max_open_positions>0?c.max_open_positions:'بدون سقف تعداد')+' پوزیشن ('+c.coins+' ارز)';}
  else if(useB){$('slots').textContent=bo+' / '+b.max_open_positions;$('updated_sub').textContent='پوزیشن‌ها و سفارش‌های در انتظار';}
- else{$('slots').textContent=co+' / '+c.coins;$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
+ else{$('slots').textContent=co+' / '+(c.max_open_positions>0?c.max_open_positions:'بدون سقف تعداد');$('updated_sub').textContent='پوزیشن باز از ارزهای C3';}
  if(useC){const eq=c.equity_usd;$('equity').textContent=number(eq);$('equity_note').textContent=view==='c3'?'سرمایهٔ مشترک؛ C3 '+(c.realized_total_usd>=0?'+':'')+number(c.realized_total_usd)+' سود بسته‌شده':'سرمایهٔ مشترک ربات + C3';}
  else{$('equity').textContent=number(b.equity_usd);$('equity_note').textContent=b.shared_account_enabled?'سرمایهٔ مشترک ربات اصلی و C3':'سرمایهٔ paper ربات اصلی (بدون سود و زیان C3)';}
  if(useB&&!useC){$('margin').textContent=number(b.engaged_margin_usd)+' / '+number(b.allowed_margin_usd);
@@ -422,13 +424,13 @@ $('panic').onclick=async()=>{if(!confirm('همهٔ پوزیشن‌ها بسته 
 
 let c3cfg=null,c3etag=null;
 const c3n=(v,n=2)=>number(v,n);
-function c3Fill(){if(!c3cfg)return;$('c3_enabled').checked=c3cfg.enabled;$('c3_risk').value=+(c3cfg.risk_per_trade_pct*100).toFixed(4);$('c3_notional').value=+(c3cfg.max_notional_pct*100).toFixed(2);
+function c3Fill(){if(!c3cfg)return;$('c3_enabled').checked=c3cfg.enabled;$('c3_max_positions').value=c3cfg.max_open_positions;$('c3_risk').value=+(c3cfg.risk_per_trade_pct*100).toFixed(4);$('c3_notional').value=+(c3cfg.max_notional_pct*100).toFixed(2);
  $('c3_confirm').value=c3cfg.confirm_bars;$('c3_weekend').checked=c3cfg.skip_weekend;$('c3_symbols').value=c3cfg.symbols.join('\n');$('c3_editor').value=JSON.stringify(c3cfg,null,2);}
 async function loadC3(){const r=await api('/api/c3/config');c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='تنظیمات C3 ذخیره شده است.';}
 function c3Changed(){if(!c3cfg)return;try{c3cfg=JSON.parse($('c3_editor').value);}catch(e){message('ابتدا JSON تنظیمات C3 را اصلاح کنید.',true);c3Fill();return;}
- Object.assign(c3cfg,{enabled:$('c3_enabled').checked,risk_per_trade_pct:Number($('c3_risk').value)/100,max_notional_pct:Number($('c3_notional').value)/100,confirm_bars:parseInt($('c3_confirm').value||'0',10),skip_weekend:$('c3_weekend').checked,
+ Object.assign(c3cfg,{max_open_positions:Number($('c3_max_positions').value),enabled:$('c3_enabled').checked,risk_per_trade_pct:Number($('c3_risk').value)/100,max_notional_pct:Number($('c3_notional').value)/100,confirm_bars:parseInt($('c3_confirm').value||'0',10),skip_weekend:$('c3_weekend').checked,
   symbols:$('c3_symbols').value.split(/[\s,]+/).filter(Boolean)});$('c3_editor').value=JSON.stringify(c3cfg,null,2);$('c3_dirty').textContent='تغییرات C3 ذخیره نشده است.';}
-for(const id of ['c3_enabled','c3_risk','c3_notional','c3_confirm','c3_weekend','c3_symbols'])$(id).addEventListener('change',c3Changed);
+for(const id of ['c3_max_positions','c3_enabled','c3_risk','c3_notional','c3_confirm','c3_weekend','c3_symbols'])$(id).addEventListener('change',c3Changed);
 $('c3_editor').addEventListener('input',()=>{$('c3_dirty').textContent='تغییرات C3 ذخیره نشده است.';});
 $('c3_editor').addEventListener('blur',()=>{try{c3cfg=JSON.parse($('c3_editor').value);c3Fill();}catch(e){message('JSON تنظیمات C3 نامعتبر است.',true);}});
 $('c3_save').onclick=async()=>{const b=$('c3_save');b.disabled=true;try{const edited=JSON.parse($('c3_editor').value);const r=await api('/api/c3/config','PUT',edited,c3etag);c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='تنظیمات C3 ذخیره شد و در چند ثانیه اعمال می‌شود.';await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};

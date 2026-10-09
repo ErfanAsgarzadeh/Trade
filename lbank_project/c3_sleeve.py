@@ -23,7 +23,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
-DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,
+DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
     stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[])
 
@@ -32,6 +32,7 @@ def validate(c:dict)->dict:
     if set(c)!=set(DEFAULTS):raise ValueError(f'Unknown C3 keys: {sorted(set(c)-set(DEFAULTS))}')
     if c['dry_run_mode'] is not True:raise ValueError('C3 sleeve is paper-only: dry_run_mode must be true')
     if type(c['isolated_leverage']) is not int or not 1<=c['isolated_leverage']<=5:raise ValueError('isolated_leverage must be an integer 1..5')
+    if type(c['max_open_positions']) is not int or not 0<=c['max_open_positions']<=100:raise ValueError('max_open_positions must be an integer 0..100; 0 disables the count cap')
     if c['timeframe']!='4h':raise ValueError('C3 was researched on 4h only')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['stop_atr']>0 and c['trail_atr']>0):raise ValueError('Invalid C3 risk settings')
     if not (type(c['confirm_bars']) is int and 0<=c['confirm_bars']<=12):raise ValueError('confirm_bars must be an int 0..12')
@@ -103,7 +104,7 @@ class Sleeve:
         return base+self.store.realized()
 
     def execution_lock(self):
-        return bot.file_lock(self.shared_account.lock_path) if self.shared_account is not None else contextlib.nullcontext()
+        return bot.file_lock(self.shared_account.lock_path) if self.shared_account is not None else bot.file_lock(self.store.path.with_suffix('.trade.lock'))
 
     def close(self,p:dict,price:float,reason:str,now:float):
         with self.execution_lock():return self._close(p,price,reason,now)
@@ -165,12 +166,17 @@ class Sleeve:
         with self.execution_lock():return self._open(s,side,b,now)
 
     def _open(self,s:str,side:str,b:pd.Series,now:float):
-        if any(p['symbol']==s for p in self.store.positions()):return None
+        positions=self.store.positions()
+        limit=self.c['max_open_positions']
+        if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None
         c=self.c;sign=1 if side=='long' else -1;price=self.data.price(s);stop=price-sign*c['stop_atr']*b.atr;dist=sign*(price-stop)
         if dist<=0 or dist/price<c['min_stop_pct']:return None
         eq=self.equity()
         if eq<=0:return None
-        notional=min(c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct']),c['max_notional_pct']*eq)
+        notional=c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
+        account=self.shared_account
+        pooled=account is not None and account.engine.config.read()['portfolio_risk']['margin_allocation_mode']=='SHARED_POOL'
+        if not pooled:notional=min(notional,c['max_notional_pct']*eq)
         if self.shared_account is not None:
             conf=self.shared_account.engine.config.read()
             if not conf['portfolio_risk']['shared_c3_account']:return None
@@ -208,7 +214,7 @@ def summary(store:Store,conf:dict,price,base_equity:float,net_costs:bool=False)-
         day=db.execute('SELECT COALESCE(SUM(pnl),0),COUNT(*) FROM trades WHERE closed>=?',(time.time()-86400,)).fetchone()
         recent=[dict(zip(('symbol','side','entry','exit','pnl','reason','closed'),r)) for r in db.execute('SELECT symbol,side,entry,exit,pnl,reason,closed FROM trades ORDER BY id DESC LIMIT 20')]
     return dict(enabled=conf['enabled'],risk_per_trade_pct=conf['risk_per_trade_pct'],confirm_bars=conf['confirm_bars'],coins=len(conf['symbols']),
-        open_positions_count=len(pos),notional_usd=float(sum(p['qty']*p['entry'] for p in pos)),engaged_margin_usd=float(sum(p['qty']*p['entry']/p['isolated_leverage'] for p in pos)),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
+        max_open_positions=conf['max_open_positions'],open_positions_count=len(pos),notional_usd=float(sum(p['qty']*p['entry'] for p in pos)),engaged_margin_usd=float(sum(p['qty']*p['entry']/p['isolated_leverage'] for p in pos)),positions=pos,price_errors=errors,unrealized_pnl_usd=None if errors else unreal,realized_total_usd=float(realized),
         trades_total=int(n),win_rate_pct=float(wins/n*100) if n else None,daily_realized_pnl=float(day[0]),daily_trades_count=int(day[1]),recent_trades=recent,
         equity_usd=None if errors else base_equity+float(realized)+unreal)
 

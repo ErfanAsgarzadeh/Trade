@@ -42,7 +42,7 @@ SCHEMA = {
     "bot_control": {"auto_trade_enabled": bool, "dry_run_mode": bool, "check_interval_seconds": int},
     "strategy_mode": {"mode": str, "htf_trend_timeframe": str, "ltf_entry_timeframe": str, "single_timeframe": str},
     "symbols": list,
-    "portfolio_risk": {"rank_by": str, "enforce_shared_margin": bool, "shared_c3_account": bool},
+    "portfolio_risk": {"rank_by": str, "enforce_shared_margin": bool, "shared_c3_account": bool, "margin_allocation_mode": str},
     "ichimoku_params": {"tenkan": int, "kijun": int, "senkou_b": int, "displacement": int, "candle_fetch_limit": int},
     "filters_and_triggers": {"rsi_period": int, "long_rsi_min": float, "long_rsi_max": float,
         "short_rsi_min": float, "short_rsi_max": float, "atr_period": int,
@@ -151,6 +151,11 @@ def validate_config(c: dict) -> dict:
     c.setdefault("portfolio_risk", {"rank_by": "LEGACY_RSI", "enforce_shared_margin": False})
     if isinstance(c.get("portfolio_risk"), dict):
         c["portfolio_risk"].setdefault("shared_c3_account", False)
+        c["portfolio_risk"].setdefault("margin_allocation_mode", "PER_SLOT")
+        if c["portfolio_risk"]["margin_allocation_mode"] not in ("PER_SLOT", "SHARED_POOL"):
+            raise ConfigError("margin_allocation_mode must be PER_SLOT or SHARED_POOL")
+        if c["portfolio_risk"]["margin_allocation_mode"] == "SHARED_POOL":
+            c["portfolio_risk"]["enforce_shared_margin"] = True
         if c["portfolio_risk"]["shared_c3_account"]:
             c["portfolio_risk"]["enforce_shared_margin"] = True
     c.setdefault("archetype_strategy", copy.deepcopy(archetypes.DEFAULTS))
@@ -834,10 +839,16 @@ def entry_budget(equity: float, stop_pct: float, c: dict,
     slot = equity * (r["engaged_capital_pct"] / r["max_open_positions"] if modern
                      else r["max_margin_per_position_pct"])
     maximum = r["default_isolated_leverage"]
+    pooled = c.get("portfolio_risk", {}).get("margin_allocation_mode") == "SHARED_POOL"
+    if pooled:
+        # Count limits do not allocate margin: every unit uses the remaining pool.
+        slot = equity * r["engaged_capital_pct"]
+        if available_notional is not None:
+            slot = min(slot, max(0.0, available_notional) / maximum)
     target = risk / (stop_pct + r["lbank_round_trip_fee"] + slippage)
-    leverage = (max(1, min(maximum, math.ceil(target / slot)))
+    leverage = (max(1, min(maximum, math.ceil(target / slot) if slot > 0 else maximum))
                 if r["leverage_mode"] == "DYNAMIC_MARGIN" else maximum)
-    cap = slot * maximum
+    cap = slot * (leverage if pooled else maximum)
     if available_notional is not None:
         # available_notional expresses free margin at the maximum leverage.
         cap = min(cap, max(0.0, available_notional) / maximum * leverage)

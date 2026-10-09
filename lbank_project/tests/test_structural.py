@@ -98,6 +98,7 @@ def test_deployed_config_matches_eligible_winner():
             d=json.loads(extra.read_text());assert all((root/v.split(' ')[0]).exists() for k,v in d['evidence'].items() if v.startswith('high_cagr'))
             expected['strategy_settings'].update(d['config_overrides']['strategy_settings'])
         expected["portfolio_risk"]["shared_c3_account"]=True
+        expected["portfolio_risk"]["margin_allocation_mode"]="SHARED_POOL"
         assert c==expected
         assert result['eligible'] and result['worst_period_dd_pct']<=35
         assert c['risk_and_exit']['risk_per_trade_pct']==result['risk']
