@@ -55,7 +55,7 @@ def test_invalid_pool_mode():
  with pytest.raises(B.ConfigError):B.validate_config(c)
 def test_shipped_request():
  c=config();s=C.load(Path(__file__).parents[1]/'c3_config.json')
- assert c['risk_and_exit']['risk_per_trade_pct']==.0075 and s['risk_per_trade_pct']==.004
+ assert c['risk_and_exit']['risk_per_trade_pct']==.01 and s['risk_per_trade_pct']==.004
  assert c['risk_and_exit']['max_open_positions']==4 and s['max_open_positions']==0
  assert c['bot_control']['dry_run_mode'] and s['dry_run_mode']
 

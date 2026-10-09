@@ -46,7 +46,7 @@
     "h2_l2_lookback_bars": 8
   },
   "risk_and_exit": {
-    "risk_per_trade_pct": 0.0075,
+    "risk_per_trade_pct": 0.01,
     "max_open_positions": 4,
     "max_margin_per_position_pct": 0.25,
     "default_isolated_leverage": 5,

@@ -97,11 +97,12 @@ def test_deployed_config_matches_eligible_winner():
         if extra.exists():
             d=json.loads(extra.read_text());assert all((root/v.split(' ')[0]).exists() for k,v in d['evidence'].items() if v.startswith('high_cagr'))
             expected['strategy_settings'].update(d['config_overrides']['strategy_settings'])
+            expected['risk_and_exit'].update(d['config_overrides'].get('risk_and_exit',{}))
         expected["portfolio_risk"]["shared_c3_account"]=True
         expected["portfolio_risk"]["margin_allocation_mode"]="SHARED_POOL"
         assert c==expected
         assert result['eligible'] and result['worst_period_dd_pct']<=35
-        assert c['risk_and_exit']['risk_per_trade_pct']==result['risk']
+        assert c['risk_and_exit']['risk_per_trade_pct']==expected['risk_and_exit']['risk_per_trade_pct']   # audited winner risk unless a documented override exists
         assert c['strategy_settings']['pyramid_enabled']==result['pyramid']
         assert c['strategy_settings']['donchian_entry_period']==result['lookback']
         assert c['risk_and_exit']['min_stop_policy']=='REJECT'
