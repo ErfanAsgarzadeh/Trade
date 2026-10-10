@@ -548,7 +548,7 @@ AUTH = {"X-Bot-Pin": "test-pin-9384"}
 
 def test_api_auth_and_public_html(client):
     assert client.get("/").status_code == 200
-    assert 'dir="rtl"' in client.get("/").text
+    assert 'dir="ltr"' in client.get("/").text
     for route in ("/api/status", "/api/config"):
         assert client.get(route).status_code == 401
         assert client.get(route, headers={"X-Bot-Pin": "wrong"}).status_code == 401
