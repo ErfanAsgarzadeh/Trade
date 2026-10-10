@@ -11,6 +11,7 @@ services:
       PAPER_EQUITY: ${PAPER_EQUITY:-10000}
       PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
       OHLCV_DIR: /app/runtime/ohlcv
+      FUNDING_DIR: /app/runtime/funding
       BOT_CONFIG: /app/runtime/config.json
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
       C3_CONFIG: /app/runtime/c3_config.json
@@ -20,6 +21,35 @@ services:
     volumes:
       - ./runtime:/app/runtime
     stop_grace_period: 30s
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+  lbank-candles:
+    build: .
+    command: ["python", "-u", "lbank_candles.py"]
+    restart: unless-stopped
+    init: true
+    environment:
+      OHLCV_DIR: /app/runtime/ohlcv
+      BOT_CONFIG: /app/runtime/config.json
+      C3_CONFIG: /app/runtime/c3_config.json
+      PA_CONFIG: /app/runtime/pa_config.json
+    volumes:
+      - ./runtime:/app/runtime
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+  lbank-funding:
+    build: .
+    command: ["sh", "-c", "while true; do for c in config c3_config pa_config; do python fetch_funding.py /app/$$c.json; done; sleep 3600; done"]
+    restart: unless-stopped
+    init: true
+    environment:
+      FUNDING_DIR: /app/runtime/funding
+    volumes:
+      - ./runtime:/app/runtime
     logging:
       options:
         max-size: 10m
@@ -36,6 +66,7 @@ services:
       PAPER_EQUITY: ${PAPER_EQUITY:-10000}
       PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
       OHLCV_DIR: /app/runtime/ohlcv
+      FUNDING_DIR: /app/runtime/funding
       BOT_CONFIG: /app/runtime/config.json
       BOT_DB: /app/runtime/lbank_ichimoku_bot.db
       C3_CONFIG: /app/runtime/c3_config.json

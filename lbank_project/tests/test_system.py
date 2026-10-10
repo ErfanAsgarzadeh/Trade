@@ -548,7 +548,7 @@ AUTH = {"X-Bot-Pin": "test-pin-9384"}
 
 def test_api_auth_and_public_html(client):
     assert client.get("/").status_code == 200
-    assert 'dir="rtl"' in client.get("/").text
+    assert 'dir="ltr"' in client.get("/").text
     for route in ("/api/status", "/api/config"):
         assert client.get(route).status_code == 401
         assert client.get(route, headers={"X-Bot-Pin": "wrong"}).status_code == 401
@@ -637,11 +637,11 @@ def test_csv_futures_does_not_call_spot_ohlcv(monkeypatch, tmp_path):
 def test_compose_shared_directory_and_local_bind():
     compose = yaml.safe_load((ROOT / "docker-compose.yml").read_text())
     services = compose["services"]
-    assert set(services) == {"lbank-bot", "lbank-dashboard"}   # C3 runs inside lbank-bot (own thread, config and DB)
+    assert set(services) == {"lbank-bot", "lbank-dashboard", "lbank-candles", "lbank-funding"}   # C3 and PA run inside lbank-bot; candles/funding are feed collectors
     for name, service in services.items():
         assert service["volumes"] == ["./runtime:/app/runtime"]
         assert service["restart"] == "unless-stopped"
-        assert service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
+        assert name == "lbank-funding" or service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
     assert services["lbank-bot"]["environment"]["C3_CONFIG"] == "/app/runtime/c3_config.json"
     assert services["lbank-bot"]["environment"]["C3_DB"] == "/app/runtime/c3_sleeve.db"
     assert services["lbank-dashboard"]["ports"] == ["127.0.0.1:8000:8000"]
