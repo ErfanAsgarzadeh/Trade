@@ -23,7 +23,7 @@ def binance_klines(symbol: str, until_ms: int, bars: int) -> list[list[float]]:
             chunk = json.loads(response.read())
         if not chunk:
             break
-        out = [[float(r[0]), *map(float, r[1:6])] for r in chunk] + out
+        out = [L.sane([float(r[0]), *map(float, r[1:6])]) for r in chunk] + out
         end = int(chunk[0][0]) - 1
     return out[-bars:]
 

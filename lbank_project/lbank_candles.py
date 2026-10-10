@@ -76,6 +76,12 @@ def fetch_prices() -> dict[str, float]:
     return out
 
 
+def sane(row: list[float]) -> list[float]:
+    """Exchange candles occasionally print an open/close outside high/low; widen high/low to contain them."""
+    ts, o, h, l, c, v = row
+    return [ts, o, max(h, o, c), min(l, o, c), c, v]
+
+
 def spot_klines(symbol: str, start_ms: int, until_ms: int) -> list[list[float]]:
     """Closed LBank SPOT 4h bars with start_ms <= open < until_ms ([ts_ms,o,h,l,c,v]); [] when the coin has no spot market."""
     size = min(2000, max(2, (until_ms - start_ms) // (H4 * 1000) + 2))
@@ -84,7 +90,7 @@ def spot_klines(symbol: str, start_ms: int, until_ms: int) -> list[list[float]]:
     with urllib.request.urlopen(request, timeout=15) as response:
         body = json.loads(response.read())
     out = [[float(r[0]) * 1000, *map(float, r[1:6])] for r in (body.get("data") or [])]
-    return [r for r in out if start_ms <= r[0] < until_ms]
+    return [sane(r) for r in out if start_ms <= r[0] < until_ms]
 
 
 def read_rows(path: Path) -> list[list[float]]:
