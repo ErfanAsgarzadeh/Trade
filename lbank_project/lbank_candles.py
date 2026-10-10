@@ -11,6 +11,11 @@ volume is not available per bar and is written as 0, and a period in which the c
 history (the bots refuse symbols whose recent history has more than max_gap_bars missing bars). History starts the day the
 collector first runs: the bots need ~17 days (Shahin), ~34 days (Mojsavar, EMA200) and ~83 days (Ghoghnous volatility rank) of closed bars.
 
+Fast start (history): seed_ohlcv/ ships ~250 days of closed 4h bars (LBank SPOT 4h candles, ONE from Binance spot) so the bots can
+start trading after the first collector run instead of after months of warm-up. At start-up and after every outage the collector
+fills the missing closed bars from LBank spot candles (CANDLE_BACKFILL=0 turns that off). Spot is an approximation of the perpetual
+(small basis; larger on thin alts) and is only used for history, never for live prices.
+
 python lbank_candles.py [--once]       symbols = union of BOT_CONFIG, C3_CONFIG, PA_CONFIG
 """
 import csv
@@ -26,6 +31,9 @@ from pathlib import Path
 URL = "https://lbkperp.lbank.com/cfd/openApi/v1/pub/marketData?productGroup=SwapU"
 H4 = 4 * 3600
 HEADER = ["timestamp", "open", "high", "low", "close", "volume"]
+SPOT = "https://api.lbkex.com/v2/kline.do?symbol={name}&size={size}&type=hour4&time={start}"
+BACKFILL = os.getenv("CANDLE_BACKFILL", "1") != "0"
+SEED = Path(os.getenv("SEED_OHLCV_DIR", str(Path(__file__).with_name("seed_ohlcv"))))
 SAMPLE_SECONDS = float(os.getenv("CANDLE_SAMPLE_SECONDS", "10"))
 WRITE_SECONDS = float(os.getenv("CANDLE_WRITE_SECONDS", "60"))
 OUT = Path(os.getenv("OHLCV_DIR", "data/ohlcv"))
@@ -68,6 +76,17 @@ def fetch_prices() -> dict[str, float]:
     return out
 
 
+def spot_klines(symbol: str, start_ms: int, until_ms: int) -> list[list[float]]:
+    """Closed LBank SPOT 4h bars with start_ms <= open < until_ms ([ts_ms,o,h,l,c,v]); [] when the coin has no spot market."""
+    size = min(2000, max(2, (until_ms - start_ms) // (H4 * 1000) + 2))
+    url = SPOT.format(name=symbol.split("/")[0].lower() + "_usdt", size=size, start=start_ms // 1000)
+    request = urllib.request.Request(url, headers={"User-Agent": "lbank-paper-bot"})
+    with urllib.request.urlopen(request, timeout=15) as response:
+        body = json.loads(response.read())
+    out = [[float(r[0]) * 1000, *map(float, r[1:6])] for r in (body.get("data") or [])]
+    return [r for r in out if start_ms <= r[0] < until_ms]
+
+
 def read_rows(path: Path) -> list[list[float]]:
     if not path.is_file():
         return []
@@ -96,9 +115,34 @@ class Collector:
         self.dirty: set[str] = set()
         self.last_write = 0.0
         for symbol in symbols:                     # resume a bar that was forming before a restart
+            self.install_seed(symbol)
             rows = read_rows(csv_path(symbol))
             if rows:
                 self.bars[symbol] = rows[-1]
+
+    @staticmethod
+    def install_seed(symbol: str) -> None:
+        """First run: start from the shipped history instead of an empty file."""
+        target, seed = csv_path(symbol), SEED / csv_path(symbol).name
+        if not target.is_file() and seed.is_file():
+            write_rows(target, read_rows(seed))
+            LOG.info("%s: history seeded from %s", symbol, seed.name)
+
+    def backfill(self, symbol: str, bar_ts: int) -> None:
+        """Replace/append the closed bars between the last stored bar and the current one with LBank spot candles."""
+        if not BACKFILL:
+            return
+        rows = read_rows(csv_path(symbol))
+        if not rows or rows[-1][0] >= bar_ts - H4 * 1000:
+            return                                  # nothing missing
+        try:
+            fresh = spot_klines(symbol, int(rows[-1][0]), bar_ts)
+        except Exception as exc:
+            LOG.warning("%s: gap since %s could not be filled (%s)", symbol, int(rows[-1][0]), exc)
+            return
+        if fresh:
+            write_rows(csv_path(symbol), [r for r in rows if r[0] < fresh[0][0]] + fresh)
+            LOG.info("%s: filled %d missing 4h bars from spot", symbol, len(fresh))
 
     def step(self, prices: dict[str, float], now: float) -> None:
         bar_ts = int(now) // H4 * H4 * 1000
@@ -110,6 +154,7 @@ class Collector:
             if bar is None or bar[0] < bar_ts:
                 if bar is not None:
                     self.flush(symbol)             # persist the final values of the bar that just closed
+                self.backfill(symbol, bar_ts)
                 self.bars[symbol] = [bar_ts, price, price, price, price, 0.0]
                 self.dirty.add(symbol)
                 self.flush(symbol, new_bar=True)
