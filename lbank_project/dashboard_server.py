@@ -363,7 +363,7 @@ main{max-width:1450px;margin:auto;padding:28px}header,.row{display:flex;align-it
 h1{font-size:24px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:18px;margin:0 0 16px}p{margin:4px 0;color:var(--muted)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:20px}
 .badge{display:inline-block;padding:4px 12px;border-radius:8px;background:#24324e;direction:ltr;font-size:12px}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.kpi strong{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;direction:ltr;text-align:left}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.kpi strong{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;direction:ltr;text-align:left}
 input,select,textarea{background:#0b1325;border:1px solid #40516f;color:#fff;border-radius:8px;padding:10px;font:inherit}input[type=checkbox]{width:18px;height:18px;accent-color:#58cab9}
 button{border:0;background:#315dc8;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;font:inherit}button:disabled{opacity:.45;cursor:wait}
 .danger{background:#ac2b42}.subtle{background:#2a3650}.good{color:var(--good)}.bad{color:var(--bad)}
