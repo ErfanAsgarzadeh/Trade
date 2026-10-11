@@ -394,7 +394,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <article class="bot bot-c3" id="card_c3"><div class="row"><div><h3>Mojsavar</h3><p class="sub muted">4h trend pullback with confirmation · 10 coins</p></div><label class="switch"><input id="c3_enabled" type="checkbox">On</label></div>
 <dl><dt>Risk per trade</dt><dd id="c3_risk_v">—</dd><dt>Open positions</dt><dd id="c3_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="c3_unrealized">—</dd><dt>24h profit ($)</dt><dd id="c3_realized">—</dd><dt>Total closed profit ($)</dt><dd id="c3_total">—</dd><dt>Trades</dt><dd id="c3_win">—</dd></dl><p id="c3badge" class="muted" style="font-size:12px">—</p><p id="c3_trades" hidden></p></article>
 <article class="bot bot-pa" id="card_pa"><div class="row"><div><h3>Ghoghnous</h3><p class="sub muted">4h price-action Key Reversal · 20 coins</p></div><label class="switch"><input id="pa_enabled" type="checkbox">On</label></div>
-<dl><dt>Risk per trade</dt><dd id="pa_risk_v">—</dd><dt>Positions / Stop orders</dt><dd id="pa_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="pa_unrealized">—</dd><dt>24h profit ($)</dt><dd id="pa_realized">—</dd><dt>Total closed profit ($)</dt><dd id="pa_total">—</dd><dt>Trades</dt><dd id="pa_win">—</dd></dl><p id="pabadge" class="muted" style="font-size:12px">—</p><p id="pa_trades" hidden></p></article>
+<dl><dt>Planned risk per trade</dt><dd id="pa_risk_v">—</dd><dt>Positions / Stop orders</dt><dd id="pa_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="pa_unrealized">—</dd><dt>24h profit ($)</dt><dd id="pa_realized">—</dd><dt>Total closed profit ($)</dt><dd id="pa_total">—</dd><dt>Trades</dt><dd id="pa_win">—</dd></dl><p id="pabadge" class="muted" style="font-size:12px">—</p><p id="pa_trades" hidden></p></article>
 </div>
 <details><summary>Mojsavar settings</summary>
 <div class="fields" style="margin-top:18px">
@@ -409,9 +409,10 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <details><summary>Mojsavar: last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></details>
 <details><summary>Ghoghnous settings</summary>
 <div class="fields" style="margin-top:18px">
-<label class="field">Risk per trade (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field">Base risk (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field">Volume multiplier<input id="pa_volume" type="number" min="0.01" step="0.1"></label>
 <label class="field" style="grid-column:span 3">Symbols (one per line, e.g. LINK/USDT:USDT)<textarea id="pa_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
-<p class="muted">C2 version: entry with a Stop order at the signal candle's high/low, valid until the next candle closes, only while that coin is in a low-volatility state (ATR rank below 0.354 over the last 500 candles); signal candles smaller than 1.1 ATR are skipped; exit by stop, an opposite Key Reversal, or after 30 candles (no fixed target).</p>
+<p class="muted">Selected paper policy adds a trend exhaustion filter and fuzzy sizing to the low-volatility Key Reversal. Base risk is multiplied by the volume setting and the signal weight. The card shows planned risk before margin limits. Entry is valid for one candle; exits use the stop, an opposite Key Reversal, or 30 candles.</p>
 <details><summary>Edit full Ghoghnous JSON settings</summary><textarea id="pa_editor" aria-label="Ghoghnous JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="pa_dirty">Ghoghnous settings not loaded.</p><button id="pa_save" disabled>Save Ghoghnous settings</button></div>
 <details><summary>Ghoghnous: pending Stop orders and last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry level</th><th>Stop loss</th></tr></thead><tbody id="pa_orders"></tbody></table>
@@ -577,15 +578,15 @@ function renderC3(s){lastC3=s;$('c3_enabled').checked=s.enabled;$('c3_risk_v').t
  const h=$('c3_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'Buy':'Sell');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
 async function refreshC3(){if(!connected)return;try{const r=await api('/api/c3/status');renderC3(r.data);}catch(e){message('Mojsavar: '+e.message,true);}}
 let pacfg=null,paetag=null;
-function paFill(){if(!pacfg)return;$('pa_enabled').checked=pacfg.enabled;$('pa_risk').value=+(pacfg.risk_per_trade_pct*100).toFixed(4);$('pa_symbols').value=pacfg.symbols.join('\n');$('pa_editor').value=JSON.stringify(pacfg,null,2);}
+function paFill(){if(!pacfg)return;$('pa_enabled').checked=pacfg.enabled;$('pa_risk').value=+(pacfg.risk_per_trade_pct*100).toFixed(4);$('pa_volume').value=pacfg.volume_multiplier;$('pa_symbols').value=pacfg.symbols.join('\n');$('pa_editor').value=JSON.stringify(pacfg,null,2);}
 async function loadPA(){const r=await api('/api/pa/config');pacfg=r.data;paetag=r.etag;paFill();$('pa_dirty').textContent='Ghoghnous settings saved.';}
 function paChanged(){if(!pacfg)return;try{pacfg=JSON.parse($('pa_editor').value);}catch(e){message('Fix the Ghoghnous settings JSON first.',true);paFill();return;}
- Object.assign(pacfg,{risk_per_trade_pct:Number($('pa_risk').value)/100,symbols:$('pa_symbols').value.split(/[\s,]+/).filter(Boolean)});$('pa_editor').value=JSON.stringify(pacfg,null,2);$('pa_dirty').textContent='Ghoghnous changes were not saved.';}
-for(const id of ['pa_risk','pa_symbols'])$(id).addEventListener('change',paChanged);
+ Object.assign(pacfg,{risk_per_trade_pct:Number($('pa_risk').value)/100,volume_multiplier:Number($('pa_volume').value),symbols:$('pa_symbols').value.split(/[\s,]+/).filter(Boolean)});$('pa_editor').value=JSON.stringify(pacfg,null,2);$('pa_dirty').textContent='Ghoghnous changes were not saved.';}
+for(const id of ['pa_risk','pa_volume','pa_symbols'])$(id).addEventListener('change',paChanged);
 $('pa_editor').addEventListener('input',()=>{$('pa_dirty').textContent='Ghoghnous changes were not saved.';});
 $('pa_editor').addEventListener('blur',()=>{try{pacfg=JSON.parse($('pa_editor').value);paFill();}catch(e){message('Ghoghnous settings JSON is invalid.',true);}});
 $('pa_save').onclick=async()=>{const b=$('pa_save');b.disabled=true;try{const edited=JSON.parse($('pa_editor').value);const r=await api('/api/pa/config','PUT',edited,paetag);pacfg=r.data;paetag=r.etag;paFill();$('pa_dirty').textContent='Ghoghnous settings saved; they apply within seconds.';await refreshPA();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
-function renderPA(s){lastPA=s;$('pa_enabled').checked=s.enabled;$('pa_risk_v').textContent=number(s.risk_per_trade_pct*100)+'%';$('pabadge').textContent=(s.in_bot?'running inside the bot':'thread is off (PA_IN_BOT=0)')+' · '+(s.enabled?'Entries on':'Entries off');
+function renderPA(s){lastPA=s;$('pa_enabled').checked=s.enabled;$('pa_risk_v').textContent=number(s.planned_risk_min*100)+'–'+number(s.planned_risk_max*100)+'%';$('pabadge').textContent=(s.in_bot?'running inside the bot':'thread is off (PA_IN_BOT=0)')+' · '+(s.enabled?'Entries on':'Entries off')+' · '+s.strategy_variant+' · volume ×'+number(s.volume_multiplier);
  $('pa_unrealized').textContent=c3n(s.unrealized_pnl_usd);$('pa_positions').textContent=s.open_positions_count+' / '+s.pending_orders.length+' ('+s.coins+' coins)';
  $('pa_realized').textContent=c3n(s.daily_realized_pnl);$('pa_realized').className=s.daily_realized_pnl<0?'bad':'good';$('pa_trades').textContent=s.daily_trades_count+' exits in 24h';
  $('pa_total').textContent=c3n(s.realized_total_usd);$('pa_total').className=s.realized_total_usd<0?'bad':'good';$('pa_win').textContent=s.trades_total?(s.trades_total+' · wins '+c3n(s.win_rate_pct,1)+'%'):'—';

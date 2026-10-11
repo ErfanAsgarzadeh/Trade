@@ -55,7 +55,7 @@ def rows_with_keyrev(side='long',n=120,drift=.2):
     out.append([START+n*H4*1000,out[-1][4],out[-1][4],out[-1][4],out[-1][4],1.]);return out
 
 def sleeve(tmp_path,rows,price,db='pa.db',**kw):
-    kw={'vol_rank_max':1.,'candle_fetch_limit':300,**kw}   # short synthetic histories; the C2 volatility gate is tested separately
+    kw={'strategy_variant':'C2_baseline','volume_multiplier':1.,'vol_rank_max':1.,'candle_fetch_limit':300,**kw}   # legacy C2 lifecycle; selected policy tested separately
     st=P.Store(tmp_path/db);return P.Sleeve(pcfg(symbols=['LINK/USDT:USDT'],**kw),st,FakeData(rows,price)),st
 
 def scan_time(rows):return (rows[-1][0])/1000+3   # just after the signal candle closed
@@ -153,6 +153,7 @@ def test_c2_volatility_gate_matches_the_research(coin):
     if not p.exists():pytest.skip('research data not restored')
     sys.path.insert(0,str(ROOT));from high_cagr.ideas import pa_bot as R, ltf_search as L, pa2_confluence as CF;from high_cagr import run_suite as rs
     px=np.load(p);g=R.signals(px,240,'KEYREV');o,h,l,c=L.bars(px,240);n=len(c);conf=pcfg()
+    conf=pcfg(strategy_variant='C2_baseline',volume_multiplier=1.)
     side=np.where((h-l)>=1.1*g['atr'],g['side'],0);vr=CF.prank(g['atr']/c,500);want=side*((vr<.354)&np.isfinite(vr))
     ts=rs.START+np.arange(n)*240*60000;rows=np.column_stack([ts,o,h,l,c,np.zeros(n)]);idx=[t for t in np.where(side!=0)[0] if t>900];bad=0
     for t in idx:

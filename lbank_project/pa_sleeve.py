@@ -17,7 +17,11 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   exit  : the stop, or at the close of the 30th 4h candle after entry (time stop), or (C2) at the close of a candle that
           prints an opposite key reversal (opposite_exit; the raw signal, before the volatility gate); no target
           (target_r=0; a positive target_r restores the original 2R target)
-Defaults = variant C2 of the second 12-agent meeting (high_cagr/ideas/pa2_final.py, winner F3_vol_opp), risk 0.4%.
+Shipped policy = C_exhaustion_soft, with volume multiplier 1.5. The original C2 remains selectable.
+Selected entries also require side * (EMA50[t] - EMA50[t-6]) / ATR14[t] < 0.146.
+Their frozen fuzzy risk weight is (0.75 + 0.25 * clip((0.554 - volrank) / 0.4, 0, 1)) / 0.7755069444444445.
+The normalizer comes from the original research budget; it is never re-fitted at runtime.
+Effective planned risk = base risk (0.4%) * volume multiplier * frozen signal weight.
 History: C1 (pa_opt_combo.py, 0.25%) -> C2.
 One position per coin; own DB and config. Runs inside the main bot (lbank_bot.run starts it in its own thread;
 PA_IN_BOT=0 turns that off). Sizing as C3: risk_per_trade_pct of the shared paper equity / (stop distance + round-trip
@@ -33,24 +37,29 @@ import c3_sleeve as c3
 
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
 C1_RISK=.0025;OLD_FETCH=300   # C1 defaults (upgraded to C2 when untouched)
+SOFT_VARIANT='C_exhaustion_soft';FUZZY_NORMALIZER=.7755069444444445
+EXHAUSTION_MAX=.146;EMA_SPAN=50;SLOPE_BARS=6
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.004,max_notional_pct=1.,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,atr_period=14,lookback=10,close_frac=.75,stop_buffer_atr=.1,
     target_r=0.,min_range_atr=1.1,vol_rank_max=.354,vol_rank_window=500,opposite_exit=True,time_stop_bars=30,min_stop_pct=.004,
-    candle_fetch_limit=800,check_interval_seconds=15,max_gap_bars=3,symbols=[])
+    candle_fetch_limit=800,check_interval_seconds=15,max_gap_bars=3,symbols=[],strategy_variant='C2_baseline',volume_multiplier=1.)
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
     if set(c)!=set(DEFAULTS):raise ValueError(f'Unknown PA keys: {sorted(set(c)-set(DEFAULTS))}')
     if c['dry_run_mode'] is not True:raise ValueError('PA sleeve is paper-only: dry_run_mode must be true')
     if c['timeframe']!='4h':raise ValueError('PA was researched on 4h only')
+    if c['strategy_variant'] not in ('C2_baseline',SOFT_VARIANT):raise ValueError('Unknown PA strategy_variant')
+    if type(c['volume_multiplier']) not in (int,float) or not np.isfinite(c['volume_multiplier']) or c['volume_multiplier']<=0:raise ValueError('volume_multiplier must be finite and positive')
     if type(c['isolated_leverage']) is not int or not 1<=c['isolated_leverage']<=5:raise ValueError('isolated_leverage must be an integer 1..5')
     if type(c['max_open_positions']) is not int or not 0<=c['max_open_positions']<=100:raise ValueError('max_open_positions must be an integer 0..100; 0 disables the count cap')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['target_r']>=0 and c['stop_buffer_atr']>=0 and 0<=c['min_range_atr']<=5):raise ValueError('Invalid PA risk settings')
+    if c['risk_per_trade_pct']*c['volume_multiplier']*(1/FUZZY_NORMALIZER if c['strategy_variant']==SOFT_VARIANT else 1)>.01:raise ValueError('Effective PA risk, including fuzzy weight and volume_multiplier, must not exceed 1%')
     if not (type(c['time_stop_bars']) is int and 1<=c['time_stop_bars']<=500):raise ValueError('time_stop_bars must be an int 1..500')
     if not (type(c['lookback']) is int and 2<=c['lookback']<=100 and 0<c['close_frac']<1):raise ValueError('Invalid PA signal settings')
     if not (0<c['vol_rank_max']<=1 and type(c['vol_rank_window']) is int and 50<=c['vol_rank_window']<=2000 and type(c['opposite_exit']) is bool):raise ValueError('Invalid PA volatility/exit settings')
     if not (type(c['max_gap_bars']) is int and 0<=c['max_gap_bars']<=12):raise ValueError('max_gap_bars must be an int 0..12')
-    need=max(100,c['lookback']+10*c['atr_period'])+(c['vol_rank_window']+1 if c['vol_rank_max']<1 else 0)
+    need=max(100,c['lookback']+10*c['atr_period'])+(c['vol_rank_window']+1 if c['vol_rank_max']<1 or c['strategy_variant']==SOFT_VARIANT else 0)
     if c['candle_fetch_limit']<need:raise ValueError(f'candle_fetch_limit too small for the ATR warm-up and the volatility window (need >= {need})')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('PA needs a list of distinct symbols')
     return c
@@ -77,10 +86,33 @@ def vol_rank(df:pd.DataFrame,window:int)->float:
     prev=x[-window-1:-1];prev=prev[np.isfinite(prev)];return float((prev<x[-1]).mean()) if len(prev) else float('nan')
 
 def tradable_signal(df:pd.DataFrame,c:dict)->tuple[dict|None,dict|None]:
-    """(raw key-reversal signal, the same signal if it passes the volatility gate else None)."""
+    """Raw signal drives opposite exits; only the entry receives the gates and frozen sizing weight."""
     sig=signal(df,c)
-    if sig is None or c['vol_rank_max']>=1:return sig,sig
-    vr=vol_rank(df,c['vol_rank_window']);return sig,(sig if vr==vr and vr<c['vol_rank_max'] else None)
+    if sig is None:return None,None
+    soft=c['strategy_variant']==SOFT_VARIANT
+    if not soft and c['vol_rank_max']>=1:return sig,sig
+    vr=vol_rank(df,c['vol_rank_window'])
+    if not np.isfinite(vr) or (c['vol_rank_max']<1 and vr>=c['vol_rank_max']):return sig,None
+    if not soft:return sig,sig
+    if len(df)<EMA_SPAN+SLOPE_BARS or not np.isfinite(df.atr.iloc[-1]) or df.atr.iloc[-1]<=0:return sig,None
+    ema=df.close.ewm(span=EMA_SPAN,adjust=False).mean()
+    side=1 if sig['side']=='long' else -1
+    slope=float(side*(ema.iloc[-1]-ema.iloc[-1-SLOPE_BARS])/df.atr.iloc[-1])
+    if not np.isfinite(slope) or slope>=EXHAUSTION_MAX:return sig,None
+    weight=float((.75+.25*np.clip((.554-vr)/.4,0.,1.))/FUZZY_NORMALIZER)
+    return sig,dict(sig,policy_variant=SOFT_VARIANT,risk_weight=weight,vol_rank=vr,exhaustion_slope=slope)
+
+def planned_risk(c:dict,order:dict)->float|None:
+    """Use the closed signal's saved weight, never indicators observed at the fill. Old incompatible orders expire."""
+    if c['strategy_variant']==SOFT_VARIANT:
+        if order.get('policy_variant')!=SOFT_VARIANT:return None
+        weight=order.get('risk_weight')
+        if type(weight) not in (int,float) or not np.isfinite(weight) or not .75/FUZZY_NORMALIZER<=weight<=1/FUZZY_NORMALIZER:return None
+    else:
+        if order.get('policy_variant') not in (None,'C2_baseline'):return None
+        weight=1.
+    risk=c['risk_per_trade_pct']*c['volume_multiplier']*weight
+    return risk if 0<risk<=.01 else None
 
 def signal(df:pd.DataFrame,c:dict)->dict|None:
     """Key reversal on the last closed candle -> pending stop order {side, level, stop}; None if no signal."""
@@ -178,9 +210,12 @@ class Sleeve(c3.Sleeve):
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None
         c=self.c;sign=1 if order['side']=='long' else -1;price=self.data.price(s);stop=order['stop'];dist=sign*(price-stop)
         if dist<=0 or dist/price<c['min_stop_pct']:return None
+        risk=planned_risk(c,order)
+        if risk is None:
+            LOG.info('Ghoghnous skips incompatible or invalid pending order for %s',s);return None
         eq=self.equity()
         if eq<=0:return None
-        notional=c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
+        notional=risk*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
         account=self.shared_account
         if account is not None:
             conf=account.engine.config.read()
@@ -195,7 +230,7 @@ class Sleeve(c3.Sleeve):
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
             db.execute('INSERT OR REPLACE INTO exits VALUES(?,?,?,?)',(s,now,target,entry_bar))
-        LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %s qty %.6g',s,order['side'],price,stop,'none' if target is None else f'{target:.6g}',qty);return True
+        LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %s qty %.6g policy %s volume x%.3g planned risk %.4f%%',s,order['side'],price,stop,'none' if target is None else f'{target:.6g}',qty,c['strategy_variant'],c['volume_multiplier'],risk*100);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
 
@@ -208,6 +243,11 @@ def write_config(path:Path,c:dict)->dict:
 
 def summary(store:Store,conf:dict,price,base_equity:float,net_costs:bool=False)->dict:
     view=c3.summary(store,{**conf,'confirm_bars':0},price,base_equity,net_costs);view.pop('confirm_bars',None)
+    conf=validate(conf);base=conf['risk_per_trade_pct']*conf['volume_multiplier']
+    min_weight=(.75+.25*np.clip((.554-conf['vol_rank_max'])/.4,0.,1.))/FUZZY_NORMALIZER
+    view.update(strategy_variant=conf['strategy_variant'],volume_multiplier=conf['volume_multiplier'],
+        planned_risk_min=base*(min_weight if conf['strategy_variant']==SOFT_VARIANT else 1),
+        planned_risk_max=base*(1/FUZZY_NORMALIZER if conf['strategy_variant']==SOFT_VARIANT else 1))
     view['pending_orders']=[dict(symbol=s,**o) for s,o in store.orders().items()];return view
 
 def prepare_config(path:Path,shipped:Path)->Path:
@@ -221,8 +261,9 @@ def prepare_config(path:Path,shipped:Path)->Path:
     elif 'vol_rank_max' not in cur and cur.get('risk_per_trade_pct')==C1_RISK:new['risk_per_trade_pct']=ship['risk_per_trade_pct']   # untouched C1 -> C2 risk
     if cur.get('candle_fetch_limit',OLD_FETCH)==OLD_FETCH:new['candle_fetch_limit']=ship['candle_fetch_limit']   # C2 needs 500+ candles
     if '1000SHIB/USDT:USDT' in new.get('symbols',[]):new['symbols']=['SHIB/USDT:USDT' if x=='1000SHIB/USDT:USDT' else x for x in new['symbols']]   # LBank lists SHIBUSDT
+    new=validate(new)   # never persist a migration that exceeds the composite risk cap
     if new!=cur:
-        LOG.info('%s runtime config upgraded: %s',NAME,{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
+        LOG.info('%s runtime config upgraded: %s',NAME,{k:new[k] for k in new if cur.get(k)!=new[k]});write_config(path,new)
     return path
 
 def paths()->tuple[Path,Store]:
@@ -252,7 +293,7 @@ def start_in_bot(engine,stop):
     if not in_bot():LOG.info('Ghoghnous disabled in the bot (PA_IN_BOT=0)');return None
     cfg,store=paths();sl=Sleeve(load(cfg),store,bot.MarketData(),base_equity=engine.main_paper_equity,shared_account=engine.shared_paper_account)
     t=threading.Thread(target=loop,args=(sl,cfg,stop),name='pa-sleeve',daemon=True);t.start()
-    LOG.info('Ghoghnous (PA) started inside the bot: %d coins, risk %.2f%%/trade',len(sl.c['symbols']),sl.c['risk_per_trade_pct']*100)
+    LOG.info('Ghoghnous (PA) started inside the bot: %d coins, policy %s, volume x%.3g, base risk %.2f%%',len(sl.c['symbols']),sl.c['strategy_variant'],sl.c['volume_multiplier'],sl.c['risk_per_trade_pct']*100)
     return t
 
 def main():

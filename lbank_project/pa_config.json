@@ -4,6 +4,8 @@
   "timeframe": "4h",
   "paper_capital": 10000.0,
   "risk_per_trade_pct": 0.004,
+  "strategy_variant": "C_exhaustion_soft",
+  "volume_multiplier": 1.5,
   "max_notional_pct": 1.0,
   "round_trip_fee": 0.0012,
   "sizing_slippage_pct": 0.0004,
