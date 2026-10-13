@@ -6,3 +6,7 @@ tests
 __pycache__
 .pytest_cache
 *.zip
+customers
+issuer-keys
+releases
+*.private.pem

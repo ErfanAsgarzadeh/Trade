@@ -167,6 +167,7 @@ class Sleeve:
         with self.execution_lock():return self._open(s,side,b,now)
 
     def _open(self,s:str,side:str,b:pd.Series,now:float):
+        if not bot.license_access.entries_allowed(now):return None
         positions=self.store.positions()
         limit=self.c['max_open_positions']
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None

@@ -53,13 +53,14 @@ def test_pyramid_add_is_measured(system):
  bar=pd.Series(dict(close=110.,timestamp=(1_800_014_400-14400)*1000));assert system._pyramid_add(p,'long',bar,c,1_800_014_403)
  assert [r['kind'] for r in rows(system)][-1]=='add' and rows(system)[-1]['side']=='buy'
 
-def test_summary_status_and_demo_mode(system):
+def test_summary_status_and_demo_mode(system,monkeypatch):
+ monkeypatch.setenv('BOT_PIN','fill-quality-test-secret')
  system.data.book_fill=book(vwap_edge=6.,fraction=.5)
  p=open_position(system);q=system.db.position(p['symbol']);system._close(q,100.,q['qty'],'stop',1_800_000_100)
  s=system.db.fill_quality_summary();assert s['total']==2 and s['assumed_bps_per_fill']==2.0
  assert s['entry']['median_bps']==pytest.approx(6.,abs=1e-6) and s['exit']['n']==1 and s['entry']['thin_book_fills']==1
  with TestClient(create_app(system)) as client:
-  body=client.get('/api/status',headers={'x-bot-pin':'1234'}).json();assert body['fill_quality']['total']==2
+  body=client.get('/api/status',headers={'x-bot-pin':'fill-quality-test-secret'}).json();assert body['fill_quality']['total']==2
  demo=lb.MarketData();assert demo.mode=='demo' and demo.book_fill('BTC/USDT:USDT',True,1.) is None
 
 class FakeExchange:

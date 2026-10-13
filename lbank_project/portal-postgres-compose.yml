@@ -1,0 +1,70 @@
+name: trade-portal-central
+x-runtime: &runtime
+  build:
+    context: .
+    dockerfile: Dockerfile.portal
+  restart: unless-stopped
+  init: true
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  depends_on:
+    db:
+      condition: service_healthy
+  environment: &environment
+    PORTAL_KEY_FILE: /run/secrets/portal_key
+    PORTAL_DATABASE_URL_FILE: /run/secrets/portal_database_url
+    PORTAL_DB_POOL_MAX: "8"
+  secrets: [portal_key, portal_database_url]
+  logging:
+    options:
+      max-size: 10m
+      max-file: "3"
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: trade_portal
+      POSTGRES_USER: trade_portal
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes: [portal_pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U trade_portal -d trade_portal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No public database port or mount of the encryption key.
+  portal:
+    <<: *runtime
+    environment:
+      <<: *environment
+      PORTAL_HOST: 0.0.0.0
+      PORTAL_PORT: "8080"
+      PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
+      PORTAL_ALLOW_LOCAL_HTTP: ${PORTAL_ALLOW_LOCAL_HTTP:-0}
+      PORTAL_TRUSTED_PROXY_IPS: ${PORTAL_TRUSTED_PROXY_IPS:-}
+    ports: ["127.0.0.1:8080:8080"]
+    healthcheck:
+      test: [CMD, python, -c, "import os, urllib.request, urllib.parse; host=urllib.parse.urlsplit(os.environ['PORTAL_ORIGIN']).netloc; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8080/healthz', headers={'Host': host}), timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  account-worker:
+    <<: *runtime
+    command: [python, -u, portal_worker.py]
+    environment:
+      <<: *environment
+      PORTAL_EXCHANGE_READ_INTERVAL: ${PORTAL_EXCHANGE_READ_INTERVAL:-0.25}
+      PORTAL_EXCHANGE_READ_INTERVALS: ${PORTAL_EXCHANGE_READ_INTERVALS:-}
+volumes:
+  portal_pgdata:
+secrets:
+  postgres_password:
+    file: ./issuer-keys/postgres_password
+  portal_database_url:
+    file: ./issuer-keys/portal_database_url
+  portal_key:
+    file: ./issuer-keys/portal.key

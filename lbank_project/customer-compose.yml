@@ -1,0 +1,63 @@
+name: trade-${CUSTOMER_ID:?Customer ID required}
+
+x-environment: &environment
+  BOT_CUSTOMER_ID: ${CUSTOMER_ID:?Customer ID required}
+  BOT_RUNTIME_DIR: /app/runtime
+  BOT_LICENSE_REQUIRED: "1"
+  BOT_LICENSE_FILE: /app/license/license.json
+  BOT_LICENSE_PUBLIC_KEY_FILE: /app/license/license_public.pem
+  BOT_PIN_FILE: /run/secrets/dashboard_pin
+  PAPER_EQUITY: ${PAPER_EQUITY:-10000}
+  PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+
+x-service: &service
+  build: ./app
+  restart: unless-stopped
+  init: true
+  read_only: true
+  tmpfs:
+    - /tmp
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  stop_grace_period: 30s
+  environment: *environment
+  volumes:
+    - ./runtime:/app/runtime
+    - ./license:/app/license:ro
+  logging:
+    options:
+      max-size: 10m
+      max-file: "3"
+
+services:
+  bot:
+    <<: *service
+    command: [python, -u, customer_entrypoint.py, bot]
+    secrets: [dashboard_pin]
+  dashboard:
+    <<: *service
+    command: [python, -u, customer_entrypoint.py, dashboard]
+    secrets: [dashboard_pin]
+    ports:
+      - "127.0.0.1:${DASHBOARD_PORT:?Dashboard port required}:8000"
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+  candles:
+    <<: *service
+    command: [python, -u, customer_entrypoint.py, candles]
+    profiles: [market-data]
+    environment:
+      <<: *environment
+      PAPER_DATA_MODE: csv-lbank
+  funding:
+    <<: *service
+    command: [python, -u, customer_entrypoint.py, funding]
+    profiles: [market-data]
+
+secrets:
+  dashboard_pin:
+    file: ./secrets/dashboard_pin

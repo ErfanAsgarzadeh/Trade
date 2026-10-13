@@ -1,0 +1,55 @@
+name: trade-portal
+services:
+  account-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.portal
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    command: [python, -u, portal_worker.py]
+    environment:
+      PORTAL_DB: /app/runtime/portal/portal.db
+      PORTAL_KEY_FILE: /run/secrets/portal_key
+    volumes: [./runtime/portal:/app/runtime/portal]
+    secrets: [portal_key]
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile.portal
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      PORTAL_HOST: 0.0.0.0
+      PORTAL_PORT: "8080"
+      PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
+      PORTAL_ALLOW_LOCAL_HTTP: ${PORTAL_ALLOW_LOCAL_HTTP:-0}
+      PORTAL_DB: /app/runtime/portal/portal.db
+      PORTAL_KEY_FILE: /run/secrets/portal_key
+    volumes:
+      - ./runtime/portal:/app/runtime/portal
+    secrets: [portal_key]
+    ports: ["127.0.0.1:8080:8080"]
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test: [CMD, python, -c, "import os, urllib.request, urllib.parse; host=urllib.parse.urlsplit(os.environ['PORTAL_ORIGIN']).netloc; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8080/healthz', headers={'Host': host}), timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+secrets:
+  portal_key:
+    file: ./issuer-keys/portal.key
