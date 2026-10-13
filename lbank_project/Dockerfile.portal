@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY requirements.txt requirements-portal.txt ./
+RUN pip install --no-cache-dir -r requirements-portal.txt
+COPY portal_server.py portal_store.py portal_database.py portal_jobs.py portal_worker.py portal_exchanges.py portal_migrate.py portal_runtime.py portal_lbank.py portal_admin.py customer_manager.py license_access.py portal.html portal.js portal.css ./
+CMD ["python", "-u", "portal_server.py"]
