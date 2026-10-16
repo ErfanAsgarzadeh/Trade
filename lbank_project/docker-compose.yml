@@ -10,14 +10,15 @@ services:
       BOT_PIN: ${BOT_PIN:?Set BOT_PIN in .env}
       PAPER_EQUITY: ${PAPER_EQUITY:-10000}
       PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+      LBANK_OFFICIAL_CANDLES: ${LBANK_OFFICIAL_CANDLES:-0}
       OHLCV_DIR: /app/runtime/ohlcv
       FUNDING_DIR: /app/runtime/funding
       BOT_CONFIG: /app/runtime/config.json
-      BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+      BOT_DB: ${BOT_DB_PATH:-/app/runtime/lbank_ichimoku_bot.db}
       C3_CONFIG: /app/runtime/c3_config.json
-      C3_DB: /app/runtime/c3_sleeve.db
+      C3_DB: ${C3_DB_PATH:-/app/runtime/c3_sleeve.db}
       PA_CONFIG: /app/runtime/pa_config.json
-      PA_DB: /app/runtime/pa_sleeve.db
+      PA_DB: ${PA_DB_PATH:-/app/runtime/pa_sleeve.db}
     volumes:
       - ./runtime:/app/runtime
     stop_grace_period: 30s
@@ -31,6 +32,7 @@ services:
     restart: unless-stopped
     init: true
     environment:
+      LBANK_OFFICIAL_CANDLES: ${LBANK_OFFICIAL_CANDLES:-0}
       OHLCV_DIR: /app/runtime/ohlcv
       BOT_CONFIG: /app/runtime/config.json
       C3_CONFIG: /app/runtime/c3_config.json
@@ -65,14 +67,15 @@ services:
       BOT_PIN: ${BOT_PIN:?Set BOT_PIN in .env}
       PAPER_EQUITY: ${PAPER_EQUITY:-10000}
       PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+      LBANK_OFFICIAL_CANDLES: ${LBANK_OFFICIAL_CANDLES:-0}
       OHLCV_DIR: /app/runtime/ohlcv
       FUNDING_DIR: /app/runtime/funding
       BOT_CONFIG: /app/runtime/config.json
-      BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+      BOT_DB: ${BOT_DB_PATH:-/app/runtime/lbank_ichimoku_bot.db}
       C3_CONFIG: /app/runtime/c3_config.json
-      C3_DB: /app/runtime/c3_sleeve.db
+      C3_DB: ${C3_DB_PATH:-/app/runtime/c3_sleeve.db}
       PA_CONFIG: /app/runtime/pa_config.json
-      PA_DB: /app/runtime/pa_sleeve.db
+      PA_DB: ${PA_DB_PATH:-/app/runtime/pa_sleeve.db}
     volumes:
       - ./runtime:/app/runtime
     ports:

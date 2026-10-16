@@ -42,7 +42,7 @@ def validate(c:dict)->dict:
 
 def features(rows:list,now:float,c:dict)->pd.DataFrame:
     """Closed candles only (the exchange's last, forming candle is dropped), with EMA/RSI/ATR as in the backtest."""
-    df=pd.DataFrame(rows,columns=['timestamp','open','high','low','close','volume']).astype(float).iloc[:-1]
+    df=pd.DataFrame(bot.closed_rows(rows),columns=['timestamp','open','high','low','close','volume']).astype(float)
     df=df[df.timestamp+H4*1000<=now*1000].reset_index(drop=True)
     if len(df)<c['ema_slow']+5:raise ValueError('Not enough closed candles')
     if (np.diff(df.timestamp.to_numpy())!=H4*1000).any():raise ValueError('Gaps in candle history')

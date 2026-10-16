@@ -5,5 +5,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY lbank_bot.py strategy_archetypes.py dashboard_server.py config.json c3_sleeve.py c3_config.json shared_paper_account.py pa_sleeve.py pa_config.json lbank_candles.py fetch_funding.py ./
 COPY license_access.py deployment_security.py customer_entrypoint.py ./
+COPY lbank_official_candles.py ./
 RUN mkdir -p /app/runtime
 CMD ["python", "-u", "lbank_bot.py"]
