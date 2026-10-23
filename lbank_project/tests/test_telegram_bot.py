@@ -78,6 +78,24 @@ class ReportTests(unittest.TestCase):
         self.reports.reply('/closed')
         self.assertEqual(before, {p: p.read_bytes() for p in before})
 
+    def test_report_reads_committed_positions_while_engine_writes_wal(self):
+        path = self.reports.paths['شاهین'][1]
+        with sqlite3.connect(path, timeout=0.2) as engine:
+            self.assertEqual(engine.execute('PRAGMA journal_mode=WAL').fetchone()[0], 'wal')
+            engine.execute('BEGIN IMMEDIATE')
+            engine.execute("UPDATE positions SET active_sl=95 WHERE symbol='BTC/USDT'")
+            # Reporting sees the last committed stop, without interfering with the writer.
+            rows, total, _, warnings = self.reports.snapshot('open', 1)
+            self.assertEqual(warnings, [])
+            self.assertEqual(total, 3)
+            self.assertEqual(next(r for r in rows if r['bot'] == 'شاهین')['stop'], 90)
+            engine.commit()
+            rows, _, _, warnings = self.reports.snapshot('open', 1)
+            self.assertEqual(warnings, [])
+            self.assertEqual(next(r for r in rows if r['bot'] == 'شاهین')['stop'], 95)
+            p = engine.execute("SELECT qty,entry_price,tp1_price,state FROM positions WHERE symbol='BTC/USDT'").fetchone()
+            self.assertEqual(p, (2, 100, 120, 'STATE_INITIAL'))
+
     def test_menu_status_and_invalid_commands(self):
         self.assertIn('تعداد: 3', self.reports.reply('📈 معاملات باز'))
         self.assertIn('پوزیشن باز: 3', self.reports.reply('/status'))
