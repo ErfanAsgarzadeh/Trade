@@ -81,3 +81,22 @@ services:
       options:
         max-size: 10m
         max-file: "3"
+
+  lbank-telegram:
+    build: .
+    profiles: ["telegram"]
+    command: ["python", "-u", "telegram_bot.py"]
+    restart: unless-stopped
+    init: true
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ALLOWED_USER_IDS: ${TELEGRAM_ALLOWED_USER_IDS:-}
+      BOT_DB: /app/runtime/lbank_ichimoku_bot.db
+      C3_DB: /app/runtime/c3_sleeve.db
+      PA_DB: /app/runtime/pa_sleeve.db
+    volumes:
+      - ./runtime:/app/runtime
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
