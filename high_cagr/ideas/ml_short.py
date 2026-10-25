@@ -135,7 +135,7 @@ def backtest(T,ext,k,thr,a_bar,b_bar):
                 win=float((tr.ret>0).mean()*100) if len(tr) else 0.,avg_ret=float(tr.ret.mean()*100) if len(tr) else 0.,long_share=float((tr.side>0).mean()) if len(tr) else 0.),dv
 
 def run(tf):
-    t0=time.time();k=TFS[tf];D,ext=build(tf);feat=[c for c in D.columns if c not in ('coin','t','y')]
+    t0=time.time();k=TFS[tf];D,ext=build(tf);feat=[c for c in D.columns if c not in ('coin','t','y')];D[feat]=D[feat].replace([np.inf,-np.inf],np.nan).clip(-1e6,1e6)
     print(f'[{tf}] rows {len(D):,} features {len(feat)} built in {time.time()-t0:.0f}s',flush=True);res={}
     bar_min=k*15
     for fn,(a,b) in FOLDS.items():
