@@ -23,3 +23,4 @@ high_cagr/cache_stage2/
 high_cagr/prepared_flow1m/
 high_cagr/prepared_pa/
 high_cagr/cache_sentiment/
+high_cagr/output/ideas/ml/*.parquet
