@@ -91,7 +91,7 @@ def main(kinds=('mlp','cnn1d','image')):
     L=MD.all_legs();dep_n=sum(1 for l in L if not l['aug']);dep=L[:dep_n]
     S=pd.read_parquet(OUT/'states.parquet');feats=[f for f in MD.FEATS if f in S.columns]
     em=np.array([l['em'] for l in L]);xm=np.array([l['xm'] for l in L]);S['em']=em[S.leg];S['xm']=xm[S.leg]
-    S=S[(S.hours>=4)&((S.hours%4)<1e-9)].reset_index(drop=True);print('states (every 4h)',len(S),flush=True)
+    S=S[S.hours>=4].reset_index(drop=True);S=S[(S.groupby('leg').cumcount()%4)==0].reset_index(drop=True);print('states (every 4h)',len(S),flush=True)
     P=lambda j,m:LM.px(L[j]['coin'])[m,3];res={}
     for fn,(a,b) in WF.FOLDS.items():
         trm=(S.xm<a).to_numpy();te=((S.em>=a)&((S.em<b) if b else True)&(S.leg<dep_n)).to_numpy()
