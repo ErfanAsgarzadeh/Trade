@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
 from high_cagr import run_suite as rs
 from high_cagr.ideas import criteria_lib as C
-CACHE=ROOT/'high_cagr/cache_sentiment';BAR=240*60000
+CACHE=ROOT/'high_cagr/cache_sentiment';BAR=240*60000;REC=5*60000   # Binance metrics: create_time = START of the 5-min period
 SENT_SIGNED=['tbr6','tbr_z','oi_price','ls_global','ls_global_z','ls_top','smart_vs_crowd','taker_ls6','fng','fng_chg7','stable_g30','mkt_oi_chg42']
 SENT_UNSIGNED=['oi_chg6','oi_chg42','fng_extreme']
 SENT=SENT_SIGNED+SENT_UNSIGNED
@@ -51,7 +51,7 @@ def metrics(s):
         d=pd.concat(parts,ignore_index=True);t=pd.to_datetime(d.create_time).astype('int64')//10**6
         d=d.assign(t=t).sort_values('t').drop_duplicates('t')
         cols=['sum_open_interest','sum_open_interest_value','count_toptrader_long_short_ratio','sum_toptrader_long_short_ratio','count_long_short_ratio','sum_taker_long_short_vol_ratio']
-        closes=rs.START+(np.arange(n)+1)*BAR;ix=np.searchsorted(d.t.to_numpy(),closes,side='right')-1;ok=ix>=0
+        closes=rs.START+(np.arange(n)+1)*BAR;ix=np.searchsorted(d.t.to_numpy(),closes-REC,side='right')-1;ok=ix>=0   # a record stamped T covers T..T+5min
         for i,c in enumerate(cols):
             v=pd.to_numeric(d[c],errors='coerce').to_numpy();o=np.full(n,np.nan);o[ok]=v[ix[ok]]
             stale=np.full(n,True);stale[ok]=(closes[ok]-d.t.to_numpy()[ix[ok]])>6*3600*1000;o[stale]=np.nan;out[i]=o

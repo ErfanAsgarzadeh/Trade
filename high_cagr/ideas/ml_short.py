@@ -54,7 +54,7 @@ def base15(s):
         except Exception:pass
     if parts:
         d=pd.concat(parts,ignore_index=True);t=pd.to_datetime(d.create_time).astype('int64')//10**6;d=d.assign(t=t).sort_values('t').drop_duplicates('t')
-        closes=rs.START+(np.arange(n)+1)*B15;ix=np.searchsorted(d.t.to_numpy(),closes,side='right')-1;ok=ix>=0;age=np.full(n,1e18);age[ok]=closes[ok]-d.t.to_numpy()[ix[ok]]
+        closes=rs.START+(np.arange(n)+1)*B15;ix=np.searchsorted(d.t.to_numpy(),closes-300000,side='right')-1;ok=ix>=0;age=np.full(n,1e18);age[ok]=closes[ok]-300000-d.t.to_numpy()[ix[ok]]   # record T covers T..T+5min
         for i,cname in enumerate(['sum_open_interest','sum_toptrader_long_short_ratio','count_long_short_ratio','sum_taker_long_short_vol_ratio']):
             v=pd.to_numeric(d[cname],errors='coerce').to_numpy();o_=np.full(n,np.nan);o_[ok]=v[ix[ok]];o_[age>3600000]=np.nan;met[i]=o_
     fc=PB.coin(s)['fc'];fcum=fc[np.minimum((np.arange(n)+1)*15,len(fc)-1)]
