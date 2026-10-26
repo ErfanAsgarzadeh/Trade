@@ -15,8 +15,13 @@ ctrl keys (all optional):
              re-armed at a new high-water mark); the cut part is closed at that close with 0.06% fee + 2 bps
   bots       dict bot -> extra multiplier
   gb         dict bot -> array[DAYS]: per-bot daily multiplier (per-bot AI), multiplied with g
-  ddopen     (d0, d1, floor): hard drawdown brake that also acts on OPEN positions - the multiplier f(dd) (as ddt) is applied
+  ddopen     (d0, d1, floor[, N]): optional N = drawdown measured from the highest daily close of the last N days
+             (instead of the all-time high-water mark), so the brake releases as the account recovers; hard drawdown brake that also acts on OPEN positions - the multiplier f(dd) (as ddt) is applied
              to new trades and, at each daily close, open positions are cut to f(dd)/f_at_entry when lower (works with gopen)
+  ddnew      False: the brake acts only on positions that are open when it deepens (a position is cut by f_now/f_at_entry);
+             new trades are not shrunk by it, so the account can catch the recovery
+  botdd      (N, thr, mult): per-bot losing streak control - if the sum of the R results (pnl / entry risk $) of that bot's
+             last N CLOSED trades is below thr, its new trades get x mult
   gopen      True: open positions follow g too - at the close of day d, a position opened with g-multiplier k is cut to
              g[d+1]/k of its size when g[d+1] < k (never increased); the cut part is closed at that close like the breaker
 """
@@ -28,21 +33,23 @@ def replay(legs,ctrl=None,margin_cap=.8,start_day=0):
     c=ctrl or {};risk=TB.DEFAULT;L=legs
     ev=[(l['em'],1,i) for i,l in enumerate(L)]+[(l['xm'],0,i) for i,l in enumerate(L)]+[((d+1)*1440-1,2,d) for d in range(start_day,DAYS)]
     ev.sort(key=lambda e:(e[0],e[1]))
-    realized=0.;open_={};qty={};rk={};skipped=set();daily=np.zeros(DAYS);trades=[];hwm=SEED;armed=True;ncut=0;gk={};fdd_e={};go=c.get('gopen');dop=c.get('ddopen')
+    realized=0.;open_={};qty={};rk={};skipped=set();daily=np.zeros(DAYS);trades=[];hwm=SEED;armed=True;ncut=0;gk={};fdd_e={};go=c.get('gopen');dop=c.get('ddopen');dnew=c.get('ddnew',True);bdd=c.get('botdd');bR={}
     g=c.get('g');gb=c.get('gb') or {};ddt=c.get('ddt');heat=c.get('heat');sheat=c.get('side_heat');vt=c.get('vt');eqma=c.get('eqma');brk=c.get('breaker');bm=c.get('bots',{});sc=c.get('scale',1.)
     def equity(m):
         u=0.
         for i in open_:
             l=L[i];u+=qty[i]*l['side']*(TB.closes(l['coin'])[m]-l['entry'])
         return SEED+realized+u
-    def fdd(eq):
+    def fdd(eq,day):
         if not dop:return 1.
-        dd=1-eq/hwm;d0,d1,fl=dop;return 1. if dd<=d0 else max(fl,1-(1-fl)*(dd-d0)/max(d1-d0,1e-9))
+        d0,d1,fl=dop[:3];ref=hwm
+        if len(dop)>3 and day-start_day>0:ref=max(eq,daily[max(start_day,day-dop[3]):day].max())
+        dd=1-eq/ref;return 1. if dd<=d0 else max(fl,1-(1-fl)*(dd-d0)/max(d1-d0,1e-9))
     def used():return sum(qty[i]*L[i]['entry']/LEV for i in open_)
     for m,typ,i in ev:
         if typ==0:
             if i in open_:
-                l=L[i];p=qty[i]*l['unit'];realized+=p;trades.append((l['bot'],l['coin'],l['side'],l['em'],l['xm'],qty[i]*l['entry'],p));del open_[i];del rk[i];gk.pop(i,None);fdd_e.pop(i,None)
+                l=L[i];p=qty[i]*l['unit'];realized+=p;bR.setdefault(l['bot'],[]).append(p/max(rk[i],1e-9));trades.append((l['bot'],l['coin'],l['side'],l['em'],l['xm'],qty[i]*l['entry'],p));del open_[i];del rk[i];gk.pop(i,None);fdd_e.pop(i,None)
         elif typ==1:
             l=L[i]
             if l['is_add'] and l['root'] in skipped:continue
@@ -50,7 +57,10 @@ def replay(legs,ctrl=None,margin_cap=.8,start_day=0):
             eq=equity(m)
             if eq<=0:skipped.add(l['root']);continue
             hwm=max(hwm,eq);d=m//1440;k=sc*bm.get(l['bot'],1.)
-            gv=(g[d] if g is not None else 1.)*(gb[l['bot']][d] if l['bot'] in gb else 1.)*fdd(eq);k*=gv
+            gv=(g[d] if g is not None else 1.)*(gb[l['bot']][d] if l['bot'] in gb else 1.)*(fdd(eq,d) if dnew else 1.);k*=gv
+            if bdd:
+                h=bR.get(l['bot'],[])
+                if len(h)>=bdd[0] and sum(h[-bdd[0]:])<bdd[1]:k*=bdd[2]
             if ddt:
                 dd=1-eq/hwm;d0,d1,fl=ddt;k*=1. if dd<=d0 else max(fl,1-(1-fl)*(dd-d0)/max(d1-d0,1e-9))
             if vt and d-start_day>vt[1]:
@@ -66,7 +76,7 @@ def replay(legs,ctrl=None,margin_cap=.8,start_day=0):
             free=max(0.,margin_cap*eq-used())/(1+margin_cap*LEV*FEE_RT)*LEV
             notional=min(notional,free)
             if notional<20:skipped.add(l['root']);continue
-            qty[i]=notional/l['entry'];open_[i]=1;rk[i]=notional*per;gk[i]=gv;fdd_e[i]=fdd(eq)
+            qty[i]=notional/l['entry'];open_[i]=1;rk[i]=notional*per;gk[i]=gv;fdd_e[i]=fdd(eq,d)
         else:
             eq=equity(m)
             if eq>hwm:hwm=eq;armed=True
@@ -76,9 +86,9 @@ def replay(legs,ctrl=None,margin_cap=.8,start_day=0):
                     realized+=cq*(l['side']*(px-l['entry'])-(l['entry']+px)*.0006-px*2e-4);qty[j]-=cq;rk[j]*=1-brk[1]
                 armed=False;ncut+=1;eq=equity(m)
             if (go or dop) and i+1<DAYS and open_:
-                fd=fdd(eq)
+                fd=fdd(eq,i)
                 for j in list(open_):
-                    bj=L[j]['bot'];gn=((g[i+1] if g is not None else 1.)*(gb[bj][i+1] if bj in gb else 1.) if go else gk[j]/max(fdd_e[j],1e-9))*fd
+                    bj=L[j]['bot'];gn=((g[i+1] if g is not None else 1.)*(gb[bj][i+1] if bj in gb else 1.) if go else gk[j]/(max(fdd_e[j],1e-9) if dnew else 1.))*(fd if dnew else min(1.,fd/max(fdd_e[j],1e-9)))
                     if gn<gk[j]-1e-9:
                         l=L[j];px=TB.closes(l['coin'])[m];f=1-gn/gk[j];cq=qty[j]*f
                         realized+=cq*(l['side']*(px-l['entry'])-(l['entry']+px)*.0006-px*2e-4);qty[j]-=cq;rk[j]*=1-f;gk[j]=gn;fdd_e[j]=fd
