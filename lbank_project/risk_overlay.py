@@ -156,7 +156,9 @@ class Bots:
     def __init__(self):
         import lbank_bot as bot, c3_sleeve, pa_sleeve
         self.bot, self.c3, self.pa = bot, c3_sleeve, pa_sleeve
-        self.engine = bot.Engine(bot.ConfigStore(), bot.Database(), bot.MarketData())
+        data = bot.MarketData()
+        data.exchange.has["fetchCurrencies"] = False   # load_markets without LBank's slow withdrawConfigs call (not needed here)
+        self.engine = bot.Engine(bot.ConfigStore(), bot.Database(), data)
 
     def equity(self) -> float:
         return float(self.engine.paper_equity())
