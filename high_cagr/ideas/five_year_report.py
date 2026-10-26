@@ -50,9 +50,9 @@ def ledgers(pa='soft'):
 def month_ends():
     idx=pd.date_range(START_DATE,periods=DAYS);return np.asarray((idx+pd.Timedelta(days=1)).day==1)
 
-def replay(risk=None,margin_cap=.8,bots=('main','c3','pa'),wd=0.,pa='soft',legs=None):
+def replay(risk=None,margin_cap=.8,bots=None,wd=0.,pa='soft',legs=None):
     """legs: optional custom ledger (same fields; 'skip'=True drops a root and its adds, 'risk_scale' may be rescaled)."""
-    risk={**TB.DEFAULT,**(risk or {})};L=[l for l in (ledgers(pa) if legs is None else legs) if l['bot'] in bots];me=month_ends()
+    risk={**TB.DEFAULT,**(risk or {})};L=[l for l in (ledgers(pa) if legs is None else legs) if bots is None or l['bot'] in bots];me=month_ends()
     ev=[(l['em'],1,i) for i,l in enumerate(L)]+[(l['xm'],0,i) for i,l in enumerate(L)]+[((d+1)*1440-1,2,d) for d in range(DAYS)]
     ev.sort(key=lambda e:(e[0],e[1]))
     realized=0.;withdrawn=0.;open_={};qty={};skipped=set();daily=np.zeros(DAYS);wdl=np.zeros(DAYS);used_d=np.zeros(DAYS);trades=[];prev=SEED
