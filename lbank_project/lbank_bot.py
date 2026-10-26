@@ -694,6 +694,10 @@ class MarketData:
         self.exchange = ccxt.lbank({"apiKey": os.getenv("LBANK_API_KEY", ""),
             "secret": os.getenv("LBANK_SECRET_KEY", ""), "enableRateLimit": True,
             "timeout": 10000, "options": {"defaultType": "swap"}})
+        # Only USDT perpetuals are ever traded: load swap markets from the futures API (lbkperp) and skip the spot
+        # market list / currency configs, whose api.lbank.info endpoints can time out and would block start-up.
+        self.exchange.has["fetchCurrencies"] = False
+        self.exchange.fetch_markets = lambda params={}: self.exchange.fetch_swap_markets(params)
         self.lock = threading.RLock()
         self.loaded = False
         self.cache: dict[str, tuple[float, float]] = {}
