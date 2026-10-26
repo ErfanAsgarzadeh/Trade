@@ -28,7 +28,7 @@ APP_FILES = ('lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
-             'risk_gate.py', 'risk_overlay.py', 'performance.py', 'lbank_account.py', 'models/risk_ai_r20.json')
+             'risk_gate.py', 'risk_overlay.py', 'performance.py', 'lbank_account.py', 'exchanges.py', 'live_mirror.py', 'models/risk_ai_r20.json')
 
 
 def validate_id(customer: str):

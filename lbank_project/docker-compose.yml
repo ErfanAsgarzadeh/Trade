@@ -82,6 +82,34 @@ services:
       options:
         max-size: 10m
         max-file: "3"
+  lbank-live:
+    # Live mirror (live_mirror.py): copies the bots' paper positions to a real exchange account. Mode is set in the
+    # dashboard (Settings > Live execution) and is OFF by default; keys only from .env.
+    build: .
+    command: ["python", "-u", "live_mirror.py"]
+    restart: unless-stopped
+    init: true
+    environment:
+      PAPER_EQUITY: ${PAPER_EQUITY:-10000}
+      BOT_CONFIG: /app/runtime/config.json
+      BOT_DB: ${BOT_DB_PATH:-/app/runtime/lbank_ichimoku_bot.db}
+      C3_CONFIG: /app/runtime/c3_config.json
+      C3_DB: ${C3_DB_PATH:-/app/runtime/c3_sleeve.db}
+      PA_CONFIG: /app/runtime/pa_config.json
+      PA_DB: ${PA_DB_PATH:-/app/runtime/pa_sleeve.db}
+      RISK_DIR: /app/runtime
+      TTT_API_KEY: ${TTT_API_KEY:-}
+      TTT_API_SECRET: ${TTT_API_SECRET:-}
+      BINANCE_API_KEY: ${BINANCE_API_KEY:-}
+      BINANCE_API_SECRET: ${BINANCE_API_SECRET:-}
+      BINANCE_TESTNET: ${BINANCE_TESTNET:-0}
+    volumes:
+      - ./runtime:/app/runtime
+    stop_grace_period: 30s
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
   lbank-dashboard:
     build: .
     command: ["uvicorn", "dashboard_server:app", "--host", "0.0.0.0", "--port", "8000"]
@@ -103,6 +131,11 @@ services:
       PA_CONFIG: /app/runtime/pa_config.json
       PA_DB: ${PA_DB_PATH:-/app/runtime/pa_sleeve.db}
       RISK_DIR: /app/runtime
+      TTT_API_KEY: ${TTT_API_KEY:-}
+      TTT_API_SECRET: ${TTT_API_SECRET:-}
+      BINANCE_API_KEY: ${BINANCE_API_KEY:-}
+      BINANCE_API_SECRET: ${BINANCE_API_SECRET:-}
+      BINANCE_TESTNET: ${BINANCE_TESTNET:-0}
     volumes:
       - ./runtime:/app/runtime
     ports:

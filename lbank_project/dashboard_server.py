@@ -386,6 +386,61 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         import lbank_account
         return lbank_account.account_check()
 
+    # ---- live execution through the mirror service (live_mirror.py, docker service lbank-live) ----
+    @application.get("/api/live", dependencies=[Depends(authorized)])
+    def live_view():
+        import live_mirror as LM
+        cfg = LM.read_config();folder = LM.folder()
+        st = {}
+        try:st = json.loads((folder / f"live_state_{cfg['mode']}_{cfg['exchange']}.json").read_text())
+        except Exception:pass
+        log = []
+        p = folder / "live_log.jsonl"
+        if p.is_file():
+            for line in p.read_text().splitlines()[-40:]:
+                try:log.append(json.loads(line))
+                except Exception:pass
+        keys = {"thetruetrade": bool(os.getenv("TTT_API_KEY") and os.getenv("TTT_API_SECRET")),
+                "binance": bool(os.getenv("BINANCE_API_KEY") and os.getenv("BINANCE_API_SECRET"))}
+        running = bool(st.get("last_cycle")) and time.time() - st.get("last_cycle", 0) < 120
+        return {"config": cfg, "keys": keys, "running": running, "state": {k: st.get(k) for k in ("managed", "paused", "errors", "equity_live", "equity_paper", "ratio", "unmanaged", "last_cycle")},
+                "log": log[::-1]}
+
+    @application.put("/api/live/config", dependencies=[Depends(authorized)])
+    def live_config(payload: dict):
+        import live_mirror as LM
+        cur = LM.read_config();new = {**cur, **{k: payload[k] for k in LM.DEFAULT if k in payload}}
+        if new["mode"] == "live" and cur["mode"] != "live" and payload.get("confirm") != "LIVE":
+            raise HTTPException(422, "Type LIVE to confirm real orders")
+        try:
+            v = LM.write_config(new)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc))
+        (LM.folder() / "live_command.json").write_text(json.dumps({"resume": True}))
+        LOG.warning("Live mirror settings changed: %s", v)
+        return v
+
+    @application.post("/api/live/test", dependencies=[Depends(authorized)])
+    def live_test(payload: dict):
+        import exchanges as EX
+        name = payload.get("exchange", "thetruetrade")
+        try:
+            a = EX.make(name);m = a.markets();out = {"ok": True, "markets": len(m)}
+            try:
+                out["equity"] = a.equity();out["positions"] = [dict(symbol=p.symbol, side=p.side, qty=p.qty) for p in a.positions().values()]
+                out["message"] = f"Connected to {name}: {len(m)} USDT perpetual markets, futures equity {out['equity']:.2f} USDT."
+            except Exception as exc:
+                out.update(ok=False, message=f"Public data OK ({len(m)} markets), but the account call failed: {exc}")
+            return out
+        except Exception as exc:
+            return {"ok": False, "message": f"{name}: {exc}"}
+
+    @application.post("/api/live/close-all", dependencies=[Depends(authorized)])
+    def live_close_all():
+        import live_mirror as LM
+        (LM.folder() / "live_command.json").write_text(json.dumps({"close_all": True}))
+        return {"queued": True, "note": "The mirror closes every position it opened within ~10 s and stops new entries."}
+
     @application.post("/api/account/mode", dependencies=[Depends(authorized)])
     def account_mode(payload: dict):
         if payload.get("mode") != "paper":
@@ -569,6 +624,19 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (set LBANK_API_KEY and LBANK_SECRET_KEY in the server's .env; keys are never entered in this page)</p>
 <div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test LBank connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
 <p class="small" id="acct_result"></p></section></div></section>
+<section class="panel" id="live_panel"><div class="row"><div><h2>Live execution (exchange mirror)</h2><p class="small">The bots keep trading on paper; the mirror copies their NEW positions, stops, partial exits and exits to a real exchange account, sized by account equity. Positions open before switching on are not copied. Only positions opened by the mirror are ever touched.</p></div><span class="badge" id="lv_badge">—</span></div>
+<div class="fields" style="margin-top:14px">
+<label class="field">Exchange<select id="lv_exchange"><option value="thetruetrade">TheTrueTrade</option><option value="binance">Binance USDT-M</option></select></label>
+<label class="field">Mode<select id="lv_mode"><option value="off">Off</option><option value="dry">Dry run (simulated orders, real prices)</option><option value="live">LIVE (real orders)</option></select></label>
+<label class="field">Size factor (1 = same % risk as paper)<input id="lv_size" type="number" min="0.01" max="3" step="0.01"></label>
+<label class="field">Leverage<input id="lv_lev" type="number" min="1" max="20" step="1"></label>
+<label class="field">Max position size (USD notional)<input id="lv_cap" type="number" min="1" step="1"></label>
+<label class="field">Max open positions<input id="lv_maxpos" type="number" min="1" max="100" step="1"></label>
+<label class="field">Copy entries up to (minutes late)<input id="lv_delay" type="number" min="1" max="240" step="1"></label></div>
+<div class="gap" style="margin-top:14px"><button id="lv_save" disabled>Save live settings</button><button class="subtle" id="lv_test" disabled>Test connection</button><button class="danger" id="lv_panic" disabled>Close all mirrored positions</button></div>
+<p class="small" id="lv_status">—</p><p class="small" id="lv_result"></p>
+<div class="scroll"><table><thead><tr><th>Symbol</th><th>Bot</th><th>Side</th><th class="num">Live qty</th><th class="num">Stop</th><th>Opened</th></tr></thead><tbody id="lv_rows"></tbody></table></div>
+<details><summary>Mirror log</summary><div class="scroll" style="max-height:320px"><table><tbody id="lv_log"></tbody></table></div></details></section>
 <section class="panel"><div class="row"><h2>Shahin settings (main bot)</h2><button class="subtle" id="reload" disabled>Reload</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">Shahin auto-entry (same on/off switch as above)</label><label><input id="dry" type="checkbox" checked disabled>Simulation mode (Dry-run)</label>
 <label class="field">Strategy mode<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
@@ -864,6 +932,23 @@ $('acct_test').onclick=async()=>{const b=$('acct_test');b.disabled=true;$('acct_
  catch(e){$('acct_result').textContent=e.message;$('acct_result').className='small bad';}finally{b.disabled=false;}};
 const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _connect2();await loadControl();await loadAccount();};
 setInterval(loadControl,60000);
+let lv=null;
+function lvFill(c){$('lv_exchange').value=c.exchange;$('lv_mode').value=c.mode;$('lv_size').value=c.size_factor;$('lv_lev').value=c.leverage;$('lv_cap').value=c.max_position_usd;$('lv_maxpos').value=c.max_positions;$('lv_delay').value=c.max_entry_delay_min;}
+function renderLive(d){lv=d;const c=d.config,s=d.state||{};if(document.activeElement===null||!document.activeElement.id||!document.activeElement.id.startsWith('lv_'))lvFill(c);
+ $('lv_badge').textContent=c.mode.toUpperCase()+' · '+c.exchange+(d.running?' · running':c.mode!=='off'?' · service not running':'');$('lv_badge').className='badge '+(c.mode==='live'?'bad':c.mode==='dry'?'warn':'');
+ $('lv_status').textContent='API key on the server for '+c.exchange+': '+(d.keys[c.exchange]?'configured':'NOT configured')+(s.equity_live!=null?' · exchange equity '+number(s.equity_live)+' USDT · paper equity '+number(s.equity_paper)+' · size ratio '+number(s.ratio,4):'')+(s.paused?' · NEW ENTRIES PAUSED':'')+(s.unmanaged&&s.unmanaged.length?' · other positions on the account (not touched): '+s.unmanaged.join(', '):'');
+ const r=$('lv_rows');r.replaceChildren();const m=s.managed||{};const ks=Object.keys(m);
+ if(!ks.length){const tr=document.createElement('tr');td(tr,'No mirrored positions.','empty').colSpan=6;r.append(tr);}
+ for(const k of ks){const x=m[k],tr=document.createElement('tr');td(tr,k,'mono');td(tr,BOTNAME[x.bot==='main'?'bot':x.bot]||x.bot);td(tr,x.side==='long'?'Buy':'Sell');td(tr,number(x.live_qty0,6),'',1);td(tr,x.stop?number(x.stop,6):'—','',1);td(tr,new Date(x.opened*1000).toISOString().slice(0,16).replace('T',' '),'mono');r.append(tr);}
+ const lg=$('lv_log');lg.replaceChildren();for(const e of d.log){const tr=document.createElement('tr');td(tr,new Date(e.t*1000).toISOString().slice(5,16).replace('T',' '),'mono');td(tr,e.mode+' / '+e.exchange);td(tr,e.kind,e.kind==='error'?'bad':'');td(tr,[e.symbol,e.side,e.qty,e.stop,e.reason,e.error,e.note].filter(v=>v!==undefined&&v!==null).join(' · '));lg.append(tr);}}
+async function loadLive(){if(!connected)return;try{renderLive((await api('/api/live')).data);}catch(e){message('Live: '+e.message,true);}}
+$('lv_save').onclick=async()=>{const body={exchange:$('lv_exchange').value,mode:$('lv_mode').value,size_factor:Number($('lv_size').value),leverage:parseInt($('lv_lev').value,10),max_position_usd:Number($('lv_cap').value),max_positions:parseInt($('lv_maxpos').value,10),max_entry_delay_min:Number($('lv_delay').value)};
+ if(body.mode==='live'&&(!lv||lv.config.mode!=='live')){const t=prompt('Real orders with real money on '+body.exchange+'. Type LIVE to confirm.');if(t!=='LIVE'){message('Live mode not confirmed; nothing changed.',true);return;}body.confirm='LIVE';}
+ try{await api('/api/live/config','PUT',body);message('Live settings saved ('+body.mode+' on '+body.exchange+').');await loadLive();}catch(e){message(e.message,true);}};
+$('lv_test').onclick=async()=>{$('lv_result').textContent='Testing…';try{const r=(await api('/api/live/test','POST',{exchange:$('lv_exchange').value})).data;$('lv_result').textContent=r.message;$('lv_result').className='small '+(r.ok?'good':'bad');}catch(e){$('lv_result').textContent=e.message;$('lv_result').className='small bad';}};
+$('lv_panic').onclick=async()=>{if(!confirm('Close every position the mirror opened on the exchange and stop new entries?'))return;try{const r=(await api('/api/live/close-all','POST',{})).data;message(r.note);}catch(e){message(e.message,true);}};
+const _connect3=$('connect').onclick;$('connect').onclick=async()=>{await _connect3();for(const id of ['lv_save','lv_test','lv_panic'])$(id).disabled=false;await loadLive();};
+setInterval(loadLive,15000);
 </script></body></html>'''
 
 app = create_app()
