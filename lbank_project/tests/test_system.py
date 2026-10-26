@@ -643,5 +643,8 @@ def test_compose_shared_directory_and_local_bind():
         assert service["restart"] == "unless-stopped"
         assert name == "lbank-funding" or service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
     assert services["lbank-bot"]["environment"]["C3_CONFIG"] == "/app/runtime/c3_config.json"
-    assert services["lbank-bot"]["environment"]["C3_DB"] == "/app/runtime/c3_sleeve.db"
+    assert services["lbank-bot"]["environment"]["C3_DB"] == "${C3_DB_PATH:-/app/runtime/c3_sleeve.db}"
+    for field in ('BOT_DB', 'C3_DB', 'PA_DB', 'LBANK_OFFICIAL_CANDLES'):
+        assert services['lbank-bot']['environment'][field] == services['lbank-dashboard']['environment'][field]
+    assert services['lbank-candles']['environment']['LBANK_OFFICIAL_CANDLES'] == services['lbank-bot']['environment']['LBANK_OFFICIAL_CANDLES']
     assert services["lbank-dashboard"]["ports"] == ["127.0.0.1:8000:8000"]

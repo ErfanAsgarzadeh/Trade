@@ -521,8 +521,13 @@ def adx_wilder(df: pd.DataFrame, period: int = 14) -> pd.Series:
     return pd.Series(output, index=df.index)
 
 
+def closed_rows(bars):
+    # Official history is explicitly closed-only; legacy feeds include a forming final bar.
+    return bars if getattr(bars, 'closed_only', False) else bars[:-1]
+
+
 def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
-    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"])
+    df = pd.DataFrame(closed_rows(bars), columns=["timestamp", "open", "high", "low", "close", "volume"])
     if df.empty:
         raise ValueError("Empty OHLCV response")
     df = df.astype(float)
@@ -533,8 +538,7 @@ def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
         (df[["open", "high", "low", "close"]].min(axis=1) <= 0) |
         (df.volume < 0)).any():
         raise ValueError("Invalid OHLCV geometry")
-    # Always discard the final exchange bar as specified, then enforce its time.
-    df = df.iloc[:-1].copy()
+    # closed_rows discards forming bars unless the source is explicitly closed-only.
     seconds = TIMEFRAMES[timeframe]
     df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
     if len(df) and (np.diff(df.timestamp) != seconds * 1000).any():
@@ -569,7 +573,7 @@ def atr_regime_ratio(bars: list, c: dict, timeframe: str, now: float, window: in
     (candle_fetch_limit fetched, forming bar dropped), exactly like the research features, so `bars`
     must hold candle_fetch_limit + window candles. None when history is short, gapped or not finite.
     """
-    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float).iloc[:-1]
+    df = pd.DataFrame(closed_rows(bars), columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float)
     seconds = TIMEFRAMES[timeframe]
     df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
     span = c["ichimoku_params"]["candle_fetch_limit"] - 1
@@ -733,6 +737,9 @@ class MarketData:
                     samples = [self.demo_price(symbol, stamp + seconds * k / 24) for k in range(25)]
                     result.append([stamp * 1000, samples[0], max(samples), min(samples), samples[-1], 100.0])
                 return result
+            if os.getenv('LBANK_OFFICIAL_CANDLES') == '1':
+                from lbank_official_candles import read_history
+                return read_history(self.ohlcv_dir, symbol, timeframe, limit, time.time())
             name = symbol.replace("/", "_").replace(":", "_") + "_" + timeframe + ".csv"
             source = self.ohlcv_dir / name
             if not source.is_file():

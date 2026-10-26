@@ -25,6 +25,7 @@ CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
 APP_FILES = ('lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
              'lbank_candles.py', 'fetch_funding.py', 'license_access.py',
+             'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
              'risk_gate.py', 'risk_overlay.py', 'performance.py', 'lbank_account.py', 'models/risk_ai_r20.json')
