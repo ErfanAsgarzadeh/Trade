@@ -296,6 +296,50 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             LOG.exception("PA close failed for %s", payload.symbol)
             raise HTTPException(503, "Could not close the Ghoghnous position; it is still open")
 
+    # ---- performance (all three bots) and the F risk manager (shadow service risk_overlay.py): read only ----
+    def runtime_folder():
+        from pathlib import Path
+        return Path(os.getenv("RISK_DIR", str(bot().db.path.parent)))
+
+    def all_trades():
+        out = []
+        with bot().db.connect() as db:
+            for s, side, pnl, t, e, x, why in db.execute("SELECT symbol,side,pnl_usd,closed_at,entry_price,exit_price,reason FROM trade_history WHERE dry_run=1"):
+                out.append(dict(bot="main", symbol=s, side=side, pnl=float(pnl), closed=float(t), entry=e, exit=x, reason=why))
+        for key, (_, store) in (("c3", c3_paths()), ("pa", pa_paths())):
+            try:
+                with store.db() as db:
+                    for s, side, pnl, t, e, x, why in db.execute("SELECT symbol,side,pnl,closed,entry,exit,reason FROM trades"):
+                        out.append(dict(bot=key, symbol=s, side=side, pnl=float(pnl or 0), closed=float(t or 0), entry=e, exit=x, reason=why))
+            except Exception:
+                LOG.exception("%s trades unreadable", key)
+        return sorted(out, key=lambda x: x["closed"])
+
+    @application.get("/api/performance", dependencies=[Depends(authorized)])
+    def performance_view():
+        import performance
+        return performance.summarize(all_trades(), float(bot().paper_seed), performance.read_snapshots(runtime_folder() / "equity_history.jsonl"))
+
+    @application.get("/api/risk", dependencies=[Depends(authorized)])
+    def risk_view():
+        folder = runtime_folder();cur = folder / "risk_overlay.json";log = folder / "risk_overlay_log.jsonl"
+        if not cur.is_file():
+            return {"available": False, "folder": str(folder),
+                    "hint": "The F risk manager service is not running yet (docker compose up -d --no-deps lbank-risk)."}
+        rows = []
+        if log.is_file():
+            for line in log.read_text().splitlines()[-120:]:
+                try:
+                    r = json.loads(line)
+                    rows.append({k: r.get(k) for k in ("as_of", "account_equity", "shadow_equity", "combined")} |
+                                {"ai_pct": r["ai"]["percentile"], "ai_mult": r["ai"]["multiplier"], "zone": r["ai"]["zone"],
+                                 "vol_mult": r["vol"]["multiplier"], "brake_mult": r["brake"]["multiplier"], "dd": r["brake"]["drawdown_pct"]})
+                except Exception:
+                    pass
+        import risk_overlay
+        return risk_overlay.clean({"available": True, "current": json.loads(cur.read_text()), "history": rows,
+                "stale": time.time() - json.loads(cur.read_text()).get("computed_at", 0) > 36 * 3600})
+
     @application.post("/api/bots/toggle", dependencies=[Depends(authorized)])
     def toggle_bot(payload: BotToggle):
         """On/off switch of one bot: off stops NEW entries (and cancels unfilled orders); open positions stay managed."""
@@ -348,46 +392,81 @@ HTML = r'''<!doctype html>
 <title>LBank Trading Control Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-.view{background:#2a3650}.view.on{background:#315dc8;outline:2px solid #7fa1ff}.tag{display:inline-block;padding:1px 8px;border-radius:6px;background:#24324e;font-size:11px}.tag.c3{background:#3b2f58}.tag.pa{background:#5a3b22}
-.bots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.bot{background:#101829;border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
-.bot h3{margin:0;font-size:20px}.bot .sub{margin:0 0 10px;font-size:12px}.bot dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:12px 0 0;font-size:13px}
-.bot dt{color:var(--muted)}.bot dd{margin:0;text-align:right;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}.bot.off{opacity:.65}
-.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}.switch input{width:20px;height:20px}
-.bot-main{border-top:3px solid #4f7be0}.bot-c3{border-top:3px solid #8a6ad0}.bot-pa{border-top:3px solid #d08a45}
-@media(max-width:850px){.bots{grid-template-columns:1fr}}
-:root{color-scheme:dark;--bg:#0b1020;--panel:#141c30;--line:#29344d;--muted:#a4b3ce;--good:#4ee2ad;--bad:#ff7886}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf3ff;font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1}
-main{max-width:1450px;margin:auto;padding:28px}header,.row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-h1{font-size:24px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:18px;margin:0 0 16px}p{margin:4px 0;color:var(--muted)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:20px}
-.badge{display:inline-block;padding:4px 12px;border-radius:8px;background:#24324e;direction:ltr;font-size:12px}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.kpi strong{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;direction:ltr;text-align:left}
-input,select,textarea{background:#0b1325;border:1px solid #40516f;color:#fff;border-radius:8px;padding:10px;font:inherit}input[type=checkbox]{width:18px;height:18px;accent-color:#58cab9}
-button{border:0;background:#315dc8;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;font:inherit}button:disabled{opacity:.45;cursor:wait}
-.danger{background:#ac2b42}.subtle{background:#2a3650}.good{color:var(--good)}.bad{color:var(--bad)}
-.scroll{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}th,td{padding:14px 9px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}td[dir=ltr]{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px}
-.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field{display:flex;flex-direction:column;align-items:stretch}
-textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7 'JetBrains Mono',ui-monospace,monospace;resize:vertical;margin:16px 0}
-#message{display:none;padding:14px;border-radius:10px;margin-top:18px;white-space:pre-wrap;border:1px solid #53688f;background:#1c2940}
-.note{border-left:3px solid #d7ac63;padding-left:12px}.muted{color:var(--muted)}details{margin-top:18px}summary{cursor:pointer}footer{margin-top:20px;color:var(--muted)}
-@media(max-width:850px){main{padding:14px}.kpis{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}h1{font-size:20px}.panel{padding:16px}}
+:root{color-scheme:dark;--bg:#070b16;--bg2:#0b1222;--panel:#0f172a;--panel2:#131d33;--line:#1f2b45;--line2:#2b3a5c;--text:#e8eefc;--muted:#8fa0c2;--good:#34d399;--bad:#f87171;--warn:#fbbf24;--accent:#6d8dff;--accent2:#8b5cf6;--main:#5b8cff;--c3:#a78bfa;--pa:#f59e0b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#16234a 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#251a4a 0,transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1;min-height:100vh}
+main{max-width:1480px;margin:auto;padding:22px 28px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:6px 0 18px}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 24px -8px #6d8dff88}
+h1{font-size:21px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:16px;margin:0;font-weight:600;letter-spacing:-.01em}h3{font-size:14px;margin:0;font-weight:600}
+p{margin:2px 0;color:var(--muted)}.muted{color:var(--muted)}.small{font-size:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.gap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px -18px #000}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:#17223b;border:1px solid var(--line2);font-size:12px;color:#c9d5f2;white-space:nowrap}
+.badge.ok{color:var(--good);border-color:#1f5f4a;background:#0e2a22}.badge.warn{color:var(--warn);border-color:#6b5414;background:#2b220b}.badge.bad{color:var(--bad);border-color:#6b2730;background:#2c1015}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:5px;background:#0c1426;border:1px solid var(--line);border-radius:14px;width:fit-content;max-width:100%;overflow:auto}
+.tab{background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-weight:500}.tab:hover{color:var(--text);background:#141f38}.tab.on{background:linear-gradient(135deg,#3557c9,#5b3fc4);color:#fff;box-shadow:0 6px 18px -8px #6d8dff}
+.pane{display:none}.pane.on{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}.kpis .panel{margin-top:0}
+.kpi p:first-child{font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi strong{display:block;font-size:28px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+.bar{height:6px;border-radius:99px;background:#1a2540;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.grid2{display:grid;grid-template-columns:2fr 1fr;gap:18px}.grid2 .panel,.grid3 .panel{margin-top:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.chart{position:relative;height:300px;margin-top:12px}.chart.sm{height:200px}
+input,select,textarea{background:#0a1222;border:1px solid var(--line2);color:#fff;border-radius:9px;padding:9px 11px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid #3f5fd0;border-color:transparent}
+input[type=checkbox]{width:18px;height:18px;accent-color:#6d8dff}
+button{border:0;background:#3557c9;color:white;padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-weight:500;transition:filter .15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
+.danger{background:#b4233c}.subtle{background:#1d2945}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.view{background:#16213a;color:var(--muted)}.view.on{background:#24356a;color:#fff;outline:1px solid #5b7cff}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:#1b2b55;color:#9db8ff}.tag.c3{background:#2b2150;color:#c4b5fd}.tag.pa{background:#3a2710;color:#fbbf6a}
+.scroll{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12.5px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--panel)}tbody tr:hover{background:#121c33}
+td[dir=ltr],.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px}.num{text-align:right}
+.bots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.bot{background:linear-gradient(180deg,#121b31,#0e1628);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;position:relative;overflow:hidden}
+.bot:before{content:'';position:absolute;inset:0 0 auto 0;height:3px}.bot-main:before{background:var(--main)}.bot-c3:before{background:var(--c3)}.bot-pa:before{background:var(--pa)}
+.bot h3{font-size:18px}.bot .sub{margin:0 0 8px;font-size:12px}.bot dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:12px 0 0;font-size:13px}
+.bot dt{color:var(--muted)}.bot dd{margin:0;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}.bot.off{opacity:.55}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;background:#16213a;padding:5px 10px;border-radius:999px}
+.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#c9d5f2}.field{display:flex;flex-direction:column;align-items:stretch;gap:6px;font-size:12.5px}
+textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7 'JetBrains Mono',ui-monospace,monospace;resize:vertical;margin:14px 0}
+#message{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;white-space:pre-wrap;border:1px solid #33456e;background:#121c33}
+.note{border-left:3px solid var(--warn);font-size:13px;color:#cdd6ea}details{margin-top:16px}summary{cursor:pointer;font-weight:600;color:#c9d5f2}footer{margin-top:22px;color:var(--muted);font-size:12px}
+.gauge{position:relative;height:14px;border-radius:99px;background:linear-gradient(90deg,#7f1d1d 0 30%,#1f2b45 30% 70%,#065f46 70%);margin:14px 0 6px}
+.gauge>b{position:absolute;top:-5px;width:4px;height:24px;border-radius:3px;background:#fff;box-shadow:0 0 0 3px #ffffff33;transform:translateX(-2px);transition:left .4s}
+.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.big{font-size:34px;font-weight:700;letter-spacing:-.02em}.pill{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.good{background:#0e2a22}.pill.bad{background:#2c1015}.pill.normal{background:#1b2540;color:#c9d5f2}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+.mtab td.pos{color:var(--good)}.mtab td.neg{color:var(--bad)}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+@media(max-width:850px){main{padding:14px}.bots{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:1fr}}
 @media(max-width:450px){.fields{grid-template-columns:1fr}}
 </style></head><body><main>
-<header><div><h1>LBank Trading Control Center</h1><p>Three bots, one paper account: Shahin · Mojsavar · Ghoghnous</p></div>
-<div class="row"><input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="10">
-<button id="connect">Connect</button><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span></div></header>
+<header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · F risk manager</p></div></div>
+<div class="gap"><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span><span id="f_badge" class="badge">F: —</span>
+<input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
+<nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="risk">Risk manager (F)</button><button class="tab" data-tab="settings">Settings</button></nav>
 <div id="message" role="status" aria-live="polite"></div>
-<section class="panel note">This build simulates trades (paper only). DEMO mode uses synthetic prices and candles. Live LBank futures order placement is not supported by the pinned CCXT adapter. P&amp;L uses estimated fees.</section>
-<div class="row" style="margin-top:20px"><div id="views" style="display:flex;gap:8px" role="tablist" aria-label="Summary view"><button class="view" data-view="all">All</button> <button class="view" data-view="bot">Shahin</button> <button class="view" data-view="c3">Mojsavar</button> <button class="view" data-view="pa">Ghoghnous</button></div><p id="view_note">Summary and position table follow the selected view</p></div>
-<div class="kpis"><section class="panel kpi"><p>Account equity ($)</p><strong id="equity">—</strong><p id="equity_note">—</p></section>
-<section class="panel kpi"><p>Open P&amp;L ($)</p><strong id="unrealized">—</strong></section>
-<section class="panel kpi"><p>Realized P&amp;L, 24h ($)</p><strong id="realized">—</strong><p id="trades">—</p></section>
-<section class="panel kpi"><p>Positions and pending orders</p><strong id="slots">—</strong><p id="updated_sub">—</p><p id="updated">Waiting for connection</p></section>
-<section class="panel kpi"><p>Margin in use / allowed budget ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
-<section class="panel kpi"><p>Measured slippage vs the LBank order book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel" id="botspanel"><div class="row"><h2>Three bots</h2><p class="muted">All three run on one shared paper account. Switching a bot off only stops its new entries; open positions keep being managed until they exit. Changes apply without a restart.</p></div>
+
+<section class="pane" data-pane="overview">
+<div class="row" style="margin-top:16px"><div id="views" style="display:flex;gap:8px" role="tablist" aria-label="Summary view"><button class="view" data-view="all">All</button> <button class="view" data-view="bot">Shahin</button> <button class="view" data-view="c3">Mojsavar</button> <button class="view" data-view="pa">Ghoghnous</button></div><p id="view_note" class="small">Summary and position table follow the selected view</p></div>
+<div class="kpis">
+<section class="panel kpi"><p>Account equity ($)</p><strong id="equity">—</strong><p id="equity_note" class="small">—</p><p id="ret_total" class="small">—</p></section>
+<section class="panel kpi"><p>Open P&amp;L ($)</p><strong id="unrealized">—</strong><p id="slots_sub" class="small"><span id="slots">—</span> · <span id="updated_sub">—</span></p></section>
+<section class="panel kpi"><p>Realized P&amp;L, 24h ($)</p><strong id="realized">—</strong><p id="trades" class="small">—</p><p id="pnl_30d" class="small">—</p></section>
+<section class="panel kpi"><p>Drawdown now / max</p><strong id="dd_now">—</strong><p id="dd_max" class="small">—</p><div class="bar"><i id="dd_bar" style="width:0"></i></div></section>
+<section class="panel kpi"><p>Margin in use / allowed ($)</p><strong id="margin">—</strong><p id="margin_pct" class="small">—</p><p id="pending_margin" class="small">—</p><div class="bar"><i id="margin_bar" style="width:0"></i></div></section>
+<section class="panel kpi"><p>Win rate (all closed trades)</p><strong id="winrate">—</strong><p id="pf" class="small">—</p></section>
+<section class="panel kpi"><p>F risk manager today</p><strong id="f_mult">—</strong><p id="f_line" class="small">—</p></section>
+<section class="panel kpi"><p>Slippage vs LBank book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail" class="small">—</p></section>
+</div>
+<div class="grid2" style="margin-top:18px"><section class="panel"><div class="row"><h2>Equity and drawdown</h2><span class="small muted" id="eq_src">—</span></div><div class="chart"><canvas id="eq_chart"></canvas></div><div class="chart sm"><canvas id="dd_chart"></canvas></div></section>
+<section class="panel"><div class="row"><h2>Daily P&amp;L, last 30 days</h2></div><div class="chart" style="height:520px"><canvas id="daily_chart"></canvas></div></section></div>
+<section class="panel" id="botspanel"><div class="row"><h2>Three bots</h2><p class="small">Switching a bot off only stops its new entries; open positions keep being managed. Changes apply without a restart.</p></div>
 <div class="bots">
 <article class="bot bot-main" id="card_main"><div class="row"><div><h3>Shahin</h3><p class="sub muted">Donchian + Kumo breakout, 4h · 5 major coins</p></div><label class="switch"><input id="main_enabled" type="checkbox">On</label></div>
 <dl><dt>Risk per trade</dt><dd id="main_risk_v">—</dd><dt>Positions / orders</dt><dd id="main_open">—</dd><dt>Open P&amp;L ($)</dt><dd id="main_unreal">—</dd><dt>24h profit ($)</dt><dd id="main_day">—</dd></dl></article>
@@ -395,30 +474,39 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <dl><dt>Risk per trade</dt><dd id="c3_risk_v">—</dd><dt>Open positions</dt><dd id="c3_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="c3_unrealized">—</dd><dt>24h profit ($)</dt><dd id="c3_realized">—</dd><dt>Total closed profit ($)</dt><dd id="c3_total">—</dd><dt>Trades</dt><dd id="c3_win">—</dd></dl><p id="c3badge" class="muted" style="font-size:12px">—</p><p id="c3_trades" hidden></p></article>
 <article class="bot bot-pa" id="card_pa"><div class="row"><div><h3>Ghoghnous</h3><p class="sub muted">4h price-action Key Reversal · 20 coins</p></div><label class="switch"><input id="pa_enabled" type="checkbox">On</label></div>
 <dl><dt>Planned risk per trade</dt><dd id="pa_risk_v">—</dd><dt>Positions / Stop orders</dt><dd id="pa_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="pa_unrealized">—</dd><dt>24h profit ($)</dt><dd id="pa_realized">—</dd><dt>Total closed profit ($)</dt><dd id="pa_total">—</dd><dt>Trades</dt><dd id="pa_win">—</dd></dl><p id="pabadge" class="muted" style="font-size:12px">—</p><p id="pa_trades" hidden></p></article>
-</div>
-<details><summary>Mojsavar settings</summary>
-<div class="fields" style="margin-top:18px">
-<label class="field">Risk per trade (%)<input id="c3_risk" type="number" min="0.01" max="1" step="0.01"></label>
-<label class="field">Max positions (0 = no count cap)<input id="c3_max_positions" type="number" min="0" max="100" step="1"></label>
-<label class="field">Notional cap (PER_SLOT mode only, % of equity)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
-<label class="field">Entry confirmation (candles; 0 = none)<input id="c3_confirm" type="number" min="0" max="12" step="1"></label>
-<label><input id="c3_weekend" type="checkbox">Skip entries when the signal candle closes on a weekend</label>
-<label class="field" style="grid-column:span 2">Symbols (one per line, e.g. AVAX/USDT:USDT)<textarea id="c3_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
-<details><summary>Edit full Mojsavar JSON settings</summary><textarea id="c3_editor" aria-label="Mojsavar JSON configuration" spellcheck="false"></textarea></details>
-<div class="row" style="margin-top:18px"><p id="c3_dirty">Mojsavar settings not loaded.</p><button id="c3_save" disabled>Save Mojsavar settings</button></div>
-<details><summary>Mojsavar: last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></details>
-<details><summary>Ghoghnous settings</summary>
-<div class="fields" style="margin-top:18px">
-<label class="field">Base risk (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
-<label class="field">Volume multiplier<input id="pa_volume" type="number" min="0.01" step="0.1"></label>
-<label class="field" style="grid-column:span 3">Symbols (one per line, e.g. LINK/USDT:USDT)<textarea id="pa_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
-<p class="muted">Selected paper policy adds a trend exhaustion filter and fuzzy sizing to the low-volatility Key Reversal. Base risk is multiplied by the volume setting and the signal weight. The card shows planned risk before margin limits. Entry is valid for one candle; exits use the stop, an opposite Key Reversal, or 30 candles.</p>
-<details><summary>Edit full Ghoghnous JSON settings</summary><textarea id="pa_editor" aria-label="Ghoghnous JSON configuration" spellcheck="false"></textarea></details>
-<div class="row" style="margin-top:18px"><p id="pa_dirty">Ghoghnous settings not loaded.</p><button id="pa_save" disabled>Save Ghoghnous settings</button></div>
-<details><summary>Ghoghnous: pending Stop orders and last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry level</th><th>Stop loss</th></tr></thead><tbody id="pa_orders"></tbody></table>
-<table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="pa_hist"></tbody></table></div></details></details></section>
-<section class="panel"><div class="row"><h2>Positions (Shahin, Mojsavar and Ghoghnous in one table)</h2><button class="danger" id="panic" disabled>🚨 Emergency close of all positions (all three bots) + stop entries</button></div>
+</div></section>
+</section>
+
+<section class="pane" data-pane="positions">
+<section class="panel"><div class="row"><h2>Open positions (all three bots)</h2><button class="danger" id="panic" disabled>🚨 Emergency close all + stop entries</button></div>
 <div class="scroll"><table><thead><tr><th>Strategy</th><th>Symbol</th><th>Side</th><th>Entry / trigger</th><th>Live price</th><th>Stop loss</th><th>Target 1</th><th>Status</th><th>R</th><th>P&amp;L ($)</th><th>Action</th></tr></thead><tbody id="positions"><tr><td colspan="10">Enter the PIN first.</td></tr></tbody></table></div></section>
+<section class="panel note">Paper trading only. DEMO mode uses synthetic prices. Live LBank order placement is not supported by the pinned CCXT adapter. P&amp;L uses estimated fees.</section>
+</section>
+
+<section class="pane" data-pane="performance">
+<div class="grid3" style="margin-top:18px" id="perf_cards"></div>
+<section class="panel"><div class="row"><h2>Monthly profit</h2><span class="small muted">closed trades, % of the equity at the start of the month</span></div><div class="scroll"><table class="mtab"><thead><tr><th>Month</th><th class="num">Shahin</th><th class="num">Mojsavar</th><th class="num">Ghoghnous</th><th class="num">Total ($)</th><th class="num">Total (%)</th><th class="num">Trades</th><th class="num">Win %</th></tr></thead><tbody id="monthly"></tbody></table></div></section>
+<section class="panel"><div class="row"><h2>Trade log</h2><div class="gap"><select id="hist_filter"><option value="all">All bots</option><option value="main">Shahin</option><option value="c3">Mojsavar</option><option value="pa">Ghoghnous</option></select></div></div>
+<div class="scroll" style="max-height:560px"><table><thead><tr><th>Closed (UTC)</th><th>Bot</th><th>Symbol</th><th>Side</th><th class="num">Entry</th><th class="num">Exit</th><th class="num">P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="hist_all"></tbody></table></div></section>
+</section>
+
+<section class="pane" data-pane="risk">
+<section class="panel"><div class="row"><div><h2>F risk manager <span class="badge warn" id="f_mode">SHADOW</span></h2><p class="small">Shadow mode: F calculates and records what it would do every day. It does not change, open or close anything in the three bots.</p></div><span class="small muted" id="f_asof">—</span></div>
+<div id="f_empty" class="empty">Waiting for the F service (lbank-risk).</div>
+<div id="f_body" hidden>
+<div class="grid3" style="margin-top:14px">
+<section class="panel"><p class="small">AI market score (next 20 days for the bots)</p><div class="row"><span class="big" id="f_ai_pct">—</span><span class="pill" id="f_zone">—</span></div><div class="gauge"><b id="f_needle" style="left:50%"></b></div><div class="scale"><span>0 · no new entries</span><span>30</span><span>normal ×1</span><span>70</span><span>×1.4 · 100</span></div></section>
+<section class="panel"><p class="small">Combined risk multiplier</p><span class="big" id="f_comb">—</span><p class="small mono" id="f_formula">—</p><p class="small" id="f_action">—</p></section>
+<section class="panel"><p class="small">Drawdown brake (F account)</p><span class="big" id="f_dd">—</span><div class="bar"><i id="f_dd_bar" style="width:0;background:linear-gradient(90deg,#fbbf24,#f87171)"></i></div><div class="scale"><span>0%</span><span>8% brake starts</span><span>14% ×0.2</span></div><p class="small" id="f_vol">—</p></section>
+</div>
+<section class="panel"><h2>Per bot</h2><div class="scroll"><table><thead><tr><th>Bot</th><th class="num">Risk now</th><th class="num">Last 20 trades (R)</th><th>Losing streak control</th><th class="num">F multiplier</th><th class="num">Risk with F</th></tr></thead><tbody id="f_bots"></tbody></table></div></section>
+<div class="grid2"><section class="panel"><h2>AI score and multiplier history</h2><div class="chart"><canvas id="f_hist_chart"></canvas></div></section>
+<section class="panel"><h2>Account vs F (shadow estimate)</h2><div class="chart"><canvas id="f_shadow_chart"></canvas></div></section></div>
+<details><summary>Model inputs today</summary><div class="scroll"><table><tbody id="f_feats"></tbody></table></div><p class="small" id="f_data"></p></details>
+</div></section>
+</section>
+
+<section class="pane" data-pane="settings">
 <section class="panel"><div class="row"><h2>Shahin settings (main bot)</h2><button class="subtle" id="reload" disabled>Reload</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">Shahin auto-entry (same on/off switch as above)</label><label><input id="dry" type="checkbox" checked disabled>Simulation mode (Dry-run)</label>
 <label class="field">Strategy mode<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
@@ -454,7 +542,28 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label><input id="breakout" type="checkbox">Signal-candle breakout</label><label><input id="barb" type="checkbox">Barb Wire filter</label><label><input id="h2" type="checkbox">H2 / L2 pullback</label></div>
 <details><summary>Edit full JSON</summary><textarea id="editor" aria-label="JSON configuration" spellcheck="false"></textarea></details>
 <div class="row" style="margin-top:18px"><p id="dirty">Settings not loaded.</p><button id="save" disabled>Save settings</button></div></section>
-<footer><span id="health">—</span> · Stopping entries does not stop management of open positions.</footer>
+<section class="panel"><details><summary>Mojsavar settings</summary>
+<div class="fields" style="margin-top:18px">
+<label class="field">Risk per trade (%)<input id="c3_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field">Max positions (0 = no count cap)<input id="c3_max_positions" type="number" min="0" max="100" step="1"></label>
+<label class="field">Notional cap (PER_SLOT mode only, % of equity)<input id="c3_notional" type="number" min="1" max="100" step="1"></label>
+<label class="field">Entry confirmation (candles; 0 = none)<input id="c3_confirm" type="number" min="0" max="12" step="1"></label>
+<label><input id="c3_weekend" type="checkbox">Skip entries when the signal candle closes on a weekend</label>
+<label class="field" style="grid-column:span 2">Symbols (one per line, e.g. AVAX/USDT:USDT)<textarea id="c3_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
+<details><summary>Edit full Mojsavar JSON settings</summary><textarea id="c3_editor" aria-label="Mojsavar JSON configuration" spellcheck="false"></textarea></details>
+<div class="row" style="margin-top:18px"><p id="c3_dirty">Mojsavar settings not loaded.</p><button id="c3_save" disabled>Save Mojsavar settings</button></div>
+<details><summary>Mojsavar: last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="c3_hist"></tbody></table></div></details></details><details><summary>Ghoghnous settings</summary>
+<div class="fields" style="margin-top:18px">
+<label class="field">Base risk (%)<input id="pa_risk" type="number" min="0.01" max="1" step="0.01"></label>
+<label class="field">Volume multiplier<input id="pa_volume" type="number" min="0.01" step="0.1"></label>
+<label class="field" style="grid-column:span 3">Symbols (one per line, e.g. LINK/USDT:USDT)<textarea id="pa_symbols" style="min-height:90px;margin:0" spellcheck="false"></textarea></label></div>
+<p class="muted">Selected paper policy adds a trend exhaustion filter and fuzzy sizing to the low-volatility Key Reversal. Base risk is multiplied by the volume setting and the signal weight. The card shows planned risk before margin limits. Entry is valid for one candle; exits use the stop, an opposite Key Reversal, or 30 candles.</p>
+<details><summary>Edit full Ghoghnous JSON settings</summary><textarea id="pa_editor" aria-label="Ghoghnous JSON configuration" spellcheck="false"></textarea></details>
+<div class="row" style="margin-top:18px"><p id="pa_dirty">Ghoghnous settings not loaded.</p><button id="pa_save" disabled>Save Ghoghnous settings</button></div>
+<details><summary>Ghoghnous: pending Stop orders and last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry level</th><th>Stop loss</th></tr></thead><tbody id="pa_orders"></tbody></table>
+<table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="pa_hist"></tbody></table></div></details></details></section>
+</section>
+<footer><span id="health">—</span> · <span id="updated">Waiting for connection</span> · Stopping entries does not stop management of open positions.</footer>
 </main><script>
 'use strict';
 const $ = id => document.getElementById(id);
@@ -594,6 +703,89 @@ function renderPA(s){lastPA=s;$('pa_enabled').checked=s.enabled;$('pa_risk_v').t
  const h=$('pa_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'Buy':'Sell');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
 async function refreshPA(){if(!connected)return;try{const r=await api('/api/pa/status');renderPA(r.data);}catch(e){message('Ghoghnous: '+e.message,true);}}
 setInterval(()=>{refresh();refreshC3();refreshPA();},5000);
+
+// ---------------- tabs, performance, F risk manager (added) ----------------
+const charts={};let tab='overview';try{tab=localStorage.getItem('tab')||'overview';}catch(e){}
+function setTab(t){tab=t;try{localStorage.setItem('tab',t);}catch(e){}
+ for(const b of document.querySelectorAll('.tab'))b.classList.toggle('on',b.dataset.tab===t);
+ for(const p of document.querySelectorAll('.pane'))p.classList.toggle('on',p.dataset.pane===t);
+ for(const c of Object.values(charts))if(c)c.resize();}
+for(const b of document.querySelectorAll('.tab'))b.onclick=()=>setTab(b.dataset.tab);
+setTab(tab);
+const BOTCOL={main:'#5b8cff',c3:'#a78bfa',pa:'#f59e0b'};
+const money=v=>v===null||v===undefined?'—':(v<0?'-$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct=(v,n=1)=>v===null||v===undefined||!isFinite(v)?'—':(v>0?'+':'')+Number(v).toFixed(n)+'%';
+const cls=v=>v>0?'good':v<0?'bad':'';
+const day=t=>new Date(t*1000).toISOString().slice(0,10);
+function chart(id,cfg){if(typeof Chart==='undefined')return null;if(charts[id])charts[id].destroy();
+ Chart.defaults.color='#8fa0c2';Chart.defaults.borderColor='#1f2b45';Chart.defaults.font.family='Inter';
+ charts[id]=new Chart($(id),cfg);return charts[id];}
+const baseOpts=(extra={})=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,maxRotation:0}},y:{grid:{color:'#17223a'}}}},extra);
+let lastPerf=null,lastRisk=null;
+function td(tr,v,c,num){const x=document.createElement('td');x.textContent=v;if(c)x.className=c;if(num){x.classList.add('num');x.dir='ltr';}tr.append(x);return x;}
+function renderPerf(p){lastPerf=p;const a=p.all,eqNow=(()=>{try{return Number(String($('equity').textContent).replace(/,/g,''));}catch(e){return null;}})();
+ const eq=isFinite(eqNow)&&eqNow>0?eqNow:(p.realized_curve.length?p.realized_curve.at(-1).equity:p.seed);
+ $('ret_total').textContent='Since start: '+pct((eq/p.seed-1)*100)+' on $'+number(p.seed,0);$('ret_total').className='small '+cls(eq-p.seed);
+ $('pnl_30d').textContent='7 days '+money(a.pnl_7d)+' · 30 days '+money(a.pnl_30d);
+ $('dd_now').textContent=pct(p.drawdown_now);$('dd_now').className=p.drawdown_now<-10?'bad':p.drawdown_now<-5?'warn':'';$('dd_max').textContent='Max '+pct(p.drawdown_max)+' · F target: stay above -15%';
+ $('dd_bar').style.width=Math.min(100,-p.drawdown_now/15*100)+'%';
+ $('winrate').textContent=a.win_rate===null?'—':number(a.win_rate,1)+'%';$('pf').textContent=a.trades+' trades · profit factor '+(a.profit_factor?number(a.profit_factor):'—')+' · avg win '+money(a.avg_win)+' / loss '+money(a.avg_loss);
+ // equity + drawdown
+ const pts=p.snapshots.length>=2?p.snapshots.map(s=>({t:s.t,v:s.equity})):p.realized_curve.map(s=>({t:s.t,v:s.equity}));
+ $('eq_src').textContent=p.snapshots.length>=2?'hourly account snapshots (incl. open P&L)':'closed trades only (snapshots start with the F service)';
+ if(pts.length){let pk=-Infinity;const dd=pts.map(x=>{pk=Math.max(pk,x.v);return (x.v/pk-1)*100;});const lab=pts.map(x=>new Date(x.t*1000).toISOString().slice(0,10));
+  chart('eq_chart',{type:'line',data:{labels:lab,datasets:[{label:'Equity ($)',data:pts.map(x=>x.v),borderColor:'#6d8dff',backgroundColor:'rgba(109,141,255,.12)',fill:true,pointRadius:0,tension:.2,borderWidth:2}]},options:baseOpts({plugins:{legend:{display:false}}})});
+  chart('dd_chart',{type:'line',data:{labels:lab,datasets:[{label:'Drawdown (%)',data:dd,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.15)',fill:true,pointRadius:0,borderWidth:1.5},{label:'-15% limit',data:dd.map(()=>-15),borderColor:'#fbbf24',borderDash:[5,5],pointRadius:0,borderWidth:1}]},options:baseOpts({scales:{x:{display:false},y:{grid:{color:'#17223a'},suggestedMin:-16,max:0}}})});}
+ // daily bars
+ const days=[];for(let i=29;i>=0;i--)days.push(new Date(Date.now()-i*86400000).toISOString().slice(0,10));
+ chart('daily_chart',{type:'bar',data:{labels:days.map(d=>d.slice(5)),datasets:['main','c3','pa'].map(b=>({label:BOTNAME[b==='main'?'bot':b],data:days.map(d=>(p.daily[d]||{})[b]||0),backgroundColor:BOTCOL[b],borderRadius:3,stack:'s'}))},options:baseOpts({indexAxis:'y',scales:{x:{stacked:true,grid:{color:'#17223a'}},y:{stacked:true,grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}}})});
+ // per-bot cards
+ const pc=$('perf_cards');pc.replaceChildren();
+ for(const [k,b] of Object.entries(p.bots)){const s=document.createElement('section');s.className='panel bot bot-'+k;
+  s.innerHTML='<h3></h3><dl><dt>Closed profit</dt><dd></dd><dt>Trades · win rate</dt><dd></dd><dt>Profit factor</dt><dd></dd><dt>Avg win / avg loss</dt><dd></dd><dt>Best / worst</dt><dd></dd><dt>7 days / 30 days</dt><dd></dd></dl>';
+  s.querySelector('h3').textContent=b.name;const dd_=s.querySelectorAll('dd');dd_[0].textContent=money(b.total);dd_[0].className=cls(b.total);
+  dd_[1].textContent=b.trades+' · '+(b.win_rate===null?'—':number(b.win_rate,1)+'%');dd_[2].textContent=b.profit_factor?number(b.profit_factor):'—';
+  dd_[3].textContent=money(b.avg_win)+' / '+money(b.avg_loss);dd_[4].textContent=money(b.best)+' / '+money(b.worst);dd_[5].textContent=money(b.pnl_7d)+' / '+money(b.pnl_30d);pc.append(s);}
+ // monthly
+ const m=$('monthly');m.replaceChildren();const ms=Object.entries(p.monthly).reverse();
+ if(!ms.length){const tr=document.createElement('tr');td(tr,'No closed trades yet.','empty').colSpan=8;m.append(tr);}
+ for(const [k,r] of ms){const tr=document.createElement('tr');td(tr,k);for(const b of ['main','c3','pa'])td(tr,number(r[b]),r[b]>0?'pos':r[b]<0?'neg':'',1);td(tr,number(r.total),r.total>0?'pos':'neg',1);td(tr,pct(r.pct,2),r.pct>0?'pos':'neg',1);td(tr,r.trades,'',1);td(tr,number(r.win_rate,1),'',1);m.append(tr);}
+ drawHist();}
+function drawHist(){if(!lastPerf)return;const f=$('hist_filter').value,h=$('hist_all');h.replaceChildren();
+ const rows=lastPerf.recent.filter(x=>f==='all'||x.bot===f);
+ if(!rows.length){const tr=document.createElement('tr');td(tr,'No closed trades yet.','empty').colSpan=8;h.append(tr);return;}
+ for(const x of rows){const tr=document.createElement('tr');td(tr,new Date(x.closed*1000).toISOString().slice(0,16).replace('T',' '),'mono');
+  const t=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(x.bot==='main'?'':' '+x.bot);sp.textContent=x.name;t.append(sp);tr.append(t);
+  td(tr,x.symbol,'mono');td(tr,x.side==='long'?'Buy':'Sell');td(tr,number(x.entry,6),'',1);td(tr,number(x.exit,6),'',1);td(tr,number(x.pnl),x.pnl<0?'bad':'good',1);td(tr,x.reason||'');h.append(tr);}}
+$('hist_filter').addEventListener('change',drawHist);
+function renderRisk(r){lastRisk=r;
+ if(!r.available){$('f_empty').hidden=false;$('f_empty').textContent=r.hint;$('f_body').hidden=true;$('f_badge').textContent='F: not running';$('f_badge').className='badge';$('f_mult').textContent='—';$('f_line').textContent=r.hint;return;}
+ const c=r.current;$('f_empty').hidden=true;$('f_body').hidden=false;
+ const p=c.ai.percentile*100,zone=c.ai.zone;
+ $('f_badge').textContent='F '+(r.stale?'(stale) ':'')+'· AI '+number(p,0)+' · ×'+number(c.combined);$('f_badge').className='badge '+(r.stale?'warn':zone==='bad'?'bad':zone==='good'?'ok':'');
+ $('f_mult').textContent='×'+number(c.combined);$('f_mult').className=c.combined<1?'warn':'good';
+ $('f_line').textContent='AI '+number(p,0)+'/100 ('+zone+') · shadow mode, no effect on the bots';
+ $('f_asof').textContent='Decision for the day after '+c.as_of+' · computed '+new Date(c.computed_at*1000).toISOString().slice(0,16).replace('T',' ')+' UTC'+(r.stale?' · STALE':'');
+ $('f_ai_pct').textContent=number(p,0);$('f_zone').textContent=zone==='bad'?'Bad: no new entries':zone==='good'?'Good: ×1.4':'Normal: ×1';$('f_zone').className='pill '+zone;$('f_needle').style.left=Math.max(0,Math.min(100,p))+'%';
+ $('f_comb').textContent='×'+number(c.combined);$('f_formula').textContent='scale '+c.scale+' × AI '+c.ai.multiplier+' × vol '+number(c.vol.multiplier)+' × brake '+number(c.brake.multiplier);$('f_action').textContent=c.open_positions_action;
+ $('f_dd').textContent=pct(-c.brake.drawdown_pct);$('f_dd_bar').style.width=Math.min(100,c.brake.drawdown_pct/15*100)+'%';
+ $('f_vol').textContent='Volatility target: account daily vol '+(c.vol.daily_vol===null?'— (needs 20 days)':number(c.vol.daily_vol*100)+'%')+' → ×'+number(c.vol.multiplier);
+ const tb=$('f_bots');tb.replaceChildren();
+ for(const [k,b] of Object.entries(c.bots)){const tr=document.createElement('tr');const t=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(k==='main'?'':' '+k);sp.textContent=b.name;t.append(sp);tr.append(t);
+  td(tr,number(b.base_risk_pct,2)+'%','',1);td(tr,number(b.streak.sum_r)+' ('+b.streak.trades+' trades)',b.streak.sum_r<0?'bad':'good',1);td(tr,b.streak.active?'ACTIVE: ×0.5':'off',b.streak.active?'warn':'muted');td(tr,'×'+number(b.multiplier),'',1);td(tr,number(b.f_risk_pct,2)+'%','',1);tb.append(tr);}
+ const H=r.history;if(H.length){const lab=H.map(x=>x.as_of.slice(5));
+  chart('f_hist_chart',{type:'line',data:{labels:lab,datasets:[{label:'AI score (0-100)',data:H.map(x=>x.ai_pct*100),borderColor:'#6d8dff',pointRadius:2,yAxisID:'y'},{label:'Combined multiplier',data:H.map(x=>x.combined),borderColor:'#34d399',stepped:true,pointRadius:0,yAxisID:'y1'}]},options:baseOpts({scales:{x:{grid:{display:false}},y:{min:0,max:100,grid:{color:'#17223a'}},y1:{position:'right',min:0,grid:{display:false}}}})});
+  chart('f_shadow_chart',{type:'line',data:{labels:lab,datasets:[{label:'Account',data:H.map(x=>x.account_equity),borderColor:'#8fa0c2',pointRadius:0},{label:'F (shadow estimate)',data:H.map(x=>x.shadow_equity),borderColor:'#a78bfa',pointRadius:0}]},options:baseOpts()});}
+ const ft=$('f_feats');ft.replaceChildren();for(const [k,v] of Object.entries(c.features)){const tr=document.createElement('tr');td(tr,k,'mono');td(tr,v===null?'—':Number(v).toPrecision(4),'',1);ft.append(tr);}
+ $('f_data').textContent='Coins with data: '+(c.data_status.coins??'—')+' · inputs filled with training medians: '+((c.data_status.features_missing||[]).join(', ')||'none')+' · model trained until '+(c.model.trained_until||'—');}
+async function loadPerf(){if(!connected)return;try{renderPerf((await api('/api/performance')).data);}catch(e){message('Performance: '+e.message,true);}}
+async function loadRisk(){if(!connected)return;try{renderRisk((await api('/api/risk')).data);}catch(e){message('F risk manager: '+e.message,true);}}
+const _drawSummary=drawSummary;drawSummary=function(){_drawSummary();
+ const S=[lastBot,lastC3,lastPA].filter(Boolean),used=S.reduce((a,x)=>a+(x.engaged_margin_usd||0),0),b=lastBot;
+ const eq=b&&b.shared_account_enabled?b.equity_usd:(b?b.equity_usd:null),allowed=b&&eq?eq*b.allowed_margin_pct/100:null;
+ if(allowed)$('margin_bar').style.width=Math.min(100,used/allowed*100)+'%';};
+const _connect=$('connect').onclick;$('connect').onclick=async()=>{await _connect();await loadPerf();await loadRisk();};
+setInterval(()=>{loadPerf();loadRisk();},60000);
 </script></body></html>'''
 
 app = create_app()
