@@ -358,6 +358,40 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         return risk_overlay.clean({"available": True, "current": json.loads(cur.read_text()), "history": rows,
                 "stale": time.time() - json.loads(cur.read_text()).get("computed_at", 0) > 36 * 3600})
 
+    @application.get("/api/risk/control", dependencies=[Depends(authorized)])
+    def risk_control_get():
+        import risk_gate
+        return risk_gate.status()
+
+    @application.put("/api/risk/control", dependencies=[Depends(authorized)])
+    def risk_control_put(payload: dict):
+        import risk_gate
+        try:
+            risk_gate.write_control({**risk_gate.read_control(), **{k: payload[k] for k in ("enabled", "open_cuts") if k in payload}})
+        except ValueError as exc:
+            raise HTTPException(422, str(exc))
+        LOG.warning("F risk manager control changed: %s", risk_gate.read_control())
+        return risk_gate.status()
+
+    @application.get("/api/account", dependencies=[Depends(authorized)])
+    def account_view():
+        import lbank_account
+        return {"mode": "paper", "live_available": False, "keys": lbank_account.key_status(),
+                "live_reason": "Live LBank futures execution is not built yet: LBank's published contract API documents no "
+                               "order, leverage or position endpoints, and the pinned CCXT adapter only trades spot. "
+                               "The bots stay on the paper account."}
+
+    @application.post("/api/account/test", dependencies=[Depends(authorized)])
+    def account_test():
+        import lbank_account
+        return lbank_account.account_check()
+
+    @application.post("/api/account/mode", dependencies=[Depends(authorized)])
+    def account_mode(payload: dict):
+        if payload.get("mode") != "paper":
+            raise HTTPException(409, "Live trading is locked in this build; the bots stay on paper.")
+        return {"mode": "paper"}
+
     @application.post("/api/bots/toggle", dependencies=[Depends(authorized)])
     def toggle_bot(payload: BotToggle):
         """On/off switch of one bot: off stops NEW entries (and cancels unfilled orders); open positions stay managed."""
@@ -510,6 +544,9 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 
 <section class="pane" data-pane="risk">
 <section class="panel"><div class="row"><div><h2>F risk manager <span class="badge warn" id="f_mode">SHADOW</span></h2><p class="small">Shadow mode: F calculates and records what it would do every day. It does not change, open or close anything in the three bots.</p></div><span class="small muted" id="f_asof">—</span></div>
+<section class="panel" id="f_control" style="border-color:#3b4a75"><div class="row"><div><h3>Apply F to the three bots</h3><p class="small" id="fc_status">—</p></div>
+<div class="gap"><label class="switch"><input id="fc_open" type="checkbox" checked>Also act on open positions</label><label class="switch" style="background:#2a1d3d"><input id="fc_enabled" type="checkbox">F active</label></div></div>
+<p class="small muted">Off = the bots trade exactly as now and F only records what it would do. On = each bot multiplies its risk by F's multiplier (0 = no new entries) and, if selected, cuts open positions when F's AI score or drawdown brake falls. If F's daily decision is missing or older than 36 hours, the bots automatically use ×1. Applies within seconds, no restart.</p></section>
 <div id="f_empty" class="empty">Waiting for the F service (lbank-risk).</div>
 <div id="f_body" hidden>
 <div class="grid3" style="margin-top:14px">
@@ -525,6 +562,13 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 </section>
 
 <section class="pane" data-pane="settings">
+<section class="panel"><div class="row"><h2>Trading account</h2><span class="badge ok" id="acct_mode"><span class="dot"></span>PAPER</span></div>
+<div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
+<section class="panel" style="border-color:#1f5f4a"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
+<section class="panel"><div class="row"><h3>🔒 Live LBank futures</h3><span class="pill bad">Locked</span></div>
+<p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (set LBANK_API_KEY and LBANK_SECRET_KEY in the server's .env; keys are never entered in this page)</p>
+<div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test LBank connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
+<p class="small" id="acct_result"></p></section></div></section>
 <section class="panel"><div class="row"><h2>Shahin settings (main bot)</h2><button class="subtle" id="reload" disabled>Reload</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">Shahin auto-entry (same on/off switch as above)</label><label><input id="dry" type="checkbox" checked disabled>Simulation mode (Dry-run)</label>
 <label class="field">Strategy mode<select id="strategy"><option>MTF</option><option>SINGLE</option></select></label>
@@ -804,6 +848,22 @@ const _drawSummary=drawSummary;drawSummary=function(){_drawSummary();
  if(allowed)$('margin_bar').style.width=Math.min(100,used/allowed*100)+'%';};
 const _connect=$('connect').onclick;$('connect').onclick=async()=>{await _connect();await loadPerf();await loadRisk();};
 setInterval(()=>{loadPerf();loadRisk();},60000);
+function renderControl(st){$('fc_enabled').checked=st.control.enabled;$('fc_open').checked=st.control.open_cuts;
+ $('fc_status').textContent=(st.active?'ACTIVE: ':st.control.enabled?'ON but not applied: ':'OFF: ')+st.reason+(st.active?' · multipliers Shahin ×'+number(st.multipliers.main)+' · Mojsavar ×'+number(st.multipliers.c3)+' · Ghoghnous ×'+number(st.multipliers.pa):'');
+ $('fc_status').className='small '+(st.active?'good':st.control.enabled?'warn':'muted');
+ if(!st.bot_ready)$('fc_status').textContent+=' · The running bot does not include F support yet (rebuild lbank-bot once when you decide to connect F).';$('f_mode').textContent=st.active?'ACTIVE':'SHADOW';$('f_mode').className='badge '+(st.active?'ok':'warn');}
+async function loadControl(){if(!connected)return;try{renderControl((await api('/api/risk/control')).data);}catch(e){message('F control: '+e.message,true);}}
+async function saveControl(){const on=$('fc_enabled').checked;
+ if(on&&!confirm('Switch F ON? From now on the three bots will size new trades with F\'s multiplier'+($('fc_open').checked?' and F may cut open positions':'')+'.')){$('fc_enabled').checked=false;return;}
+ try{renderControl((await api('/api/risk/control','PUT',{enabled:on,open_cuts:$('fc_open').checked})).data);message(on?'F is switched ON.':'F is switched OFF; the bots trade without it.');}catch(e){message(e.message,true);loadControl();}}
+$('fc_enabled').addEventListener('change',saveControl);$('fc_open').addEventListener('change',saveControl);
+async function loadAccount(){if(!connected)return;try{const a=(await api('/api/account')).data;$('acct_reason').textContent=a.live_reason;
+ $('acct_keys').textContent=a.keys.configured?'configured '+(a.keys.api_key_hint||''):'not configured';$('acct_test').disabled=!a.keys.configured;$('acct_live').disabled=!a.live_available;}catch(e){message('Account: '+e.message,true);}}
+$('acct_test').onclick=async()=>{const b=$('acct_test');b.disabled=true;$('acct_result').textContent='Asking LBank…';
+ try{const r=(await api('/api/account/test','POST',{})).data;$('acct_result').textContent=r.message+(r.balances&&r.balances.length?' · '+r.balances.map(x=>Object.entries(x).map(([k,v])=>k+': '+v).join(', ')).join(' | '):'');$('acct_result').className='small '+(r.ok?'good':'bad');}
+ catch(e){$('acct_result').textContent=e.message;$('acct_result').className='small bad';}finally{b.disabled=false;}};
+const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _connect2();await loadControl();await loadAccount();};
+setInterval(loadControl,60000);
 </script></body></html>'''
 
 app = create_app()
