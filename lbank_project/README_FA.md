@@ -1,5 +1,10 @@
 # سه ربات LBank: شاهین، موج‌سوار، ققنوس — و داشبورد فارسی
 
+برای تحویل نسخه مستقل به چند مشتری و لایسنس زمان‌دار، [راهنمای چندمشتری](MULTI_CUSTOMER_FA.md)
+را ببینید. هر نصب رمز، پورت، runtime و حساب paper مستقل دارد.
+
+برای پنل مرکزی با ورود اختصاصی کاربران و انتخاب حساب شخصی صرافی، [PORTAL_FA.md](PORTAL_FA.md) و [MULTI_EXCHANGE_FA.md](MULTI_EXCHANGE_FA.md) را بخوانید. این سرویس پایلوت جدا از داشبورد تک‌مشتری است؛ اجرای سفارش واقعی هنوز فعال نشده است.
+
 ## سه ربات (پیش‌فرض: هر سه روشن، حساب paper مشترک، سقف مارجین ۸۰٪)
 
 | نام | کار | ارزها | ریسک پیش‌فرض | فایل |
@@ -68,7 +73,7 @@ Linux یا macOS و Python نسخهٔ ۳.۱۱ یا بالاتر لازم است.
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-export BOT_PIN='my-personal-pin'
+export BOT_PIN='replace-with-your-own-long-secret'
 export PAPER_DATA_MODE=demo
 python -u lbank_bot.py
 ```
@@ -77,12 +82,12 @@ python -u lbank_bot.py
 
 ```bash
 source .venv/bin/activate
-export BOT_PIN='my-personal-pin'
+export BOT_PIN='replace-with-your-own-long-secret'
 export PAPER_DATA_MODE=demo
 uvicorn dashboard_server:app --host 127.0.0.1 --port 8000
 ```
 
-در اجرای محلی، مسیر پیش‌فرض کانفیگ `config.json` و دیتابیس `data/lbank_ichimoku_bot.db` است. متغیرهای `BOT_CONFIG` و `BOT_DB` قابل تغییر هستند و باید برای دو پردازش یکسان باشند. اگر `BOT_PIN` محلی تنظیم نشود، مقدار درخواستی مشخصات، یعنی `1234`، استفاده می‌شود؛ در Docker تنظیم آن الزامی است.
+در اجرای محلی، مسیر پیش‌فرض کانفیگ `config.json` و دیتابیس `data/lbank_ichimoku_bot.db` است. متغیرهای `BOT_CONFIG` و `BOT_DB` قابل تغییر هستند و باید برای دو پردازش یکسان باشند. `BOT_PIN` یا `BOT_PIN_FILE` با راز حداقل ۱۶کاراکتری لازم است؛ رمز پیش‌فرض وجود ندارد.
 
 ## دادهٔ واقعی فیوچرز برای شبیه‌سازی
 

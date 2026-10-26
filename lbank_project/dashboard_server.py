@@ -9,12 +9,14 @@ import os
 import secrets
 import time
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Response
+from fastapi import Depends, FastAPI, Header, HTTPException, Response, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 import c3_sleeve
 import pa_sleeve
+import license_access
+from deployment_security import dashboard_secret, LoginThrottle
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        LIVE_LIMITATION, LiveUnavailable, MarketData, PENDING,
                        file_lock, net_pnl, position_margin, position_leverage)
@@ -54,17 +56,25 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         if engine is None:
+            if len(dashboard_secret()) < 16:
+                raise ValueError('Set BOT_PIN or BOT_PIN_FILE to a secret of at least 16 characters')
             application.state.engine = Engine(ConfigStore(), Database(), MarketData())
         else:
             application.state.engine = engine
         yield
 
     application = FastAPI(title="LBank Ichimoku Paper Dashboard", lifespan=lifespan)
+    throttle = LoginThrottle()
 
-    def authorized(x_bot_pin: str = Header(default="")):
-        expected = os.getenv("BOT_PIN", "1234")
+    async def authorized(request: Request, x_bot_pin: str = Header(default="")):
+        client = request.client.host if request.client else 'unknown'
+        if throttle.blocked(client):
+            raise HTTPException(status_code=429, detail='Too many failed login attempts; retry later')
+        expected = dashboard_secret()
         if not expected or not secrets.compare_digest(x_bot_pin.encode(), expected.encode()):
+            throttle.failed(client)
             raise HTTPException(status_code=401, detail="Incorrect PIN")
+        throttle.succeeded(client)
 
     def bot() -> Engine:
         return application.state.engine
@@ -89,6 +99,14 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @application.get("/", response_class=HTMLResponse)
     def home():
         return HTML
+
+    @application.get('/healthz')
+    def health():
+        return {'status': 'ok'}
+
+    @application.get('/api/license', dependencies=[Depends(authorized)])
+    def license_status():
+        return license_access.status()
 
     @application.get("/api/status", dependencies=[Depends(authorized)])
     def status():
@@ -147,7 +165,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             "runtime": engine.db.runtime_all(), "live_execution_supported": False,
             "data_mode": getattr(engine.data, "mode", "test-fixture"),
             "fill_quality": engine.db.fill_quality_summary(),
-            "execution_note": LIVE_LIMITATION}
+            "execution_note": LIVE_LIMITATION, "license": license_access.status()}
 
     @application.post("/api/positions/close", dependencies=[Depends(authorized)])
     def close(payload: CloseRequest):
@@ -652,7 +670,7 @@ function drawPositions(){const rows=$('positions');rows.replaceChildren();const 
   const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'Cancel':'Close now';
   button.onclick=async()=>{if(!confirm('Close / cancel '+p.symbol+' ('+BOTNAME[kind]+')'+'?'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':kind==='pa'?'/api/pa/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();await refreshPA();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
 function draw(){drawSummary();drawPositions();}
-function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.auto_trade_enabled?'Entries on':'Entries off';
+function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.license&&!s.license.entries_allowed?'License '+s.license.state+' · entries blocked':s.auto_trade_enabled?'Entries on':'Entries off';
  renderFillQuality(s.fill_quality);$('updated').textContent='Last update: '+new Date().toLocaleTimeString('en-GB');draw();
  const stamp=s.runtime.watchdog_at;$('health').textContent=stamp?'Last bot check: '+new Date(stamp*1000).toLocaleTimeString('en-GB'):'The bot has not logged a check yet';
  if(stamp&&Date.now()/1000-stamp>60)$('health').textContent+=' — the bot check is lagging';

@@ -175,7 +175,7 @@ class Sleeve(c3.Sleeve):
         held={p['symbol'] for p in self.store.positions()}
         for s,o in self.store.orders().items():
             try:
-                if s in held or now*1000>=o['expires']:self.store.set_order(s,None);continue
+                if s in held or now*1000>=o['expires'] or not bot.license_access.entries_allowed(now):self.store.set_order(s,None);continue
                 step=order_step(o,self.data.price(s))
                 if step=='cancel' or (step=='fill' and not self.c['enabled']):self.store.set_order(s,None)
                 elif step=='fill':self.open(s,o,now);self.store.set_order(s,None)
@@ -195,7 +195,7 @@ class Sleeve(c3.Sleeve):
                 raw,sig=tradable_signal(df,c)
                 if pos and c['opposite_exit'] and raw and raw['side']!=pos['side']:
                     self.close(pos,self.data.price(s),'opposite',now);pos=None
-                if not pos and c['enabled'] and sig:   # valid until the next candle (stamp + 4h) has closed
+                if not pos and c['enabled'] and sig and bot.license_access.entries_allowed(now):   # valid until the next candle (stamp + 4h) has closed
                     self.store.set_order(s,dict(sig,signal_ts=stamp,expires=stamp+2*H4*1000,atr=float(b.atr)))
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
@@ -206,6 +206,7 @@ class Sleeve(c3.Sleeve):
         with self.execution_lock():return self._open(s,order,now)
 
     def _open(self,s:str,order:dict,now:float):
+        if not bot.license_access.entries_allowed(now):return None
         positions=self.store.positions();limit=self.c['max_open_positions']
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None
         c=self.c;sign=1 if order['side']=='long' else -1;price=self.data.price(s);stop=order['stop'];dist=sign*(price-stop)

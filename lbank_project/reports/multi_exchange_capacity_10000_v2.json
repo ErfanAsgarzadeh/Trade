@@ -1,0 +1,52 @@
+{
+  "profile": "synthetic SQLite / in-process ASGI; NOT live trading or production capacity certification",
+  "users": 10000,
+  "queued_jobs_initial": 10000,
+  "workers": 1,
+  "synthetic_jobs_claimed": 1000,
+  "synthetic_jobs_completed": 1000,
+  "synthetic_jobs_failed": 0,
+  "worker_seconds": 16.996,
+  "worker_jobs_per_second": 58.84,
+  "http_requests": 2000,
+  "http_concurrency": 40,
+  "http_seconds": 3.453,
+  "http_requests_per_second": 579.21,
+  "latency_ms": {
+    "p50": 57.95,
+    "p95": 116.86,
+    "p99": 140.5
+  },
+  "http_status_codes": {
+    "200": 2000
+  },
+  "verified_account_reads": 192,
+  "owner_mismatches": 0,
+  "queue_remaining": {
+    "states": {
+      "done": 1000,
+      "queued": 9000
+    },
+    "oldest_due_age_seconds": 20.95743203163147
+  },
+  "exchange_requests": 0,
+  "live_orders": 0,
+  "connections_by_exchange_and_market": {
+    "lbank:spot": 1112,
+    "binance:futures": 556,
+    "bybit:spot": 556,
+    "okx:futures": 556,
+    "bitget:spot": 556,
+    "gate:futures": 556,
+    "kucoin:spot": 556,
+    "kraken:futures": 556,
+    "coinbaseexchange:spot": 1111,
+    "binance:spot": 555,
+    "bybit:futures": 555,
+    "okx:spot": 555,
+    "bitget:futures": 555,
+    "gate:spot": 555,
+    "kucoin:futures": 555,
+    "kraken:spot": 555
+  }
+}
