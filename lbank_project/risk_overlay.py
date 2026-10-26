@@ -151,13 +151,30 @@ def account_features(daily_eq: list[float]) -> dict:
 
 
 # ---------------------------------------------------------------- bots (read only)
+class QuoteData:
+    """Prices for the account equity from LBank's public futures marketData (the feed lbank_candles.py already uses).
+    No CCXT market loading (its spot side endpoints can time out), one HTTP call for all contracts, cached 30 s."""
+    mode = "csv-lbank"
+
+    def __init__(self):
+        self.quotes, self.at = {}, 0.
+
+    def price(self, symbol: str, cached: bool = False) -> float:
+        import lbank_candles
+        if time.time() - self.at > 30 or not self.quotes:
+            self.quotes, self.at = lbank_candles.fetch_prices(), time.time()
+        v = self.quotes.get(lbank_candles.lbank_name(symbol))
+        if v is None or not math.isfinite(v) or v <= 0:
+            raise ValueError(f"no LBank futures quote for {symbol}")
+        return float(v)
+
+
 class Bots:
     """Read-only view of the three bots: equity, open positions, closed trades."""
     def __init__(self):
         import lbank_bot as bot, c3_sleeve, pa_sleeve
         self.bot, self.c3, self.pa = bot, c3_sleeve, pa_sleeve
-        data = bot.MarketData()
-        data.exchange.has["fetchCurrencies"] = False   # load_markets without LBank's slow withdrawConfigs call (not needed here)
+        data = bot.MarketData() if os.getenv("PAPER_DATA_MODE", "demo") == "demo" else QuoteData()
         self.engine = bot.Engine(bot.ConfigStore(), bot.Database(), data)
 
     def equity(self) -> float:
