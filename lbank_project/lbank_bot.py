@@ -73,7 +73,8 @@ SCHEMA = {
         "initial_stop_atr_mult": float,
         "btc_regime_filter_enabled": bool, "btc_regime_symbol": str,
         "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float,
-        "atr_regime_filter_enabled": bool, "atr_regime_window": int, "atr_regime_min_ratio": float},
+        "atr_regime_filter_enabled": bool, "atr_regime_window": int, "atr_regime_min_ratio": float,
+        "late_entry_filter_enabled": bool, "late_entry_bars": int, "late_entry_max_log_move": float},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -92,7 +93,11 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     "funding_short_filter_enabled": False, "funding_short_prints": 9, "funding_short_threshold": 0.0,
     # ATR regime filter 2A (high_cagr/output/ideas/idea2_atr_regime.json): no entry or pyramid add while the signal
     # bar's ATR is below min_ratio x the median ATR of the `window` closed bars before it. Older configs: OFF.
-    "atr_regime_filter_enabled": False, "atr_regime_window": 60, "atr_regime_min_ratio": 1.0}
+    "atr_regime_filter_enabled": False, "atr_regime_window": 60, "atr_regime_min_ratio": 1.0,
+    # Late-entry gate (high_cagr/output/ideas/winrate/report_fa.html): no new root entry when the last closed 4h close
+    # has already moved more than max_log_move (log return) in the trade direction over the previous `bars` candles.
+    # Pyramid adds are not gated. Older configs: OFF.
+    "late_entry_filter_enabled": False, "late_entry_bars": 60, "late_entry_max_log_move": 0.1521}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -218,6 +223,8 @@ def validate_config(c: dict) -> dict:
             raise ConfigError("Invalid funding short filter settings")
         if not (10 <= settings["atr_regime_window"] <= 500 and 0.1 <= settings["atr_regime_min_ratio"] <= 5.0):
             raise ConfigError("Invalid ATR regime filter settings")
+        if not (10 <= settings["late_entry_bars"] <= 500 and 0.01 <= settings["late_entry_max_log_move"] <= 2.0):
+            raise ConfigError("Invalid late-entry filter settings")
         if settings["btc_regime_filter_enabled"] and settings["btc_regime_symbol"] not in c["symbols"]:
             raise ConfigError("btc_regime_symbol must be one of the traded symbols")
         if settings["exit_tp_mode"] == "HYBRID_TRAIL_AND_HARD_TP" and settings["hard_tp_rr"] <= 0:
@@ -585,6 +592,16 @@ def atr_regime_ratio(bars: list, c: dict, timeframe: str, now: float, window: in
     if not (math.isfinite(current) and math.isfinite(median) and median > 0):
         return None
     return current / median
+
+
+def late_entry_move(df: pd.DataFrame, side: str, bars: int) -> float | None:
+    """Side-signed log move of the last closed close versus the close `bars` candles earlier (None if too short)."""
+    if len(df) <= bars:
+        return None
+    now, then = float(df.close.iloc[-1]), float(df.close.iloc[-1 - bars])
+    if not (math.isfinite(now) and math.isfinite(then) and now > 0 and then > 0):
+        return None
+    return (1 if side == "long" else -1) * math.log(now / then)
 
 
 def regime(df: pd.DataFrame, c: dict) -> str | None:
@@ -1478,6 +1495,14 @@ class Engine:
                         if ratio is None or ratio < gate["atr_regime_min_ratio"]:
                             if ratio is None:
                                 LOG.warning("ATR regime history unavailable for %s; entry skipped", symbol)
+                            continue
+                    if gate.get("late_entry_filter_enabled", False):
+                        move = late_entry_move(high, side, gate["late_entry_bars"])
+                        if move is None:
+                            # Same as the research: too little history means the gate does not block.
+                            LOG.warning("Late-entry history unavailable for %s; gate not applied", symbol)
+                        elif move > gate["late_entry_max_log_move"]:
+                            LOG.info("Late-entry gate: %s %s skipped, %.1f%% move over %d candles", symbol, side, math.expm1(move) * 100, gate["late_entry_bars"])
                             continue
                     score = (archetypes.breakout_strength(high.iloc[-1], side, c["archetype_strategy"]["donchian_lookback"])
                              if c["portfolio_risk"]["rank_by"] == "BREAKOUT_DISTANCE" else
