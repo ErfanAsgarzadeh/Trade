@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 import strategy_archetypes as archetypes
 import license_access
+import risk_gate
 
 LOG = logging.getLogger("lbank_bot")
 PENDING = "STATE_PENDING_TRIGGER"
@@ -527,8 +528,13 @@ def adx_wilder(df: pd.DataFrame, period: int = 14) -> pd.Series:
     return pd.Series(output, index=df.index)
 
 
+def closed_rows(bars):
+    # Official history is explicitly closed-only; legacy feeds include a forming final bar.
+    return bars if getattr(bars, 'closed_only', False) else bars[:-1]
+
+
 def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
-    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"])
+    df = pd.DataFrame(closed_rows(bars), columns=["timestamp", "open", "high", "low", "close", "volume"])
     if df.empty:
         raise ValueError("Empty OHLCV response")
     df = df.astype(float)
@@ -539,8 +545,7 @@ def indicators(bars: list, c: dict, timeframe: str, now: float) -> pd.DataFrame:
         (df[["open", "high", "low", "close"]].min(axis=1) <= 0) |
         (df.volume < 0)).any():
         raise ValueError("Invalid OHLCV geometry")
-    # Always discard the final exchange bar as specified, then enforce its time.
-    df = df.iloc[:-1].copy()
+    # closed_rows discards forming bars unless the source is explicitly closed-only.
     seconds = TIMEFRAMES[timeframe]
     df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
     if len(df) and (np.diff(df.timestamp) != seconds * 1000).any():
@@ -575,7 +580,7 @@ def atr_regime_ratio(bars: list, c: dict, timeframe: str, now: float, window: in
     (candle_fetch_limit fetched, forming bar dropped), exactly like the research features, so `bars`
     must hold candle_fetch_limit + window candles. None when history is short, gapped or not finite.
     """
-    df = pd.DataFrame(bars, columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float).iloc[:-1]
+    df = pd.DataFrame(closed_rows(bars), columns=["timestamp", "open", "high", "low", "close", "volume"]).astype(float)
     seconds = TIMEFRAMES[timeframe]
     df = df[df.timestamp + seconds * 1000 <= now * 1000].reset_index(drop=True)
     span = c["ichimoku_params"]["candle_fetch_limit"] - 1
@@ -706,6 +711,10 @@ class MarketData:
         self.exchange = ccxt.lbank({"apiKey": os.getenv("LBANK_API_KEY", ""),
             "secret": os.getenv("LBANK_SECRET_KEY", ""), "enableRateLimit": True,
             "timeout": 10000, "options": {"defaultType": "swap"}})
+        # Only USDT perpetuals are ever traded: load swap markets from the futures API (lbkperp) and skip the spot
+        # market list / currency configs, whose api.lbank.info endpoints can time out and would block start-up.
+        self.exchange.has["fetchCurrencies"] = False
+        self.exchange.fetch_markets = lambda params={}: self.exchange.fetch_swap_markets(params)
         self.lock = threading.RLock()
         self.loaded = False
         self.cache: dict[str, tuple[float, float]] = {}
@@ -749,6 +758,9 @@ class MarketData:
                     samples = [self.demo_price(symbol, stamp + seconds * k / 24) for k in range(25)]
                     result.append([stamp * 1000, samples[0], max(samples), min(samples), samples[-1], 100.0])
                 return result
+            if os.getenv('LBANK_OFFICIAL_CANDLES') == '1':
+                from lbank_official_candles import read_history
+                return read_history(self.ohlcv_dir, symbol, timeframe, limit, time.time())
             name = symbol.replace("/", "_").replace(":", "_") + "_" + timeframe + ".csv"
             source = self.ohlcv_dir / name
             if not source.is_file():
@@ -1073,6 +1085,11 @@ class Engine:
         if not license_access.entries_allowed(now):
             return False
         self.assert_paper(p)
+        fmult = risk_gate.multiplier("main", now)   # F risk manager; exactly 1.0 while F is switched off
+        if fmult <= 0:
+            with self.db.connect() as db:
+                db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
+            return False
         direction = 1 if p["side"] == "long" else -1
         current = self.config.read()
         modern = "strategy_settings" in current
@@ -1101,9 +1118,9 @@ class Engine:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
             sized = current
-            if p.get("risk_mult", 1.0) != 1.0:  # the signal-time width filter halved this position's risk
+            if p.get("risk_mult", 1.0) != 1.0 or fmult != 1.0:  # width filter halved this position's risk / F multiplier
                 sized = copy.deepcopy(current)
-                sized["risk_and_exit"]["risk_per_trade_pct"] *= p["risk_mult"]
+                sized["risk_and_exit"]["risk_per_trade_pct"] *= p.get("risk_mult", 1.0) * fmult
             budget = entry_budget(equity, distance / price, sized,
                                   self.available_notional(equity, current, p["symbol"]))
             p["fee_rate"] = current["risk_and_exit"]["lbank_round_trip_fee"]
@@ -1114,6 +1131,9 @@ class Engine:
             p["risk_budget"] = min(p["risk_budget"], equity * current["risk_and_exit"]["risk_per_trade_pct"])
             p["max_notional"] = min(p["max_notional"], self.available_notional(equity, current, p["symbol"]),
                                      equity * current["risk_and_exit"]["max_margin_per_position_pct"] * current["risk_and_exit"]["default_isolated_leverage"])
+        if not modern and fmult != 1.0:
+            p["risk_budget"] *= fmult
+            p["max_notional"] *= min(1.0, fmult)
         # Re-size at the simulated fill after a gap, so risk isn't based on an old trigger.
         cap = min(p["qty"], p["risk_budget"] / (distance + price * (p["fee_rate"] + p.get("sizing_slippage_pct", 0))) / p["contract_size"],
                   p["max_notional"] / price / p["contract_size"])
@@ -1134,6 +1154,24 @@ class Engine:
                  p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
                  p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], price, distance, p["symbol"], PENDING))
         self._record_fill("entry", p, price, qty)
+        risk_gate.record("main", f'{p["symbol"]}|{p.get("signal_ts", 0)}', now)
+        return True
+
+    def _f_cut(self, p: dict, price: float, now: float) -> bool:
+        """F risk manager on an open position (no-op while F is off). True if the position was reduced or closed."""
+        key = f'{p["symbol"]}|{p.get("signal_ts", 0)}'
+        keep = risk_gate.keep_fraction("main", key, now)
+        if keep >= 1:
+            return False
+        qty = self.data.precision(p["symbol"], p["qty"] * (1 - keep))
+        remainder = self.data.precision(p["symbol"], p["qty"] - qty)
+        if keep <= 0 or not self.data.tradable(p["symbol"], remainder, price):
+            self._close(p, price, p["qty"], "f_cut", now)
+            risk_gate.forget("main", key)
+            return True
+        if qty > 0 and self.data.tradable(p["symbol"], qty, price):
+            self._close(p, price, qty, "f_cut", now)
+        risk_gate.mark("main", key, now)
         return True
 
     @staticmethod
@@ -1335,6 +1373,8 @@ class Engine:
                             continue
                     price = self.data.price(p["symbol"])
                     sign = 1 if p["side"] == "long" else -1
+                    if p["state"] != PENDING and self._f_cut(p, price, now):
+                        continue
                     self.apply_profit_floor(p, price)
                     self.arm_pyramid(p, price, now)
                     if p["state"] == PENDING:
@@ -1620,7 +1660,11 @@ def run():
     except Exception as exc:
         LOG.exception("PA sleeve failed to start; main bot continues")
         db.runtime_set("pa_error", str(exc))
-    LOG.info("Started PAPER engine. %s", LIVE_LIMITATION)
+    try:   # tells the dashboard that this bot build can apply the F risk manager (still off until switched on)
+        risk_gate.announce()
+    except Exception:
+        LOG.exception("Could not write the F readiness marker")
+    LOG.info("Started PAPER engine. %s F risk manager: %s", LIVE_LIMITATION, risk_gate.status()["reason"])
     while not stop.is_set():
         interval = 15
         try:

@@ -24,6 +24,7 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+import risk_gate
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
@@ -49,7 +50,7 @@ def validate(c:dict)->dict:
 
 def features(rows:list,now:float,c:dict)->pd.DataFrame:
     """Closed candles only (the exchange's last, forming candle is dropped), with EMA/RSI/ATR as in the backtest."""
-    df=pd.DataFrame(rows,columns=['timestamp','open','high','low','close','volume']).astype(float).iloc[:-1]
+    df=pd.DataFrame(bot.closed_rows(rows),columns=['timestamp','open','high','low','close','volume']).astype(float)
     df=df[df.timestamp+H4*1000<=now*1000].reset_index(drop=True)
     if len(df)<c['ema_slow']+5:raise ValueError('Not enough closed candles')
     if (np.diff(df.timestamp.to_numpy())!=H4*1000).any():raise ValueError('Gaps in candle history')
@@ -100,7 +101,7 @@ class Store:
         with self.db() as db:return float(db.execute('SELECT COALESCE(SUM(pnl),0) FROM trades').fetchone()[0])
 
 class Sleeve:
-    NAME='Mojsavar';LOG=LOG
+    NAME='Mojsavar';LOG=LOG;GATE='c3'
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
     @property
@@ -128,6 +129,25 @@ class Sleeve:
                 db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,p['qty'],p['opened'],now,pnl,reason))
         self.LOG.info('%s close %s %s at %.6g pnl %.2f (%s)',self.NAME,p['symbol'],p['side'],price,pnl,reason);return pnl
 
+    def reduce(self,p:dict,price:float,keep:float,reason:str,now:float)->float:
+        """Close (1-keep) of a position at price (F risk manager); the rest stays open with the same stop."""
+        with self.execution_lock():
+            cut=p['qty']*(1-keep);sign=1 if p['side']=='long' else -1
+            pnl=sign*(price-p['entry'])*cut-(p['entry']+price)*cut*self.c['round_trip_fee']/2
+            with self.store.db() as db:
+                if not db.execute('UPDATE positions SET qty=qty*?,risk_usd=risk_usd*? WHERE symbol=? AND opened=?',(keep,keep,p['symbol'],p['opened'])).rowcount:return 0.0
+                db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,cut,p['opened'],now,pnl,reason))
+        self.LOG.info('%s reduce %s to %.0f%% at %.6g pnl %.2f (%s)',self.NAME,p['symbol'],keep*100,price,pnl,reason);return pnl
+
+    def f_cut(self,p:dict,price:float,now:float)->bool:
+        """F risk manager on an open position (no-op while F is off). True if the position was reduced or closed."""
+        key=f"{p['symbol']}|{p['opened']}";keep=risk_gate.keep_fraction(self.GATE,key,now)
+        if keep>=1:return False
+        cs=float(self.data.market(p['symbol']).get('contractSize') or 1)
+        if keep<=0 or not self.data.tradable(p['symbol'],p['qty']*keep/cs,price):
+            self.close(p,price,'f_cut',now);risk_gate.forget(self.GATE,key);return True
+        self.reduce(p,price,keep,'f_cut',now);risk_gate.mark(self.GATE,key,now);return True
+
     def close_all(self,reason:str='manual',now:float|None=None)->list[dict]:
         now=now or time.time();out=[]
         for p in self.store.positions():
@@ -141,6 +161,7 @@ class Sleeve:
             try:
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
                 if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now);continue
+                if self.f_cut(p,price,now):continue   # F reduced/closed it: re-read before the profit rules act
                 self.manage_profit(p,price,now)
             except Exception:LOG.exception('Mojsavar watchdog failed for %s',p['symbol'])
 
@@ -214,7 +235,9 @@ class Sleeve:
         if dist<=0 or dist/price<c['min_stop_pct']:return None
         eq=self.equity()
         if eq<=0:return None
-        notional=c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
+        fmult=risk_gate.multiplier(self.GATE)   # F risk manager; exactly 1.0 while F is switched off
+        if fmult<=0:return None
+        notional=c['risk_per_trade_pct']*fmult*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
         account=self.shared_account
         pooled=account is not None and account.engine.config.read()['portfolio_risk']['margin_allocation_mode']=='SHARED_POOL'
         if not pooled:notional=min(notional,c['max_notional_pct']*eq)
@@ -227,6 +250,7 @@ class Sleeve:
         with self.store.db() as db:
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,side,price,qty,stop,float(b.close),now,int(b.timestamp),int(b.timestamp),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
+        risk_gate.record(self.GATE,f'{s}|{now}')
         LOG.info('Mojsavar open %s %s at %.6g stop %.6g qty %.6g',s,side,price,stop,qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))

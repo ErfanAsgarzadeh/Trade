@@ -637,11 +637,14 @@ def test_csv_futures_does_not_call_spot_ohlcv(monkeypatch, tmp_path):
 def test_compose_shared_directory_and_local_bind():
     compose = yaml.safe_load((ROOT / "docker-compose.yml").read_text())
     services = compose["services"]
-    assert set(services) == {"lbank-bot", "lbank-dashboard", "lbank-candles", "lbank-funding"}   # C3 and PA run inside lbank-bot; candles/funding are feed collectors
+    assert set(services) == {"lbank-bot", "lbank-dashboard", "lbank-candles", "lbank-funding", "lbank-risk", "lbank-live"}   # C3 and PA run inside lbank-bot; candles/funding are feed collectors; lbank-risk = F shadow service
     for name, service in services.items():
         assert service["volumes"] == ["./runtime:/app/runtime"]
         assert service["restart"] == "unless-stopped"
         assert name == "lbank-funding" or service["environment"]["BOT_CONFIG"] == "/app/runtime/config.json"
     assert services["lbank-bot"]["environment"]["C3_CONFIG"] == "/app/runtime/c3_config.json"
-    assert services["lbank-bot"]["environment"]["C3_DB"] == "/app/runtime/c3_sleeve.db"
+    assert services["lbank-bot"]["environment"]["C3_DB"] == "${C3_DB_PATH:-/app/runtime/c3_sleeve.db}"
+    for field in ('BOT_DB', 'C3_DB', 'PA_DB', 'LBANK_OFFICIAL_CANDLES'):
+        assert services['lbank-bot']['environment'][field] == services['lbank-dashboard']['environment'][field]
+    assert services['lbank-candles']['environment']['LBANK_OFFICIAL_CANDLES'] == services['lbank-bot']['environment']['LBANK_OFFICIAL_CANDLES']
     assert services["lbank-dashboard"]["ports"] == ["127.0.0.1:8000:8000"]
