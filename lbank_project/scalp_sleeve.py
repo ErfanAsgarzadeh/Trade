@@ -202,6 +202,9 @@ class Sleeve(c3.Sleeve):
                 trend = features(
                     self.data.candles(symbol, "1h", c["trend_candle_fetch_limit"]), now, 3600, c
                 )
+                if (len(entry) < c["candle_fetch_limit"] - 1 or
+                        len(trend) < c["trend_candle_fetch_limit"] - 1):
+                    raise ValueError("Insufficient uninterrupted 15m/1h warm-up history")
                 b = entry.iloc[-1]
                 stamp = int(b.timestamp)
                 expected15 = (int(now) // 900 - 1) * 900 * 1000
