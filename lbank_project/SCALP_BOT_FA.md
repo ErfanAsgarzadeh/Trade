@@ -1,82 +1,64 @@
-# Chabok (چابک): experimental fourth PAPER bot
+# ربات چهارم «چابک» — نسخهٔ آزمایشی تایم‌فریم پایین
 
-Status: **research prototype; OFF by default; no live futures execution.**
-No five-year low-timeframe backtest or real forward test has been performed.
+**وضعیت: فقط Paper Trading، پیش‌فرض خاموش، بدون قابلیت ارسال سفارش زندهٔ فیوچرز.**
 
-## Strategy
+این ربات در شاخهٔ آزمایشی GitHub ساخته شده و هنوز بک‌تست پنج‌ساله و فورواردتست معتبر ندارد؛ بنابراین هیچ ادعایی دربارهٔ سودآوری آن وجود ندارد. استراتژی سه ربات شاهین، موج‌سوار و ققنوس تغییر نکرده است.
 
-Chabok operates alongside Shahin, Mojsavar and Ghoghnous in an independent SQLite
-database and is included in their shared paper equity and margin calculations.
+## قواعد معاملاتی
 
-- 15m entry: a fully closed candle must break the prior 20-bar Donchian high/low,
-  with EMA20 direction and RSI14 of 55–75 for longs or 25–45 for shorts.
-- 1h trend: fully closed EMA50/EMA200 trend confirmation and price on the right side
-  of EMA50. No incomplete current bar is used.
-- Minimum ATR14/close on 15m: 0.15%.
-- Entry only if the live sampled price is within half an ATR of signal close.
-- Initial stop: 2 ATR or 0.6% of entry, whichever is wider; ratcheting trail:
-  2.5 ATR below best close (above best close for shorts).
-- Time exit: after 48 subsequent 15m bars, about 12 hours. No take profit.
-- Budget: base 0.15% shared equity risk, with estimated fee/slippage allowance,
-  at most 25% equity notional per position, at most two positions, paper 5x max.
-- Stop new entries after Chabok's daily realized loss reaches 0.5% of shared equity.
-- All existing margin limits and shared locking are preserved; watchdog checks
-  stop prices even while entry scanner cannot read valid bars.
+- تایم‌فریم ورود: **۱۵ دقیقه**، روی کندل **کاملاً بسته‌شده**.
+- تایم‌فریم فیلتر روند: **۱ ساعت**، با EMA50 و EMA200 و جایگاه قیمت نسبت به EMA50.
+- ورود خرید: بسته‌شدن قیمت بالاتر از سقف ۲۰ کندل قبلی، شیب صعودی EMA20 و RSI بین ۵۵ و ۷۵. فروش قرینه است: کف ۲۰ کندل، EMA20 نزولی و RSI بین ۲۵ و ۴۵.
+- اگر نسبت ATR14 به قیمت کمتر از ۰٫۱۵٪ باشد سیگنال رد می‌شود. ورود در صورت فاصله بیش از نیم ATR با کلوز سیگنال رد می‌شود تا تعقیب پرش قیمت اتفاق نیفتد.
+- حد ضرر اولیه: بزرگ‌ترِ «۲ برابر ATR» و «۰٫۶٪ قیمت ورود». تریلینگ با ۲٫۵ برابر ATR از بهترین کلوز بعدی و بدون عقب‌بردن استاپ.
+- خروج زمانی: حداکثر ۴۸ کندل ۱۵دقیقه‌ای، تقریباً ۱۲ ساعت، بدون تارگت سود ثابت.
+- ریسک پایه هر معامله: **۰٫۱۵٪ از Equity مشترک**. سقف ارزش اسمی هر پوزیشن ۲۵٪ Equity؛ حداکثر دو پوزیشن؛ اهرم شبیه‌سازی حداکثر 5x.
+- توقف ورود جدید بعد از زیان تحقق‌یافته روزانه چابک معادل ۰٫۵٪ سرمایه مشترک؛ موقعیت‌های باز همچنان توسط Watchdog بررسی می‌شوند.
+- حسابداری، قفل مشترک معاملات و بودجهٔ مارجین موجود (معمولاً ۸۰٪) شامل چابک هم می‌شوند. دیتابیس آن مستقل است.
 
-## Data and limitations
+## محدودیت اساسی داده
 
-The existing 4h candle producer cannot feed this new strategy. The independent
-scalp_candles.py samples the LBank public *futures* quote every 10 seconds and
-writes separate 15m and 1h CSV files. It does not touch existing 4h files.
+جمع‌آوری‌کننده فعلی پروژه فقط کندل ۴ساعته می‌سازد. فایل جدید `scalp_candles.py` به‌طور مستقل از قیمت عمومی **فیوچرز LBank** هر ۱۰ ثانیه نمونه می‌گیرد و کندل‌های ۱۵دقیقه‌ای و ۱ساعته می‌سازد. فایل‌های ۴ساعته قبلی را تغییر نمی‌دهد.
 
-These bars are NOT native futures OHLCV. Very short wicks can be missed; volume
-is unavailable (written as zero); gaps are retained and reject scanning.
-Recorded Paper stops are simulated, not exchange-native protective orders.
-Paper P&L does not fully model actual spread, slippage, gaps or funding.
-Actual profitability or safety is unproven. Do not use with real funds.
+**این داده‌ها کندل رسمی و دقیق صرافی نیستند.** سایه‌های کوتاه ممکن است ثبت نشوند؛ حجم واقعی موجود نیست و صفر درج می‌شود؛ اگر جمع‌آوری متوقف شود، شکاف تاریخی حفظ می‌شود و ربات معامله را رد می‌کند. استاپ‌ها روی سرور Paper شبیه‌سازی می‌شوند، نه با سفارش حفاظتی واقعی در صرافی. سود و زیان Paper اثر دقیق اسپرد، اسلیپیج، Funding و گپ‌های بازار را بازنمایی نمی‌کند.
 
-A new collector needs at least 350 1h bars (about 15 days) plus 300 15m bars
-(about 3.2 days), each with the extra forming bar, before scan readiness.
-No fake history is backfilled.
+جمع‌آوری‌کننده تازه به پنجره‌ای شامل **۳۰۰ ردیف ۱۵دقیقه‌ای** و **۳۵۰ ردیف ۱ساعته** (شامل آخرین کندل در حال تشکیل) نیاز دارد؛ یعنی حدود ۳٫۲ و ۱۴٫۶ روز. هیچ بک‌فیل مصنوعی برای گرم‌شدن انجام نمی‌شود.
 
-## Safe preparation only
+## راه‌اندازی ایمن برای بررسی — بدون فعال‌کردن معامله
 
-1. Review the draft PR and run all tests before deploying. Do not overwrite
-   existing runtime configs, databases, logs or current server processes.
-2. With this branch checked out inside lbank_project, if the new runtime config
-   does not exist: cp scalp_config.json runtime/scalp_config.json
-3. Leave PAPER_DATA_MODE=csv-lbank, SCALP_IN_BOT=0 and the config's enabled=false.
-4. Run ONLY the collector:
-   docker compose --profile scalp up -d --build lbank-scalp-candles
-5. Check runtime/ohlcv/BTC_USDT_USDT_15m.csv and corresponding BTC 1h and ETH
-   files. Check for consecutive timestamps, data age and market availability.
-6. Run python -m pytest tests/test_scalp_sleeve.py -q and the full suite.
-7. Only after walk-forward backtests and extended Paper forward tests, enable
-   the 15m engine in an approved, controlled rollout using SCALP_IN_BOT=1 and
-   enabled=true. Do not enable it based on this source code alone.
+۱. ابتدا PR آزمایشی و تست‌ها را بازبینی کنید. شاخه فعلی را بدون بازبینی روی سرور فعال جایگزین نکنید؛ دیتابیس‌ها و Runtime قبلی را پاک یا overwrite نکنید.
 
-The collector and engine remain opt-in; enabling one does not enable the other.
+۲. در پوشه `lbank_project` در صورت نبود فایل جدید، آن را کپی کنید:
 
-## New authenticated dashboard endpoints
+```bash
+cp scalp_config.json runtime/scalp_config.json
+```
 
-GET /api/scalp/status
-GET /api/scalp/config
-PUT /api/scalp/config (ETag/If-Match supported)
-POST /api/scalp/close with symbol in JSON
-POST /api/bots/toggle with bot=scalp and enabled boolean
+۳. حالت `PAPER_DATA_MODE=csv-lbank` را حفظ کنید. فعلاً `SCALP_IN_BOT=0` و `enabled=false` در `scalp_config.json` باقی بمانند.
 
-The fourth sleeve is also included in the emergency close-all endpoint, and
-its paper positions are included in the dashboard position and margin views.
+۴. فقط جمع‌آوری‌کننده اختیاری را اجرا کنید:
 
-When the entry thread is off, positions remain in shared-account accounting,
-but automatic watchdog supervision for Chabok is also off. Do not leave open
-positions unmanaged; use the thread or manually close them.
+```bash
+docker compose --profile scalp up -d --build lbank-scalp-candles
+```
 
-## Required backtest before active Paper trading
+۵. پیوستگی و اعتبار فایل‌های `runtime/ohlcv/BTC_USDT_USDT_15m.csv` و `BTC_USDT_USDT_1h.csv` و فایل‌های ETH را ارزیابی کنید.
 
-Replay true 1m/15m futures history from 2021 to 2026, with decisions after
-15m/1h close and intrabar exits at observed minute resolution. Include funding,
-0.12% round-trip taker fees, slippage/depth/spread sensitivities and minimum
-contract sizing. Evaluate standalone and jointly with all existing sleeves.
-Keep a genuinely untouched out-of-sample period; report full CAGR, DD, trade
-count, profit factor, fee drag, margin, overlap and negative years.
+۶. تست‌های اختصاصی و سپس تمام تست‌های پروژه را اجرا کنید:
+
+```bash
+python -m pytest tests/test_scalp_sleeve.py -q
+python -m pytest tests -q
+```
+
+۷. **فعال‌سازی Paper معامله‌ای توصیه نمی‌شود** مگر بعد از تأیید بک‌تست Walk-Forward، هزینه‌های واقعی و فورواردتست مستقل. سپس در یک استقرار کنترل‌شده `SCALP_IN_BOT=1` و `enabled=true` اعمال شوند. روشن‌کردن فقط یکی از این دو، ربات را فعال نمی‌کند.
+
+## داشبورد و توقف اضطراری
+
+APIهای جدید با PIN قبلی: `GET /api/scalp/status`، `GET /api/scalp/config`، `PUT /api/scalp/config` با ETag، `POST /api/scalp/close` و `POST /api/bots/toggle` با bot=scalp. صفحه داشبورد کارت چهارم و پوزیشن‌های چابک را نمایش می‌دهد. توقف اضطراری سراسری چابک را نیز پوشش می‌دهد.
+
+اگر نخ چابک غیرفعال باشد، موقعیت‌های باز آن همچنان در Equity/مارجین حساب مشترک شمرده می‌شوند؛ ولی Watchdog آن هم اجرا نمی‌شود. در چنین شرایطی پوزیشن باز را بدون مدیریت باقی نگذارید و از بستن دستی یا اجرای کنترل‌شده موتور استفاده کنید.
+
+## شرط قبل از اعتماد به استراتژی
+
+بک‌تست مستقل ۲۰۲۱ تا ۲۰۲۶ با داده واقعی دقیقه‌ای فیوچرز، تصمیم بعد از کلوز ۱۵m/۱h، اجرای استاپ روی داده درون کندلی، کارمزد رفت‌وبرگشت ۰٫۱۲٪، Funding، سناریوهای اسپرد/اسلیپیج، حداقل حجم و تداخل مارجین چهار ربات لازم است. نتیجه باید با حالت «بدون چابک» مقایسه شود و CAGR، MaxDD، PF، تعداد معاملات، هزینه کارمزد، هم‌پوشانی پوزیشن‌ها، دوره‌های زیان و اعتبارسنجی واقعاً مستقل گزارش شوند.
