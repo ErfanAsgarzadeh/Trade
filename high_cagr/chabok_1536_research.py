@@ -25,10 +25,10 @@ from chabok_historical_backtest import load_historical, SYMBOLS
 
 HERE = Path(__file__).resolve().parent
 BAR_MINUTES = int(os.getenv("CHABOK_BAR_MINUTES", "15"))
-if BAR_MINUTES not in (15, 30):
-    raise ValueError("Research supports only 15m or 30m bar aggregation")
+if BAR_MINUTES not in (15, 30, 60):
+    raise ValueError("Research supports 15m, 30m or 1h entries")
 BAR_MS = BAR_MINUTES * 60000
-OUT = HERE / "output" / ("chabok_sweep_1536" if BAR_MINUTES == 15 else "chabok_sweep_1536_30m")
+OUT = HERE / "output" / ("chabok_sweep_1536" if BAR_MINUTES == 15 else f"chabok_sweep_1536_{BAR_MINUTES}m")
 OUT.mkdir(parents=True, exist_ok=True)
 FAMILIES = ("donchian", "kumo_cloud", "ema_pullback", "bollinger_reversion",
             "rsi_momentum", "macd_crossover")
@@ -81,15 +81,23 @@ def feature_data(raw):
     for sym in SYMBOLS:
         a=raw[(sym,"kline","15m")].copy()
         h=raw[(sym,"kline","1h")].copy()
-        if BAR_MINUTES == 30:
+        if BAR_MINUTES in (30, 60):
             # Aggregate only fully completed, contiguous source 15m candles.
             a = a.groupby(a.ts // BAR_MS, sort=True).agg(
                 {"ts":"first","open":"first","high":"max","low":"min",
                  "close":"last","volume":"sum"}
             ).reset_index(drop=True)
             if (np.diff(a.ts.to_numpy(dtype=np.int64)) != BAR_MS).any():
-                raise RuntimeError("30m aggregated candles not contiguous")
-        assert len(a)>90000 and len(h)>50000
+                raise RuntimeError("Aggregated candles not contiguous")
+        if BAR_MINUTES == 60:
+            # True 4-hour HTF gating for 1h entry, built from contiguous 1h sources.
+            h=h.groupby(h.ts // (4*3600000),sort=True).agg(
+                {"ts":"first","open":"first","high":"max","low":"min",
+                 "close":"last","volume":"sum"}
+            ).reset_index(drop=True)
+            if (np.diff(h.ts.to_numpy(dtype=np.int64)) != 4*3600000).any():
+                raise RuntimeError("4h trend candle gaps")
+        assert len(a)>(24000 if BAR_MINUTES == 60 else 90000) and len(h)>(11000 if BAR_MINUTES == 60 else 50000)
         a=atr_rsi(a)
         a["adx"]=adx14(a)
         for n in (10,20,30,50):
@@ -116,7 +124,7 @@ def feature_data(raw):
         h["sa"]=hsa
         h["sb"]=hsb
         h["hidx"]=np.arange(len(h))
-        h["decision_ts"]=h.ts+3600000
+        h["decision_ts"]=h.ts+(4*3600000 if BAR_MINUTES == 60 else 3600000)
         a["decision_ts"]=a.ts+BAR_MS
         a=pd.merge_asof(
             a.sort_values("decision_ts"),
@@ -390,7 +398,9 @@ def main():
     train=(0,date_index(ts,"2024-01-01"))
     valid=(train[1],date_index(ts,"2025-01-01"))
     locked=(valid[1],len(ts))
-    if not (train[1]>50000 and valid[1]-valid[0]>15000 and locked[1]-locked[0]>30000):
+    if not (train[1]>(25000 if BAR_MINUTES == 60 else 50000)
+            and valid[1]-valid[0]>(8000 if BAR_MINUTES == 60 else 15000)
+            and locked[1]-locked[0]>(15000 if BAR_MINUTES == 60 else 30000)):
         raise RuntimeError("Split not as expected")
     starts={"train":str(pd.to_datetime(ts[0],unit="ms",utc=True)),
             "valid":str(pd.to_datetime(ts[valid[0]],unit="ms",utc=True)),
@@ -496,6 +506,7 @@ def main():
         source="Binance USDT-M actual 15m/1h kline/funding monthly archives, not LBank",
         candidates_tested=len(records),successful_train_validation=len(eligible),
         families=list(FAMILIES),regimes=list(REGIMES),
+        htf_timeframe_hours=4 if BAR_MINUTES == 60 else 1,
         periods=dict(train="2021-01-01 to 2023-12-31",
                      validation="2024-01-01 to 2024-12-31",
                      locked_test="2025-01-01 to 2026-09-30"),
