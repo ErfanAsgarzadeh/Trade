@@ -428,6 +428,31 @@ def main():
     print("GRID_COMPLETE candidates=1536",flush=True)
     eligible=[r for r in records if r["eligible"]]
     sorted_candidates=sorted(eligible,key=lambda r:r["score"],reverse=True)
+    # Transparent diagnostics: never touch the locked test for unsuccessful rows.
+    top_unfiltered=sorted(records,key=lambda r:r["score"],reverse=True)[:10]
+    diagnostic={
+        "train_positive_cagr":sum(r["train"]["cagr_pct"]>0 for r in records),
+        "validation_positive_cagr":sum(r["validation"]["cagr_pct"]>0 for r in records),
+        "positive_both":sum(r["train"]["cagr_pct"]>0 and r["validation"]["cagr_pct"]>0 for r in records),
+        "min_trades_both":sum(r["train"]["trades"]>=80 and r["validation"]["trades"]>=20 for r in records),
+        "pf_above_one_both":sum(r["train"]["profit_factor"]>=1.05 and r["validation"]["profit_factor"]>=1.05 for r in records),
+        "best_score_even_if_rejected":top_unfiltered,
+        "family":{}
+    }
+    for f in FAMILIES:
+        rows=[r for r in records if r["family"]==f]
+        diagnostic["family"][f]={
+            "positive_train":sum(r["train"]["cagr_pct"]>0 for r in rows),
+            "positive_validation":sum(r["validation"]["cagr_pct"]>0 for r in rows),
+            "positive_both":sum(r["train"]["cagr_pct"]>0 and r["validation"]["cagr_pct"]>0 for r in rows),
+            "top_training_cagr":max(r["train"]["cagr_pct"] for r in rows),
+            "top_validation_cagr":max(r["validation"]["cagr_pct"] for r in rows),
+            "best_common_score":max(r["score"] for r in rows),
+        }
+    print("DIAGNOSTIC_JSON "+json.dumps({
+        k:v for k,v in diagnostic.items() if k!="best_score_even_if_rejected"
+    }),flush=True)
+    print("TOP_REJECTED_CANDIDATES "+json.dumps(top_unfiltered[:5]),flush=True)
     status="train_validation_pass" if eligible else "NO_TRAIN_VALIDATION_PASS"
     winner=sorted_candidates[0] if eligible else None
     test=None
@@ -468,7 +493,7 @@ def main():
           train_cagr_gt=4,validation_cagr_gt=2,
           min_pf=1.05,train_dd_lt=30,valid_dd_lt=25),
         selection_method="max(min(train_CAGR,validation_CAGR)-0.4*max(train_DD,validation_DD)); locked test evaluated only for first chosen eligible candidate",
-        status=status, recommendation=gate,selected=winner,
+        status=status, recommendation=gate,diagnostics=diagnostic,selected=winner,
         locked_test_metrics=test,locked_test_slippage_4bps_per_side=stress,
         top_20_train_validation=sorted_candidates[:20],
         caveats=[
