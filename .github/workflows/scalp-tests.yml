@@ -1,0 +1,27 @@
+name: Experimental Chabok paper strategy checks
+on:
+  pull_request:
+    paths:
+      - "lbank_project/scalp_sleeve.py"
+      - "lbank_project/scalp_candles.py"
+      - "lbank_project/scalp_config.json"
+      - "lbank_project/tests/test_scalp_sleeve.py"
+      - ".github/workflows/scalp-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test dependencies
+        run: python -m pip install -r lbank_project/requirements-dev.txt
+      - name: Run fourth-sleeve tests
+        run: python -m pytest -q lbank_project/tests/test_scalp_sleeve.py
+        env:
+          PYTHONPATH: lbank_project

@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 import c3_sleeve
 import pa_sleeve
+import scalp_sleeve
 import license_access
 from deployment_security import dashboard_secret, LoginThrottle
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
@@ -41,11 +42,11 @@ class C3Close(BaseModel):
 
 class BotToggle(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    bot: str = Field(pattern="^(main|c3|pa)$")
+    bot: str = Field(pattern="^(main|c3|pa|scalp)$")
     enabled: bool
 
 
-BOT_NAMES = {"main": "Shahin", "c3": "Mojsavar", "pa": "Ghoghnous"}
+BOT_NAMES = {"main": "Shahin", "c3": "Mojsavar", "pa": "Ghoghnous", "scalp": "Chabok"}
 
 
 def revision(c: dict) -> str:
@@ -204,6 +205,24 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         except Exception as exc:
             LOG.exception("PA emergency close failed")
             result = {**result, "errors": list(result.get("errors", [])) + [{"symbol": "Ghoghnous", "error": str(exc)}]}
+        try:  # emergency-stop the fourth sleeve even if it is currently disabled
+            cfg, store = scalp_sleeve.paths()
+            conf = scalp_sleeve.load(cfg)
+            if payload.disable_auto_trade and conf["enabled"]:
+                scalp_sleeve.write_config(cfg, {**conf, "enabled": False})
+            sl = scalp_sleeve.Sleeve(
+                conf, store, bot().data, base_equity=bot().main_paper_equity,
+                shared_account=bot().shared_paper_account,
+            )
+            closed = sl.close_all("emergency")
+            result = {**result, "scalp": closed}
+            result["errors"] = list(result.get("errors", [])) + [
+                x for x in closed if x["result"] == "error"
+            ]
+        except Exception as exc:
+            LOG.exception("Chabok emergency close failed")
+            result = {**result, "errors": list(result.get("errors", [])) +
+                      [{"symbol": "Chabok", "error": str(exc)}]}
         return result
 
     def shared_equity(engine, view):
@@ -314,10 +333,65 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             LOG.exception("PA close failed for %s", payload.symbol)
             raise HTTPException(503, "Could not close the Ghoghnous position; it is still open")
 
+    # ---- Fourth sleeve (Chabok): 15m breakout + closed 1h trend filter ----
+    @application.get("/api/scalp/status", dependencies=[Depends(authorized)])
+    def scalp_status():
+        cfg, store = scalp_sleeve.paths()
+        engine = bot()
+        conf = scalp_sleeve.load(cfg)
+        view = scalp_sleeve.summary(
+            store, conf, lambda sym: engine.data.price(sym, cached=True),
+            engine.main_paper_equity(),
+        )
+        view["in_bot"] = os.getenv("SCALP_IN_BOT", "0") == "1"
+        view["timeframe"] = "15m"
+        view["trend_timeframe"] = "1h"
+        return shared_equity(engine, view)
+
+    @application.get("/api/scalp/config", dependencies=[Depends(authorized)])
+    def scalp_get_config(response: Response):
+        cfg, _ = scalp_sleeve.paths()
+        c = scalp_sleeve.load(cfg)
+        response.headers["ETag"] = revision(c)
+        return c
+
+    @application.put("/api/scalp/config", dependencies=[Depends(authorized)])
+    def scalp_put_config(payload: dict, response: Response, if_match: str | None = Header(default=None)):
+        cfg, _ = scalp_sleeve.paths()
+        with file_lock(cfg.with_suffix(".lock")):
+            if if_match is not None and if_match != revision(scalp_sleeve.load(cfg)):
+                raise HTTPException(409, "Chabok settings changed; reload and try again")
+            try:
+                value = scalp_sleeve.write_config(cfg, payload)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc))
+        response.headers["ETag"] = revision(value)
+        return value
+
+    @application.post("/api/scalp/close", dependencies=[Depends(authorized)])
+    def scalp_close(payload: C3Close):
+        cfg, store = scalp_sleeve.paths()
+        sl = scalp_sleeve.Sleeve(
+            scalp_sleeve.load(cfg), store, bot().data,
+            base_equity=bot().main_paper_equity,
+            shared_account=bot().shared_paper_account,
+        )
+        p = next((p for p in store.positions() if p["symbol"] == payload.symbol), None)
+        if p is None:
+            raise HTTPException(404, "Chabok position not found")
+        try:
+            return {"symbol": payload.symbol,
+                    "pnl": sl.close(p, bot().data.price(payload.symbol), "manual", time.time())}
+        except Exception:
+            LOG.exception("Chabok close failed for %s", payload.symbol)
+            raise HTTPException(503, "Chabok close failed; position remains open")
+
     @application.post("/api/bots/toggle", dependencies=[Depends(authorized)])
     def toggle_bot(payload: BotToggle):
         """On/off switch of one bot: off stops NEW entries (and cancels unfilled orders); open positions stay managed."""
         engine = bot()
+        if payload.bot == "scalp" and payload.enabled and os.getenv("SCALP_IN_BOT", "0") != "1":
+            raise HTTPException(409, "Chabok runner is not configured (SCALP_IN_BOT=0). Cannot enable entries.")
         if payload.bot == "main":
             with file_lock(engine.db.trade_lock):
                 c = engine.config.read()
@@ -327,7 +401,12 @@ def create_app(engine: Engine | None = None) -> FastAPI:
                     with engine.db.connect() as db:
                         db.execute("DELETE FROM positions WHERE state=?", (PENDING,))
         else:
-            module, (cfg, store) = (c3_sleeve, c3_paths()) if payload.bot == "c3" else (pa_sleeve, pa_paths())
+            if payload.bot == "c3":
+                module, (cfg, store) = c3_sleeve, c3_paths()
+            elif payload.bot == "pa":
+                module, (cfg, store) = pa_sleeve, pa_paths()
+            else:
+                module, (cfg, store) = scalp_sleeve, scalp_sleeve.paths()
             with file_lock(cfg.with_suffix(".lock")):
                 module.write_config(cfg, {**module.load(cfg), "enabled": payload.enabled})
             if payload.bot == "pa" and not payload.enabled:
@@ -393,19 +472,19 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 @media(max-width:850px){main{padding:14px}.kpis{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}h1{font-size:20px}.panel{padding:16px}}
 @media(max-width:450px){.fields{grid-template-columns:1fr}}
 </style></head><body><main>
-<header><div><h1>LBank Trading Control Center</h1><p>Three bots, one paper account: Shahin · Mojsavar · Ghoghnous</p></div>
+<header><div><h1>LBank Trading Control Center</h1><p>Four bots, one paper account: Shahin · Mojsavar · Ghoghnous · Chabok</p></div>
 <div class="row"><input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="10">
 <button id="connect">Connect</button><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span></div></header>
 <div id="message" role="status" aria-live="polite"></div>
 <section class="panel note">This build simulates trades (paper only). DEMO mode uses synthetic prices and candles. Live LBank futures order placement is not supported by the pinned CCXT adapter. P&amp;L uses estimated fees.</section>
-<div class="row" style="margin-top:20px"><div id="views" style="display:flex;gap:8px" role="tablist" aria-label="Summary view"><button class="view" data-view="all">All</button> <button class="view" data-view="bot">Shahin</button> <button class="view" data-view="c3">Mojsavar</button> <button class="view" data-view="pa">Ghoghnous</button></div><p id="view_note">Summary and position table follow the selected view</p></div>
+<div class="row" style="margin-top:20px"><div id="views" style="display:flex;gap:8px" role="tablist" aria-label="Summary view"><button class="view" data-view="all">All</button> <button class="view" data-view="bot">Shahin</button> <button class="view" data-view="c3">Mojsavar</button> <button class="view" data-view="pa">Ghoghnous</button> <button class="view" data-view="scalp">Chabok</button></div><p id="view_note">Summary and position table follow the selected view</p></div>
 <div class="kpis"><section class="panel kpi"><p>Account equity ($)</p><strong id="equity">—</strong><p id="equity_note">—</p></section>
 <section class="panel kpi"><p>Open P&amp;L ($)</p><strong id="unrealized">—</strong></section>
 <section class="panel kpi"><p>Realized P&amp;L, 24h ($)</p><strong id="realized">—</strong><p id="trades">—</p></section>
 <section class="panel kpi"><p>Positions and pending orders</p><strong id="slots">—</strong><p id="updated_sub">—</p><p id="updated">Waiting for connection</p></section>
 <section class="panel kpi"><p>Margin in use / allowed budget ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
 <section class="panel kpi"><p>Measured slippage vs the LBank order book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel" id="botspanel"><div class="row"><h2>Three bots</h2><p class="muted">All three run on one shared paper account. Switching a bot off only stops its new entries; open positions keep being managed until they exit. Changes apply without a restart.</p></div>
+<section class="panel" id="botspanel"><div class="row"><h2>Four bots</h2><p class="muted">All four share one paper account. Switching entries off does not close open positions. Chabok's collector and runner require a separate opt-in and may need a restart; do not enable it before validation.</p></div>
 <div class="bots">
 <article class="bot bot-main" id="card_main"><div class="row"><div><h3>Shahin</h3><p class="sub muted">Donchian + Kumo breakout, 4h · 5 major coins</p></div><label class="switch"><input id="main_enabled" type="checkbox">On</label></div>
 <dl><dt>Risk per trade</dt><dd id="main_risk_v">—</dd><dt>Positions / orders</dt><dd id="main_open">—</dd><dt>Open P&amp;L ($)</dt><dd id="main_unreal">—</dd><dt>24h profit ($)</dt><dd id="main_day">—</dd></dl></article>
@@ -413,6 +492,9 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <dl><dt>Risk per trade</dt><dd id="c3_risk_v">—</dd><dt>Open positions</dt><dd id="c3_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="c3_unrealized">—</dd><dt>24h profit ($)</dt><dd id="c3_realized">—</dd><dt>Total closed profit ($)</dt><dd id="c3_total">—</dd><dt>Trades</dt><dd id="c3_win">—</dd></dl><p id="c3badge" class="muted" style="font-size:12px">—</p><p id="c3_trades" hidden></p></article>
 <article class="bot bot-pa" id="card_pa"><div class="row"><div><h3>Ghoghnous</h3><p class="sub muted">4h price-action Key Reversal · 20 coins</p></div><label class="switch"><input id="pa_enabled" type="checkbox">On</label></div>
 <dl><dt>Planned risk per trade</dt><dd id="pa_risk_v">—</dd><dt>Positions / Stop orders</dt><dd id="pa_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="pa_unrealized">—</dd><dt>24h profit ($)</dt><dd id="pa_realized">—</dd><dt>Total closed profit ($)</dt><dd id="pa_total">—</dd><dt>Trades</dt><dd id="pa_win">—</dd></dl><p id="pabadge" class="muted" style="font-size:12px">—</p><p id="pa_trades" hidden></p></article>
+<article class="bot bot-c3" id="card_scalp"><div class="row"><div><h3>Chabok</h3><p class="sub muted">Experimental 15m breakout + 1h trend · BTC / ETH · disabled by default</p></div><label class="switch"><input id="scalp_enabled" type="checkbox">On</label></div>
+<dl><dt>Risk per trade</dt><dd id="scalp_risk_v">—</dd><dt>Open positions</dt><dd id="scalp_positions">—</dd><dt>Open P&amp;L ($)</dt><dd id="scalp_unrealized">—</dd><dt>24h P&amp;L ($)</dt><dd id="scalp_realized">—</dd></dl>
+<p id="scalpbadge" class="muted" style="font-size:12px">Enable the dedicated candle collector and SCALP_IN_BOT before switching on entries.</p></article>
 </div>
 <details><summary>Mojsavar settings</summary>
 <div class="fields" style="margin-top:18px">
@@ -435,7 +517,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <div class="row" style="margin-top:18px"><p id="pa_dirty">Ghoghnous settings not loaded.</p><button id="pa_save" disabled>Save Ghoghnous settings</button></div>
 <details><summary>Ghoghnous: pending Stop orders and last 20 trades</summary><div class="scroll"><table><thead><tr><th>Symbol</th><th>Side</th><th>Entry level</th><th>Stop loss</th></tr></thead><tbody id="pa_orders"></tbody></table>
 <table><thead><tr><th>Symbol</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="pa_hist"></tbody></table></div></details></details></section>
-<section class="panel"><div class="row"><h2>Positions (Shahin, Mojsavar and Ghoghnous in one table)</h2><button class="danger" id="panic" disabled>🚨 Emergency close of all positions (all three bots) + stop entries</button></div>
+<section class="panel"><div class="row"><h2>Positions (Shahin, Mojsavar, Ghoghnous and Chabok in one table)</h2><button class="danger" id="panic" disabled>🚨 Emergency close of all positions (all four bots) + stop entries</button></div>
 <div class="scroll"><table><thead><tr><th>Strategy</th><th>Symbol</th><th>Side</th><th>Entry / trigger</th><th>Live price</th><th>Stop loss</th><th>Target 1</th><th>Status</th><th>R</th><th>P&amp;L ($)</th><th>Action</th></tr></thead><tbody id="positions"><tr><td colspan="10">Enter the PIN first.</td></tr></tbody></table></div></section>
 <section class="panel"><div class="row"><h2>Shahin settings (main bot)</h2><button class="subtle" id="reload" disabled>Reload</button></div>
 <div class="fields"><label><input id="auto" type="checkbox">Shahin auto-entry (same on/off switch as above)</label><label><input id="dry" type="checkbox" checked disabled>Simulation mode (Dry-run)</label>
@@ -457,7 +539,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <label><input id="funding_short" type="checkbox">Funding filter: no new short while the 3-day mean funding is negative (needs FUNDING_DIR files)</label>
 <label class="field">Initial-stop ATR multiple (2.5 was only tested together with V2 and the BTC filter)<input id="stop_atr_mult" type="number" min="1" max="5" step="0.1"></label>
 <label class="field">Margin budget<select id="margin_allocation"><option value="SHARED_POOL">Shared pool (no slot split)</option><option value="PER_SLOT">Fixed slot share</option></select></label>
-<label><input id="shared_account" type="checkbox">Capital management and the shared margin cap of the three bots (Shahin, Mojsavar, Ghoghnous)</label>
+<label><input id="shared_account" type="checkbox">Capital management and the shared margin cap of the four bots (Shahin, Mojsavar, Ghoghnous, Chabok)</label>
 <label><input id="pyramid" type="checkbox">One-step add to a winner</label>
 <label class="field">Added-unit risk (fraction of risk per trade)<input id="pyramid_fraction" type="number" min="0.05" max="1" step="0.05"></label>
 <label><input id="safe_pyramid" type="checkbox">Add only if the shared stop covers the combined break-even of both units (incl. fees and slippage)</label>
@@ -516,13 +598,13 @@ function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(
  const f=x=>x?Number(x.median_bps).toFixed(1)+' / '+Number(x.p90_bps).toFixed(1):'—';main.textContent='Entry '+f(fq.entry)+' | Exit '+f(fq.exit);
  const worst=Math.max(fq.entry?fq.entry.median_bps:0,fq.exit?fq.exit.median_bps:0);main.className=worst>fq.assumed_bps_per_fill*2.5?'bad':'';
  detail.textContent='Backtest assumed '+fq.assumed_bps_per_fill+' bps; '+fq.total+' fill'+(fq.last_error?' | Error: '+fq.last_error:'');}
-let lastBot=null,lastC3=null,lastPA=null,view='all';try{view=localStorage.getItem('view')||'all';}catch(e){}
+let lastBot=null,lastC3=null,lastPA=null,lastScalp=null,view='all';try{view=localStorage.getItem('view')||'all';}catch(e){}
 function setView(v){view=v;try{localStorage.setItem('view',v);}catch(e){}draw();}
 for(const b of document.querySelectorAll('.view'))b.onclick=()=>setView(b.dataset.view);
 const sumOf=(...x)=>x.some(v=>v===null||v===undefined)?null:x.reduce((p,c)=>p+c,0);
-const BOTNAME={bot:'Shahin',c3:'Mojsavar',pa:'Ghoghnous'};
+const BOTNAME={bot:'Shahin',c3:'Mojsavar',pa:'Ghoghnous',scalp:'Chabok'};
 function drawSummary(){for(const x of document.querySelectorAll('.view'))x.classList.toggle('on',x.dataset.view===view);
- const S={bot:lastBot,c3:lastC3,pa:lastPA},keys=(view==='all'?['bot','c3','pa']:[view]).filter(k=>S[k]);if(!keys.length)return;
+ const S={bot:lastBot,c3:lastC3,pa:lastPA,scalp:lastScalp},keys=(view==='all'?['bot','c3','pa','scalp']:[view]).filter(k=>S[k]);if(!keys.length)return;
  let un=0,unOk=true,rl=0,tr=0,used=0;const parts=[];
  for(const k of keys){const x=S[k],u=k==='bot'?x.total_unrealized_pnl:x.unrealized_pnl_usd;if(u===null||u===undefined)unOk=false;else un+=u;
   rl+=x.daily_realized_pnl;tr+=x.daily_trades_count;used+=x.engaged_margin_usd||0;
@@ -531,35 +613,36 @@ function drawSummary(){for(const x of document.querySelectorAll('.view'))x.class
  $('unrealized').textContent=number(unOk?un:null);$('unrealized').className=unOk&&un<0?'bad':'';$('realized').textContent=number(rl);$('realized').className=rl<0?'bad':'good';$('trades').textContent=tr+' exits recorded in 24h';
  $('slots').textContent=open+' positions';$('updated_sub').textContent=parts.join(' · ');
  const b=lastBot,eq=b&&b.shared_account_enabled?b.equity_usd:(lastC3?lastC3.equity_usd:(b?b.equity_usd:null));
- $('equity').textContent=number(eq);$('equity_note').textContent=b&&b.shared_account_enabled?'Shared capital of the three bots'+(view!=='all'&&view!=='bot'&&S[view]?' · '+BOTNAME[view]+' '+(S[view].realized_total_usd>=0?'+':'')+number(S[view].realized_total_usd)+' Closed profit':''):'Shahin paper capital (excluding the other two bots\' P&L)';
+ $('equity').textContent=number(eq);$('equity_note').textContent=b&&b.shared_account_enabled?'Shared capital of the four bots'+(view!=='all'&&view!=='bot'&&S[view]?' · '+BOTNAME[view]+' '+(S[view].realized_total_usd>=0?'+':'')+number(S[view].realized_total_usd)+' Closed profit':''):'Shahin paper capital (excluding the other three bots\' P&L)';
  const allowed=b&&eq?eq*b.allowed_margin_pct/100:null;
  $('margin').textContent=number(used)+(allowed?' / '+number(allowed):'');
- $('margin_pct').textContent=eq?number(used/eq*100)+'% of account'+(b?' / '+number(b.allowed_margin_pct)+'% allowed (all three bots)':''):'—';
+ $('margin_pct').textContent=eq?number(used/eq*100)+'% of account'+(b?' / '+number(b.allowed_margin_pct)+'% allowed (all four bots)':''):'—';
  $('pending_margin').textContent=b&&keys.includes('bot')?'Margin reserved for Shahin\'s pending orders: $'+number(b.reserved_pending_margin_usd):'Ghoghnous Stop orders reserve no margin until triggered';
  $('fq_main').closest('section').style.display=view==='all'||view==='bot'?'':'none';
- $('view_note').textContent=view==='all'?'All three bots (capital and margin are shared)':view==='bot'?'Shahin only (Donchian + Kumo)':view==='c3'?'Mojsavar only (4h trend pullback)':'Ghoghnous only (4h Key Reversal)';
+ $('view_note').textContent=view==='all'?'All four bots (capital and margin are shared)':view==='bot'?'Shahin only (Donchian + Kumo)':view==='c3'?'Mojsavar only (4h trend pullback)':view==='pa'?'Ghoghnous only (4h Key Reversal)':'Chabok only (15m breakout)';
  drawCards();}
 function drawCards(){const b=lastBot;
  if(b){$('main_enabled').checked=b.auto_trade_enabled;$('card_main').classList.toggle('off',!b.auto_trade_enabled);$('main_open').textContent=b.open_positions_count+' / '+b.max_open_positions;
   $('main_unreal').textContent=number(b.total_unrealized_pnl);$('main_day').textContent=number(b.daily_realized_pnl);}
  if(cfg)$('main_risk_v').textContent=number(cfg.risk_and_exit.risk_per_trade_pct*100)+'%';
- if(lastC3)$('card_c3').classList.toggle('off',!lastC3.enabled);if(lastPA)$('card_pa').classList.toggle('off',!lastPA.enabled);}
+ if(lastC3)$('card_c3').classList.toggle('off',!lastC3.enabled);if(lastPA)$('card_pa').classList.toggle('off',!lastPA.enabled);if(lastScalp)$('card_scalp').classList.toggle('off',!lastScalp.enabled);}
 async function toggleBot(key,on){try{const r=await api('/api/bots/toggle','POST',{bot:key,enabled:on});message(r.data.name+(on?' switched on; new entries are enabled.':' switched off; new entries are stopped and open positions stay managed.'));
-  if(key==='main'){await loadConfig();await refresh();}else if(key==='c3'){await loadC3();await refreshC3();}else{await loadPA();await refreshPA();}}catch(e){message(e.message,true);}}
+  if(key==='main'){await loadConfig();await refresh();}else if(key==='c3'){await loadC3();await refreshC3();}else if(key==='pa'){await loadPA();await refreshPA();}else{await refreshScalp();}}catch(e){message(e.message,true);}}
 function drawPositions(){const rows=$('positions');rows.replaceChildren();const items=[];
  const want=k=>view==='all'||view===k;
  if(want('bot')&&lastBot)for(const p of lastBot.positions)items.push({kind:'bot',p});
  if(want('c3')&&lastC3)for(const p of lastC3.positions)items.push({kind:'c3',p});
  if(want('pa')&&lastPA)for(const p of lastPA.positions)items.push({kind:'pa',p});
+ if(want('scalp')&&lastScalp)for(const p of lastScalp.positions)items.push({kind:'scalp',p});
  if(!items.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=11;td.textContent='No open positions.';tr.append(td);rows.append(tr);return;}
  for(const {kind,p} of items){const tr=document.createElement('tr');const tag=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(kind==='bot'?'':' '+kind);sp.textContent=BOTNAME[kind];tag.append(sp);tr.append(tag);
   const pnl=p.unrealized_pnl_usd;
-  const values=kind==='c3'?[p.symbol,p.side==='long'?'Buy':'Sell',number(p.entry,6),number(p.live_price,6),number(p.stop,6),'—','ATR trail',number(p.current_r),number(pnl)]
+  const values=(kind==='c3'||kind==='scalp')?[p.symbol,p.side==='long'?'Buy':'Sell',number(p.entry,6),number(p.live_price,6),number(p.stop,6),'—','ATR trail',number(p.current_r),number(pnl)]
    :kind==='pa'?[p.symbol,p.side==='long'?'Buy':'Sell',number(p.entry,6),number(p.live_price,6),number(p.stop,6),p.target?number(p.target,6):'—','Exit: stop, opposite reversal or 30 candles',number(p.current_r),number(pnl)]
    :[p.symbol,p.side==='long'?'Buy':'Sell',number(p.state==='STATE_PENDING_TRIGGER'?p.trigger_price:p.entry_price,6),number(p.live_price,6),number(p.active_sl,6),number(target(p),6),p.state,number(p.current_r),number(pnl)];
   values.forEach((v,index)=>{const td=document.createElement('td');td.textContent=v;if(index===0||index>=2)td.dir='ltr';if(index===8&&pnl!==null)td.className=pnl<0?'bad':'good';tr.append(td);});
   const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'Cancel':'Close now';
-  button.onclick=async()=>{if(!confirm('Close / cancel '+p.symbol+' ('+BOTNAME[kind]+')'+'?'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':kind==='pa'?'/api/pa/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();await refreshPA();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
+  button.onclick=async()=>{if(!confirm('Close / cancel '+p.symbol+' ('+BOTNAME[kind]+')'+'?'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':kind==='pa'?'/api/pa/close':kind==='scalp'?'/api/scalp/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();await refreshPA();await refreshScalp();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
 function draw(){drawSummary();drawPositions();}
 function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.license&&!s.license.entries_allowed?'License '+s.license.state+' · entries blocked':s.auto_trade_enabled?'Entries on':'Entries off';
  renderFillQuality(s.fill_quality);$('updated').textContent='Last update: '+new Date().toLocaleTimeString('en-GB');draw();
@@ -568,12 +651,12 @@ function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_
  if(s.price_errors.length)message('Some symbol prices were not received; full P&L is unavailable.',true);
 }
 async function refresh(){if(!connected||polling)return;polling=true;try{const result=await api('/api/status');render(result.data);}catch(e){message(e.message,true);}finally{polling=false;}}
-$('connect').onclick=async()=>{try{await loadConfig();await loadC3();await loadPA();connected=true;for(const id of ['save','panic','reload','c3_save','pa_save'])$(id).disabled=false;await refresh();await refreshC3();await refreshPA();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
+$('connect').onclick=async()=>{try{await loadConfig();await loadC3();await loadPA();connected=true;for(const id of ['save','panic','reload','c3_save','pa_save'])$(id).disabled=false;await refresh();await refreshC3();await refreshPA();await refreshScalp();$('message').style.display='none';}catch(e){connected=false;message(e.message,true);}};
 $('pin').addEventListener('input',()=>{connected=false;for(const id of ['save','panic','reload','c3_save','pa_save'])$(id).disabled=true;$('active').textContent='Offline';});
 $('save').onclick=async()=>{const b=$('save');b.disabled=true;try{const edited=JSON.parse($('editor').value);const result=await api('/api/config','PUT',edited,etag);cfg=result.data;etag=result.etag;fillControls();$('dirty').textContent='Settings saved.';message('Settings saved.');await refresh();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
 $('reload').onclick=async()=>{try{await loadConfig();await loadC3();await loadPA();message('Settings loaded.');}catch(e){message(e.message,true);}};
-$('panic').onclick=async()=>{if(!confirm('Close all positions of all three bots and stop all entries?'))return;const b=$('panic');b.disabled=true;
- try{const result=await api('/api/positions/close-all','POST',{disable_auto_trade:true});const s=result.data;message(s.errors.length?'Entries stopped; '+s.errors.length+' No position was closed. Try again.':'All positions closed / cancelled and entries stopped.',s.errors.length>0);await loadConfig();await loadC3();await loadPA();await refresh();await refreshC3();await refreshPA();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
+$('panic').onclick=async()=>{if(!confirm('Close all positions of all four bots and stop all entries?'))return;const b=$('panic');b.disabled=true;
+ try{const result=await api('/api/positions/close-all','POST',{disable_auto_trade:true});const s=result.data;message(s.errors.length?'Entries stopped; '+s.errors.length+' No position was closed. Try again.':'All positions closed / cancelled and entries stopped.',s.errors.length>0);await loadConfig();await loadC3();await loadPA();await refresh();await refreshC3();await refreshPA();await refreshScalp();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
 
 let c3cfg=null,c3etag=null;
 const c3n=(v,n=2)=>number(v,n);
@@ -584,7 +667,7 @@ function c3Changed(){if(!c3cfg)return;try{c3cfg=JSON.parse($('c3_editor').value)
  Object.assign(c3cfg,{max_open_positions:Number($('c3_max_positions').value),risk_per_trade_pct:Number($('c3_risk').value)/100,max_notional_pct:Number($('c3_notional').value)/100,confirm_bars:parseInt($('c3_confirm').value||'0',10),skip_weekend:$('c3_weekend').checked,
   symbols:$('c3_symbols').value.split(/[\s,]+/).filter(Boolean)});$('c3_editor').value=JSON.stringify(c3cfg,null,2);$('c3_dirty').textContent='Mojsavar changes were not saved.';}
 for(const id of ['c3_max_positions','c3_risk','c3_notional','c3_confirm','c3_weekend','c3_symbols'])$(id).addEventListener('change',c3Changed);
-for(const [id,key] of [['main_enabled','main'],['c3_enabled','c3'],['pa_enabled','pa']])$(id).addEventListener('change',e=>toggleBot(key,e.target.checked));
+for(const [id,key] of [['main_enabled','main'],['c3_enabled','c3'],['pa_enabled','pa'],['scalp_enabled','scalp']])$(id).addEventListener('change',e=>toggleBot(key,e.target.checked));
 $('c3_editor').addEventListener('input',()=>{$('c3_dirty').textContent='Mojsavar changes were not saved.';});
 $('c3_editor').addEventListener('blur',()=>{try{c3cfg=JSON.parse($('c3_editor').value);c3Fill();}catch(e){message('Mojsavar settings JSON is invalid.',true);}});
 $('c3_save').onclick=async()=>{const b=$('c3_save');b.disabled=true;try{const edited=JSON.parse($('c3_editor').value);const r=await api('/api/c3/config','PUT',edited,c3etag);c3cfg=r.data;c3etag=r.etag;c3Fill();$('c3_dirty').textContent='Mojsavar settings saved; they apply within seconds.';await refreshC3();}catch(e){message(e.message,true);}finally{b.disabled=false;}};
@@ -611,7 +694,19 @@ function renderPA(s){lastPA=s;$('pa_enabled').checked=s.enabled;$('pa_risk_v').t
  const o=$('pa_orders');o.replaceChildren();for(const x of s.pending_orders){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'Buy':'Sell');cell(tr,c3n(x.level,6),'',1);cell(tr,c3n(x.stop,6),'',1);o.append(tr);}
  const h=$('pa_hist');h.replaceChildren();for(const x of s.recent_trades){const tr=document.createElement('tr');cell(tr,x.symbol,'',1);cell(tr,x.side==='long'?'Buy':'Sell');cell(tr,c3n(x.entry,6),'',1);cell(tr,c3n(x.exit,6),'',1);cell(tr,c3n(x.pnl),x.pnl<0?'bad':'good',1);cell(tr,x.reason);h.append(tr);}draw();}
 async function refreshPA(){if(!connected)return;try{const r=await api('/api/pa/status');renderPA(r.data);}catch(e){message('Ghoghnous: '+e.message,true);}}
-setInterval(()=>{refresh();refreshC3();refreshPA();},5000);
+async function refreshScalp(){if(!connected)return;try{
+ const r=await api('/api/scalp/status'),x=r.data;lastScalp=x;
+ $('scalp_enabled').checked=x.enabled;
+ $('scalp_risk_v').textContent=number(x.risk_per_trade_pct*100)+'%';
+ $('scalp_positions').textContent=x.open_positions_count+' / '+x.max_open_positions;
+ $('scalp_unrealized').textContent=number(x.unrealized_pnl_usd);
+ $('scalp_realized').textContent=number(x.daily_realized_pnl);
+ $('scalpbadge').textContent=(x.in_bot?'Runner configured':'Runner off: SCALP_IN_BOT=0')+
+     ' · '+(x.enabled?'New entries enabled':'New entries disabled')+
+     ' · research only; not validated for live trading';
+ draw();
+ }catch(e){message('Chabok: '+e.message,true);}}
+setInterval(()=>{refresh();refreshC3();refreshPA();refreshScalp();},5000);
 </script></body></html>'''
 
 app = create_app()

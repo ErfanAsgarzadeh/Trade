@@ -1,0 +1,32 @@
+{
+  "enabled": false,
+  "dry_run_mode": true,
+  "timeframe": "15m",
+  "trend_timeframe": "1h",
+  "symbols": [
+    "BTC/USDT:USDT",
+    "ETH/USDT:USDT"
+  ],
+  "paper_capital": 10000,
+  "risk_per_trade_pct": 0.0015,
+  "max_notional_pct": 0.25,
+  "max_open_positions": 2,
+  "isolated_leverage": 5,
+  "round_trip_fee": 0.0012,
+  "sizing_slippage_pct": 0.0004,
+  "ema_entry": 20,
+  "ema_trend_fast": 50,
+  "ema_trend_slow": 200,
+  "rsi_period": 14,
+  "atr_period": 14,
+  "breakout_lookback": 20,
+  "stop_atr": 2,
+  "trail_atr": 2.5,
+  "min_stop_pct": 0.006,
+  "min_atr_pct": 0.0015,
+  "time_stop_bars": 48,
+  "daily_max_loss_pct": 0.005,
+  "candle_fetch_limit": 300,
+  "trend_candle_fetch_limit": 350,
+  "check_interval_seconds": 15
+}

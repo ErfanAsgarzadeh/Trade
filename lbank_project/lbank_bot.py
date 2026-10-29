@@ -992,9 +992,15 @@ class Engine:
         import c3_sleeve
         from shared_paper_account import SharedPaperAccount
         import pa_sleeve
+        import scalp_sleeve
         cfg, store = c3_sleeve.paths()
         pa_cfg, pa_store = pa_sleeve.paths()
-        return SharedPaperAccount(self, store, lambda: c3_sleeve.load(cfg), [(pa_store, lambda: pa_sleeve.load(pa_cfg))])
+        scalp_cfg, scalp_store = scalp_sleeve.paths()
+        # Count fourth-sleeve positions even when new entries are disabled.
+        return SharedPaperAccount(self, store, lambda: c3_sleeve.load(cfg), [
+            (pa_store, lambda: pa_sleeve.load(pa_cfg)),
+            (scalp_store, lambda: scalp_sleeve.load(scalp_cfg)),
+        ])
 
     def paper_equity(self) -> float:
         account = self.shared_paper_account()
@@ -1595,6 +1601,13 @@ def run():
     except Exception as exc:
         LOG.exception("PA sleeve failed to start; main bot continues")
         db.runtime_set("pa_error", str(exc))
+    scalp_thread = None
+    try:  # fourth, strictly opt-in 15m/1h paper strategy
+        import scalp_sleeve
+        scalp_thread = scalp_sleeve.start_in_bot(engine, stop)
+    except Exception as exc:
+        LOG.exception("Chabok sleeve failed to start; other bots continue")
+        db.runtime_set("scalp_error", str(exc))
     LOG.info("Started PAPER engine. %s", LIVE_LIMITATION)
     while not stop.is_set():
         interval = 15
@@ -1610,6 +1623,8 @@ def run():
         c3_thread.join(timeout=12)
     if pa_thread:
         pa_thread.join(timeout=12)
+    if scalp_thread:
+        scalp_thread.join(timeout=12)
 
 
 def probe_book(symbol: str, contracts: float):
