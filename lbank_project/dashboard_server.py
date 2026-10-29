@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 import c3_sleeve
 import pa_sleeve
+import scalp_sleeve
 import license_access
 from deployment_security import dashboard_secret, LoginThrottle
 from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
@@ -41,11 +42,11 @@ class C3Close(BaseModel):
 
 class BotToggle(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    bot: str = Field(pattern="^(main|c3|pa)$")
+    bot: str = Field(pattern="^(main|c3|pa|scalp)$")
     enabled: bool
 
 
-BOT_NAMES = {"main": "Shahin", "c3": "Mojsavar", "pa": "Ghoghnous"}
+BOT_NAMES = {"main": "Shahin", "c3": "Mojsavar", "pa": "Ghoghnous", "scalp": "Chabok"}
 
 
 def revision(c: dict) -> str:
@@ -204,6 +205,24 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         except Exception as exc:
             LOG.exception("PA emergency close failed")
             result = {**result, "errors": list(result.get("errors", [])) + [{"symbol": "Ghoghnous", "error": str(exc)}]}
+        try:  # emergency-stop the fourth sleeve even if it is currently disabled
+            cfg, store = scalp_sleeve.paths()
+            conf = scalp_sleeve.load(cfg)
+            if payload.disable_auto_trade and conf["enabled"]:
+                scalp_sleeve.write_config(cfg, {**conf, "enabled": False})
+            sl = scalp_sleeve.Sleeve(
+                conf, store, bot().data, base_equity=bot().main_paper_equity,
+                shared_account=bot().shared_paper_account,
+            )
+            closed = sl.close_all("emergency")
+            result = {**result, "scalp": closed}
+            result["errors"] = list(result.get("errors", [])) + [
+                x for x in closed if x["result"] == "error"
+            ]
+        except Exception as exc:
+            LOG.exception("Chabok emergency close failed")
+            result = {**result, "errors": list(result.get("errors", [])) +
+                      [{"symbol": "Chabok", "error": str(exc)}]}
         return result
 
     def shared_equity(engine, view):
@@ -314,6 +333,59 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             LOG.exception("PA close failed for %s", payload.symbol)
             raise HTTPException(503, "Could not close the Ghoghnous position; it is still open")
 
+    # ---- Fourth sleeve (Chabok): 15m breakout + closed 1h trend filter ----
+    @application.get("/api/scalp/status", dependencies=[Depends(authorized)])
+    def scalp_status():
+        cfg, store = scalp_sleeve.paths()
+        engine = bot()
+        conf = scalp_sleeve.load(cfg)
+        view = scalp_sleeve.summary(
+            store, conf, lambda sym: engine.data.price(sym, cached=True),
+            engine.main_paper_equity(),
+        )
+        view["in_bot"] = os.getenv("SCALP_IN_BOT", "0") == "1"
+        view["timeframe"] = "15m"
+        view["trend_timeframe"] = "1h"
+        return shared_equity(engine, view)
+
+    @application.get("/api/scalp/config", dependencies=[Depends(authorized)])
+    def scalp_get_config(response: Response):
+        cfg, _ = scalp_sleeve.paths()
+        c = scalp_sleeve.load(cfg)
+        response.headers["ETag"] = revision(c)
+        return c
+
+    @application.put("/api/scalp/config", dependencies=[Depends(authorized)])
+    def scalp_put_config(payload: dict, response: Response, if_match: str | None = Header(default=None)):
+        cfg, _ = scalp_sleeve.paths()
+        with file_lock(cfg.with_suffix(".lock")):
+            if if_match is not None and if_match != revision(scalp_sleeve.load(cfg)):
+                raise HTTPException(409, "Chabok settings changed; reload and try again")
+            try:
+                value = scalp_sleeve.write_config(cfg, payload)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc))
+        response.headers["ETag"] = revision(value)
+        return value
+
+    @application.post("/api/scalp/close", dependencies=[Depends(authorized)])
+    def scalp_close(payload: C3Close):
+        cfg, store = scalp_sleeve.paths()
+        sl = scalp_sleeve.Sleeve(
+            scalp_sleeve.load(cfg), store, bot().data,
+            base_equity=bot().main_paper_equity,
+            shared_account=bot().shared_paper_account,
+        )
+        p = next((p for p in store.positions() if p["symbol"] == payload.symbol), None)
+        if p is None:
+            raise HTTPException(404, "Chabok position not found")
+        try:
+            return {"symbol": payload.symbol,
+                    "pnl": sl.close(p, bot().data.price(payload.symbol), "manual", time.time())}
+        except Exception:
+            LOG.exception("Chabok close failed for %s", payload.symbol)
+            raise HTTPException(503, "Chabok close failed; position remains open")
+
     @application.post("/api/bots/toggle", dependencies=[Depends(authorized)])
     def toggle_bot(payload: BotToggle):
         """On/off switch of one bot: off stops NEW entries (and cancels unfilled orders); open positions stay managed."""
@@ -327,7 +399,12 @@ def create_app(engine: Engine | None = None) -> FastAPI:
                     with engine.db.connect() as db:
                         db.execute("DELETE FROM positions WHERE state=?", (PENDING,))
         else:
-            module, (cfg, store) = (c3_sleeve, c3_paths()) if payload.bot == "c3" else (pa_sleeve, pa_paths())
+            if payload.bot == "c3":
+                module, (cfg, store) = c3_sleeve, c3_paths()
+            elif payload.bot == "pa":
+                module, (cfg, store) = pa_sleeve, pa_paths()
+            else:
+                module, (cfg, store) = scalp_sleeve, scalp_sleeve.paths()
             with file_lock(cfg.with_suffix(".lock")):
                 module.write_config(cfg, {**module.load(cfg), "enabled": payload.enabled})
             if payload.bot == "pa" and not payload.enabled:
