@@ -1,0 +1,44 @@
+name: 1536 1h candidates at 0.6 percent risk
+on:
+  pull_request:
+    paths:
+      - "high_cagr/chabok_1536_research.py"
+      - ".github/workflows/chabok-1h-risk-sweep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            lbank_project
+            high_cagr/chabok_historical_backtest.py
+            high_cagr/chabok_1536_research.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install numpy==2.2.6 pandas==2.2.3 numba==0.61.2
+      - name: Run 60m, 0.6% risk, 50% notional research
+        run: python -u high_cagr/chabok_1536_research.py
+        env:
+          CHABOK_BAR_MINUTES: "60"
+          CHABOK_RISK_FRACTION: "0.006"
+          CHABOK_NOTIONAL_CAP: "0.5"
+          CHABOK_DAILY_LOSS: "0.02"
+          PYTHONPATH: lbank_project
+      - name: Save all candidates and locked test if selected
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1536-1h-candidates-at-0.6-percent-risk
+          path: |
+            high_cagr/output/chabok_sweep_1536_60m_r60bps/result.json
+            high_cagr/output/chabok_sweep_1536_60m_r60bps/all_candidates.csv
+            high_cagr/output/chabok_sweep_1536_60m_r60bps/all_candidates.jsonl
+          if-no-files-found: ignore
+          retention-days: 30
