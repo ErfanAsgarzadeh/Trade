@@ -1,0 +1,39 @@
+name: Chabok 2021-2026 historical backtest (Binance proxy)
+on:
+  pull_request:
+    paths:
+      - "high_cagr/chabok_historical_backtest.py"
+      - ".github/workflows/chabok-backtest.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  historical-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            lbank_project
+            high_cagr/chabok_historical_backtest.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backtest and paper-bot dependencies
+        run: python -m pip install -r lbank_project/requirements-dev.txt
+      - name: Run 2021-01 through 2026-09 historical test
+        run: python -u high_cagr/chabok_historical_backtest.py
+        env:
+          PYTHONPATH: lbank_project
+      - name: Upload resulting replay report and trade ledger
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chabok-2021-2026-binance-futures-backtest
+          path: |
+            high_cagr/output/chabok/result.json
+            high_cagr/output/chabok/trades.csv
+            high_cagr/output/chabok/daily_equity.csv
+          if-no-files-found: ignore
+          retention-days: 30
