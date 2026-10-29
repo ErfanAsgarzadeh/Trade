@@ -390,6 +390,8 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     def toggle_bot(payload: BotToggle):
         """On/off switch of one bot: off stops NEW entries (and cancels unfilled orders); open positions stay managed."""
         engine = bot()
+        if payload.bot == "scalp" and payload.enabled and os.getenv("SCALP_IN_BOT", "0") != "1":
+            raise HTTPException(409, "Chabok runner is not configured (SCALP_IN_BOT=0). Cannot enable entries.")
         if payload.bot == "main":
             with file_lock(engine.db.trade_lock):
                 c = engine.config.read()
@@ -482,7 +484,7 @@ textarea{width:100%;min-height:360px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>Positions and pending orders</p><strong id="slots">—</strong><p id="updated_sub">—</p><p id="updated">Waiting for connection</p></section>
 <section class="panel kpi"><p>Margin in use / allowed budget ($)</p><strong id="margin">—</strong><p id="margin_pct">—</p><p id="pending_margin">—</p></section>
 <section class="panel kpi"><p>Measured slippage vs the LBank order book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail">—</p></section></div>
-<section class="panel" id="botspanel"><div class="row"><h2>Four bots</h2><p class="muted">All four share one paper account. Switching a bot off only stops its new entries; open positions keep being managed until they exit. Changes apply without a restart.</p></div>
+<section class="panel" id="botspanel"><div class="row"><h2>Four bots</h2><p class="muted">All four share one paper account. Switching entries off does not close open positions. Chabok's collector and runner require a separate opt-in and may need a restart; do not enable it before validation.</p></div>
 <div class="bots">
 <article class="bot bot-main" id="card_main"><div class="row"><div><h3>Shahin</h3><p class="sub muted">Donchian + Kumo breakout, 4h · 5 major coins</p></div><label class="switch"><input id="main_enabled" type="checkbox">On</label></div>
 <dl><dt>Risk per trade</dt><dd id="main_risk_v">—</dd><dt>Positions / orders</dt><dd id="main_open">—</dd><dt>Open P&amp;L ($)</dt><dd id="main_unreal">—</dd><dt>24h profit ($)</dt><dd id="main_day">—</dd></dl></article>
