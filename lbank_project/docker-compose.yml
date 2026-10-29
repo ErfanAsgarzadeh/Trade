@@ -93,6 +93,7 @@ services:
       PA_DB: /app/runtime/pa_sleeve.db
       SCALP_CONFIG: /app/runtime/scalp_config.json
       SCALP_DB: /app/runtime/scalp_sleeve.db
+      SCALP_IN_BOT: ${SCALP_IN_BOT:-0}
     volumes:
       - ./runtime:/app/runtime
     ports:
