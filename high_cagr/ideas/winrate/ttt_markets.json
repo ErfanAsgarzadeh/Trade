@@ -1,0 +1,317 @@
+{
+ "1000PEPEUSDT": {
+  "category": "Meme",
+  "name": "1K Pepe USDT-M Perp",
+  "active": "true"
+ },
+ "1000SHIBUSDT": {
+  "category": "Meme",
+  "name": "1K Shiba Inu USDT-M Perp",
+  "active": "true"
+ },
+ "AAVEUSDT": {
+  "category": "DeFi",
+  "name": "Aave USDT-M Perp",
+  "active": "true"
+ },
+ "ADAUSDT": {
+  "category": "Layer1",
+  "name": "Cardano USDT-M Perp",
+  "active": "true"
+ },
+ "ALGOUSDT": {
+  "category": "Layer1",
+  "name": "Algorand USDT-M Perp",
+  "active": "true"
+ },
+ "APEUSDT": {
+  "category": "Gaming",
+  "name": "ApeCoin USDT-M Perp",
+  "active": "true"
+ },
+ "APTUSDT": {
+  "category": "Layer1",
+  "name": "Aptos USDT-M Perp",
+  "active": "true"
+ },
+ "ARBUSDT": {
+  "category": "Layer2",
+  "name": "Arbitrum USDT-M Perp",
+  "active": "true"
+ },
+ "ASTERUSDT": {
+  "category": "DeFi",
+  "name": "Aster USDT-M Perp",
+  "active": "true"
+ },
+ "ATOMUSDT": {
+  "category": "Layer1",
+  "name": "Atom USDT-M Perp",
+  "active": "true"
+ },
+ "AVAXUSDT": {
+  "category": "Layer1",
+  "name": "Avalanche USDT-M Perp",
+  "active": "true"
+ },
+ "BANDUSDT": {
+  "category": "Oracle",
+  "name": "Band USDT-M Perp",
+  "active": "true"
+ },
+ "BCHUSDT": {
+  "category": "Layer1",
+  "name": "Bitcoin Cash USDT-M Perp",
+  "active": "true"
+ },
+ "BMTUSDT": {
+  "category": "Infrastructure",
+  "name": "Bubblemaps USDT-M Perp",
+  "active": "true"
+ },
+ "BNBUSDT": {
+  "category": "Layer1",
+  "name": "Binance Coin USDT-M Perp",
+  "active": "true"
+ },
+ "BTCUSDT": {
+  "category": "Layer1",
+  "name": "Bitcoin USDT-M Perp",
+  "active": "true"
+ },
+ "BTWUSDT": {
+  "category": "DeFi",
+  "name": "Bitway USDT-M Perp",
+  "active": "true"
+ },
+ "BZUSDT": {
+  "category": "Commodity",
+  "name": "Brent Crude Oil USDT-M Perp",
+  "active": "true"
+ },
+ "CAKEUSDT": {
+  "category": "DeFi",
+  "name": "PancakeSwap USDT-M Perp",
+  "active": "true"
+ },
+ "CLUSDT": {
+  "category": "Commodity",
+  "name": "WTI Crude Oil USDT-M Perp",
+  "active": "true"
+ },
+ "COPPERUSDT": {
+  "category": "Commodity",
+  "name": "Copper USDT-M Perp",
+  "active": "true"
+ },
+ "DASHUSDT": {
+  "category": "Payment",
+  "name": "Dash USDT-M Perp",
+  "active": "true"
+ },
+ "DOGEUSDT": {
+  "category": "Meme",
+  "name": "Doge USDT-M Perp",
+  "active": "true"
+ },
+ "DOTUSDT": {
+  "category": "Layer1",
+  "name": "Polkadot USDT-M Perp",
+  "active": "true"
+ },
+ "ENAUSDT": {
+  "category": "DeFi",
+  "name": "Ethena USDT-M Perp",
+  "active": "true"
+ },
+ "ETCUSDT": {
+  "category": "Layer1",
+  "name": "Ethereum Classic USDT-M Perp",
+  "active": "true"
+ },
+ "ETHUSDT": {
+  "category": "Layer1",
+  "name": "Ethereum USDT-M Perp",
+  "active": "true"
+ },
+ "FETUSDT": {
+  "category": "AI",
+  "name": "Fetch AI USDT-M Perp",
+  "active": "true"
+ },
+ "FILUSDT": {
+  "category": "Storage",
+  "name": "Filecoin USDT-M Perp",
+  "active": "true"
+ },
+ "GRAMUSDT": {
+  "category": "Layer1",
+  "name": "Gram USDT-M Perp",
+  "active": "true"
+ },
+ "HBARUSDT": {
+  "category": "DeFi",
+  "name": "Hedera USDT-M Perp",
+  "active": "true"
+ },
+ "HYPEUSDT": {
+  "category": "DeFi",
+  "name": "Hyperliquid USDT-M Perp",
+  "active": "true"
+ },
+ "ICPUSDT": {
+  "category": "Web3",
+  "name": "Internet Computer USDT-M Perp",
+  "active": "true"
+ },
+ "INJUSDT": {
+  "category": "Layer1",
+  "name": "Injective USDT-M Perp",
+  "active": "true"
+ },
+ "KAITOUSDT": {
+  "category": "AI",
+  "name": "Kaito USDT-M Perp",
+  "active": "true"
+ },
+ "KSMUSDT": {
+  "category": "Layer1",
+  "name": "Kusama USDT-M Perp",
+  "active": "true"
+ },
+ "LINKUSDT": {
+  "category": "Oracle",
+  "name": "Chainlink USDT-M Perp",
+  "active": "true"
+ },
+ "LTCUSDT": {
+  "category": "Layer1",
+  "name": "Litecoin USDT-M Perp",
+  "active": "true"
+ },
+ "MSTRUSDT": {
+  "category": "Equity",
+  "name": "MicroStrategy USDT-M Perp",
+  "active": "true"
+ },
+ "NEARUSDT": {
+  "category": "Layer1",
+  "name": "Near Protocol USDT-M Perp",
+  "active": "true"
+ },
+ "NOTUSDT": {
+  "category": "Gaming",
+  "name": "Notcoin USDT-M Perp",
+  "active": "true"
+ },
+ "NVDAUSDT": {
+  "category": "Equity",
+  "name": "NVIDIA USDT-M Perp",
+  "active": "true"
+ },
+ "ONDOUSDT": {
+  "category": "DeFi",
+  "name": "Ondo USDT-M Perp",
+  "active": "true"
+ },
+ "OPUSDT": {
+  "category": "Layer2",
+  "name": "OPU Coin USDT-M Perp",
+  "active": "true"
+ },
+ "PAXGUSDT": {
+  "category": "Commodity",
+  "name": "PAX Gold USDT-M Perp",
+  "active": "true"
+ },
+ "PUMPUSDT": {
+  "category": "Meme",
+  "name": "Pump.fun USDT-M Perp",
+  "active": "true"
+ },
+ "QNTUSDT": {
+  "category": "Utility",
+  "name": "Quant USDT-M Perp",
+  "active": "true"
+ },
+ "SANDUSDT": {
+  "category": "Gaming",
+  "name": "The Sandbox USDT-M Perp",
+  "active": "true"
+ },
+ "SOLUSDT": {
+  "category": "Layer1",
+  "name": "Solana USDT-M Perp",
+  "active": "true"
+ },
+ "SPCXUSDT": {
+  "category": "Equity",
+  "name": "SpaceX USDT-M Perp",
+  "active": "true"
+ },
+ "SUIUSDT": {
+  "category": "Layer1",
+  "name": "Sui USDT-M Perp",
+  "active": "true"
+ },
+ "TRUMPUSDT": {
+  "category": "Meme",
+  "name": "Official Trump USDT-M Perp",
+  "active": "true"
+ },
+ "TRXUSDT": {
+  "category": "Layer1",
+  "name": "TRON USDT-M Perp",
+  "active": "true"
+ },
+ "TSLAUSDT": {
+  "category": "Equity",
+  "name": "Tesla USDT-M Perp",
+  "active": "true"
+ },
+ "TUTUSDT": {
+  "category": "Meme",
+  "name": "Tutorial USDT-M Perp",
+  "active": "true"
+ },
+ "UNIUSDT": {
+  "category": "DeFi",
+  "name": "Uniswap USDT-M Perp",
+  "active": "true"
+ },
+ "VETUSDT": {
+  "category": "Layer1",
+  "name": "VeChain USDT-M Perp",
+  "active": "true"
+ },
+ "WLDUSDT": {
+  "category": "AI",
+  "name": "World Coin USDT-M Perp",
+  "active": "true"
+ },
+ "XAGUSDT": {
+  "category": "Commodity",
+  "name": "Silver USDT-M Perp",
+  "active": "true"
+ },
+ "XAUUSDT": {
+  "category": "Commodity",
+  "name": "Gold USDT-M Perp",
+  "active": "true"
+ },
+ "XLMUSDT": {
+  "category": "Payment",
+  "name": "Stellar USDT-M Perp",
+  "active": "true"
+ },
+ "XRPUSDT": {
+  "category": "Payment",
+  "name": "XRP USDT-M Perp",
+  "active": "true"
+ },
+ "ZECUSDT": {
+  "category": "Layer1",
+  "name": "Zcash USDT-M Perp",
+  "active": "true"
+ }
+}
