@@ -1,0 +1,40 @@
+name: 1536 technical and Ichimoku strategies (Chabok research)
+on:
+  pull_request:
+    paths:
+      - "high_cagr/chabok_1536_research.py"
+      - ".github/workflows/chabok-1536-sweep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            lbank_project
+            high_cagr/chabok_historical_backtest.py
+            high_cagr/chabok_1536_research.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install vector and JIT dependencies
+        run: python -m pip install numpy==2.2.6 pandas==2.2.3 numba==0.61.2
+      - name: Run frozen 1536 candidate search and locked test
+        run: python -u high_cagr/chabok_1536_research.py
+        env:
+          PYTHONPATH: lbank_project
+      - name: Attach complete candidate ledger and audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chabok-1536-strategy-search
+          path: |
+            high_cagr/output/chabok_sweep_1536/result.json
+            high_cagr/output/chabok_sweep_1536/all_candidates.csv
+            high_cagr/output/chabok_sweep_1536/all_candidates.jsonl
+          if-no-files-found: ignore
+          retention-days: 30
