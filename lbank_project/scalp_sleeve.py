@@ -217,10 +217,12 @@ class Sleeve(c3.Sleeve):
                 position = next(
                     (p for p in self.store.positions() if p["symbol"] == symbol), None
                 )
+                closed_for_time = False
                 if position:
                     if (stamp - position["signal_ts"]) // (900 * 1000) >= c["time_stop_bars"]:
                         self.close(position, self.data.price(symbol), "time", now)
                         position = None
+                        closed_for_time = True
                     elif stamp > position["last_bar_ts"]:
                         sign = 1 if position["side"] == "long" else -1
                         best = max(position["best"], float(b.close)) if sign == 1 else min(position["best"], float(b.close))
@@ -233,9 +235,7 @@ class Sleeve(c3.Sleeve):
                                 (best, new_stop, stamp, symbol, position["opened"], stamp)
                             )
                 # Don't re-enter on the same candle after a time stop.
-                if position is None and c["enabled"] and not (
-                    last and stamp <= last[0]
-                ):
+                if position is None and c["enabled"] and not closed_for_time:
                     side = signal(entry, trend, c)
                     if side:
                         self.open(symbol, side, b, now)
