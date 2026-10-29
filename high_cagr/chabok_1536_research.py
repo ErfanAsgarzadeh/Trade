@@ -13,6 +13,7 @@ from __future__ import annotations
 import itertools
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -23,7 +24,11 @@ import pandas as pd
 from chabok_historical_backtest import load_historical, SYMBOLS
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "output" / "chabok_sweep_1536"
+BAR_MINUTES = int(os.getenv("CHABOK_BAR_MINUTES", "15"))
+if BAR_MINUTES not in (15, 30):
+    raise ValueError("Research supports only 15m or 30m bar aggregation")
+BAR_MS = BAR_MINUTES * 60000
+OUT = HERE / "output" / ("chabok_sweep_1536" if BAR_MINUTES == 15 else "chabok_sweep_1536_30m")
 OUT.mkdir(parents=True, exist_ok=True)
 FAMILIES = ("donchian", "kumo_cloud", "ema_pullback", "bollinger_reversion",
             "rsi_momentum", "macd_crossover")
@@ -76,7 +81,15 @@ def feature_data(raw):
     for sym in SYMBOLS:
         a=raw[(sym,"kline","15m")].copy()
         h=raw[(sym,"kline","1h")].copy()
-        assert len(a)>200000 and len(h)>50000
+        if BAR_MINUTES == 30:
+            # Aggregate only fully completed, contiguous source 15m candles.
+            a = a.groupby(a.ts // BAR_MS, sort=True).agg(
+                {"ts":"first","open":"first","high":"max","low":"min",
+                 "close":"last","volume":"sum"}
+            ).reset_index(drop=True)
+            if (np.diff(a.ts.to_numpy(dtype=np.int64)) != BAR_MS).any():
+                raise RuntimeError("30m aggregated candles not contiguous")
+        assert len(a)>90000 and len(h)>50000
         a=atr_rsi(a)
         a["adx"]=adx14(a)
         for n in (10,20,30,50):
@@ -104,7 +117,7 @@ def feature_data(raw):
         h["sb"]=hsb
         h["hidx"]=np.arange(len(h))
         h["decision_ts"]=h.ts+3600000
-        a["decision_ts"]=a.ts+900000
+        a["decision_ts"]=a.ts+BAR_MS
         a=pd.merge_asof(
             a.sort_values("decision_ts"),
             h[["decision_ts","close","ema50","ema200","sa","sb","hidx"]]
@@ -286,7 +299,7 @@ def replay(opens,highs,lows,closes,atrs,fund,signal_values,ts,start,end,
                 else:timeex+=1
                 sides[j]=0;qty[j]=0.
                 continue
-            # Historical settlement timestamp is the 15m close (ts[i]+15m).
+            # Historical funding settlement timestamp is the current bar close.
             rate=fund[j,i]
             if rate!=0:
                 cash_delta=-direction*qty[j]*closes[j,i]*rate
@@ -334,10 +347,10 @@ def make_arrays(raw,prepared,ts):
         if len(times)==0:
             raise RuntimeError("Funding must exist: "+sym)
         # Unlike a casual shortcut, funding print must not be shifted to earlier bars.
-        indexed=np.searchsorted(times,ts+900000,side="left")
+        indexed=np.searchsorted(times,ts+BAR_MS,side="left")
         values=np.zeros(len(ts),dtype=np.float64)
         mask=indexed<len(times)
-        mask[mask]=times[indexed[mask]]==ts[mask]+900000
+        mask[mask]=times[indexed[mask]]==ts[mask]+BAR_MS
         values[mask]=rates[indexed[mask]]
         fund.append(values)
     matrix["fund"]=np.ascontiguousarray(np.stack(fund))
@@ -368,7 +381,7 @@ def date_index(ts, day):
 
 
 def main():
-    print("RESEARCH_START 1536 fixed candidates, OOS locked 2025-2026",flush=True)
+    print(f"RESEARCH_START 1536 fixed candidates, timeframe={BAR_MINUTES}m, OOS locked 2025-2026",flush=True)
     raw,misses=load_historical()
     if misses:
         raise RuntimeError(f"Missing any required funding or candle archive: {misses[:5]}")
@@ -377,13 +390,13 @@ def main():
     train=(0,date_index(ts,"2024-01-01"))
     valid=(train[1],date_index(ts,"2025-01-01"))
     locked=(valid[1],len(ts))
-    if not (train[1]>100000 and valid[1]-valid[0]>30000 and locked[1]-locked[0]>60000):
+    if not (train[1]>50000 and valid[1]-valid[0]>15000 and locked[1]-locked[0]>30000):
         raise RuntimeError("Split not as expected")
     starts={"train":str(pd.to_datetime(ts[0],unit="ms",utc=True)),
             "valid":str(pd.to_datetime(ts[valid[0]],unit="ms",utc=True)),
             "locked_test":str(pd.to_datetime(ts[locked[0]],unit="ms",utc=True))}
     print("SPLITS "+json.dumps(dict(starts=starts,ends=[
-        str(pd.to_datetime(ts[x[1]-1]+900000,unit="ms",utc=True)) for x in (train,valid,locked)
+        str(pd.to_datetime(ts[x[1]-1]+BAR_MS,unit="ms",utc=True)) for x in (train,valid,locked)
     ])),flush=True)
     years_train=(ts[train[1]-1]-ts[train[0]])/86400000/365.25
     years_valid=(ts[valid[1]-1]-ts[valid[0]])/86400000/365.25
@@ -478,7 +491,8 @@ def main():
         print("NO_CANDIDATE_MET_PRECOMMITTED_TRAIN_VALIDATION_GATES",flush=True)
 
     result=dict(
-        experiment="chabok-1536-indicator-technical-kumo-sweep-v1",
+        experiment=f"chabok-1536-indicator-technical-kumo-sweep-{BAR_MINUTES}m-v1",
+        entry_timeframe_minutes=BAR_MINUTES,
         source="Binance USDT-M actual 15m/1h kline/funding monthly archives, not LBank",
         candidates_tested=len(records),successful_train_validation=len(eligible),
         families=list(FAMILIES),regimes=list(REGIMES),
@@ -498,7 +512,7 @@ def main():
         top_20_train_validation=sorted_candidates[:20],
         caveats=[
             "1000+ combinations amplify data-snooping risk even when locked test is respected",
-            "15m high/low adverse stop-first policy, not 1m tick-level exits",
+            f"{BAR_MINUTES}m high/low adverse stop-first policy, not 1m tick-level exits",
             "No LBank fill, exchange precision, depth, dynamic spread or liquidations",
             "Combined account with Shahin/Mojsavar/Ghoghnous not simulated",
             "Candidate family is not automatically deployed; review required",
