@@ -28,7 +28,13 @@ BAR_MINUTES = int(os.getenv("CHABOK_BAR_MINUTES", "15"))
 if BAR_MINUTES not in (15, 30, 60):
     raise ValueError("Research supports 15m, 30m or 1h entries")
 BAR_MS = BAR_MINUTES * 60000
-OUT = HERE / "output" / ("chabok_sweep_1536" if BAR_MINUTES == 15 else f"chabok_sweep_1536_{BAR_MINUTES}m")
+RISK_FRACTION = float(os.getenv("CHABOK_RISK_FRACTION","0.0015"))
+NOTIONAL_FRACTION = float(os.getenv("CHABOK_NOTIONAL_CAP","0.25"))
+DAILY_LOSS_FRACTION = float(os.getenv("CHABOK_DAILY_LOSS","0.005"))
+if not (0<RISK_FRACTION<=0.01 and 0<NOTIONAL_FRACTION<=0.6 and 0<DAILY_LOSS_FRACTION<=0.02):
+    raise ValueError("Risk research input exceeds safe scenario limits")
+PROFILE = "" if RISK_FRACTION == 0.0015 else f"_r{round(10000*RISK_FRACTION)}bps"
+OUT = HERE / "output" / (("chabok_sweep_1536" if BAR_MINUTES == 15 else f"chabok_sweep_1536_{BAR_MINUTES}m")+PROFILE)
 OUT.mkdir(parents=True, exist_ok=True)
 FAMILIES = ("donchian", "kumo_cloud", "ema_pullback", "bollinger_reversion",
             "rsi_momentum", "macd_crossover")
@@ -247,7 +253,7 @@ def replay(opens,highs,lows,closes,atrs,fund,signal_values,ts,start,end,
                     npos+=1
                     eq+=sides[k]*qty[k]*(marks[k]-entry[k])-FEE*qty[k]*marks[k]
                     used+=qty[k]*entry[k]/5.
-            if npos>=2 or eq<=0 or daily_realized<=-.005*eq:
+            if npos>=2 or eq<=0 or daily_realized<=-DAILY_LOSS_FRACTION*eq:
                 continue
             px=opens[j,i]
             atr=atrs[j,i-1]
@@ -255,9 +261,9 @@ def replay(opens,highs,lows,closes,atrs,fund,signal_values,ts,start,end,
                 continue
             fill=px*(1+direction*slippage)
             distance=max(stop_multiple*atr,.006*fill)
-            desired_notional=eq*.0015/(distance/fill+2*FEE+2*slippage)
+            desired_notional=eq*RISK_FRACTION/(distance/fill+2*FEE+2*slippage)
             allowed=max(0.,eq*.8-used)
-            notional=min(desired_notional,eq*.25,allowed/(1+0.8*5*2*FEE)*5)
+            notional=min(desired_notional,eq*NOTIONAL_FRACTION,allowed/(1+0.8*5*2*FEE)*5)
             if notional<20 or distance/fill>0.20 or fill-distance<=0:
                 continue
             q=notional/fill
@@ -389,7 +395,7 @@ def date_index(ts, day):
 
 
 def main():
-    print(f"RESEARCH_START 1536 fixed candidates, timeframe={BAR_MINUTES}m, OOS locked 2025-2026",flush=True)
+    print(f"RESEARCH_START 1536 candidates timeframe={BAR_MINUTES}m risk={RISK_FRACTION} notional_cap={NOTIONAL_FRACTION} daily_stop={DAILY_LOSS_FRACTION} OOS locked 2025-2026",flush=True)
     raw,misses=load_historical()
     if misses:
         raise RuntimeError(f"Missing any required funding or candle archive: {misses[:5]}")
@@ -503,6 +509,9 @@ def main():
     result=dict(
         experiment=f"chabok-1536-indicator-technical-kumo-sweep-{BAR_MINUTES}m-v1",
         entry_timeframe_minutes=BAR_MINUTES,
+        risk_per_trade_fraction=RISK_FRACTION,
+        notional_cap_fraction=NOTIONAL_FRACTION,
+        daily_stop_fraction=DAILY_LOSS_FRACTION,
         source="Binance USDT-M actual 15m/1h kline/funding monthly archives, not LBank",
         candidates_tested=len(records),successful_train_validation=len(eligible),
         families=list(FAMILIES),regimes=list(REGIMES),
