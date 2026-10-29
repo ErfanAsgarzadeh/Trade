@@ -114,7 +114,8 @@ class Account:
         return self.margin
 
 
-def test_entry_capped_by_shared_margin_and_only_one_per_symbol(tmp_path):
+def test_entry_capped_by_shared_margin_and_only_one_per_symbol(tmp_path, monkeypatch):
+    monkeypatch.setattr(S.bot.license_access, "entries_allowed", lambda _: True)
     c = conf(enabled=True)
     store = S.c3.Store(tmp_path / "chabok.db")
     account = Account(tmp_path / "shared.lock")
