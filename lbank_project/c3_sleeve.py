@@ -12,7 +12,8 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   exit when the price touches the stop. One position per coin; own DB and config.
   profit lock (win-rate study, high_cagr/output/ideas/winrate/report_fa.html): once the price is profit_lock_arm_r x the
   initial risk in favour, the stop ratchets to entry + profit_lock_r x risk; partial_close_frac of the size closes once at
-  partial_target_r x risk. 0 turns either off. Checked by the stop watchdog on the live price.
+  partial_target_r x risk. 0 turns either off. Checked by the stop watchdog on the live price. Only positions opened at or after
+  profit_rules_from (unix time; set to the upgrade time when an existing runtime config first receives these keys) use them.
 Runs inside the main bot (lbank_bot.run starts it in its own thread; C3_IN_BOT=0 turns that off) or alone with
 `python c3_sleeve.py`. Inside the bot it sizes on the shared paper account: one seed + both realized P&Ls + both net unrealized P&Ls.
 Sizing: risk_per_trade_pct of that equity / (stop distance + round-trip fee + slippage allowance),
@@ -30,7 +31,7 @@ LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
     stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[],
-    profit_lock_arm_r=0.,profit_lock_r=.1,partial_target_r=0.,partial_close_frac=.5)
+    profit_lock_arm_r=0.,profit_lock_r=.1,partial_target_r=0.,partial_close_frac=.5,profit_rules_from=0.)
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -44,6 +45,7 @@ def validate(c:dict)->dict:
     if not (0<=c['profit_lock_arm_r']<=20 and 0<=c['profit_lock_r']<=20 and (c['profit_lock_arm_r']==0 or c['profit_lock_r']<c['profit_lock_arm_r'])):
         raise ValueError('profit lock: 0 <= profit_lock_r < profit_lock_arm_r <= 20 (arm 0 = off)')
     if not (0<=c['partial_target_r']<=20 and 0<c['partial_close_frac']<1):raise ValueError('partial: 0 <= partial_target_r <= 20 (0 = off), 0 < partial_close_frac < 1')
+    if not (isinstance(c['profit_rules_from'],(int,float)) and c['profit_rules_from']>=0):raise ValueError('profit_rules_from must be a unix time >= 0')
     if c['candle_fetch_limit']<c['ema_slow']*3:raise ValueError('candle_fetch_limit too small for the EMA warm-up')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('C3 needs a list of distinct symbols')
     return c
@@ -168,7 +170,7 @@ class Sleeve:
     def manage_profit(self,p:dict,price:float,now:float):
         """Partial close at partial_target_r, then the profit-lock ratchet (it acts from the next price check on)."""
         c=self.c;sign=1 if p['side']=='long' else -1
-        if p['qty']<=0 or p['risk_usd']<=0:return
+        if p['qty']<=0 or p['risk_usd']<=0 or p['opened']<c['profit_rules_from']:return   # positions opened before the upgrade keep the old rules
         dist=p['risk_usd']/p['qty'];move=sign*(price-p['entry'])/dist
         if c['partial_target_r']>0 and move>=c['partial_target_r']:
             with self.execution_lock():self._partial(p,price,now)
@@ -291,6 +293,8 @@ def prepare_config(path:Path,shipped:Path)->Path:
     if not path.exists():
         path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
+    if 'profit_lock_arm_r' not in cur and 'profit_rules_from' not in cur:
+        new['profit_rules_from']=time.time()   # upgrade of a running install: open positions keep their old exit rules
     if cur.get('risk_per_trade_pct') in (OLD_DEFAULT_RISK,.002):new['risk_per_trade_pct']=ship['risk_per_trade_pct']
     if new!=cur:
         LOG.info('Mojsavar runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))

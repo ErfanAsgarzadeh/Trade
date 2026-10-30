@@ -184,3 +184,22 @@ def test_exit_rule_validation():
     old=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text())
     for k in ('profit_lock_arm_r','profit_lock_r','partial_target_r','partial_close_frac'):old.pop(k)
     v=C.validate(old);assert v['profit_lock_arm_r']==0. and v['partial_target_r']==0.
+
+
+def test_upgrade_keeps_open_positions_on_old_rules(tmp_path):
+    """Upgrading a running install: the runtime config gets profit_rules_from = now, so positions opened before the upgrade are
+    not touched by the profit lock / half close; positions opened after it are."""
+    import time as _t
+    old=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text())
+    for k in ('profit_lock_arm_r','profit_lock_r','partial_target_r','partial_close_frac'):old.pop(k)
+    rt=tmp_path/'runtime_c3.json';rt.write_text(json.dumps(old))
+    before=_t.time();C.prepare_config(rt,Path(__file__).parents[1]/'c3_config.json');conf=C.load(rt)
+    assert conf['profit_lock_arm_r']==1. and conf['profit_rules_from']>=before
+    st=C.Store(tmp_path/'c3.db');data=FakeData([],108.);sl=C.Sleeve({**conf,'symbols':['AVAX/USDT:USDT']},st,data)
+    with st.db() as db:
+        db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',('AVAX/USDT:USDT','long',100.,10.,96.,100.,before-3600,0,0,40.))   # opened before
+        db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',('DOT/USDT:USDT','long',100.,10.,96.,100.,_t.time()+1,0,0,40.))     # opened after
+    sl.watchdog(_t.time()+5);P={p['symbol']:p for p in st.positions()}
+    assert P['AVAX/USDT:USDT']['qty']==10. and P['AVAX/USDT:USDT']['stop']==96.
+    assert P['DOT/USDT:USDT']['qty']==pytest.approx(5.) and P['DOT/USDT:USDT']['stop']==pytest.approx(100.4)
+    fresh=tmp_path/'fresh.json';C.prepare_config(fresh,Path(__file__).parents[1]/'c3_config.json');assert C.load(fresh)['profit_rules_from']==0.

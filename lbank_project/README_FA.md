@@ -276,6 +276,31 @@ FUNDING_DIR=data/funding python fetch_funding.py --source binance   # منبع �
 - 5A — همان profit floor موجود با `profit_floor_trigger_r=1.0` و `profit_floor_lock_r=0.1`.
 - پیکربندی آزموده‌شدهٔ 2A+5A: `profit_floor_enabled=true`، `profit_floor_trigger_r=1.0`، `profit_floor_lock_r=0.1`، `safe_pyramid_enabled=false`، `pyramid_risk_fraction=0.5`، `stop_width_filter_enabled=false`، `btc_regime_filter_enabled=false`، `initial_stop_atr_mult=2.0`، `atr_regime_filter_enabled=true`، `atr_regime_window=60`، `atr_regime_min_ratio=1.0`؛ F4 خاموش. ترکیب 2A با V2، فیلتر BTC یا 4B آزموده نشده است.
 
+## به‌روزرسانی امن سرور بدون خراب شدن معاملات باز
+
+- **موج‌سوار:** قفل سود و بستن نیم‌حجم فقط روی پوزیشن‌هایی اعمال می‌شود که **بعد از به‌روزرسانی** باز شوند. هنگام اولین شروع، `profit_rules_from` در `runtime/c3_config.json` برابر زمان همان لحظه ثبت می‌شود. پوزیشن‌های باز قبلی با همان استاپ و تریل قبلی ادامه می‌دهند.
+- **شاهین:** فیلتر ورود دیرهنگام فقط روی ورودهای جدید اثر دارد و تا وقتی از داشبورد روشن نشود خاموش است.
+- **F و Live mirror:** پیش‌فرض خاموش‌اند.
+- **ققنوس:** تغییری ندارد.
+- پوزیشن‌ها در `runtime/*.db` می‌مانند و ربات بعد از ری‌استارت دوباره مدیریتشان می‌کند. فقط در چند ثانیهٔ ری‌استارت قیمت چک نمی‌شود.
+
+```bash
+cd ~/Trade/lbank_project            # مسیر پروژه روی سرور
+grep BOT_PIN .env                   # باید حداقل ۱۶ کاراکتر باشد؛ اگر کوتاه است اول عوضش کنید
+git fetch origin && git checkout main && git pull
+docker compose build lbank-bot lbank-dashboard lbank-risk
+docker compose stop lbank-bot
+tar czf ~/runtime-backup-$(date +%Y%m%d-%H%M).tgz runtime
+docker compose up -d --no-deps lbank-bot lbank-dashboard lbank-risk
+docker compose logs --tail=50 lbank-bot
+```
+
+- بین `stop` و `up` فقط زمان پشتیبان‌گیری است، معمولاً چند ثانیه.
+- سرویس `lbank-live` را بالا نیاورید مگر وقتی بخواهید Live mirror را راه بیندازید.
+- بعد از بالا آمدن: در داشبورد پوزیشن‌های باز را با قبل مقایسه کنید. در لاگ باید `Mojsavar runtime config upgraded` با `profit_rules_from` دیده شود. در صورت تمایل «Late-entry gate» را روشن کنید.
+- F را اول با کلید اصلی روشن و **بدون تیک «Also act on open positions»** امتحان کنید تا روی پوزیشن‌های باز فعلی اثری نگذارد.
+- **بازگشت:** `docker compose stop lbank-bot`، باز کردن فایل پشتیبان روی `runtime`، برگشت به نسخهٔ قبلی کد (`git checkout <commit قبلی>`) و `docker compose up -d --build lbank-bot lbank-dashboard`.
+
 ## افزایش نرخ برد (۲۰۲۶-۱۰-۲۹) — گزارش: `high_cagr/output/ideas/winrate/report_fa.html`
 
 - **شاهین، فیلتر ورود دیرهنگام** — کلیدهای `strategy_settings`: `late_entry_filter_enabled`، `late_entry_bars` (۶۰)، `late_entry_max_log_move` (۰٫۱۵۲۱ ≈ ۱۶٫۴٪). اگر بستهٔ آخرین کندل ۴ساعته نسبت به ۶۰ کندل قبل بیش از این مقدار در جهت معامله رفته باشد، ورود جدید باز نمی‌شود. افزودن هرمی محدود نمی‌شود و تاریخچهٔ کوتاه‌تر از ۶۱ کندل ورود را مسدود نمی‌کند (مثل تحقیق). در داشبورد: «Late-entry gate».
