@@ -90,11 +90,13 @@ def test_errors_pause_and_dashboard_commands(env):
     # Operator must reconcile the exchange first, then explicitly clear the
     # uncertainty marker. A dashboard config save alone may never unlock it.
     m.state['pending_orders'].clear();m.save()
+    paper.book.clear()  # Do not retry the same failed paper signal.
     (tmp / 'live_command.json').write_text(json.dumps({'resume': True}))
     step()
     assert not m.state['paused']
     ex.open = X.Sim.open.__get__(ex)
-    paper.book['AAVE/USDT:USDT']['key'] = 'c3|AAVE|new'
+    paper.book['AAVE/USDT:USDT'] = dict(bot='c3', side='long', qty=1., stop=90.,
+                                       key='c3|AAVE|new', opened=clock[0])
     paper.book['AAVE/USDT:USDT']['opened'] = clock[0]
     step()
     assert 'AAVEUSDT' in ex.positions()
