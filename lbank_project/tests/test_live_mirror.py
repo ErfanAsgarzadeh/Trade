@@ -134,6 +134,69 @@ def test_thetruetrade_signing_and_requests(monkeypatch):
     with pytest.raises(X.ExchangeError):X.TheTrueTrade('', '', 'https://api.test').equity()
 
 
+
+def test_thetruetrade_equity_uses_futures_summary_without_double_count(monkeypatch):
+    # Actual API response shape; totalAssets already includes unrealized PnL.
+    payload = {
+        'summary': {
+            'totalAssets': '9.828017869708509526',
+            'availableBalance': '1.645366040000000002',
+            'positionMarginBalance': '8.182651829708509457',
+            'totalUnrealizedPnl': '0.513053230987205807',
+        },
+        'assets': [{
+            'symbol': 'USDT',
+            'totalAssets': '9.828017869708509526',
+            'availableBalance': '1.645366040000000002',
+        }],
+    }
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda method, path, **kw: payload)
+    def should_not_fetch_positions():
+        raise AssertionError('summary.totalAssets must not add position PnL again')
+    monkeypatch.setattr(t, '_raw_positions', should_not_fetch_positions)
+    assert len(t._list(payload)) == 1
+    assert t.equity() == pytest.approx(9.82801786970851)
+
+
+def test_thetruetrade_equity_fallback_to_modern_asset_rows(monkeypatch):
+    payload = {'assets': [{'symbol': 'USDT', 'totalAssets': '9.83'},
+                          {'symbol': 'BTC', 'totalAssets': '0.01'}]}
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *args, **kw: payload)
+    monkeypatch.setattr(t, '_raw_positions', lambda: (_ for _ in ()).throw(
+        AssertionError('modern totalAssets should not fetch positions')))
+    assert t.equity() == pytest.approx(9.83)
+
+
+@pytest.mark.parametrize('payload', [
+    {'summary': {'totalAssets': 'NaN'}, 'assets': [{'symbol': 'USDT', 'totalAssets': '9.83'}]},
+    {'summary': {'totalAssets': '-1'}},
+    {'summary': {'totalAssets': True}},
+    {'summary': {'totalAssets': 'not-a-number'}},
+    {'assets': []},
+    {'assets': [{'symbol': 'BTC', 'totalAssets': '1'}]},
+    {'assets': [{'symbol': 'USDT', 'totalAssets': None}]},
+    {'assets': [{'symbol': 'USDT', 'totalAssets': 'inf'}]},
+    {'assets': {'symbol': 'USDT', 'totalAssets': '9.83'}},
+    {'summary': 'bad', 'assets': [{'symbol': 'USDT', 'totalAssets': '9.83'}]},
+    {},
+    None,
+])
+def test_thetruetrade_equity_invalid_response_fails_closed(monkeypatch, payload):
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *args, **kw: payload)
+    with pytest.raises(X.ExchangeError):
+        t.equity()
+
+
+def test_thetruetrade_zero_futures_equity_is_valid(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *args, **kw:
+                        {'summary': {'totalAssets': '0'}, 'assets': []})
+    assert t.equity() == 0.0
+
+
 def test_binance_adapter_orders():
     calls = []
     class FakeCcxt:
