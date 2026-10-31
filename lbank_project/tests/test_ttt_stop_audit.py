@@ -85,11 +85,11 @@ def test_documented_orders_audit_uses_only_get_and_redacts_secrets(monkeypatch):
         "meta": {"total": 2},
     }
     def fake_request(method, path, *args, **kwargs):
-        calls.append((method, path))
+        calls.append((method, path, args, kwargs))
         return response
     monkeypatch.setattr(ex, "request", fake_request)
     result = audit.audit_orders(ex, "off")
-    assert calls == [("GET", "/futures/orders")]
+    assert calls == [("GET", "/futures/orders", ({"active": "true", "page": 1},), {})]
     assert result["order_records_checked"] == 2
     assert result["order_type_counts"] == {"STOP_MARKET": 1, "MARKET": 1}
     assert result["order_status_counts"] == {"OPEN": 1, "FILLED": 1}
