@@ -412,6 +412,10 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         cur = LM.read_config();new = {**cur, **{k: payload[k] for k in LM.DEFAULT if k in payload}}
         if new["mode"] == "live" and cur["mode"] != "live" and payload.get("confirm") != "LIVE":
             raise HTTPException(422, "Type LIVE to confirm real orders")
+        if new["mode"] == "live":
+            # Exchange stop-loss readback is not yet validated on either live adapter.
+            # Keep the user-facing switch locked until end-to-end protection is proven.
+            raise HTTPException(409, "Live execution locked: exchange stop-loss confirmation is not validated. Use dry/off.")
         try:
             v = LM.write_config(new)
         except ValueError as exc:
