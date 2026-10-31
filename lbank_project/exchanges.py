@@ -45,6 +45,12 @@ class Adapter:
     name = "base"
     def markets(self) -> dict:raise NotImplementedError          # symbol -> {step, tick, min_qty, min_notional, max_leverage}
     def equity(self) -> float:raise NotImplementedError          # futures account equity in USDT
+    def available_balance(self) -> float:
+        raise ExchangeError("Available-margin preflight is not supported by this adapter")
+    def ensure_protected_entries(self) -> None:
+        raise ExchangeError("Exchange stop-loss readback has not been validated; live entries are blocked")
+    def verify_stop(self, pos: LivePosition, stop: float) -> None:
+        raise ExchangeError("Exchange stop-loss readback is not supported")
     def positions(self) -> dict[str, LivePosition]:raise NotImplementedError
     def price(self, symbol: str) -> float:raise NotImplementedError
     def open(self, symbol: str, side: str, qty: float, leverage: int, stop: float | None) -> None:raise NotImplementedError
@@ -164,6 +170,29 @@ class TheTrueTrade(Adapter):
             raise ExchangeError("Invalid TheTrueTrade unrealized PnL")
         return amount(balance + upnl, "futures equity")
 
+    def available_balance(self) -> float:
+        """Use *free* margin, never total account equity, for new order budgets."""
+        data = self.request("GET", "/futures/assets")
+        if isinstance(data, dict) and isinstance(data.get("summary"), dict):
+            value = data["summary"].get("availableBalance")
+        elif isinstance(data, dict) and isinstance(data.get("assets"), list):
+            rows = [a for a in data["assets"] if isinstance(a, dict)
+                    and str(a.get("symbol", "")).upper() == "USDT"]
+            if len(rows) != 1:
+                raise ExchangeError("Missing/ambiguous USDT available balance")
+            value = rows[0].get("availableBalance")
+        else:
+            raise ExchangeError("Unsupported TheTrueTrade available-balance response")
+        if isinstance(value, bool) or value is None:
+            raise ExchangeError("Missing TheTrueTrade availableBalance")
+        try:
+            result = float(value)
+        except (TypeError, ValueError, OverflowError):
+            raise ExchangeError("Invalid TheTrueTrade availableBalance") from None
+        if not math.isfinite(result) or result < 0:
+            raise ExchangeError("Invalid TheTrueTrade availableBalance")
+        return result
+
     def _raw_positions(self) -> list:
         """Read all reported open positions; never mistake an unknown schema for an empty account."""
         response = self.request("GET", "/futures/positions", {"active": "true"})
@@ -248,9 +277,16 @@ class TheTrueTrade(Adapter):
         return f"{x:.12f}".rstrip("0").rstrip(".")
 
     def open(self, symbol, side, qty, leverage, stop=None):
+        # Never issue a naked futures entry. The mirror also requires an independently
+        # verified stop-readback capability before it can call this in live mode.
+        if not isinstance(stop, (int, float)) or isinstance(stop, bool) or not math.isfinite(stop) or stop <= 0:
+            raise ExchangeError("Refusing TheTrueTrade entry without valid stop loss")
+        if not isinstance(qty, (int, float)) or isinstance(qty, bool) or not math.isfinite(qty) or qty <= 0:
+            raise ExchangeError("Invalid TheTrueTrade entry quantity")
+        if side not in ("long", "short"):
+            raise ExchangeError("Invalid TheTrueTrade entry side")
         body = {"symbol": symbol, "side": "LONG" if side == "long" else "SHORT", "tradeType": "MARKET", "leverage": int(leverage),
-                "size": self._fmt(qty), "walletType": "debit"}
-        if stop:body.update(stopLoss=self._fmt(stop))
+                "size": self._fmt(qty), "walletType": "debit", "stopLoss": self._fmt(stop)}
         self.request("POST", "/futures/positions", body=body)
 
     def close(self, pos, qty=None):
@@ -304,6 +340,17 @@ class Binance(Adapter):
     def equity(self):
         b = self.x.fetch_balance();return float(((b.get("info") or {}).get("totalMarginBalance")) or (b.get("total") or {}).get("USDT") or 0)
 
+    def available_balance(self):
+        b = self.x.fetch_balance()
+        value = (b.get("free") or {}).get("USDT")
+        if value is None:raise ExchangeError("Binance available USDT balance unavailable")
+        try:result = float(value)
+        except (TypeError, ValueError, OverflowError):
+            raise ExchangeError("Invalid Binance free balance") from None
+        if not math.isfinite(result) or result < 0:
+            raise ExchangeError("Invalid Binance free balance")
+        return result
+
     def positions(self):
         out = {}
         for p in self.x.fetch_positions():
@@ -351,6 +398,12 @@ class Sim(Adapter):
 
     def price(self, symbol):return float(self.price_fn(symbol))
     def equity(self):return self.eq
+    def available_balance(self):return self.eq
+    def ensure_protected_entries(self):return None  # Simulator verifies stops from in-memory state.
+    def verify_stop(self, pos, stop):
+        actual = self.stops.get(pos.symbol)
+        if actual is None or not math.isclose(actual, stop, rel_tol=1e-7, abs_tol=1e-10):
+            raise ExchangeError(f"{pos.symbol}: simulated stop loss not confirmed")
     def positions(self):return {k: LivePosition(v.symbol, v.side, v.qty, v.entry, list(v.ids)) for k, v in self.pos.items()}
 
     def open(self, symbol, side, qty, leverage, stop=None):
