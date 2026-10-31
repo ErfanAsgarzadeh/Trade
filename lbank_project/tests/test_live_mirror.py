@@ -536,6 +536,17 @@ def test_dashboard_live_endpoints(tmp_path, monkeypatch):
         blocked = c.put('/api/live/config', headers=H, json={'mode': 'live', 'confirm': 'LIVE'})
         assert blocked.status_code == 409 and 'stop-loss confirmation' in blocked.json()['detail']
         assert c.get('/api/live', headers=H).json()['config']['mode'] == 'dry'
+        # A journal from the REAL exchange must remain visible while mode is off/dry.
+        state_file = tmp_path / 'rt' / 'live_state_live_thetruetrade.json'
+        state_file.write_text(_j.dumps({
+            'pending_orders': {'BTCUSDT': {'action': 'close', 'qty': .01,
+                                          'key': 'private-paper-id'}}}))
+        view = c.get('/api/live', headers=H).json()
+        assert view['unresolved_live_operations'] == [
+            {'exchange': 'thetruetrade', 'symbol': 'BTCUSDT', 'action': 'close'}]
+        assert 'private-paper-id' not in str(view['unresolved_live_operations'])
+        state_file.unlink()
+
         assert c.put('/api/live/config', headers=H, json={'leverage': 99}).status_code == 422
         assert c.post('/api/live/close-all', headers=H).json()['queued'] and _j.loads((tmp_path / 'rt' / 'live_command.json').read_text())['close_all']
         assert 'id="live_panel"' in c.get('/').text
