@@ -205,7 +205,24 @@ class TheTrueTrade(Adapter):
             rows = None
         if rows is None:
             raise ExchangeError("Invalid TheTrueTrade positions response: no position list")
-
+        if isinstance(response, dict) and "meta" in response:
+            meta = response["meta"]
+            if not isinstance(meta, dict):
+                raise ExchangeError("Invalid TheTrueTrade positions pagination metadata")
+            for key in ("total", "totalCount", "totalItems"):
+                if key not in meta or meta[key] is None:
+                    continue
+                value = meta[key]
+                try:
+                    total = int(value)
+                except (TypeError, ValueError, OverflowError):
+                    raise ExchangeError("Invalid TheTrueTrade positions total") from None
+                if isinstance(value, bool) or total < 0 or str(value).strip() != str(total):
+                    raise ExchangeError("Invalid TheTrueTrade positions total")
+                if total > len(rows):
+                    raise ExchangeError("Incomplete TheTrueTrade positions page; no trading until all positions are fetched")
+            if meta.get("hasNextPage") is True or meta.get("hasNext") is True or meta.get("nextCursor"):
+                raise ExchangeError("TheTrueTrade positions response has another page")
         positions = []
         for p in rows:
             if not isinstance(p, dict):
