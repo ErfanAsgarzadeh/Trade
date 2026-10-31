@@ -165,18 +165,83 @@ class TheTrueTrade(Adapter):
         return amount(balance + upnl, "futures equity")
 
     def _raw_positions(self) -> list:
-        return [p for p in self._list(self.request("GET", "/futures/positions", {"active": "true"})) if str(p.get("status", "OPEN")).upper() == "OPEN"]
+        """Read all reported open positions; never mistake an unknown schema for an empty account."""
+        response = self.request("GET", "/futures/positions", {"active": "true"})
+        if isinstance(response, list):  # Older API shape.
+            rows = response
+        elif isinstance(response, dict):
+            rows = next((response[k] for k in ("items", "positions", "data", "results")
+                         if isinstance(response.get(k), list)), None)
+        else:
+            rows = None
+        if rows is None:
+            raise ExchangeError("Invalid TheTrueTrade positions response: no position list")
+
+        positions = []
+        for p in rows:
+            if not isinstance(p, dict):
+                raise ExchangeError("Invalid TheTrueTrade position record")
+            status = p.get("status")
+            active = p.get("isActive")
+            if active is not None and not isinstance(active, bool):
+                raise ExchangeError("Invalid TheTrueTrade isActive flag")
+            if status is None:
+                if active is True:
+                    positions.append(p)
+                    continue
+                raise ExchangeError("Missing TheTrueTrade position status")
+            if not isinstance(status, str):
+                raise ExchangeError("Invalid TheTrueTrade position status")
+            status = status.upper()
+            if status in ("OPEN", "OPENED"):
+                if active is False:
+                    raise ExchangeError("Inconsistent TheTrueTrade open position state")
+                positions.append(p)
+            elif status in ("CLOSED", "CANCELED", "CANCELLED", "LIQUIDATED", "SETTLED"):
+                if active is True:
+                    raise ExchangeError("Inconsistent TheTrueTrade closed position state")
+            else:
+                raise ExchangeError(f"Unknown TheTrueTrade position status: {status}")
+        return positions
 
     def positions(self) -> dict[str, LivePosition]:
+        """Normalize positions with explicit validation; incomplete snapshots must block trading."""
         out: dict[str, LivePosition] = {}
+
+        def positive(value, field: str) -> float:
+            if isinstance(value, bool):
+                raise ExchangeError(f"Invalid TheTrueTrade {field}")
+            try:
+                num = float(value)
+            except (TypeError, ValueError, OverflowError):
+                raise ExchangeError(f"Invalid TheTrueTrade {field}") from None
+            if not math.isfinite(num) or num <= 0:
+                raise ExchangeError(f"Invalid TheTrueTrade {field}")
+            return num
+
         for p in self._raw_positions():
-            sym = p["symbol"];side = "long" if str(p["side"]).upper() == "LONG" else "short";q = abs(float(p.get("size") or 0))
-            if q <= 0:continue
-            e = float(p.get("entryPrice") or p.get("averageEntryPrice") or p.get("markPrice") or 0)
+            sym = p.get("symbol")
+            if not isinstance(sym, str) or not sym.strip():
+                raise ExchangeError("Missing TheTrueTrade position symbol")
+            raw_side = p.get("side")
+            if not isinstance(raw_side, str) or raw_side.upper() not in ("LONG", "SHORT"):
+                raise ExchangeError(f"Invalid TheTrueTrade position side for {sym}")
+            side = "long" if raw_side.upper() == "LONG" else "short"
+            q = positive(p.get("size"), f"position size for {sym}")
+            price = (p.get("entryPrice") or p.get("averageEntryPrice") or p.get("markPrice"))
+            entry = positive(price, f"entry price for {sym}")
+            pid = p.get("id")
+            if pid is None or isinstance(pid, bool) or not isinstance(pid, (int, str)) or not str(pid).strip():
+                raise ExchangeError(f"Missing TheTrueTrade position ID for {sym}")
             cur = out.get(sym)
-            if cur is None:out[sym] = LivePosition(sym, side, q, e, [p["id"]])
-            elif cur.side == side:cur.entry = (cur.entry * cur.qty + e * q) / (cur.qty + q);cur.qty += q;cur.ids.append(p["id"])
-            else:raise ExchangeError(f"{sym}: long and short positions open at the same time")
+            if cur is None:
+                out[sym] = LivePosition(sym, side, q, entry, [pid])
+            elif cur.side == side:
+                cur.entry = (cur.entry * cur.qty + entry * q) / (cur.qty + q)
+                cur.qty += q
+                cur.ids.append(pid)
+            else:
+                raise ExchangeError(f"{sym}: both long and short positions open")
         return out
 
     def _fmt(self, x: float) -> str:
