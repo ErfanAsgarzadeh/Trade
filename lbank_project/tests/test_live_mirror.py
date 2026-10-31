@@ -500,6 +500,36 @@ def test_thetruetrade_position_list_does_not_prove_stop_is_present(monkeypatch):
 
 
 
+
+@pytest.mark.parametrize('meta', [
+    {'total': 3},
+    {'totalCount': '3'},
+    {'totalItems': 3},
+    {'hasNextPage': True},
+    {'hasNext': True},
+    {'nextCursor': 'cursor-next'},
+    {'total': 'NaN'},
+    {'total': True},
+    {'total': -1},
+])
+def test_thetruetrade_incomplete_position_pages_fail_closed(monkeypatch, meta):
+    t = X.TheTrueTrade('key', 'secret')
+    row = {'id': 1, 'symbol': 'BTCUSDT', 'side': 'LONG', 'status': 'OPENED',
+           'isActive': True, 'size': '0.01', 'entryPrice': '80000'}
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: {'items': [row], 'meta': meta})
+    with pytest.raises(X.ExchangeError):
+        t.positions()
+
+
+def test_thetruetrade_complete_position_page_with_meta(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    row = {'id': 1, 'symbol': 'BTCUSDT', 'side': 'LONG', 'status': 'OPENED',
+           'isActive': True, 'size': '0.01', 'entryPrice': '80000'}
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: {
+        'items': [row], 'meta': {'total': 1, 'hasNextPage': False}})
+    assert t.positions()['BTCUSDT'].qty == pytest.approx(.01)
+
+
 def test_binance_adapter_orders():
     calls = []
     class FakeCcxt:
