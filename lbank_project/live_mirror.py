@@ -98,9 +98,24 @@ class Mirror:
 
     # ---------------- persistence
     def _load(self) -> dict:
-        try:s = json.loads(self.state_path.read_text())
-        except Exception:s = {}
+        if not self.state_path.is_file():
+            s = {}
+        else:
+            try:
+                s = json.loads(self.state_path.read_text())
+                if not isinstance(s, dict):
+                    raise ValueError("mirror state is not a dictionary")
+                if not isinstance(s.get("managed", {}), dict) or not isinstance(s.get("pending_orders", {}), dict):
+                    raise ValueError("invalid managed or pending order state")
+            except (OSError, ValueError, TypeError) as exc:
+                # NEVER silently reset live ownership when state is corrupt.
+                if self.cfg["mode"] == "live":
+                    raise X.ExchangeError(f"Cannot load live mirror state: {type(exc).__name__}") from None
+                s = {}
         s.setdefault("managed", {});s.setdefault("seen", {});s.setdefault("errors", 0);s.setdefault("paused", False);s.setdefault("last_cycle", 0)
+        s.setdefault("pending_orders", {})
+        if s["pending_orders"]:
+            s["paused"] = True  # Durable uncertainty survives restart and config edits.
         return s
 
     def save(self):
@@ -121,6 +136,58 @@ class Mirror:
     def _qty(self, sym: str, qty: float) -> float:
         m = self.ex.markets().get(sym, {});return X.round_step(qty, m.get("step", 0))
 
+    def _entry_preflight(self, esym: str, side: str, qty: float, price: float, stop: float) -> bool:
+        """Reject unprotected and underfunded entries without touching order endpoints."""
+        if (side not in ("long", "short") or
+                not all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+                        for x in (qty, price, stop)) or qty <= 0 or price <= 0 or stop <= 0 or
+                not ((side == "long" and stop < price) or (side == "short" and stop > price))):
+            self.state["paused"] = True
+            raise X.ExchangeError(f"{esym}: invalid or missing protective stop; entries paused")
+        # No entry can be sent unless the venue's active stop can be read back.
+        # TheTrueTrade and Binance adapters currently block live orders here.
+        self.ex.ensure_protected_entries()
+        market = self.ex.markets().get(esym)
+        if not isinstance(market, dict):
+            raise X.ExchangeError(f"{esym}: missing market contract metadata")
+        max_leverage = market.get("max_leverage")
+        if max_leverage is not None and self.cfg["leverage"] > max_leverage:
+            raise X.ExchangeError(f"{esym}: leverage exceeds exchange maximum")
+        available = self.ex.available_balance()
+        if not isinstance(available, (float, int)) or isinstance(available, bool) or not math.isfinite(available) or available < 0:
+            self.state["paused"] = True
+            raise X.ExchangeError("Available margin unavailable or invalid; entries paused")
+        # 5% buffer for price drift/fees; never use equity in place of free margin.
+        required = qty * price / self.cfg["leverage"] * 1.05
+        if required > available + 1e-9:
+            self.event("skip", symbol=esym, reason="insufficient available margin",
+                       free_margin=round(available, 8), required_margin=round(required, 8))
+            return False
+        return True
+
+    def _submit_entry(self, esym, side, qty, stop, key):
+        """Write-ahead journal: no automatic retry after an ambiguous order outcome."""
+        if self.state["pending_orders"]:
+            raise X.ExchangeError("Unresolved exchange order exists; manual reconciliation required")
+        self.state["pending_orders"][esym] = dict(action="open", key=key, side=side, qty=qty,
+                                                  stop=stop, attempted_at=self.now())
+        self.save()  # Durable BEFORE submitting to the exchange.
+        try:
+            self.ex.open(esym, side, qty, self.cfg["leverage"], stop)
+            observed = self.ex.positions().get(esym)
+            if observed is None or observed.side != side or observed.qty <= 0:
+                raise X.ExchangeError(f"{esym}: exchange entry was not confirmed")
+            self.ex.verify_stop(observed, stop)
+        except Exception as exc:
+            self.state["paused"] = True
+            self.save()
+            self.event("order_uncertain", symbol=esym, reason=type(exc).__name__,
+                       note="No retry; verify exchange position and stop manually")
+            raise X.ExchangeError(f"{esym}: entry outcome/stop unverified; no automatic retry") from exc
+        del self.state["pending_orders"][esym]
+        self.save()
+        return observed
+
     # ---------------- one cycle
     def cycle(self):
         if self.cfg["mode"] == "off":return
@@ -130,7 +197,17 @@ class Mirror:
             except Exception:c = {}
             cmd.unlink(missing_ok=True)
             if c.get("close_all"):self.close_managed("dashboard emergency close");self.state["paused"] = True;self.save();return
-            if c.get("resume"):self.state.update(paused=False, errors=0);self.event("resume", note="new entries allowed again")
+            if c.get("resume"):
+                if self.state["pending_orders"]:
+                    self.event("resume_denied", reason="unresolved_order",
+                               note="Manual reconciliation required; no automatic retry")
+                else:
+                    self.state.update(paused=False, errors=0)
+                    self.event("resume", note="new entries allowed again")
+        if self.state["pending_orders"]:
+            self.state["paused"] = True
+            self.save()
+            return  # Never replay or overwrite an ambiguous order after restart.
         now = self.now();was_running = now - self.state["last_cycle"] < 180
         paper = self.paper.positions();markets = self.ex.markets();live = self.ex.positions()
         eq_live = self.ex.equity();eq_paper = self.paper.equity();ratio = eq_live / eq_paper * self.cfg["size_factor"]
@@ -174,9 +251,11 @@ class Mirror:
             mk = self.ex.markets().get(esym, {})
             if q <= 0 or q * px < mk.get("min_notional", 5) or q < mk.get("min_qty", 0):
                 self.event("skip", symbol=esym, reason=f"size {q} below exchange minimum");self.state.setdefault("skipped", {})[t["key"]] = True;return
-            stop = t["ex_stop"] if (t["side"] == "long" and t["ex_stop"] < px) or (t["side"] == "short" and t["ex_stop"] > px) else None
-            self.ex.open(esym, t["side"], q, self.cfg["leverage"], stop)
-            managed[esym] = dict(key=t["key"], bot=t["bot"], side=t["side"], paper_qty0=t["ex_qty"], live_qty0=q, stop=stop, opened=self.now())
+            stop = t["ex_stop"]
+            if not self._entry_preflight(esym, t["side"], q, px, stop):
+                return
+            observed = self._submit_entry(esym, t["side"], q, stop, t["key"])
+            managed[esym] = dict(key=t["key"], bot=t["bot"], side=t["side"], paper_qty0=t["ex_qty"], live_qty0=observed.qty, stop=stop, opened=self.now())
             self.state["errors"] = 0;self.event("open", symbol=esym, bot=t["bot"], side=t["side"], qty=q, price=px, stop=stop)
             return
         # managed & present: follow size and stop
@@ -187,7 +266,11 @@ class Mirror:
             self.ex.close(l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part / F cut)")
         elif target_q - l.qty > max(step, l.qty * .02) and not self.state["paused"]:
             add = self._qty(esym, min(target_q - l.qty, max(0., self.cfg["max_position_usd"] / self.ex.price(esym) - l.qty)))
-            if add > 0:self.ex.open(esym, l.side, add, self.cfg["leverage"], None);self.event("add", symbol=esym, qty=add, reason="paper added (pyramid)")
+            if add > 0:
+                px = self.ex.price(esym)
+                if self._entry_preflight(esym, l.side, add, px, t["ex_stop"]):
+                    self._submit_entry(esym, l.side, add, t["ex_stop"], t["key"])
+                    self.event("add", symbol=esym, qty=add, reason="paper added (pyramid)")
         s = t["ex_stop"]
         if s > 0 and (m.get("stop") is None or abs(s - m["stop"]) / s > 5e-4):
             px = self.ex.price(esym)
