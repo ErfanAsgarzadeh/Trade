@@ -80,13 +80,26 @@ def test_errors_pause_and_dashboard_commands(env):
     step()
     def boom(*a, **k):raise X.ExchangeError('down')
     ex.open = boom
-    for i in range(5):
-        paper.book['AAVE/USDT:USDT'] = dict(bot='c3', side='long', qty=1., stop=90., key=f'c3|AAVE|{i}', opened=clock[0]);step()
-    assert m.state['paused']
-    (tmp / 'live_command.json').write_text(json.dumps({'resume': True}));step();assert not m.state['paused']
-    ex.open = X.Sim.open.__get__(ex);paper.book['AAVE/USDT:USDT']['key'] = 'c3|AAVE|new';paper.book['AAVE/USDT:USDT']['opened'] = clock[0];step()
+    paper.book['AAVE/USDT:USDT'] = dict(bot='c3', side='long', qty=1., stop=90., key='c3|AAVE|first', opened=clock[0])
+    step()
+    assert m.state['paused'] and 'AAVEUSDT' in m.state['pending_orders']
+    (tmp / 'live_command.json').write_text(json.dumps({'resume': True}))
+    step()
+    assert m.state['paused'] and 'AAVEUSDT' in m.state['pending_orders']
+    assert 'AAVEUSDT' not in ex.positions()
+    # Operator must reconcile the exchange first, then explicitly clear the
+    # uncertainty marker. A dashboard config save alone may never unlock it.
+    m.state['pending_orders'].clear();m.save()
+    (tmp / 'live_command.json').write_text(json.dumps({'resume': True}))
+    step()
+    assert not m.state['paused']
+    ex.open = X.Sim.open.__get__(ex)
+    paper.book['AAVE/USDT:USDT']['key'] = 'c3|AAVE|new'
+    paper.book['AAVE/USDT:USDT']['opened'] = clock[0]
+    step()
     assert 'AAVEUSDT' in ex.positions()
-    (tmp / 'live_command.json').write_text(json.dumps({'close_all': True}));step()
+    (tmp / 'live_command.json').write_text(json.dumps({'close_all': True}))
+    step()
     assert not ex.positions() and m.state['paused']
 
 
@@ -273,6 +286,124 @@ def test_thetruetrade_empty_positions_list_is_valid(monkeypatch):
     t = X.TheTrueTrade('key', 'secret')
     monkeypatch.setattr(t, 'request', lambda *a, **kw: {'items': [], 'meta': {'total': 0}})
     assert t.positions() == {}
+
+
+
+def test_thetruetrade_available_balance_uses_free_margin(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    payload = {'summary': {'totalAssets': '9.828017869708509526',
+                           'availableBalance': '1.645366040000000002',
+                           'positionMarginBalance': '8.182651829708509457'},
+               'assets': [{'symbol': 'USDT', 'availableBalance': '1.645366040000000002'}]}
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: payload)
+    assert t.available_balance() == pytest.approx(1.64536604)
+    assert t.equity() == pytest.approx(9.82801786970851)
+
+
+@pytest.mark.parametrize('payload', [
+    {}, {'summary': {'totalAssets': '9.83'}},
+    {'summary': {'availableBalance': 'NaN'}},
+    {'summary': {'availableBalance': None}},
+    {'summary': {'availableBalance': '-1'}},
+    {'summary': {'availableBalance': 'infinity'}},
+    {'summary': {'availableBalance': True}},
+    {'assets': []},
+    {'assets': [{'symbol': 'USDT'}]},
+])
+def test_thetruetrade_missing_or_invalid_free_margin_fails(monkeypatch, payload):
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: payload)
+    with pytest.raises(X.ExchangeError):
+        t.available_balance()
+
+
+def test_thetruetrade_refuses_unprotected_order_before_post(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    sent = []
+    monkeypatch.setattr(t, 'request', lambda *args, **kw: sent.append((args, kw)))
+    with pytest.raises(X.ExchangeError, match='stop loss'):
+        t.open('BTCUSDT', 'long', 0.001, 5, None)
+    assert not sent
+
+
+def test_live_mirror_blocks_unverified_exchange_stop_without_order(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    def unverified():
+        raise X.ExchangeError('TheTrueTrade stop loss readback unavailable')
+    sim.ensure_protected_entries = unverified
+    paper.book['BTC/USDT:USDT'] = main_pos(ts=17)
+    step()
+    assert 'BTCUSDT' not in sim.positions()
+    assert 'BTCUSDT' not in m.state['pending_orders']
+    assert not [x for x in sim.log if x[0] == 'open']
+
+
+def test_live_mirror_checks_available_margin_before_order(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    sim.available_balance = lambda: 0.01
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    step()
+    assert 'BTCUSDT' not in sim.positions()
+    assert 'BTCUSDT' not in m.state['pending_orders']
+    assert not [x for x in sim.log if x[0] == 'open']
+
+
+def test_live_mirror_rejects_invalid_stop_and_pauses(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book['BTC/USDT:USDT'] = main_pos(stop=81000)
+    step()
+    assert m.state['paused']
+    assert 'BTCUSDT' not in sim.positions()
+    assert not [x for x in sim.log if x[0] == 'open']
+
+
+def test_live_mirror_timeout_writes_durable_uncertainty_and_never_retries(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    calls = []
+    def timeout_after_fill(symbol, side, qty, leverage, stop=None):
+        calls.append(symbol)
+        X.Sim.open(sim, symbol, side, qty, leverage, stop)
+        raise TimeoutError('response lost after fill')
+    sim.open = timeout_after_fill
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    step()
+    assert len(calls) == 1
+    assert m.state['paused'] and 'BTCUSDT' in m.state['pending_orders']
+    assert 'BTCUSDT' in sim.positions()
+    # Recreate mirror process from durable state file, do not open again.
+    restarted = L.Mirror(sim, paper, m.cfg, now=lambda: clock[0])
+    assert restarted.state['paused'] and restarted.state['pending_orders']
+    restarted.cycle()
+    assert len(calls) == 1
+    (tmp / 'live_command.json').write_text(json.dumps({'resume': True}))
+    restarted.cycle()
+    assert restarted.state['paused'] and len(calls) == 1
+
+
+def test_live_mirror_fails_closed_if_state_corrupt(tmp_path, monkeypatch):
+    monkeypatch.setenv('RISK_DIR', str(tmp_path))
+    path = tmp_path / 'live_state_live_thetruetrade.json'
+    path.write_text('{not valid json')
+    sim = X.Sim()
+    with pytest.raises(X.ExchangeError, match='Cannot load'):
+        L.Mirror(sim, FakePaper(), L.validate({'mode': 'live'}))
+
+
+def test_live_mirror_missing_post_fill_stop_halts_and_journals(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    def open_without_stop(symbol, side, qty, leverage, stop=None):
+        X.Sim.open(sim, symbol, side, qty, leverage, None)
+    sim.open = open_without_stop
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    step()
+    assert 'BTCUSDT' in sim.positions()
+    assert m.state['paused'] and 'BTCUSDT' in m.state['pending_orders']
+    assert 'BTCUSDT' not in m.state['managed']
 
 
 def test_binance_adapter_orders():
