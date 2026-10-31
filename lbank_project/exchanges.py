@@ -127,7 +127,7 @@ class TheTrueTrade(Adapter):
         return amount
 
     def equity(self) -> float:
-        """USDT futures equity; modern totalAssets already includes account PnL.
+        """USDT futures equity from provider-reported totalAssets (without PnL recombination).
 
         TheTrueTrade /futures/assets currently returns
         {'summary': {'totalAssets': ...}, 'assets': [{'symbol': 'USDT', 'totalAssets': ...}]}.
