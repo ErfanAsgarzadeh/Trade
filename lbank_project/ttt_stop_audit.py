@@ -165,7 +165,11 @@ def audit_orders(exchange: TheTrueTrade, mode: str) -> dict:
             raise ExchangeError("Order audit permits only GET /futures/orders")
         return original_request(method, path, *args, **kwargs)
     exchange.request = only_orders_get
-    return audit_order_rows(exchange.request("GET", "/futures/orders"))
+    # The documented filters select working orders; limit the audit to page one.
+    # If metadata signals more pages, report incompleteness rather than assuming
+    # there are no other protective orders.
+    return audit_order_rows(exchange.request(
+        "GET", "/futures/orders", {"active": "true", "page": 1}))
 
 
 def main() -> int:
