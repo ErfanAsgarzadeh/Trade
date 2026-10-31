@@ -184,8 +184,9 @@ class Mirror:
             self.event("order_uncertain", symbol=esym, reason=type(exc).__name__,
                        note="No retry; verify exchange position and stop manually")
             raise X.ExchangeError(f"{esym}: entry outcome/stop unverified; no automatic retry") from exc
-        del self.state["pending_orders"][esym]
-        self.save()
+        # The caller must durably save ownership BEFORE resolving the journal.
+        # A crash between exchange confirmation and state persistence must not
+        # leave an unmanaged position that can be silently forgotten.
         return observed
 
     # ---------------- one cycle
@@ -256,6 +257,9 @@ class Mirror:
                 return
             observed = self._submit_entry(esym, t["side"], q, stop, t["key"])
             managed[esym] = dict(key=t["key"], bot=t["bot"], side=t["side"], paper_qty0=t["ex_qty"], live_qty0=observed.qty, stop=stop, opened=self.now())
+            self.save()  # Save confirmed ownership while the uncertainty marker still exists.
+            del self.state["pending_orders"][esym]
+            self.save()
             self.state["errors"] = 0;self.event("open", symbol=esym, bot=t["bot"], side=t["side"], qty=q, price=px, stop=stop)
             return
         # managed & present: follow size and stop
@@ -270,6 +274,11 @@ class Mirror:
                 px = self.ex.price(esym)
                 if self._entry_preflight(esym, l.side, add, px, t["ex_stop"]):
                     self._submit_entry(esym, l.side, add, t["ex_stop"], t["key"])
+                    # Existing ownership is already durable; resolve pending only
+                    # after the exchange has acknowledged the protected add.
+                    self.save()
+                    del self.state["pending_orders"][esym]
+                    self.save()
                     self.event("add", symbol=esym, qty=add, reason="paper added (pyramid)")
         s = t["ex_stop"]
         if s > 0 and (m.get("stop") is None or abs(s - m["stop"]) / s > 5e-4):
