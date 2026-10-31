@@ -84,9 +84,98 @@ def audit_exchange(exchange: TheTrueTrade, mode: str) -> dict:
     return audit_rows(exchange._raw_positions())
 
 
+# Only allow public, non-identifying enum labels into diagnostic output.
+ORDER_TYPES = {
+    "STOP_MARKET", "STOP_LIMIT", "TAKE_PROFIT_MARKET", "TAKE_PROFIT_LIMIT",
+    "MARKET", "LIMIT", "STOP", "TAKE_PROFIT", "TRAILING_STOP_MARKET",
+}
+STATUS_TYPES = {
+    "OPEN", "OPENED", "ACTIVE", "NEW", "PENDING", "TRIGGERED", "FILLED",
+    "PARTIALLY_FILLED", "CLOSED", "CANCELED", "CANCELLED", "EXPIRED",
+}
+
+
+def audit_order_rows(response) -> dict:
+    """Summarize order schema without returning any order IDs, prices or account data."""
+    if isinstance(response, list):
+        rows, meta = response, {}
+    elif isinstance(response, dict):
+        rows = next((response[k] for k in ("items", "orders", "data", "results")
+                     if isinstance(response.get(k), list)), None)
+        meta = response.get("meta") or {}
+    else:
+        rows, meta = None, {}
+    if not isinstance(rows, list) or any(not isinstance(r, dict) for r in rows):
+        raise ExchangeError("Invalid futures/orders response: expected order list")
+    if not isinstance(meta, dict):
+        raise ExchangeError("Invalid futures/orders pagination metadata")
+    fields = sorted({
+        name for row in rows for name in row
+        if isinstance(name, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,63}", name)
+    })
+    candidate_fields = sorted(set().union(*(candidate_paths(row) for row in rows)))
+    counts = {}
+    status_counts = {}
+    for row in rows:
+        # Strict whitelist prevents accidental leaking of IDs and arbitrary values.
+        label = next((row[k] for k in ("orderType", "type", "tradeType")
+                      if isinstance(row.get(k), str)), "")
+        label = label.strip().upper()
+        label = label if label in ORDER_TYPES else "OTHER_OR_UNKNOWN"
+        counts[label] = counts.get(label, 0) + 1
+        status = next((row[k] for k in ("status", "orderStatus")
+                       if isinstance(row.get(k), str)), "")
+        status = status.strip().upper()
+        status = status if status in STATUS_TYPES else "OTHER_OR_UNKNOWN"
+        status_counts[status] = status_counts.get(status, 0) + 1
+    incomplete = meta.get("hasNextPage") is True or meta.get("hasNext") is True or bool(meta.get("nextCursor"))
+    for field in ("total", "totalCount", "totalItems"):
+        if meta.get(field) is not None:
+            try:
+                total = int(meta[field])
+                incomplete = incomplete or total > len(rows)
+            except (ValueError, TypeError, OverflowError):
+                incomplete = True
+    return {
+        "order_records_checked": len(rows),
+        "returned_order_fields": fields,
+        "possible_stop_related_field_names": candidate_fields,
+        "order_type_counts": counts,
+        "order_status_counts": status_counts,
+        "possibly_incomplete_page": bool(incomplete),
+        "stop_loss_verified": False,
+        "live_trading_authorized": False,
+        "conclusion": "UNVERIFIED",
+        "note": (
+            "Open orders may include stops, but field names and enum counts alone "
+            "do not prove that a working stop is bound to a particular position."
+        ),
+    }
+
+
+def audit_orders(exchange: TheTrueTrade, mode: str) -> dict:
+    """Use only the officially documented GET /futures/orders endpoint."""
+    if mode != "off":
+        raise ExchangeError("Read-only order audit requires Live Mirror mode=off")
+    original_request = exchange.request
+    def only_orders_get(method, path, *args, **kwargs):
+        if str(method).upper() != "GET":
+            raise ExchangeError("Order audit forbids non-GET requests")
+        if path != "/futures/orders":
+            raise ExchangeError("Order audit permits only GET /futures/orders")
+        return original_request(method, path, *args, **kwargs)
+    exchange.request = only_orders_get
+    return audit_order_rows(exchange.request("GET", "/futures/orders"))
+
+
 def main() -> int:
     try:
-        result = audit_exchange(TheTrueTrade(), read_config()["mode"])
+        if len(sys.argv) > 2 or (len(sys.argv) == 2 and sys.argv[1] != "--orders"):
+            raise ExchangeError("Unsupported audit option")
+        mode = read_config()["mode"]
+        exchange = TheTrueTrade()
+        result = (audit_orders(exchange, mode) if "--orders" in sys.argv[1:]
+                  else audit_exchange(exchange, mode))
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
     except Exception as exc:
