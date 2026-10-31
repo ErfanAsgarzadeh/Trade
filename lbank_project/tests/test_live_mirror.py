@@ -408,6 +408,98 @@ def test_live_mirror_missing_post_fill_stop_halts_and_journals(env):
     assert 'BTCUSDT' not in m.state['managed']
 
 
+
+def test_close_timeout_after_exchange_fill_never_repeats(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    step()
+    assert 'BTCUSDT' in sim.positions()
+    calls = []
+    def close_but_drop_reply(pos, qty=None):
+        calls.append((pos.symbol, qty))
+        X.Sim.close(sim, pos, qty)
+        raise TimeoutError('close executed but response lost')
+    sim.close = close_but_drop_reply
+    del paper.book['BTC/USDT:USDT']
+    step()
+    assert len(calls) == 1
+    assert m.state['paused'] and m.state['pending_orders']['BTCUSDT']['action'] == 'close'
+    assert 'BTCUSDT' not in sim.positions()
+    restarted = L.Mirror(sim, paper, m.cfg, now=lambda: clock[0])
+    restarted.cycle()
+    assert len(calls) == 1
+    (tmp / 'live_command.json').write_text(json.dumps({'resume': True}))
+    restarted.cycle()
+    assert restarted.state['paused'] and len(calls) == 1
+
+
+def test_partial_close_without_confirmed_quantity_is_frozen(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book['BTC/USDT:USDT'] = main_pos(qty=.1)
+    step()
+    assert sim.positions()['BTCUSDT'].qty == pytest.approx(.01)
+    def pretend_close(pos, qty=None):
+        return None  # The API reported success but did not actually close any contracts.
+    sim.close = pretend_close
+    paper.book['BTC/USDT:USDT']['qty'] = .05
+    step()
+    assert m.state['paused']
+    assert m.state['pending_orders']['BTCUSDT']['action'] == 'close'
+    assert sim.positions()['BTCUSDT'].qty == pytest.approx(.01)
+
+
+def test_unverified_stop_update_is_durable_and_not_replayed(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    step()
+    calls = []
+    def silent_failure(pos, stop):
+        calls.append(stop)  # API says OK but the stop remains at the old level.
+    sim.set_stop = silent_failure
+    paper.book['BTC/USDT:USDT']['stop'] = 79000.
+    step()
+    assert calls == [79000.]
+    assert m.state['paused'] and m.state['pending_orders']['BTCUSDT']['action'] == 'set_stop'
+    assert sim.stops['BTCUSDT'] == 78000.
+    restarted = L.Mirror(sim, paper, m.cfg, now=lambda: clock[0])
+    restarted.cycle()
+    assert calls == [79000.]
+
+
+def test_entry_journal_is_not_cleared_before_managed_state_saved(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book['BTC/USDT:USDT'] = main_pos()
+    saved = []
+    original_save = m.save
+    def observe_save():
+        saved.append((bool(m.state['pending_orders']), 'BTCUSDT' in m.state['managed']))
+        original_save()
+    m.save = observe_save
+    step()
+    assert sim.positions()['BTCUSDT'].qty > 0
+    # At least one durable snapshot contains both ownership and the journal.
+    assert (True, True) in saved
+    assert saved.index((True, True)) < saved.index((False, True))
+
+
+def test_thetruetrade_position_list_does_not_prove_stop_is_present(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    payload = {'items': [{'id': 1, 'symbol': 'BTCUSDT', 'side': 'SHORT',
+                          'status': 'OPENED', 'isActive': True,
+                          'size': '0.01', 'entryPrice': '80000'}], 'meta': {}}
+    monkeypatch.setattr(t, 'request', lambda *args, **kwargs: payload)
+    assert 'BTCUSDT' in t.positions()
+    with pytest.raises(X.ExchangeError, match='stop-loss readback'):
+        t.ensure_protected_entries()
+    with pytest.raises(X.ExchangeError, match='not supported'):
+        t.verify_stop(t.positions()['BTCUSDT'], 83000.)
+
+
+
 def test_binance_adapter_orders():
     calls = []
     class FakeCcxt:
