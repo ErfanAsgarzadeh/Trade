@@ -197,6 +197,84 @@ def test_thetruetrade_zero_futures_equity_is_valid(monkeypatch):
     assert t.equity() == 0.0
 
 
+
+def test_thetruetrade_opened_positions_with_real_response_shape(monkeypatch):
+    # TheTrueTrade /futures/positions returns {items, meta}; live statuses are OPENED.
+    rows = [
+        dict(id='a1', symbol='BTCUSDT', side='SHORT', status='OPENED', isActive=True,
+             size='0.00002', entryPrice='80000'),
+        dict(id='a2', symbol='ETHUSDT', side='SHORT', status='OPENED', isActive=True,
+             size='0.01', entryPrice='2200'),
+        dict(id='a3', symbol='ADAUSDT', side='LONG', status='OPENED', isActive=True,
+             size='10', entryPrice='0.19'),
+        dict(id='a4', symbol='SOLUSDT', side='SHORT', status='OPENED', isActive=True,
+             size='0.1', entryPrice='140'),
+    ]
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda method, path, query=None: {
+        'items': rows, 'meta': {'total': len(rows)}
+    })
+    positions = t.positions()
+    assert len(positions) == 4
+    assert positions['BTCUSDT'].side == 'short'
+    assert positions['BTCUSDT'].qty == pytest.approx(.00002)
+    assert positions['BTCUSDT'].ids == ['a1']
+    assert positions['ADAUSDT'].side == 'long'
+
+
+def test_thetruetrade_aggregates_same_side_positions_and_excludes_closed(monkeypatch):
+    rows = [
+        {'id': 1, 'symbol': 'BTCUSDT', 'side': 'LONG', 'status': 'OPEN', 'size': '1', 'entryPrice': '100'},
+        {'id': 2, 'symbol': 'BTCUSDT', 'side': 'LONG', 'status': 'OPENED', 'size': '3', 'entryPrice': '200', 'isActive': True},
+        {'id': 3, 'symbol': 'ETHUSDT', 'side': 'SHORT', 'status': 'CLOSED', 'size': '2', 'entryPrice': '100', 'isActive': False},
+    ]
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *a, **k: {'items': rows})
+    positions = t.positions()
+    assert len(positions) == 1
+    assert positions['BTCUSDT'].qty == pytest.approx(4)
+    assert positions['BTCUSDT'].entry == pytest.approx(175)
+    assert positions['BTCUSDT'].ids == [1, 2]
+
+
+@pytest.mark.parametrize('payload', [
+    None,
+    {},
+    {'items': {}},
+    {'items': [None]},
+    {'items': [{'status': 'UNKNOWN', 'isActive': True}]},
+    {'items': [{'status': 'OPENED', 'isActive': False}]},
+    {'items': [{'status': 'CLOSED', 'isActive': True}]},
+    {'items': [{'status': 'OPENED', 'isActive': 'true'}]},
+])
+def test_thetruetrade_invalid_position_responses_fail_closed(monkeypatch, payload):
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: payload)
+    with pytest.raises(X.ExchangeError):
+        t.positions()
+
+
+@pytest.mark.parametrize('mutation', [
+    {'size': 'NaN'}, {'size': 'inf'}, {'size': '-2'}, {'size': None},
+    {'side': 'BOTH'}, {'side': None}, {'entryPrice': 'nan'},
+    {'entryPrice': '-1'}, {'id': None}, {'symbol': ''},
+])
+def test_thetruetrade_invalid_open_position_values_fail_closed(monkeypatch, mutation):
+    row = dict(id=4, symbol='BTCUSDT', side='SHORT', status='OPENED', isActive=True,
+               size='0.01', entryPrice='80000')
+    row.update(mutation)
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: {'items': [row]})
+    with pytest.raises(X.ExchangeError):
+        t.positions()
+
+
+def test_thetruetrade_empty_positions_list_is_valid(monkeypatch):
+    t = X.TheTrueTrade('key', 'secret')
+    monkeypatch.setattr(t, 'request', lambda *a, **kw: {'items': [], 'meta': {'total': 0}})
+    assert t.positions() == {}
+
+
 def test_binance_adapter_orders():
     calls = []
     class FakeCcxt:
