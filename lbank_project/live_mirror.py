@@ -189,6 +189,64 @@ class Mirror:
         # leave an unmanaged position that can be silently forgotten.
         return observed
 
+    def _close_verified(self, esym, position, qty=None):
+        """Journal a close and verify the remaining exchange quantity before acknowledging it."""
+        if self.state["pending_orders"]:
+            raise X.ExchangeError("Unresolved order exists; manual reconciliation required")
+        initial = float(position.qty)
+        closing = initial if qty is None else float(qty)
+        if not math.isfinite(closing) or closing <= 0 or closing > initial + 1e-10:
+            raise X.ExchangeError(f"{esym}: invalid close quantity")
+        self.state["pending_orders"][esym] = dict(
+            action="close", qty=closing, before_qty=initial, attempted_at=self.now())
+        self.save()
+        try:
+            self.ex.close(position, qty)
+            after = self.ex.positions().get(esym)
+            actual = 0.0 if after is None else after.qty
+            expected = max(0.0, initial - closing)
+            market = self.ex.markets().get(esym) or {}
+            # Exchange quantity precision and partial-fill behavior can vary.
+            # A missing/inconsistent confirmation is UNKNOWN, never success.
+            tolerance = max(1e-10, float(market.get("step") or 0) * 0.05)
+            if not math.isfinite(actual) or abs(actual - expected) > tolerance:
+                raise X.ExchangeError(
+                    f"{esym}: close not confirmed (expected {expected}, got {actual})")
+        except Exception as exc:
+            self.state["paused"] = True
+            self.save()
+            self.event("order_uncertain", symbol=esym, action="close",
+                       reason=type(exc).__name__,
+                       note="Close may have filled; manual exchange reconciliation required")
+            raise X.ExchangeError(f"{esym}: close outcome unverified; never retry automatically") from exc
+        del self.state["pending_orders"][esym]
+        self.save()
+
+    def _set_stop_verified(self, esym, pos, stop, managed_state):
+        """A stop-change response alone does not prove that protection is active."""
+        if self.state["pending_orders"]:
+            raise X.ExchangeError("Unresolved order exists; manual reconciliation required")
+        self.state["pending_orders"][esym] = dict(
+            action="set_stop", stop=stop, attempted_at=self.now())
+        self.save()
+        try:
+            self.ex.set_stop(pos, stop)
+            actual = self.ex.positions().get(esym)
+            if actual is None:
+                raise X.ExchangeError(f"{esym}: position missing after stop update")
+            self.ex.verify_stop(actual, stop)
+        except Exception as exc:
+            self.state["paused"] = True
+            self.save()
+            self.event("order_uncertain", symbol=esym, action="set_stop",
+                       reason=type(exc).__name__,
+                       note="Stop update not confirmed; manual reconciliation required")
+            raise X.ExchangeError(f"{esym}: stop outcome unverified") from exc
+        managed_state["stop"] = stop
+        self.save()  # Persist verified stop while journal still exists.
+        del self.state["pending_orders"][esym]
+        self.save()
+
     # ---------------- one cycle
     def cycle(self):
         if self.cfg["mode"] == "off":return
@@ -239,10 +297,10 @@ class Mirror:
             self.state.setdefault("skipped", {})[m["key"]] = True;del managed[esym];m = None
         if t is None:
             if m and l is not None:
-                self.ex.close(l);self.event("close", symbol=esym, qty=l.qty, reason="paper exit");del managed[esym]
+                self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper exit");del managed[esym]
             return
         if m and m["key"] != t["key"] and l is not None:   # a different paper trade now: close the old one first
-            self.ex.close(l);self.event("close", symbol=esym, qty=l.qty, reason="paper trade replaced");del managed[esym];m = None;l = None
+            self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper trade replaced");del managed[esym];m = None;l = None
         if m is None:
             if l is not None:return                        # someone else's position on this symbol: never touch
             if self.state["paused"] or not self._fresh(t, t["first_seen"], was_running):return
@@ -266,8 +324,8 @@ class Mirror:
         target_q = self._qty(esym, m["live_qty0"] * t["ex_qty"] / m["paper_qty0"]) if m["paper_qty0"] > 0 else l.qty
         step = self.ex.markets().get(esym, {}).get("step", 0) or 0
         if l.qty - target_q > max(step, l.qty * .02):
-            if target_q <= 0:self.ex.close(l);self.event("close", symbol=esym, qty=l.qty, reason="paper reduced to zero");del managed[esym];return
-            self.ex.close(l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part / F cut)")
+            if target_q <= 0:self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper reduced to zero");del managed[esym];return
+            self._close_verified(esym, l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part / F cut)")
         elif target_q - l.qty > max(step, l.qty * .02) and not self.state["paused"]:
             add = self._qty(esym, min(target_q - l.qty, max(0., self.cfg["max_position_usd"] / self.ex.price(esym) - l.qty)))
             if add > 0:
@@ -284,14 +342,19 @@ class Mirror:
         if s > 0 and (m.get("stop") is None or abs(s - m["stop"]) / s > 5e-4):
             px = self.ex.price(esym)
             if (l.side == "long" and s < px) or (l.side == "short" and s > px):
-                cur = self.ex.positions().get(esym, l);self.ex.set_stop(cur, s);self.event("stop", symbol=esym, stop=s, previous=m.get("stop"));m["stop"] = s
+                cur = self.ex.positions().get(esym, l)
+                old_stop = m.get("stop")
+                self._set_stop_verified(esym, cur, s, m)
+                self.event("stop", symbol=esym, stop=s, previous=old_stop)
 
     def close_managed(self, reason: str):
         live = self.ex.positions()
         for esym in list(self.state["managed"]):
             if esym in live:
-                try:self.ex.close(live[esym]);self.event("close", symbol=esym, qty=live[esym].qty, reason=reason)
-                except Exception as exc:self.event("error", symbol=esym, error=str(exc)[:300]);continue
+                try:self._close_verified(esym, live[esym]);self.event("close", symbol=esym, qty=live[esym].qty, reason=reason)
+                except Exception as exc:
+                    self.event("error", symbol=esym, error=str(exc)[:300])
+                    break  # Do not execute more orders after an ambiguous close.
             del self.state["managed"][esym]
 
 
