@@ -35,4 +35,8 @@ jobs:
           PYTHONPATH: lbank_project
           PORTAL_TEST_DATABASE_URL: postgresql://portal_test:disposable-ci-password@127.0.0.1:5432/portal_test
           PORTAL_TEST_ALLOW_RESET: "1"
+      - name: Test TheTrueTrade equity and live mirror adapters
+        run: python -m pytest lbank_project/tests/test_live_mirror.py lbank_project/tests/test_ttt_stop_audit.py -q
+        env:
+          PYTHONPATH: lbank_project
       - run: node lbank_project/tests/test_portal_ui.cjs

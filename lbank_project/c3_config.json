@@ -33,5 +33,9 @@
     "SUSHI/USDT:USDT"
   ],
   "isolated_leverage": 5,
-  "max_open_positions": 0
+  "max_open_positions": 0,
+  "profit_lock_arm_r": 1.0,
+  "profit_lock_r": 0.1,
+  "partial_target_r": 2.0,
+  "partial_close_frac": 0.5
 }

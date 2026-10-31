@@ -1,0 +1,4 @@
+# Extra libraries for optional OFFLINE ML research only (not the paper bot).
+xgboost>=2.1,<4
+scikit-learn>=1.5,<2
+torch>=2.4,<3
