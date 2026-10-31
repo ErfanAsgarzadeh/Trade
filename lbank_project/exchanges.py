@@ -93,7 +93,7 @@ class TheTrueTrade(Adapter):
     @staticmethod
     def _list(x):
         if isinstance(x, dict):
-            for k in ("data", "items", "results", "positions"):
+            for k in ("data", "items", "results", "positions", "assets"):
                 if isinstance(x.get(k), list):return x[k]
         return x if isinstance(x, list) else []
 
@@ -114,11 +114,55 @@ class TheTrueTrade(Adapter):
         raise ExchangeError(f"no price for {symbol}")
 
     def equity(self) -> float:
-        tot = 0.
-        for a in self._list(self.request("GET", "/futures/assets")):
-            if str(a.get("asset", "")).upper() == "USDT":tot += float(a.get("balance") or 0)
-        upnl = sum(float(p.get("unrealizedPnL") or 0) for p in self._raw_positions())
-        return tot + upnl
+        """Futures account equity; never double-count unrealized PnL in totalAssets."""
+        response = self.request("GET", "/futures/assets")
+
+        def amount(value, field: str) -> float:
+            if isinstance(value, bool):
+                raise ExchangeError(f"Invalid TheTrueTrade {field}")
+            try:
+                result = float(value)
+            except (TypeError, ValueError, OverflowError):
+                raise ExchangeError(f"Invalid TheTrueTrade {field}") from None
+            if not math.isfinite(result) or result < 0:
+                raise ExchangeError(f"Invalid TheTrueTrade {field}")
+            return result
+
+        if isinstance(response, dict):
+            summary = response.get("summary")
+            if summary is not None:
+                if not isinstance(summary, dict):
+                    raise ExchangeError("Invalid TheTrueTrade futures summary")
+                if summary.get("totalAssets") is not None:
+                    # The endpoint reports account equity here, including floating PnL.
+                    return amount(summary["totalAssets"], "summary.totalAssets")
+            rows = response.get("assets")
+        else:
+            rows = response  # Backwards-compatible legacy list response.
+
+        if not isinstance(rows, list):
+            raise ExchangeError("Missing TheTrueTrade futures assets")
+        usdt = [a for a in rows if isinstance(a, dict)
+                and str(a.get("symbol") or a.get("asset") or "").upper() == "USDT"]
+        if not usdt:
+            raise ExchangeError("USDT futures asset not found")
+
+        # Modern rows expose totalAssets; legacy responses exposed balance.
+        modern = [a for a in usdt if a.get("totalAssets") is not None]
+        if len(modern) == len(usdt):
+            return amount(sum(amount(a["totalAssets"], "assets.totalAssets") for a in modern),
+                          "futures equity")
+        if modern or any(a.get("balance") is None for a in usdt):
+            raise ExchangeError("Incomplete TheTrueTrade futures asset balances")
+        balance = sum(amount(a["balance"], "assets.balance") for a in usdt)
+        # Only old API responses required adding unrealized PnL separately.
+        try:
+            upnl = sum(float(p.get("unrealizedPnL") or 0) for p in self._raw_positions())
+        except (TypeError, ValueError, OverflowError):
+            raise ExchangeError("Invalid TheTrueTrade unrealized PnL") from None
+        if not math.isfinite(upnl):
+            raise ExchangeError("Invalid TheTrueTrade unrealized PnL")
+        return amount(balance + upnl, "futures equity")
 
     def _raw_positions(self) -> list:
         return [p for p in self._list(self.request("GET", "/futures/positions", {"active": "true"})) if str(p.get("status", "OPEN")).upper() == "OPEN"]
