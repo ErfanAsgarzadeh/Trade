@@ -172,13 +172,136 @@ def audit_orders(exchange: TheTrueTrade, mode: str) -> dict:
         "GET", "/futures/orders", {"active": "true", "page": 1}))
 
 
+
+def diagnose_order_links(exchange: TheTrueTrade, mode: str) -> dict:
+    """Compare active positions with historical/working orders; expose aggregates only.
+
+    A filled entry with hasTPSL=true is NOT evidence its protective stop
+    remains active. This function never verifies protection or authorizes live.
+    """
+    if mode != "off":
+        raise ExchangeError("Read-only diagnostic requires Live Mirror mode=off")
+    original = exchange.request
+
+    def only_safe_get(method, path, query=None, **kwargs):
+        if method != "GET":
+            raise ExchangeError("Order diagnostic forbids non-GET requests")
+        allowed = (
+            (path == "/futures/positions" and query == {"active": "true"}) or
+            (path == "/futures/orders" and query in (
+                {"page": 1}, {"active": "true", "page": 1}))
+        )
+        if not allowed or kwargs:
+            raise ExchangeError("Order diagnostic blocked an unapproved request")
+        return original(method, path, query)
+
+    exchange.request = only_safe_get
+    try:
+        positions = exchange.positions()
+        history_response = exchange.request("GET", "/futures/orders", {"page": 1})
+        active_response = exchange.request(
+            "GET", "/futures/orders", {"active": "true", "page": 1})
+        history = audit_order_rows(history_response)
+        active = audit_order_rows(active_response)
+
+        def rows(response):
+            if isinstance(response, list):
+                return response
+            for key in ("items", "orders", "data", "results"):
+                if isinstance(response.get(key), list):
+                    return response[key]
+            raise ExchangeError("Invalid order records")
+
+        history_rows = rows(history_response)
+        active_rows = rows(active_response)
+        ids = {str(i) for pos in positions.values() for i in pos.ids}
+        linked_ids = set()
+        linked_active_ids = set()
+        flags = {"true": 0, "false": 0, "missing": 0, "invalid": 0}
+        unknown_groups = {"stop_like": 0, "take_profit_like": 0, "other": 0}
+        strategy_counts = {"LATEST_PRICE": 0, "MARK_PRICE": 0,
+                           "OTHER_OR_UNKNOWN": 0, "MISSING": 0}
+        with_trigger = 0
+
+        def linked_ids_in(records):
+            return {
+                str(row["positionId"])
+                for row in records
+                if row.get("positionId") is not None
+                and str(row["positionId"]) in ids
+            }
+
+        linked_ids = linked_ids_in(history_rows)
+        linked_active_ids = linked_ids_in(active_rows)
+        linked_orders = 0
+        for row in history_rows:
+            if (row.get("positionId") is not None and
+                    str(row.get("positionId")) in ids):
+                linked_orders += 1
+            flag = row.get("hasTPSL")
+            if flag is True:
+                flags["true"] += 1
+            elif flag is False:
+                flags["false"] += 1
+            elif flag is None:
+                flags["missing"] += 1
+            else:
+                flags["invalid"] += 1
+            if row.get("triggerPrice") not in (None, ""):
+                with_trigger += 1
+            strategy = row.get("strategy")
+            if isinstance(strategy, str) and strategy.upper() in ("LATEST_PRICE", "MARK_PRICE"):
+                strategy_counts[strategy.upper()] += 1
+            elif strategy is None:
+                strategy_counts["MISSING"] += 1
+            else:
+                strategy_counts["OTHER_OR_UNKNOWN"] += 1
+            kind = next((row[k] for k in ("orderType", "type", "tradeType")
+                         if isinstance(row.get(k), str)), "")
+            kind = kind.strip().upper()
+            if kind not in ORDER_TYPES:
+                if "STOP" in kind or kind in ("SL", "SL_MARKET"):
+                    unknown_groups["stop_like"] += 1
+                elif "PROFIT" in kind or kind in ("TP", "TP_MARKET"):
+                    unknown_groups["take_profit_like"] += 1
+                else:
+                    unknown_groups["other"] += 1
+
+        return {
+            "current_position_count": len(positions),
+            "current_position_ids_with_historical_orders": len(linked_ids),
+            "historical_order_records_linked_to_current_positions": linked_orders,
+            "current_position_ids_with_working_orders": len(linked_active_ids),
+            "historical_orders": len(history_rows),
+            "working_orders": len(active_rows),
+            "historical_order_type_counts": history["order_type_counts"],
+            "historical_order_status_counts": history["order_status_counts"],
+            "unknown_type_groups": unknown_groups,
+            "hasTPSL_flag_counts": flags,
+            "orders_with_trigger_price_field_populated": with_trigger,
+            "strategy_counts": strategy_counts,
+            "possibly_incomplete_history": history["possibly_incomplete_page"],
+            "possibly_incomplete_working_orders": active["possibly_incomplete_page"],
+            "stop_loss_verified": False,
+            "live_trading_authorized": False,
+            "conclusion": "UNVERIFIED",
+            "note": (
+                "Historical order flags and trigger prices do not prove active "
+                "protective stops; verify exchange stop readback independently."
+            ),
+        }
+    finally:
+        exchange.request = original
+
+
 def main() -> int:
     try:
-        if len(sys.argv) > 2 or (len(sys.argv) == 2 and sys.argv[1] != "--orders"):
+        if len(sys.argv) > 2 or (len(sys.argv) == 2 and sys.argv[1] not in ("--orders", "--diagnose")):
             raise ExchangeError("Unsupported audit option")
         mode = read_config()["mode"]
         exchange = TheTrueTrade()
-        result = (audit_orders(exchange, mode) if "--orders" in sys.argv[1:]
+        result = (diagnose_order_links(exchange, mode) if "--diagnose" in sys.argv[1:]
+                  else audit_orders(exchange, mode) if "--orders" in sys.argv[1:]
                   else audit_exchange(exchange, mode))
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
