@@ -49,7 +49,7 @@ def test_read_only_audit_redacts_ids_and_preserves_partial_history():
     assert result["position_history"]["snapshot"]["complete_history_proven"] is False
     assert result["position_history"]["history_position_ids_not_in_current_active_snapshot"] == 1
     assert result["trade_history"]["records_on_page"] == 1
-    assert result["futures_equity_usdt"] == pytest.approx(2.39485)
+    assert result["futures_equity_usdt"] == pytest.approx(2.394853634655784)
     assert result["available_margin_usdt"] == pytest.approx(0.00318086)
     assert result["btc_short_price_pnl_diagnostic"][0]["formula_verified_against_exchange_contract_specs"] is False
     assert len(calls) == 6
