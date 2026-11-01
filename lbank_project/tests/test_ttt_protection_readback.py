@@ -148,3 +148,61 @@ def test_unsupported_history_schema_rejected():
         p.page_rows({"summary": {}})
     with pytest.raises(ExchangeError):
         p.page_rows({"items": [{"id": 1}], "meta": {"total": 0}})
+
+
+def test_reason_breakdown_aggregates_liquidations_and_stop_fields_without_claiming_protection():
+    rows = [
+        {"id": "secret-1", "status": "CLOSED", "closingReason": "LIQUIDATED",
+         "realizedPnL": "-3.5", "totalPnL": "-3.7", "openFees": "0.1",
+         "closeFees": "0.03", "leverage": 150, "stopLoss": None,
+         "slOrderId": None},
+        {"id": "secret-2", "status": "CLOSED", "closingReason": "LIQUIDATED",
+         "realizedPnL": "-2", "totalPnL": "-2.1", "openFees": "0.2",
+         "closeFees": "0.05", "leverage": 20,
+         "stopLoss": "78167", "slOrderId": "private-sl-ref",
+         "takeProfit": "76276", "tpOrderId": "private-tp-ref"},
+        {"id": "secret-3", "status": "CLOSED", "closingReason": "MANUAL",
+         "realizedPnL": "0.5", "openFees": "0.01", "closeFees": "0.01",
+         "leverage": 5},
+        {"id": "secret-active", "status": "OPENED", "closingReason": None,
+         "realizedPnL": "3000", "leverage": 250},
+    ]
+    summary = p.history_closure_summary(rows)
+    breakdown = summary["by_closing_reason"]
+    liquidation = breakdown["LIQUIDATION"]
+    assert liquidation["closed_count"] == 2
+    assert liquidation["reported_realized_pnl_sum"] == "-5.5"
+    assert liquidation["reported_total_pnl_sum"] == "-5.8"
+    assert liquidation["reported_open_fees_sum"] == "0.3"
+    assert liquidation["reported_close_fees_sum"] == "0.08"
+    assert liquidation["leverage_min_if_known"] == "20"
+    assert liquidation["leverage_max_if_known"] == "150"
+    assert liquidation["leverage_at_least_50x_count"] == 1
+    assert liquidation["leverage_at_least_100x_count"] == 1
+    assert liquidation["closed_records_with_saved_sl_price"] == 1
+    assert liquidation["closed_records_with_sl_order_reference"] == 1
+    assert liquidation["closed_records_with_saved_tp_price"] == 1
+    assert liquidation["closed_records_with_tp_order_reference"] == 1
+    assert liquidation["protective_order_active_at_close_verified"] is False
+    assert liquidation["reported_pnl_includes_fees_verified"] is False
+    assert breakdown["USER_OR_MARKET_CLOSE"]["closed_count"] == 1
+    assert breakdown["USER_OR_MARKET_CLOSE"]["reported_total_pnl_sum"] is None
+    assert summary["closed_records_on_page"] == 3
+    assert "secret-1" not in json.dumps(summary)
+    assert "private-sl-ref" not in json.dumps(summary)
+    assert "3000" not in json.dumps(summary)
+
+
+def test_missing_numeric_fields_do_not_produce_partial_financial_totals():
+    rows = [
+        {"status": "CLOSED", "closingReason": "LIQUIDATED", "leverage": 5,
+         "realizedPnL": "-1"},
+        {"status": "CLOSED", "closingReason": "LIQUIDATED",
+         "leverage": "invalid", "realizedPnL": None, "stopLoss": "secret"},
+    ]
+    group = p.closure_reason_diagnostics(rows)["LIQUIDATION"]
+    assert group["reported_realized_pnl_sum"] is None
+    assert group["leverage_missing_or_invalid_count"] == 1
+    assert group["leverage_at_least_100x_count"] == 0
+    assert group["closed_records_with_saved_sl_price"] == 0
+    assert group["protective_order_active_at_close_verified"] is False
