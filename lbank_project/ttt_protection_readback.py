@@ -79,6 +79,62 @@ def reason_category(value):
     return "OTHER_OR_UNKNOWN"
 
 
+def closure_reason_diagnostics(rows):
+    """Aggregate PnL, leverage and stored TP/SL fields by closure category.
+
+    Closed-position records do not prove stop-loss state at the moment of
+    liquidation. Aggregate numerical sums are reported only if every record
+    in that category provides a valid value; values are not netted together.
+    """
+    groups = {}
+    for row in rows:
+        status = row.get("status")
+        if not (isinstance(status, str) and
+                status.upper() in ("CLOSED", "LIQUIDATED", "SETTLED")):
+            continue
+        category = reason_category(row.get("closingReason"))
+        groups.setdefault(category, []).append(row)
+
+    def group_sum(records, field):
+        numbers = [safe_decimal(row.get(field)) for row in records]
+        return (str(sum(numbers, Decimal(0)))
+                if all(n is not None for n in numbers) else None)
+
+    result = {}
+    for category, records in sorted(groups.items()):
+        leverages = [safe_decimal(row.get("leverage")) for row in records]
+        valid_leverages = [n for n in leverages if n is not None and n > 0]
+        result[category] = {
+            "closed_count": len(records),
+            "reported_realized_pnl_sum": group_sum(records, "realizedPnL"),
+            "reported_total_pnl_sum": group_sum(records, "totalPnL"),
+            "reported_open_fees_sum": group_sum(records, "openFees"),
+            "reported_close_fees_sum": group_sum(records, "closeFees"),
+            "leverage_min_if_known": (str(min(valid_leverages)) if valid_leverages else None),
+            "leverage_max_if_known": (str(max(valid_leverages)) if valid_leverages else None),
+            "leverage_at_least_50x_count": sum(n >= 50 for n in valid_leverages),
+            "leverage_at_least_100x_count": sum(n >= 100 for n in valid_leverages),
+            "leverage_missing_or_invalid_count": len(records) - len(valid_leverages),
+            "closed_records_with_saved_sl_price": sum(
+                (n is not None and n > 0)
+                for n in (safe_decimal(row.get("stopLoss")) for row in records)
+            ),
+            "closed_records_with_sl_order_reference": sum(
+                nonempty(row.get("slOrderId")) for row in records
+            ),
+            "closed_records_with_saved_tp_price": sum(
+                (n is not None and n > 0)
+                for n in (safe_decimal(row.get("takeProfit")) for row in records)
+            ),
+            "closed_records_with_tp_order_reference": sum(
+                nonempty(row.get("tpOrderId")) for row in records
+            ),
+            "protective_order_active_at_close_verified": False,
+            "reported_pnl_includes_fees_verified": False,
+        }
+    return result
+
+
 def history_closure_summary(rows):
     closed = [row for row in rows if
               isinstance(row.get("status"), str) and
@@ -97,6 +153,7 @@ def history_closure_summary(rows):
     return {
         "closed_records_on_page": len(closed),
         "closing_reason_categories": reasons,
+        "by_closing_reason": closure_reason_diagnostics(rows),
         "closed_realized_pnl_sum_if_complete": total("realizedPnL"),
         "closed_open_fees_sum_if_complete": total("openFees"),
         "closed_close_fees_sum_if_complete": total("closeFees"),
