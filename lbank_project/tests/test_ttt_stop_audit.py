@@ -133,3 +133,78 @@ def test_orders_audit_reports_pagination_and_unknown_types_without_values():
     assert result["order_status_counts"] == {"OTHER_OR_UNKNOWN": 1}
     assert "sensitive-order-id" not in str(result)
     assert "account-secret-goes-here" not in str(result)
+
+
+def test_diagnose_history_links_and_tpsl_flags_without_sensitive_values(monkeypatch):
+    ex = X.TheTrueTrade("fake", "fake")
+    calls = []
+    original = []
+    private_id = "sensitive-position-id"
+    responses = {
+        ("GET", "/futures/positions", (("active", "true"),)): {
+            "items": [{"id": private_id, "symbol": "BTCUSDT", "side": "SHORT",
+                       "status": "OPENED", "isActive": True, "size": "0.01",
+                       "entryPrice": "80000"}], "meta": {"total": 1}},
+        ("GET", "/futures/orders", (("page", 1),)): {
+            "items": [
+                {"id": "private-order-1", "positionId": private_id,
+                 "type": "MARKET", "status": "FILLED", "hasTPSL": True,
+                 "strategy": "LATEST_PRICE", "triggerPrice": None},
+                {"id": "private-order-2", "positionId": private_id,
+                 "type": "STOP_LOSS_MARKET", "status": "CANCELED",
+                 "hasTPSL": False, "strategy": "MARK_PRICE",
+                 "triggerPrice": "79000"},
+                {"id": "private-order-3", "positionId": "another-private-id",
+                 "type": "LIMIT", "status": "FILLED"},
+            ],
+            "meta": {"total": 3}},
+        ("GET", "/futures/orders", (("active", "true"), ("page", 1))): {
+            "items": [], "meta": {"total": 0}},
+    }
+
+    def fake(method, path, query=None, **kwargs):
+        calls.append((method, path, query))
+        assert not kwargs
+        return responses[(method, path, tuple(sorted((query or {}).items())))]
+
+    monkeypatch.setattr(ex, "request", fake)
+    report = audit.diagnose_order_links(ex, "off")
+    assert len(calls) == 3 and all(method == "GET" for method, _, _ in calls)
+    assert report["current_position_count"] == 1
+    assert report["current_position_ids_with_historical_orders"] == 1
+    assert report["historical_order_records_linked_to_current_positions"] == 2
+    assert report["current_position_ids_with_working_orders"] == 0
+    assert report["historical_orders"] == 3 and report["working_orders"] == 0
+    assert report["unknown_type_groups"] == {
+        "stop_like": 1, "take_profit_like": 0, "other": 0}
+    assert report["hasTPSL_flag_counts"] == {
+        "true": 1, "false": 1, "missing": 1, "invalid": 0}
+    assert report["orders_with_trigger_price_field_populated"] == 1
+    assert not report["stop_loss_verified"] and not report["live_trading_authorized"]
+    text = __import__("json").dumps(report)
+    for secret in (private_id, "private-order-1", "private-order-2",
+                   "another-private-id", "79000"):
+        assert secret not in text
+    assert ex.request is fake  # Guard does not linger past diagnostic.
+
+
+def test_diagnose_refuses_when_not_off_and_does_not_call_api(monkeypatch):
+    ex = X.TheTrueTrade("fake", "fake")
+    calls = []
+    monkeypatch.setattr(ex, "request", lambda *args, **kwargs: calls.append(args))
+    for mode in ("dry", "live"):
+        with pytest.raises(X.ExchangeError, match="mode=off"):
+            audit.diagnose_order_links(ex, mode)
+    assert not calls
+
+
+def test_diagnose_fails_closed_if_orders_snapshot_malformed(monkeypatch):
+    ex = X.TheTrueTrade("fake", "fake")
+    def fake(method, path, query=None):
+        if path == "/futures/positions":
+            return {"items": [], "meta": {"total": 0}}
+        return {"items": ["invalid"], "meta": {"total": 1}}
+    monkeypatch.setattr(ex, "request", fake)
+    with pytest.raises(X.ExchangeError, match="expected order list"):
+        audit.diagnose_order_links(ex, "off")
+    assert ex.request is fake
