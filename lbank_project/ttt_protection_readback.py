@@ -40,6 +40,8 @@ def nonempty(value):
 
 def page_rows(response):
     if isinstance(response, list):
+        if any(not isinstance(row, dict) for row in response):
+            raise ExchangeError("Position history record schema invalid")
         return response, False
     if not isinstance(response, dict):
         raise ExchangeError("Position history schema invalid")
