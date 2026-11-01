@@ -55,7 +55,7 @@ def preflight(rows):
         raise ExchangeError("Target position is not open")
     if row.get("isActive") is False:
         raise ExchangeError("Target position is inactive")
-    if decimal_value(row, "entryPrice").copy_abs() - ENTRY > Decimal("0.01"):
+    if abs(decimal_value(row, "entryPrice") - ENTRY) > Decimal("0.01"):
         raise ExchangeError("Target position entry price changed")
     if abs(decimal_value(row, "size") - SIZE) > Decimal("0.00000001"):
         raise ExchangeError("Target position size changed")
