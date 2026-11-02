@@ -14,22 +14,25 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            ai_research
-            high_cagr/output/ideas/three_bots/trades.csv
-            .github/workflows/ai-three-bots-5y.yml
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Install numerical and ML dependencies
         run: python -m pip install "numpy==2.2.6" "pandas==2.2.3" "scikit-learn==1.7.2" "pytest==8.4.2"
       - name: Verify causality and split constraints
-        run: python -m pytest ai_research/test_experiment.py -q
+        run: python -m pytest ai_research/test_experiment.py ai_research/test_market.py -q
       - name: Evaluate frozen predeclared models on 2991 trades
         run: python -m ai_research.experiment
+      - name: Preserve ledger-only decisions
+        run: mv ai_research/output/all_2991_decisions.csv ai_research/output/ledger_decisions.csv
+      - name: Restore SHA256 checked historical minute bars
+        run: python restore_data.py
+      - name: Evaluate BTC 4h causal market regimes with same frozen AI holdout
+        run: python -m ai_research.btc_market
       - name: Print results
-        run: cat ai_research/output/result.json
+        run: |
+          cat ai_research/output/result.json
+          cat ai_research/output/btc_market_result.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
