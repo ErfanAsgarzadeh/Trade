@@ -1,0 +1,41 @@
+name: AI seven-method purged walk-forward 5y research
+on:
+  push:
+    branches: [research/ai-meta-trade-selection-5y]
+    paths:
+      - ai_research/seven_benchmark.py
+      - ai_research/test_seven_benchmark.py
+      - ai_research/walkforward_features.py
+      - .github/workflows/ai-seven-5y.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned research packages
+        run: >-
+          python -m pip install
+          numpy==2.2.6 pandas==2.2.3 scipy==1.15.3
+          scikit-learn==1.7.2 xgboost==2.1.4 hmmlearn==0.3.3
+          pytest==8.4.2 matplotlib==3.10.7 tabulate==0.9.0
+      - name: Leak-free model, feature and fold tests
+        run: python -m pytest ai_research/test_seven_benchmark.py -q
+      - name: Run 7 configurations in 5-year expanding, purged walk-forward
+        run: python -m ai_research.seven_benchmark
+      - name: Print 14 research-screen rows with F proxy caveat
+        run: |
+          cat ai_research/output/seven_methods/benchmark_screen.md
+          cat ai_research/output/seven_methods/audit.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seven-ai-methods-five-year-screen
+          path: ai_research/output/seven_methods/
+          retention-days: 30
