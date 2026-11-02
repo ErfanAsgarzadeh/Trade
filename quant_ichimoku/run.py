@@ -17,6 +17,12 @@ def from_archive(symbol, start='2021-08', end='2026-10'):
     cache=ROOT/('btc_backtest/cache' if symbol=='BTCUSDT' else 'portfolio/cache')
     names=[f'{symbol}-1m-{month}.zip' for month in pd.period_range(start,'2026-09',freq='M')]
     names += [f'{symbol}-1m-2026-10-{day:02d}.zip' for day in range(1,5)]
+    # SOL/XRP monthly archives omitted 5 dates in 2022. Include the verified
+    # daily repairs already tracked by portfolio/prepare_data.py.
+    repairs=ROOT/'portfolio/output/repair_manifest.json'
+    if repairs.exists():
+        names += [r['name'] for r in json.loads(repairs.read_text())
+                  if r.get('symbol')==symbol and r.get('status')=='verified']
     missing=[n for n in names if not (cache/n).exists()]
     if missing:raise FileNotFoundError(f'{symbol}: {len(missing)} missing archives e.g. {missing[:3]} (run python restore_data.py)')
     chunks=[]
