@@ -1,0 +1,34 @@
+name: Quant Ichimoku historical M15 backtest
+on:
+  push:
+    branches: [feat/quant-ichimoku-m15-backtest]
+    paths: [.github/workflows/quant-ichimoku-m15.yml]
+  workflow_dispatch:
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install research dependencies
+        run: python -m pip install numpy==2.2.6 pandas==2.2.3 pytest
+      - name: Guard against future leaks and missing data
+        run: python -m pytest quant_ichimoku/test_backtester.py -q
+      - name: Restore archived verified official futures candles
+        run: python restore_data.py
+      - name: Run BTC ETH SOL XRP ADA independent 2021-2026 M15 backtests
+        run: python -m quant_ichimoku.run --source repo --symbols BTCUSDT ETHUSDT SOLUSDT XRPUSDT ADAUSDT
+      - name: Print verified results
+        if: success()
+        run: cat quant_ichimoku/output/report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quant-ichimoku-m15-results
+          path: quant_ichimoku/output/
+          retention-days: 30
