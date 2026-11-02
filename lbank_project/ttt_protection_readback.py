@@ -245,7 +245,12 @@ def run(exchange, mode):
         )
         if not active_before and not active_after:
             status_code = "NO_ACTIVE_POSITIONS_IN_BOTH_READS"
-        elif active_before != active_after:
+        elif sorted((str(x.get("id")), x.get("symbol"), x.get("side"),
+                     str(x.get("size")), str(x.get("status"))) for x in active_before) != sorted(
+                     (str(x.get("id")), x.get("symbol"), x.get("side"),
+                      str(x.get("size")), str(x.get("status"))) for x in active_after):
+            # Mark price, unrealized PnL and margin can move between GET calls.
+            # Only position identity/quantity/status changes invalidate the snapshot.
             status_code = "ACTIVE_POSITIONS_CHANGED_DURING_AUDIT"
         elif not one_target_at_both_reads:
             status_code = "TARGET_NOT_UNIQUELY_ACTIVE"
