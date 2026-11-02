@@ -114,3 +114,19 @@ def test_missing_historical_leverage_is_not_replaced_by_assumption(tmp_path):
     assert result[0]["isolated_leverage_if_recorded"] is None
     assert result[0]["initial_margin_usdt_if_known"] is None
     assert result[0]["remaining_entry_to_stop_risk_usdt_excluding_costs"] == 20
+
+
+def test_shahin_excludes_non_paper_legacy_rows_from_profit_totals(tmp_path):
+    p = make_db(tmp_path, "Shahin")
+    with sqlite3.connect(p) as db:
+        db.execute("""
+            INSERT INTO trade_history VALUES(
+                3,'BTC/USDT:USDT','short',1,100,90,900,1700000060,'manual',0)
+        """)
+    with audit.db_readonly(p) as db:
+        result = audit.audit_one(
+            db, "Shahin", audit.SOURCES["Shahin"], 1700000000)
+    assert result["closed_rows_21d"] == 2
+    assert result["realized_pnl_usdt"] == -1
+    assert result["excluded_nonpaper_shahin_rows_21d"] == 1
+    assert result["historic_scan_coverage_verified"] is False
