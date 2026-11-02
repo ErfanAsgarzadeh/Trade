@@ -260,3 +260,77 @@ def test_position_size_change_is_detected_and_not_verified():
     result = p.run(ex, "off")
     assert result["status_code"] == "ACTIVE_POSITIONS_CHANGED_DURING_AUDIT"
     assert not result["configuration_readback_matches_requested"]
+
+
+def make_journal(tmp_path, monkeypatch, position_id="private-btc-id", **changes):
+    import hashlib
+    monkeypatch.setenv("TTT_TPSL_JOURNAL_DIR", str(tmp_path))
+    content = {
+        "operation": "PATCH_EXISTING_TPSL",
+        "position_fingerprint": hashlib.sha256(position_id.encode()).hexdigest()[:16],
+        "symbol": "BTCUSDT", "side": "SHORT",
+        "take_profit": "76276", "stop_loss": "78167",
+        "state": "ACKNOWLEDGED_NOT_VERIFIED",
+    }
+    content.update(changes)
+    (tmp_path / "ttt_manual_btc_short_tpsl_intent.json").write_text(json.dumps(content))
+    return content
+
+
+def test_exact_closed_position_matches_prior_tpsl_intent_without_leaking_ids(tmp_path, monkeypatch):
+    make_journal(tmp_path, monkeypatch)
+    closed = target(
+        status="CLOSED", isActive=False, closingReason="STOP_LOSS",
+        closePrice="78171.2", realizedPnL="-1.554724035753139179",
+        openFees="0.150598645963514731", closeFees="0.151220535577815987")
+    ex, calls = make_exchange(history=[closed], before=[], after=[])
+    report = p.run(ex, "off")
+    match = report["closed_position_journal_match"]
+    assert report["conclusion"] == "NO_ACTIVE_TARGET"
+    assert match["journal_status"] == "READABLE"
+    assert match["journal_patch_state"] == "ACKNOWLEDGED_NOT_VERIFIED"
+    assert match["matched_historical_position_count"] == 1
+    assert match["matched_closed_position_count"] == 1
+    assert match["matched_stop_loss_exit"] is True
+    assert match["stop_order_reference_populated"] is True
+    assert match["take_profit_order_reference_populated"] is True
+    assert match["close_price"] == "78171.2"
+    assert float(match["stop_fill_gap_bps_for_short_if_close_price_known"]) > 0
+    assert match["independent_exchange_stop_execution_verified"] is False
+    assert len(calls) == 3 and all(call[0] == "GET" for call in calls)
+    text = json.dumps(report)
+    assert "private-btc-id" not in text
+    assert "private-stop-order-1" not in text
+
+
+def test_no_journal_does_not_infer_exit_identity(tmp_path, monkeypatch):
+    monkeypatch.setenv("TTT_TPSL_JOURNAL_DIR", str(tmp_path))
+    record = target(status="CLOSED", isActive=False, closingReason="STOP_LOSS")
+    result = p.journal_close_match([record])
+    assert result["journal_status"] == "MISSING"
+    assert result["matched_stop_loss_exit"] is False
+
+
+def test_other_btc_short_does_not_match_journal(tmp_path, monkeypatch):
+    make_journal(tmp_path, monkeypatch, position_id="a-different-position-id")
+    record = target(status="CLOSED", isActive=False, closingReason="STOP_LOSS")
+    result = p.journal_close_match([record])
+    assert result["matched_historical_position_count"] == 0
+    assert result["matched_stop_loss_exit"] is False
+
+
+def test_journal_not_overclaim_when_position_liquidated(tmp_path, monkeypatch):
+    make_journal(tmp_path, monkeypatch)
+    record = target(status="CLOSED", isActive=False, closingReason="LIQUIDATED")
+    result = p.journal_close_match([record])
+    assert result["matched_historical_position_count"] == 1
+    assert result["exchange_reported_exit_category"] == "LIQUIDATION"
+    assert result["matched_stop_loss_exit"] is False
+
+
+def test_invalid_journal_is_never_trusted(tmp_path, monkeypatch):
+    make_journal(tmp_path, monkeypatch, stop_loss="99999")
+    record = target(status="CLOSED", isActive=False, closingReason="STOP_LOSS")
+    result = p.journal_close_match([record])
+    assert result["journal_status"] == "INVALID_OR_UNREADABLE"
+    assert result["matched_stop_loss_exit"] is False
