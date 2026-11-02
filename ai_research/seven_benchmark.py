@@ -176,7 +176,7 @@ def _models(t,tr,te):
     htrain,hall,_=scaler(d,tr,REGIME)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        hmm=GaussianHMM(n_components=3,covariance_type="diag",n_iter=22,
+        hmm=GaussianHMM(n_components=3,covariance_type="diag",n_iter=12,implementation="scaling",
                         min_covar=1e-3,random_state=SEED)
         hmm.fit(htrain)
     # State identity assigned from filtered posterior of TRAIN only.
@@ -260,6 +260,7 @@ def generate_decisions(t):
         if nte==0:continue
         assert np.all(t.loc[train,"root_exit_min"]+EMBARGO_MINUTES<
                       (lo-ORIGIN).total_seconds()/60),lo
+        print("START_MODEL_FOLD",str(lo.date()),"train",ntr,"test",nte,flush=True)
         outputs=_models(t,train,test)
         ids=np.flatnonzero(test)
         for name,(a,k) in outputs.items():
