@@ -188,6 +188,25 @@ def check_fields(record):
     return checks
 
 
+def closed_btc_short_summary(rows):
+    """Only aggregates. A closed BTC SHORT is not necessarily the previous trade."""
+    filtered = [
+        row for row in rows
+        if row.get("symbol") == "BTCUSDT"
+        and row.get("side") == "SHORT"
+        and str(row.get("status", "")).upper() in ("CLOSED", "LIQUIDATED", "SETTLED")
+    ]
+    reasons = {}
+    for row in filtered:
+        reason = reason_category(row.get("closingReason"))
+        reasons[reason] = reasons.get(reason, 0) + 1
+    return {
+        "closed_btc_short_records_on_page": len(filtered),
+        "closed_btc_short_reason_categories": reasons,
+        "identical_to_previous_position_proven": False,
+    }
+
+
 def run(exchange, mode):
     if mode != "off":
         raise ExchangeError("Read-only TP/SL verification requires Live Mirror OFF")
@@ -205,18 +224,37 @@ def run(exchange, mode):
     exchange.request = only_get
     try:
         active_before = exchange._raw_positions()
-        if len(active_before) != 1:
-            raise ExchangeError("Expected exactly one currently open futures position")
-        target = active_before[0]
-        if target.get("symbol") != "BTCUSDT" or target.get("side") != "SHORT":
-            raise ExchangeError("Target position is not BTCUSDT SHORT")
-        target_id = target.get("id")
-        if not nonempty(target_id):
-            raise ExchangeError("Active position ID is invalid")
-
         response = exchange.request("GET", "/futures/positions", {"page": 1})
         rows, history_incomplete = page_rows(response)
-        matches = [row for row in rows if str(row.get("id")) == str(target_id)]
+        # A position can close while this audit runs. The second read is
+        # essential before we claim that any stored protection remains current.
+        active_after = exchange._raw_positions()
+        initial_target = [
+            row for row in active_before
+            if row.get("symbol") == "BTCUSDT" and row.get("side") == "SHORT"
+        ]
+        final_target = [
+            row for row in active_after
+            if row.get("symbol") == "BTCUSDT" and row.get("side") == "SHORT"
+        ]
+        one_target_at_both_reads = (
+            len(active_before) == 1 and len(active_after) == 1 and
+            len(initial_target) == 1 and len(final_target) == 1 and
+            nonempty(initial_target[0].get("id")) and
+            str(initial_target[0].get("id")) == str(final_target[0].get("id"))
+        )
+        if not active_before and not active_after:
+            status_code = "NO_ACTIVE_POSITIONS_IN_BOTH_READS"
+        elif active_before != active_after:
+            status_code = "ACTIVE_POSITIONS_CHANGED_DURING_AUDIT"
+        elif not one_target_at_both_reads:
+            status_code = "TARGET_NOT_UNIQUELY_ACTIVE"
+        else:
+            status_code = "TARGET_STILL_OPEN"
+
+        target_id = initial_target[0].get("id") if one_target_at_both_reads else None
+        matches = [row for row in rows if
+                   target_id is not None and str(row.get("id")) == str(target_id)]
         if len(matches) > 1:
             raise ExchangeError("Duplicate matching position records in history")
         record = matches[0] if matches else None
@@ -229,17 +267,8 @@ def run(exchange, mode):
             record.get("side") == "SHORT"
         )
         checks = check_fields(record) if status_active else None
-
-        # Guard against the position closing or being replaced mid-audit.
-        active_after = exchange._raw_positions()
-        same_position_still_open = (
-            len(active_after) == 1 and
-            str(active_after[0].get("id")) == str(target_id) and
-            active_after[0].get("symbol") == "BTCUSDT" and
-            active_after[0].get("side") == "SHORT"
-        )
         config_matches = bool(
-            status_active and same_position_still_open and checks and
+            status_code == "TARGET_STILL_OPEN" and status_active and checks and
             all(
                 v["has_price"] and v["matches_requested_price"] and
                 v["order_type_matches"] and v["trigger_strategy_matches"]
@@ -249,34 +278,40 @@ def run(exchange, mode):
         order_refs_present = bool(
             checks and all(v["order_id_populated"] for v in checks.values())
         )
-
-        summary = {
+        return {
             "read_only": True,
+            "status_code": status_code,
+            "active_position_records_first_read": len(active_before),
+            "active_position_records_second_read": len(active_after),
             "history_records_on_page": len(rows),
             "history_indicates_more_pages": history_incomplete,
             "current_position_found_in_history": in_history,
             "matched_history_record_is_open": status_active,
-            "same_position_still_open_after_readback": same_position_still_open,
+            "same_position_still_open_after_readback": one_target_at_both_reads,
             "expected_stop_loss": str(SL),
             "expected_take_profit": str(TP),
             "protective_fields": checks,
             "configuration_readback_matches_requested": config_matches,
             "tp_sl_order_references_both_present": order_refs_present,
+            "closed_btc_short": closed_btc_short_summary(rows),
             "closed_positions": history_closure_summary(rows),
             "exchange_stop_execution_verified": False,
             "live_trading_authorized": False,
             "conclusion": (
                 "CONFIG_MATCHED_NOT_EXECUTION_VERIFIED"
-                if config_matches else "UNVERIFIED"
+                if config_matches else "NO_ACTIVE_TARGET" if status_code ==
+                "NO_ACTIVE_POSITIONS_IN_BOTH_READS" else "UNVERIFIED"
             ),
             "note": (
-                "Full-position history exposes possible TP/SL fields, but neither "
-                "their equality nor an order ID alone proves active trigger execution."
+                "Read-only account snapshot: a closed position must not be "
+                "treated as an API error or as verified stop execution. "
+                "History may be partial and BTC SHORT closure identity "
+                "is not established from symbol and side alone."
             ),
         }
-        return summary
     finally:
         exchange.request = original
+
 
 
 def main():
@@ -289,6 +324,16 @@ def main():
             "read_only": True,
             "conclusion": "ERROR",
             "error_type": type(exc).__name__,
+            "error_category": (
+                "MIRROR_NOT_OFF" if isinstance(exc, ExchangeError)
+                and "Live Mirror OFF" in str(exc)
+                else "AUTH_OR_HTTP" if isinstance(exc, ExchangeError)
+                and ("HTTP 401" in str(exc) or "HTTP 403" in str(exc))
+                else "NETWORK_OR_API" if isinstance(exc, ExchangeError)
+                and "TheTrueTrade GET " in str(exc)
+                else "SCHEMA_OR_PRECONDITION" if isinstance(exc, ExchangeError)
+                else "UNEXPECTED"
+            ),
             "live_trading_authorized": False,
             "message": "Read-only TP/SL verification failed; do not enable Live Mirror.",
         }))
