@@ -13,7 +13,7 @@ substitute these screening numbers. Features at signal events came from last
 completed 4h bars, as documented in winrate/ledger.py. Never use future MFE
 or MAE as predictor. Label is historical realised R>0 (NOT triple barrier),
 and label availability is max exit minute of each root, purged before fold start.
-Tests are EXPANDING chronological at 6-month boundaries (2023-2026).
+Tests are EXPANDING chronological at 12-month boundaries (2023-2026).
 Model fitting happens only on fully exited pre-fold events, and imputer,
 scalers and calibration each fit exclusively to the fold train/development.
 Warm-up before 2023 uses baseline rules across all arms.
@@ -89,7 +89,7 @@ def load():
     return df,t,{"n_legs":len(df),"n_roots":len(t),"late_rejected_roots":len(drop)}
 
 def fold_boundaries():
-    return list(pd.date_range(FIRST_TEST,STOP,freq="6MS",tz="UTC",inclusive="left"))+[STOP]
+    return list(pd.date_range(FIRST_TEST,STOP,freq="YS",tz="UTC",inclusive="left"))+[STOP]
 
 def masks(t,lo,hi):
     lo_m=(lo-ORIGIN).total_seconds()/60.
@@ -160,7 +160,7 @@ def _models(t,tr,te):
     if len(f_idx)<80 or len(c_idx)<30 or len(np.unique(y[f_idx]))<2 or len(np.unique(y[c_idx]))<2:
         f_idx=tr_idx;c_idx=np.array([],dtype=int) # RF defaults neutral, XGB model still available
     # XGBoost on native profitable trade labels: not TP/SL barrier label.
-    xgb=XGBClassifier(n_estimators=110,max_depth=3,learning_rate=.04,
+    xgb=XGBClassifier(n_estimators=65,max_depth=3,learning_rate=.05,
                       subsample=.9,colsample_bytree=.9,min_child_weight=15,
                       reg_lambda=15.,objective="binary:logistic",
                       random_state=SEED,n_jobs=1,eval_metric="logloss",
@@ -176,7 +176,7 @@ def _models(t,tr,te):
     htrain,hall,_=scaler(d,tr,REGIME)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        hmm=GaussianHMM(n_components=3,covariance_type="diag",n_iter=60,
+        hmm=GaussianHMM(n_components=3,covariance_type="diag",n_iter=22,
                         min_covar=1e-3,random_state=SEED)
         hmm.fit(htrain)
     # State identity assigned from filtered posterior of TRAIN only.
@@ -191,7 +191,7 @@ def _models(t,tr,te):
 
     # GMM clusters selected strictly with train labels (not future test returns).
     gtrain,gall,_=scaler(t,tr,CLUSTER)
-    gmm=GaussianMixture(n_components=5,covariance_type="diag",n_init=2,
+    gmm=GaussianMixture(n_components=5,covariance_type="diag",n_init=1,max_iter=65,
                         reg_covar=.015,random_state=SEED).fit(gtrain)
     a=gmm.predict(gtrain);b=gmm.predict(gall[te_idx])
     mean={s:float(R[tr_idx][a==s].mean()) if (a==s).sum()>=12 else np.nan
@@ -205,14 +205,14 @@ def _models(t,tr,te):
     all_anom=pure_imputed(t,tr,ANOM)
     # Strictly need same transform for train and test (including scaling).
     _,all_anom_scaled,_=scaler(t,tr,ANOM)
-    iso=IsolationForest(contamination=.04,n_estimators=120,
+    iso=IsolationForest(contamination=.04,n_estimators=90,
                         max_samples=min(256,len(ai)),random_state=SEED,n_jobs=1)
     iso.fit(ai)
     outputs[NAMES[4]]=(iso.predict(all_anom_scaled[te_idx])==1,np.ones(len(te_idx)))
 
     # Half-Kelly: RF pre-fit on PAST part; calibrator strictly on *later
     # non-overlapping historical calibration rows*, with scikit FrozenEstimator.
-    rf=RandomForestClassifier(n_estimators=180,max_depth=6,min_samples_leaf=16,
+    rf=RandomForestClassifier(n_estimators=95,max_depth=6,min_samples_leaf=16,
                               max_features=.7,class_weight="balanced",
                               n_jobs=1,random_state=SEED)
     rf.fit(xall[f_idx],y[f_idx])
