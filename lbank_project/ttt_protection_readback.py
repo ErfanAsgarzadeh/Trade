@@ -10,6 +10,9 @@ trigger a protective order; that needs an independently validated lifecycle.
 from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
+import hashlib
+import os
+from pathlib import Path
 import json
 import re
 import sys
@@ -207,6 +210,105 @@ def closed_btc_short_summary(rows):
     }
 
 
+def journal_close_match(rows):
+    """Compare the persisted one-time PATCH intent to CLOSED position IDs.
+
+    The journal contains a 64-bit SHA256 prefix, not an order or position ID.
+    This establishes linkage to the previously modified position only when
+    there is exactly one history match; no new trades or API writes occur.
+    """
+    base = Path(os.environ.get("TTT_TPSL_JOURNAL_DIR", "/app/runtime"))
+    path = base / "ttt_manual_btc_short_tpsl_intent.json"
+    if not path.is_file():
+        return {
+            "journal_status": "MISSING",
+            "matched_historical_position_count": 0,
+            "matched_stop_loss_exit": False,
+        }
+    try:
+        if path.stat().st_size > 4096:
+            raise ValueError("invalid journal length")
+        journal = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(journal, dict):
+            raise ValueError("not an object")
+        fingerprint = journal.get("position_fingerprint")
+        if not (isinstance(fingerprint, str)
+                and re.fullmatch(r"[a-f0-9]{16}", fingerprint)
+                and journal.get("operation") == "PATCH_EXISTING_TPSL"
+                and journal.get("symbol") == "BTCUSDT"
+                and journal.get("side") == "SHORT"
+                and journal.get("take_profit") == str(TP)
+                and journal.get("stop_loss") == str(SL)
+                and journal.get("state") in ("PENDING_OUTCOME", "ACKNOWLEDGED_NOT_VERIFIED")):
+            raise ValueError("unrecognized journal")
+    except (OSError, ValueError, TypeError, UnicodeError):
+        return {
+            "journal_status": "INVALID_OR_UNREADABLE",
+            "matched_historical_position_count": 0,
+            "matched_stop_loss_exit": False,
+        }
+    matches = [
+        row for row in rows
+        if nonempty(row.get("id")) and
+        hashlib.sha256(str(row["id"]).encode()).hexdigest()[:16] == fingerprint
+    ]
+    closed_matches = [
+        row for row in matches
+        if str(row.get("status", "")).upper() in ("CLOSED", "LIQUIDATED", "SETTLED")
+    ]
+    matched = len(matches) == 1 and len(closed_matches) == 1
+    if not matched:
+        return {
+            "journal_status": "READABLE",
+            "journal_patch_state": journal["state"],
+            "matched_historical_position_count": len(matches),
+            "matched_closed_position_count": len(closed_matches),
+            "matched_stop_loss_exit": False,
+            "note": "No unique closed-position match in this history page.",
+        }
+    row = closed_matches[0]
+    recorded_sl = safe_decimal(row.get("stopLoss"))
+    recorded_tp = safe_decimal(row.get("takeProfit"))
+    close_price = safe_decimal(row.get("closePrice"))
+    reason = reason_category(row.get("closingReason"))
+    stop_exit = reason == "STOP_LOSS" and recorded_sl == SL
+    return {
+        "journal_status": "READABLE",
+        "journal_patch_state": journal["state"],
+        "matched_historical_position_count": 1,
+        "matched_closed_position_count": 1,
+        "matched_stop_loss_exit": bool(stop_exit),
+        "exchange_reported_exit_category": reason,
+        "stored_stop_loss_matches_requested": recorded_sl == SL,
+        "stored_take_profit_matches_requested": recorded_tp == TP,
+        "stop_order_reference_populated": nonempty(row.get("slOrderId")),
+        "take_profit_order_reference_populated": nonempty(row.get("tpOrderId")),
+        "close_price": str(close_price) if close_price is not None and close_price > 0 else None,
+        "stop_fill_gap_bps_for_short_if_close_price_known": (
+            str(round((close_price - SL) / SL * Decimal(10000), 5))
+            if close_price is not None and close_price > 0 else None
+        ),
+        "reported_realized_pnl": (
+            str(safe_decimal(row.get("realizedPnL")))
+            if safe_decimal(row.get("realizedPnL")) is not None else None
+        ),
+        "reported_open_fees": (
+            str(safe_decimal(row.get("openFees")))
+            if safe_decimal(row.get("openFees")) is not None else None
+        ),
+        "reported_close_fees": (
+            str(safe_decimal(row.get("closeFees")))
+            if safe_decimal(row.get("closeFees")) is not None else None
+        ),
+        "independent_exchange_stop_execution_verified": False,
+        "note": (
+            "Position identity matches the persisted manual TP/SL intent. "
+            "Exit category and execution price are exchange-reported data; "
+            "the exchange's reliability in all market conditions is untested."
+        ),
+    }
+
+
 def run(exchange, mode):
     if mode != "off":
         raise ExchangeError("Read-only TP/SL verification requires Live Mirror OFF")
@@ -299,6 +401,7 @@ def run(exchange, mode):
             "configuration_readback_matches_requested": config_matches,
             "tp_sl_order_references_both_present": order_refs_present,
             "closed_btc_short": closed_btc_short_summary(rows),
+            "closed_position_journal_match": journal_close_match(rows),
             "closed_positions": history_closure_summary(rows),
             "exchange_stop_execution_verified": False,
             "live_trading_authorized": False,
