@@ -13,7 +13,12 @@ permissions:
 jobs:
   compare:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,7 +31,7 @@ jobs:
           scikit-learn==1.7.2 xgboost==2.1.4 hmmlearn==0.3.3
           pytest==8.4.2 matplotlib==3.10.7 tabulate==0.9.0
       - name: Leak-free model, feature and fold tests
-        run: python -m pytest ai_research/test_seven_benchmark.py -q
+        run: python -m pytest ai_research/test_seven_benchmark.py ai_research/test_strict_execution.py -q
       - name: Run 7 configurations in 5-year expanding, purged walk-forward
         run: python -m ai_research.seven_benchmark
       - name: Print 14 research-screen rows with F proxy caveat
