@@ -57,3 +57,21 @@ def test_explicit_source_fee_and_F_gate():
     text=inspect.getsource(S.daily_realized_replay)
     assert "fees=.0012;slip=.0004" in text
     assert "F-style" in inspect.getsource(S.benchmark)
+
+def test_rejected_root_and_tiny_position_advance_event_cursor():
+    import signal as os_signal
+    d=pd.DataFrame([dict(root="r0",em=40,xm=55,bot="main",entry=100.,
+                         unit=-2.,stop_frac=.05,risk_scale=1.,is_add=False)])
+    def expired(*_):raise TimeoutError("Replay cursor did not advance")
+    old=os_signal.signal(os_signal.SIGALRM,expired)
+    try:
+        os_signal.alarm(3)
+        a,t=S.daily_realized_replay(d,{"r0":False},{"r0":1.},mode="off")
+        assert len(t)==0 and np.all(a==10000)
+        os_signal.alarm(3)
+        d["stop_frac"]=1e6
+        b,u=S.daily_realized_replay(d,{"r0":True},{"r0":1.},mode="off")
+        assert len(u)==0 and np.all(b==10000)
+    finally:
+        os_signal.alarm(0)
+        os_signal.signal(os_signal.SIGALRM,old)
