@@ -23,6 +23,8 @@ jobs:
         run: python -m pytest ai_research/test_experiment.py ai_research/test_market.py ai_research/test_bandit.py -q
       - name: Verify new profit-protection and F-risk baselines in source branch
         run: python -m ai_research.current_baseline
+      - name: Screen OEM against current Shahin entries on cached 35-coin five-year trade ledger (not F)
+        run: python -m ai_research.oem_ledger_screen
       - name: Evaluate frozen predeclared models on 2991 trades
         run: python -m ai_research.experiment
       - name: Preserve ledger-only decisions
@@ -38,6 +40,7 @@ jobs:
           cat ai_research/output/result.json
           cat ai_research/output/btc_market_result.json
           cat ai_research/output/oem_vs_F.json
+          cat ai_research/output/oem_ledger_screen.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
