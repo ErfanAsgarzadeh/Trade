@@ -580,3 +580,74 @@ def test_dashboard_live_endpoints(tmp_path, monkeypatch):
         assert c.put('/api/live/config', headers=H, json={'leverage': 99}).status_code == 422
         assert c.post('/api/live/close-all', headers=H).json()['queued'] and _j.loads((tmp_path / 'rt' / 'live_command.json').read_text())['close_all']
         assert 'id="live_panel"' in c.get('/').text
+
+
+def test_ttt_market_without_minimums_keeps_them_unknown(monkeypatch):
+    t = X.TheTrueTrade("fake-key", "fake-secret")
+    monkeypatch.setattr(t, "request", lambda *a, **kw: {
+        "items": [{
+            "symbol": "BTCUSDT", "isActive": True,
+            "stepSize": "0.000001", "tickSize": "0.1",
+            "minOrderSize": None, "minOrderValue": None,
+            "maxLeverage": 150,
+        }]
+    })
+    m = t.markets()["BTCUSDT"]
+    assert m["step"] == pytest.approx(0.000001)
+    assert m["tick"] == pytest.approx(0.1)
+    assert m["min_qty"] is None
+    assert m["min_notional"] is None
+    assert m["max_leverage"] == 150
+
+
+@pytest.mark.parametrize("field,value", [
+    ("minOrderSize", 0), ("minOrderValue", 0),
+    ("minOrderValue", "-1"), ("minOrderSize", True),
+    ("minOrderValue", "NaN"),
+])
+def test_ttt_rejects_invalid_minimum_fields(monkeypatch, field, value):
+    t = X.TheTrueTrade("fake-key", "fake-secret")
+    contract = {
+        "symbol": "BTCUSDT", "stepSize": "0.000001", "tickSize": "0.1",
+        "minOrderSize": "0.00001", "minOrderValue": "11",
+        "maxLeverage": 150,
+    }
+    contract[field] = value
+    monkeypatch.setattr(t, "request", lambda *a, **kw: {"items": [contract]})
+    with pytest.raises(X.ExchangeError, match="Invalid TheTrueTrade market"):
+        t.markets()
+
+
+def test_ttt_known_minimums_are_read_from_response_not_invented(monkeypatch):
+    t = X.TheTrueTrade("fake-key", "fake-secret")
+    monkeypatch.setattr(t, "request", lambda *a, **kw: {"items": [{
+        "symbol": "BTCUSDT", "stepSize": "0.000001", "tickSize": "0.1",
+        "minOrderSize": "0.00001", "minOrderValue": "11",
+        "maxLeverage": 150,
+    }]})
+    m = t.markets()["BTCUSDT"]
+    assert m["min_qty"] == pytest.approx(0.00001)
+    assert m["min_notional"] == pytest.approx(11)
+
+
+def test_live_mirror_blocks_unknown_minimums_before_any_entry(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    sim._m["BTCUSDT"]["min_qty"] = None
+    sim._m["BTCUSDT"]["min_notional"] = None
+    paper.book["BTC/USDT:USDT"] = main_pos(ts=71)
+    step()
+    assert "BTCUSDT" not in sim.positions()
+    assert not any(event[0] == "open" for event in sim.log)
+    assert m.state["paused"]
+    assert not m.state["pending_orders"]
+
+
+def test_paper_positions_cannot_silently_overwrite_same_symbol():
+    out = {}
+    a = dict(bot="main", qty=1, side="long", stop=75)
+    b = dict(bot="c3", qty=2, side="short", stop=85)
+    L.Paper._add_unique(out, "BTC/USDT:USDT", a)
+    with pytest.raises(X.ExchangeError, match="overlapping paper positions"):
+        L.Paper._add_unique(out, "BTC/USDT:USDT", b)
+    assert out["BTC/USDT:USDT"] == a
