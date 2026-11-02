@@ -134,7 +134,12 @@ class Mirror:
         return was_running and now - first_seen <= limit
 
     def _qty(self, sym: str, qty: float) -> float:
-        m = self.ex.markets().get(sym, {});return X.round_step(qty, m.get("step", 0))
+        m = self.ex.markets().get(sym)
+        step = m.get("step") if isinstance(m, dict) else None
+        if (not isinstance(step, (int, float)) or isinstance(step, bool)
+                or not math.isfinite(step) or step <= 0):
+            raise X.ExchangeError(f"{sym}: missing/invalid quantity step; order blocked")
+        return X.round_step(qty, step)
 
     def _entry_preflight(self, esym: str, side: str, qty: float, price: float, stop: float) -> bool:
         """Reject unprotected and underfunded entries without touching order endpoints."""
@@ -150,6 +155,16 @@ class Mirror:
         market = self.ex.markets().get(esym)
         if not isinstance(market, dict):
             raise X.ExchangeError(f"{esym}: missing market contract metadata")
+        # A missing minOrderSize/minOrderValue is NOT equivalent to stepSize or
+        # a fixed $5 minimum. Fail closed until the venue's real limits are known.
+        for field in ("step", "min_qty", "min_notional"):
+            limit = market.get(field)
+            if (not isinstance(limit, (int, float)) or isinstance(limit, bool)
+                    or not math.isfinite(limit) or limit <= 0):
+                raise X.ExchangeError(f"{esym}: {field} unknown/invalid; order blocked")
+        if qty + 1e-12 < market["min_qty"] or qty * price + 1e-12 < market["min_notional"]:
+            self.event("skip", symbol=esym, reason="below verified market minima")
+            return False
         max_leverage = market.get("max_leverage")
         if max_leverage is not None and self.cfg["leverage"] > max_leverage:
             raise X.ExchangeError(f"{esym}: leverage exceeds exchange maximum")
@@ -308,8 +323,16 @@ class Mirror:
             if self.state.get("skipped", {}).get(t["key"]):return
             px = self.ex.price(esym);q = t["ex_qty"] * ratio;q = min(q, self.cfg["max_position_usd"] / px);q = self._qty(esym, q)
             mk = self.ex.markets().get(esym, {})
-            if q <= 0 or q * px < mk.get("min_notional", 5) or q < mk.get("min_qty", 0):
-                self.event("skip", symbol=esym, reason=f"size {q} below exchange minimum");self.state.setdefault("skipped", {})[t["key"]] = True;return
+            if not isinstance(mk, dict) or any(
+                not isinstance(mk.get(field), (int, float))
+                or isinstance(mk.get(field), bool)
+                or not math.isfinite(mk[field]) or mk[field] <= 0
+                for field in ("min_qty", "min_notional")
+            ):
+                self.state["paused"] = True
+                raise X.ExchangeError(f"{esym}: exchange minimum order fields unavailable; entries paused")
+            if q <= 0 or q * px < mk["min_notional"] or q < mk["min_qty"]:
+                self.event("skip", symbol=esym, reason=f"size {q} below verified exchange minimum");self.state.setdefault("skipped", {})[t["key"]] = True;return
             stop = t["ex_stop"]
             if not self._entry_preflight(esym, t["side"], q, px, stop):
                 return
