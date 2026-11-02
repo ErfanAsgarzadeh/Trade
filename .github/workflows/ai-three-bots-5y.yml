@@ -20,7 +20,7 @@ jobs:
       - name: Install numerical and ML dependencies
         run: python -m pip install "numpy==2.2.6" "pandas==2.2.3" "scikit-learn==1.7.2" "pytest==8.4.2"
       - name: Verify causality and split constraints
-        run: python -m pytest ai_research/test_experiment.py ai_research/test_market.py -q
+        run: python -m pytest ai_research/test_experiment.py ai_research/test_market.py ai_research/test_bandit.py -q
       - name: Verify new profit-protection and F-risk baselines in source branch
         run: python -m ai_research.current_baseline
       - name: Evaluate frozen predeclared models on 2991 trades
@@ -31,10 +31,13 @@ jobs:
         run: python restore_data.py
       - name: Evaluate BTC 4h causal market regimes with same frozen AI holdout
         run: python -m ai_research.btc_market
+      - name: Select and evaluate online expert AI versus F on latest protected three-bot ledger
+        run: python -m ai_research.bandit_on_f
       - name: Print results
         run: |
           cat ai_research/output/result.json
           cat ai_research/output/btc_market_result.json
+          cat ai_research/output/oem_vs_F.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
