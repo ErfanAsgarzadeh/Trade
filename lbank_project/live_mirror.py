@@ -66,15 +66,24 @@ class Paper:
         try:self.seed = float(self.db.runtime_all().get("paper_initial_equity", self.seed))
         except Exception:pass
 
+    @staticmethod
+    def _add_unique(out: dict, symbol: str, value: dict) -> None:
+        if symbol in out:
+            raise X.ExchangeError(
+                f"{symbol}: overlapping paper positions across bots; "
+                "Live Mirror cannot safely merge or overwrite ownership"
+            )
+        out[symbol] = value
+
     def positions(self) -> dict[str, dict]:
         out = {}
         for p in self.db.positions():
             if p["state"] == self.bot.PENDING:continue
-            out[p["symbol"]] = dict(bot="main", side=p["side"], qty=float(p["qty"]) * float(p.get("contract_size") or 1), stop=float(p["active_sl"]),
-                                    key=f"main|{p['symbol']}|{p.get('signal_ts', 0)}", opened=None)
+            self._add_unique(out, p["symbol"], dict(bot="main", side=p["side"], qty=float(p["qty"]) * float(p.get("contract_size") or 1), stop=float(p["active_sl"]),
+                                    key=f"main|{p['symbol']}|{p.get('signal_ts', 0)}", opened=None))
         for key, mod in (("c3", self.c3), ("pa", self.pa)):
             for p in mod.paths()[1].positions():
-                out[p["symbol"]] = dict(bot=key, side=p["side"], qty=float(p["qty"]), stop=float(p["stop"]), key=f"{key}|{p['symbol']}|{p['opened']}", opened=float(p["opened"]))
+                self._add_unique(out, p["symbol"], dict(bot=key, side=p["side"], qty=float(p["qty"]), stop=float(p["stop"]), key=f"{key}|{p['symbol']}|{p['opened']}", opened=float(p["opened"])))
         return out
 
     def equity(self) -> float:
