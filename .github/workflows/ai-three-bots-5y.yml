@@ -37,6 +37,8 @@ jobs:
         run: python -m ai_research.btc_market
       - name: Test causal conformal distributional tail-risk sizing versus daily F-style proxy
         run: python -m ai_research.cdra_daily
+      - name: Risk-match CDRA to F-style proxy 2024 drawdown and lock 2025-26 test
+        run: python -m ai_research.cdra_equal_risk
       - name: Select and evaluate online expert AI versus F on latest protected three-bot ledger
         run: python -m ai_research.bandit_on_f
       - name: Print results
@@ -47,6 +49,7 @@ jobs:
           cat ai_research/output/oem_ledger_screen.json
           cat ai_research/output/bayesian_side_screen.json
           cat ai_research/output/cdra_daily_result.json
+          cat ai_research/output/cdra_equal_risk_result.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
