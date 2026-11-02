@@ -25,6 +25,8 @@ jobs:
         run: python -m ai_research.current_baseline
       - name: Screen OEM against current Shahin entries on cached 35-coin five-year trade ledger (not F)
         run: python -m ai_research.oem_ledger_screen
+      - name: Screen hierarchical Bayesian per-bot side and coin risk models on cached 35-coin ledger
+        run: python -m ai_research.bayesian_side
       - name: Evaluate frozen predeclared models on 2991 trades
         run: python -m ai_research.experiment
       - name: Preserve ledger-only decisions
@@ -41,6 +43,7 @@ jobs:
           cat ai_research/output/btc_market_result.json
           cat ai_research/output/oem_vs_F.json
           cat ai_research/output/oem_ledger_screen.json
+          cat ai_research/output/bayesian_side_screen.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
