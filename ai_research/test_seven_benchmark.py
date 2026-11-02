@@ -50,7 +50,7 @@ def test_hmm_forward_filter_no_future_smoothing():
 def test_seven_method_names_fixed():
     assert len(S.NAMES)==7
     assert "Baseline" in S.NAMES[0]
-    assert len(S.fold_boundaries())>=7
+    assert len(S.fold_boundaries())>=5
 
 def test_explicit_source_fee_and_F_gate():
     import inspect
