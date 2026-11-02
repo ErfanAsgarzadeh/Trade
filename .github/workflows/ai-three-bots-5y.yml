@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install numerical and ML dependencies
-        run: python -m pip install "numpy==2.2.6" "pandas==2.2.3" "scikit-learn==1.7.2" "pytest==8.4.2"
+        run: python -m pip install "numpy==2.2.6" "pandas==2.2.3" "scikit-learn==1.7.2" "pytest==8.4.2" "numba==0.61.2" "matplotlib==3.10.7"
       - name: Verify causality and split constraints
         run: python -m pytest ai_research/test_experiment.py ai_research/test_market.py ai_research/test_bandit.py -q
       - name: Verify new profit-protection and F-risk baselines in source branch
