@@ -171,8 +171,17 @@ def audit_one(db, bot, source, start):
     required = {"symbol", "side", "reason", "qty", pnl_field, ts_field, entry_col, exit_col}
     if not required.issubset(table_columns(db, table)):
         raise ValueError("trade history schema mismatch")
+    is_main = bot == "Shahin"
+    if is_main and "dry_run" not in table_columns(db, table):
+        raise ValueError("main PAPER flag missing from trade history")
+    excluded_nonpaper = (
+        db.execute("SELECT COUNT(*) FROM trade_history WHERE closed_at >= ? "
+                   "AND (dry_run != 1 OR dry_run IS NULL)", (start,)).fetchone()[0]
+        if is_main else 0
+    )
+    paper_clause = " AND dry_run = 1" if is_main else ""
     data = db.execute(
-        f"SELECT * FROM {table} WHERE {ts_field} >= ? ORDER BY {ts_field}, id",
+        f"SELECT * FROM {table} WHERE {ts_field} >= ?{paper_clause} ORDER BY {ts_field}, id",
         (start,),
     ).fetchall()
     trade_rows = []
@@ -189,6 +198,8 @@ def audit_one(db, bot, source, start):
     losses = -sum(min(x["pnl"], 0) for x in trade_rows)
     return {
         "integrity": db.execute("PRAGMA quick_check").fetchone()[0],
+        "excluded_nonpaper_shahin_rows_21d": excluded_nonpaper,
+        "historic_scan_coverage_verified": False,
         "closed_rows_21d": len(trade_rows),
         "invalid_pnl_rows": dropped,
         "winning_close_rows": sum(x["pnl"] > 0 for x in trade_rows),
