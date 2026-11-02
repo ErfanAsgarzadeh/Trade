@@ -2,7 +2,7 @@ name: Quant Ichimoku historical M15 backtest
 on:
   push:
     branches: [feat/quant-ichimoku-m15-backtest]
-    paths: [.github/workflows/quant-ichimoku-m15.yml]
+    paths: [.github/workflows/quant-ichimoku-m15.yml, quant_ichimoku/run.py]
   workflow_dispatch:
 jobs:
   replay:
