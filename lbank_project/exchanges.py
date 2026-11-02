@@ -108,9 +108,30 @@ class TheTrueTrade(Adapter):
             out = {}
             for m in self._list(self.request("GET", "/futures/markets", auth=False)):
                 if not m.get("isActive", True):continue
-                out[m["symbol"]] = dict(step=float(m.get("stepSize") or 0), tick=float(m.get("tickSize") or 0),
-                                        min_qty=float(m.get("minOrderSize") or m.get("stepSize") or 0),
-                                        min_notional=float(m.get("minOrderValue") or 5), max_leverage=int(m.get("maxLeverage") or 20))
+                # The live API may omit both minimum-order fields. Do NOT turn
+                # stepSize into minOrderSize or invent a $5 minimum notional.
+                # Unknown limits remain None and must block live entry sizing.
+                def optional_positive(field):
+                    value = m.get(field)
+                    if value is None:
+                        return None
+                    if isinstance(value, bool):
+                        raise ExchangeError(f"Invalid TheTrueTrade market {field}")
+                    try:
+                        result = float(value)
+                    except (TypeError, ValueError, OverflowError):
+                        raise ExchangeError(f"Invalid TheTrueTrade market {field}") from None
+                    if not math.isfinite(result) or result <= 0:
+                        raise ExchangeError(f"Invalid TheTrueTrade market {field}")
+                    return result
+
+                out[m["symbol"]] = dict(
+                    step=optional_positive("stepSize"),
+                    tick=optional_positive("tickSize"),
+                    min_qty=optional_positive("minOrderSize"),
+                    min_notional=optional_positive("minOrderValue"),
+                    max_leverage=int(m.get("maxLeverage") or 20),
+                )
             self._markets = out
         return self._markets
 
