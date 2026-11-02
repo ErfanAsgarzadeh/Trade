@@ -312,7 +312,7 @@ def daily_realized_replay(legs,root_keep,root_mult,mode="off"):
     for day in range(days):
         end=(day+1)*1440
         while k<len(ev) and ev[k][0]<end:
-            minute,typ,i=ev[k];r=d.loc[i]
+            minute,typ,i=ev[k];k+=1;r=d.loc[i]
             root=str(r.root)
             if typ==0:
                 if i in orders:
@@ -334,7 +334,6 @@ def daily_realized_replay(legs,root_keep,root_mult,mode="off"):
                 val=min(nominal,free)
                 if val<20.:root_skipped.add(root);continue
                 orders[i]=(val/float(r.entry),val)
-            k+=1
         prev=close_daily[day-1] if day else 10000.
         close_daily[day]=max(E,1e-8)
         history.append((day,close_daily[day]/max(1e-8,prev)-1))
