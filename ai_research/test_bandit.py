@@ -9,6 +9,7 @@ def leg(bot,closed,unit=20):
 def test_weights_do_not_use_future_trade_outcome():
     L=[leg("main",1440*10,100),leg("main",1440*11,20),
        leg("c3",1440*12,-10),leg("pa",1440*13,5),
+       leg("main",1440*14,5),leg("main",1440*15,-30),
        leg("main",1440*20,200),leg("main",1440*21,-40)]
     a=weights(L,CANDIDATES["oem_30"],days=40)
     v=[dict(x) for x in L]
