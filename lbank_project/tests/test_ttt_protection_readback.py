@@ -206,3 +206,57 @@ def test_missing_numeric_fields_do_not_produce_partial_financial_totals():
     assert group["leverage_at_least_100x_count"] == 0
     assert group["closed_records_with_saved_sl_price"] == 0
     assert group["protective_order_active_at_close_verified"] is False
+
+
+def test_closed_target_returns_status_instead_of_generic_exception():
+    history = [
+        {**target(), "status": "CLOSED", "isActive": False,
+         "closingReason": "STOP_LOSS", "realizedPnL": "-0.3",
+         "totalPnL": "-0.31", "openFees": "0.02", "closeFees": "0.03"},
+        {"id": "secret-2", "symbol": "ETHUSDT", "side": "LONG",
+         "status": "CLOSED", "closingReason": "LIQUIDATED",
+         "realizedPnL": "-1.2"},
+    ]
+    ex, calls = make_exchange(history=history, before=[], after=[])
+    result = p.run(ex, "off")
+    assert [call[0] for call in calls] == ["GET", "GET", "GET"]
+    assert result["status_code"] == "NO_ACTIVE_POSITIONS_IN_BOTH_READS"
+    assert result["conclusion"] == "NO_ACTIVE_TARGET"
+    assert result["active_position_records_first_read"] == 0
+    assert result["active_position_records_second_read"] == 0
+    assert result["closed_btc_short"]["closed_btc_short_records_on_page"] == 1
+    assert result["closed_btc_short"]["closed_btc_short_reason_categories"] == {"STOP_LOSS": 1}
+    assert result["closed_btc_short"]["identical_to_previous_position_proven"] is False
+    assert not result["configuration_readback_matches_requested"]
+    assert not result["live_trading_authorized"]
+    assert "private-btc-id" not in json.dumps(result)
+
+
+def test_another_active_position_does_not_misreport_verified_tpsl():
+    history = [target(status="CLOSED", isActive=False,
+                      closingReason="LIQUIDATED")]
+    different = [{**target(), "id": "unrelated-private-id",
+                  "symbol": "ETHUSDT", "side": "LONG"}]
+    ex, _ = make_exchange(history=history, before=different, after=different)
+    result = p.run(ex, "off")
+    assert result["status_code"] == "TARGET_NOT_UNIQUELY_ACTIVE"
+    assert result["conclusion"] == "UNVERIFIED"
+    assert not result["configuration_readback_matches_requested"]
+
+
+def test_only_mark_and_pnl_changing_is_not_position_change():
+    initial = target()
+    moved = target(markPrice="77951.5", unrealizedPnL="-0.2")
+    ex, _ = make_exchange(before=[initial], after=[moved])
+    result = p.run(ex, "off")
+    assert result["status_code"] == "TARGET_STILL_OPEN"
+    assert result["configuration_readback_matches_requested"] is True
+    assert result["exchange_stop_execution_verified"] is False
+
+
+def test_position_size_change_is_detected_and_not_verified():
+    changed = target(size="0.003")
+    ex, _ = make_exchange(before=[target()], after=[changed])
+    result = p.run(ex, "off")
+    assert result["status_code"] == "ACTIVE_POSITIONS_CHANGED_DURING_AUDIT"
+    assert not result["configuration_readback_matches_requested"]
