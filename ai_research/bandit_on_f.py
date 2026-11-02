@@ -16,15 +16,14 @@ import math
 import numpy as np
 from pathlib import Path
 from collections import deque
-from high_cagr.ideas.frisk import evaluate as F
-from high_cagr.ideas.frisk import dd_engine as E
-from high_cagr.ideas.winrate import ledger as LG
+from datetime import date
 
 OUT=Path(__file__).resolve().parent/"output"
 BOTS=("main","c3","pa")
-START=F.day("2024-01-01")
-TEST=F.day("2025-01-01")
-DEVS={"2024":(START,TEST),"2025_26":(TEST,E.DAYS)}
+START=(date(2024,1,1)-date(2021,10,5)).days
+TEST=(date(2025,1,1)-date(2021,10,5)).days
+DAYS=(date(2026,10,5)-date(2021,10,5)).days
+DEVS={"2024":(START,TEST),"2025_26":(TEST,DAYS)}
 # Parameter candidates frozen BEFORE evaluating the 2025+ data.
 # clip: avoid unbounded reinforcement and preserve diversification.
 CANDIDATES={
@@ -41,7 +40,7 @@ def reward(leg):
     denom=leg["entry"]*(leg["stop_frac"]+0.0016)
     return float(np.clip(leg["unit"]/denom,-3,8))
 
-def weights(legs,candidate,days=E.DAYS):
+def weights(legs,candidate,days=DAYS):
     """Day d is computed only with trades exited on a day <d.
 
     Handle exit cohorts at the same timestamp together; any subsequent
@@ -82,12 +81,25 @@ def weights(legs,candidate,days=E.DAYS):
     return arr
 
 def measure(legs,controls,start,end):
+    from high_cagr.ideas.frisk import dd_engine as E
     rr=E.period(legs,np.ones(len(legs)),start*1440,end*1440 if end is not None else None,controls)
     daily=rr.pop("daily")
     return rr,daily
 
 def report():
     OUT.mkdir(parents=True,exist_ok=True)
+    required = [OUT.parents[1]/"high_cagr/prepared_stage2/ATOMUSDT/prices.npy",
+                OUT.parents[1]/"high_cagr/prepared/BTCUSDT/prices.npy"]
+    missing=[str(x) for x in required if not x.exists()]
+    if missing:
+        result={"status":"BLOCKED: full price arrays for 35 historical symbols missing",
+                "missing":missing,"research_only":True,
+                "note":"Cannot verify OEM > F on latest protected 2679 trades using only archived ledgers. Do not substitute prior 2991-trade results."}
+        (OUT/"oem_vs_F.json").write_text(json.dumps(result,indent=2))
+        print(json.dumps(result),flush=True)
+        return result
+    from high_cagr.ideas.frisk import evaluate as F
+    from high_cagr.ideas.frisk import dd_engine as E
     print("Latest protected ledger: reconstruct C3 lock + Shahin gate",flush=True)
     legs=F.new_legs()
     by_bot={b:sum(l["bot"]==b for l in legs) for b in BOTS}
