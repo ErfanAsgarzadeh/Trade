@@ -1,0 +1,42 @@
+name: Diagnostic seven-model walk-forward step
+on:
+  push:
+    branches: [research/ai-meta-trade-selection-5y]
+    paths: [.github/workflows/ai-seven-debug.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install numpy==2.2.6 pandas==2.2.3 scipy==1.15.3 scikit-learn==1.7.2 xgboost==2.1.4 hmmlearn==0.3.3 matplotlib==3.10.7
+      - name: Time first fold with fault trace on slow operations
+        run: |
+          python -u - <<'PY'
+          import time,faulthandler,sys
+          faulthandler.enable()
+          faulthandler.dump_traceback_later(45,repeat=True,file=sys.stderr)
+          from ai_research import seven_benchmark as B
+          t0=time.monotonic()
+          print('BEGIN LOAD',flush=True)
+          legs,roots,summary=B.load()
+          print('LOADED',len(legs),len(roots),'seconds',time.monotonic()-t0,flush=True)
+          edges=B.fold_boundaries()
+          for lo,hi in zip(edges[:-1],edges[1:]):
+              a,b=B.masks(roots,lo,hi)
+              print('FOLD START',str(lo),int(a.sum()),int(b.sum()),'elapsed',time.monotonic()-t0,flush=True)
+              out=B._models(roots,a,b)
+              print('FOLD DONE',str(lo),sorted(out),'elapsed',time.monotonic()-t0,flush=True)
+          print('ALL FOLDS COMPLETE',time.monotonic()-t0,flush=True)
+          PY
