@@ -301,10 +301,15 @@ class Mirror:
                                                   stop=stop, attempted_at=self.now())
         self.save()  # Durable BEFORE submitting to the exchange.
         try:
-            self.ex.open(esym, side, qty, self.cfg["leverage"], stop)
+            returned_position_id = self.ex.open(esym, side, qty, self.cfg["leverage"], stop)
             observed = self.ex.positions().get(esym)
             if observed is None or observed.side != side or observed.qty <= 0:
                 raise X.ExchangeError(f"{esym}: exchange entry was not confirmed")
+            if returned_position_id is not None and not any(
+                    str(pid) == str(returned_position_id) for pid in observed.ids):
+                raise X.ExchangeError(
+                    f"{esym}: newly opened positionId absent from exchange readback"
+                )
             market = self.ex.markets().get(esym, {})
             tolerance = max(1e-10, float(market.get("step") or 0) * 0.05)
             expected = before_qty + qty
