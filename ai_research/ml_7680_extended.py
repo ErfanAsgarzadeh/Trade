@@ -108,10 +108,24 @@ def main():
     for mode,r in (("NoF",ref),("Fstyle_NOT_RealF",fr)):
         scored=[];all_found=0
         pre_ok=0
+        full_hindsight_hits=0
+        test_hindsight_hits=0
+        all_hindsight_best=None
         for m,c in enumerate(model_grid()):
             pct=percentiles[m]
             for k,p in enumerate(policies()):
                 eq,siz=simulate(r,pct,p.low,p.mid,p.high,p.q,p.soft,p.hard,p.release)
+                # HINDSIGHT DIAGNOSTIC ONLY: do not use future results to select.
+                full_diag=stats(eq,idx)
+                test_diag=stats(eq,idx,TEST)
+                if full_diag["cagr"]>CAGR_GOAL and full_diag["mdd"]<MDD_GOAL:
+                    full_hindsight_hits+=1
+                    if all_hindsight_best is None or full_diag["cagr"]>all_hindsight_best["full"]["cagr"]:
+                        all_hindsight_best={"model":model_grid()[m],"policy":asdict(p),
+                                            "full":full_diag,"posthoc_2025_26":test_diag,
+                                            "warning":"HINDSIGHT ORACLE. NOT valid out-of-sample model selection."}
+                if test_diag["cagr"]>CAGR_GOAL and test_diag["mdd"]<MDD_GOAL:
+                    test_hindsight_hits+=1
                 v23=stats(eq,idx,"2023-01-01","2024-01-01")
                 v24=stats(eq,idx,"2024-01-01","2025-01-01")
                 if v23["mdd"]<=PRE_MDD_LIMIT and v24["mdd"]<=PRE_MDD_LIMIT:
@@ -133,11 +147,15 @@ def main():
                   "mean_exposure_scale":float(size.mean())})
             if rank==1:paths[mode]=eq
         out["modes"][mode]={"pre2025_eligible":pre_ok,"ranked":len(scored),
+             "full_hindsight_goal_hits_NOT_valid":full_hindsight_hits,
+             "2025_26_hindsight_goal_hits_NOT_valid":test_hindsight_hits,
+             "best_full_hindsight_ORACLE_NOT_deployable":all_hindsight_best,
              "winner":winners[0] if winners else None,
              "top50":winners}
         print("EXTENDED_ML_RESULTS",mode,json.dumps({
           "tested":len(model_grid())*len(policies()),
           "pre2025_eligible":pre_ok,
+          "hindsight_goal_hits":full_hindsight_hits,
           "selected":winners[0] if winners else None
         },default=float),flush=True)
     (OUT/"extended_7680_result.json").write_text(json.dumps(out,indent=2,default=float))
