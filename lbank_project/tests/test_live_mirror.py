@@ -806,7 +806,7 @@ def test_sleeve_snapshot_is_read_only_and_does_not_prepare_config(tmp_path, monk
     dbpath = tmp_path / "mojsavar.db"
     store = c3.Store(dbpath)
     config_path = tmp_path / "mojsavar_config.json"
-    config_path.write_text(json.dumps(c3.DEFAULTS))
+    config_path.write_text(json.dumps({**c3.DEFAULTS, "symbols": ["BTC/USDT:USDT"]}))
     original_content = config_path.read_bytes()
     original_mtime = config_path.stat().st_mtime_ns
     monkeypatch.setenv("C3_CONFIG", str(config_path))
