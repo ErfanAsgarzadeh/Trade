@@ -20,7 +20,7 @@ Keys: .env only (TTT_API_KEY/TTT_API_SECRET or BINANCE_API_KEY/BINANCE_API_SECRE
 Files: runtime/live_state_<mode>_<exchange>.json (managed positions), runtime/live_log.jsonl (every action), runtime/live_command.json.
 """
 from __future__ import annotations
-import json, logging, math, os, time
+import json, logging, math, os, sqlite3, time
 from pathlib import Path
 import exchanges as X
 
@@ -75,6 +75,34 @@ class Paper:
             )
         out[symbol] = value
 
+    @staticmethod
+    def _sleeve_snapshot(name: str, mod) -> tuple[dict, list[dict], float]:
+        """Read sleeve config and DB without calling paths()/Store() auto-migrations.
+
+        c3/pa paths() may modify default config values during startup.
+        The mirror must NEVER rewrite any bot config when merely observing.
+        """
+        prefix = {"c3": "C3", "pa": "PA"}[name]
+        base = Path(mod.__file__).resolve().parent
+        cfg_path = Path(os.getenv(prefix + "_CONFIG", str(base / (name + "_config.json"))))
+        db_path = Path(os.getenv(prefix + "_DB", str(base / "data" / (name + "_sleeve.db")))).resolve()
+        if not cfg_path.is_file() or not db_path.is_file():
+            raise X.ExchangeError(f"{name}: missing PAPER config/database; live sizing blocked")
+        config = mod.validate(json.loads(cfg_path.read_text()))
+        db = sqlite3.connect(db_path.as_uri() + "?mode=ro", uri=True, timeout=10)
+        try:
+            db.row_factory = sqlite3.Row
+            db.execute("PRAGMA query_only=ON")
+            positions = [dict(x) for x in db.execute(
+                "SELECT p.*, COALESCE(m.isolated_leverage,5) AS isolated_leverage "
+                "FROM positions p LEFT JOIN position_margin m "
+                "ON p.symbol=m.symbol AND p.opened=m.opened"
+            )]
+            realized = db.execute("SELECT COALESCE(SUM(pnl),0) FROM trades").fetchone()[0]
+        finally:
+            db.close()
+        return config, positions, float(realized)
+
     def positions(self) -> dict[str, dict]:
         out = {}
         conflicts = set()
@@ -92,7 +120,8 @@ class Paper:
             collect(p["symbol"], dict(bot="main", side=p["side"], qty=float(p["qty"]) * float(p.get("contract_size") or 1), stop=float(p["active_sl"]),
                                       key=f"main|{p['symbol']}|{p.get('signal_ts', 0)}", opened=None))
         for key, mod in (("c3", self.c3), ("pa", self.pa)):
-            for p in mod.paths()[1].positions():
+            _, sleeve_positions, _ = self._sleeve_snapshot(key, mod)
+            for p in sleeve_positions:
                 collect(p["symbol"], dict(bot=key, side=p["side"], qty=float(p["qty"]), stop=float(p["stop"]),
                                           key=f"{key}|{p['symbol']}|{p['opened']}", opened=float(p["opened"])))
         # Conflicts are NOT netted or overwritten. Other independent symbols
@@ -132,12 +161,9 @@ class Paper:
         main_open = [p for p in self.db.positions() if p["state"] != self.bot.PENDING]
         sleeves = []
         for name, mod in (("c3", self.c3), ("pa", self.pa)):
-            path, store = mod.paths()
-            config = mod.load(path)
-            with store.db() as db:
-                realized = db.execute("SELECT COALESCE(SUM(pnl),0) FROM trades").fetchone()[0]
+            config, sleeve_positions, realized = self._sleeve_snapshot(name, mod)
             total += number(realized, f"{name} realized PnL")
-            sleeves.append((name, config, store.positions()))
+            sleeves.append((name, config, sleeve_positions))
 
         if main_open or any(positions for _, _, positions in sleeves):
             quotes = fetch_prices()  # GET only; do not use spot or synthetic/demo prices.
