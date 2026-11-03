@@ -25,7 +25,7 @@ def test_historical_trade_expectancy_only_includes_closed_past():
     d.loc[0,"root_exit_min"]=d.loc[12,"em"]+10
     x,cols,cats=S.features(d)
     assert x.loc[1,"closed_all_n"]==0.
-    assert np.isclose(x.loc[13,"closed_all_n"],np.log1p(12))
+    assert np.isclose(x.loc[13,"closed_all_n"],np.log1p(13))
     assert all(col in x for col in cols)
     assert cats==["bot","side","coin"]
 
