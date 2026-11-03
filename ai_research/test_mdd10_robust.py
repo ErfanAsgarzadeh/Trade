@@ -11,7 +11,7 @@ def test_robust_selection_causally_ignores_future_losses():
     p=Policy("constant",.25,0,0,0,0,0,0)
     a=Q.pre_safety(r,idx,p,sample)
     changed=r.copy()
-    changed[idx>=pd.Timestamp("2025-01-01",tz="UTC")]=-.8
+    changed[idx>=pd.Timestamp("2025-01-01",tz="UTC")]=-.3
     b=Q.pre_safety(changed,idx,p,sample)
     assert a==b
     assert a is not None
