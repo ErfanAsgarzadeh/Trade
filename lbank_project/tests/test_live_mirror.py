@@ -734,3 +734,55 @@ def test_bad_paper_equity_does_not_send_order(env, invalid_equity):
         step()
     assert not sim.positions()
     assert not sim.log
+
+
+def test_paper_collects_conflict_without_discarding_other_symbols():
+    from types import SimpleNamespace
+    paper = L.Paper.__new__(L.Paper)
+    paper.bot = SimpleNamespace(PENDING="PENDING")
+    paper.db = SimpleNamespace(positions=lambda: [
+        dict(symbol="BTC/USDT:USDT", side="long", qty=1., contract_size=1.,
+             active_sl=75., state="OPEN", signal_ts=10),
+        dict(symbol="ETH/USDT:USDT", side="long", qty=2., contract_size=1.,
+             active_sl=70., state="OPEN", signal_ts=11),
+    ])
+    def mod_store(rows):
+        return SimpleNamespace(paths=lambda: (None, SimpleNamespace(positions=lambda: rows)))
+    paper.c3 = mod_store([
+        dict(symbol="BTC/USDT:USDT", side="short", qty=3., stop=110., opened=25.)
+    ])
+    paper.pa = mod_store([])
+    positions = paper.positions()
+    assert "BTC/USDT:USDT" not in positions
+    assert "BTC/USDT:USDT" in paper.conflicts
+    assert positions["ETH/USDT:USDT"]["bot"] == "main"
+
+
+def test_conflicted_unmanaged_symbol_does_not_block_other_paper_positions(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.conflicts = {"BTC/USDT:USDT"}
+    paper.book["AAVE/USDT:USDT"] = dict(
+        bot="c3", side="long", qty=10., stop=90., key="c3|AAVE|safe",
+        opened=clock[0])
+    step()
+    assert "BTCUSDT" not in sim.positions()
+    assert "AAVEUSDT" in sim.positions()
+    assert any(json.loads(x).get("kind") == "paper_symbol_conflict"
+               for x in (tmp / "live_log.jsonl").read_text().splitlines())
+
+
+def test_conflict_on_managed_symbol_pauses_without_unwanted_close(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    step()
+    assert "BTCUSDT" in m.state["managed"]
+    paper.book.clear()
+    paper.conflicts = {"BTC/USDT:USDT"}
+    before = len(sim.log)
+    step()
+    assert m.state["paused"]
+    assert "BTCUSDT" in sim.positions()
+    assert "BTCUSDT" in m.state["managed"]
+    assert len(sim.log) == before
