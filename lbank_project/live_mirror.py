@@ -77,13 +77,28 @@ class Paper:
 
     def positions(self) -> dict[str, dict]:
         out = {}
+        conflicts = set()
+        def collect(symbol, value):
+            if symbol in conflicts:
+                return  # A third bot on the same symbol stays ambiguous.
+            try:
+                self._add_unique(out, symbol, value)
+            except X.ExchangeError:
+                out.pop(symbol, None)
+                conflicts.add(symbol)
+
         for p in self.db.positions():
             if p["state"] == self.bot.PENDING:continue
-            self._add_unique(out, p["symbol"], dict(bot="main", side=p["side"], qty=float(p["qty"]) * float(p.get("contract_size") or 1), stop=float(p["active_sl"]),
-                                    key=f"main|{p['symbol']}|{p.get('signal_ts', 0)}", opened=None))
+            collect(p["symbol"], dict(bot="main", side=p["side"], qty=float(p["qty"]) * float(p.get("contract_size") or 1), stop=float(p["active_sl"]),
+                                      key=f"main|{p['symbol']}|{p.get('signal_ts', 0)}", opened=None))
         for key, mod in (("c3", self.c3), ("pa", self.pa)):
             for p in mod.paths()[1].positions():
-                self._add_unique(out, p["symbol"], dict(bot=key, side=p["side"], qty=float(p["qty"]), stop=float(p["stop"]), key=f"{key}|{p['symbol']}|{p['opened']}", opened=float(p["opened"])))
+                collect(p["symbol"], dict(bot=key, side=p["side"], qty=float(p["qty"]), stop=float(p["stop"]),
+                                          key=f"{key}|{p['symbol']}|{p['opened']}", opened=float(p["opened"])))
+        # Conflicts are NOT netted or overwritten. Other independent symbols
+        # can be reconciled, but existing ownership on conflicted symbols
+        # requires manual resolution before it can be changed.
+        self.conflicts = conflicts
         return out
 
     def equity(self) -> float:
@@ -367,6 +382,8 @@ class Mirror:
         was_running = (self._session_has_completed_cycle and
                        0 <= now - self.state["last_cycle"] < 180)
         paper = self.paper.positions();markets = self.ex.markets();live = self.ex.positions()
+        conflicted_exchange_symbols = {X.bot_to_exchange(sym)[0]
+                                       for sym in getattr(self.paper, "conflicts", set())}
         eq_live = self.ex.equity();eq_paper = self.paper.equity()
         if (not math.isfinite(eq_live) or not math.isfinite(eq_paper) or
                 eq_live <= 0 or eq_paper <= 0):
@@ -385,7 +402,12 @@ class Mirror:
             if esym not in markets:continue
             targets[esym] = dict(p, mult=mult, ex_qty=p["qty"] / mult, ex_stop=p["stop"] * mult, first_seen=seen[p["key"]])
         managed = self.state["managed"]
-        for esym in sorted(set(targets) | set(managed)):
+        for esym in sorted(conflicted_exchange_symbols):
+            self.event("paper_symbol_conflict", symbol=esym,
+                       note="Overlapping bot ownership cannot be safely netted; no orders on this symbol")
+            if esym in managed:
+                self.state["paused"] = True
+        for esym in sorted((set(targets) | set(managed)) - conflicted_exchange_symbols):
             try:self._reconcile(esym, targets.get(esym), live.get(esym), ratio, was_running)
             except Exception as exc:
                 self.state["errors"] += 1;self.event("error", symbol=esym, error=str(exc)[:300])
