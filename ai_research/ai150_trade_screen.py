@@ -145,28 +145,28 @@ def surrogate_score(t,scores,have,rule,short_factor):
     This is NOT an account equity curve: no leverage, MTM or margin/cost
     recomputation. Full event-replay is reserved for the ONE preselected model.
     """
-    k=size_rule(scores,rule)
-    k[~have]=1.  # All pre-2023 trades unchanged in the research screen
-    k=np.asarray(k,dtype=float)
+    k=size_rule(scores,rule).astype(float)
     s=t.side.astype(int).to_numpy()
-    k[s<0]*=short_factor
-    risk=np.array([RISK[v] for v in t.bot])
+    k[(s<0)&have]*=short_factor
+    k[~have]=1.  # No AFTER-THE-FACT 2023-selected rules on 2021/22 trades
+    risk=np.array([RISK[v] for v in t.bot],float)
     r=t.realized_r.to_numpy(float)
-    root_index=t.entry_date
     years=t.entry_date.dt.year.to_numpy()
-    # focus on truly OOS 2023 and 2024 decisions only
     a=(years==2023)
     b=(years==2024)
-    if a.sum()<50 or b.sum()<50: return -np.inf
-    # Restrict excessive "success" by removing all signals.
+    if a.sum()<50 or b.sum()<50:return -np.inf
     if np.mean(k[a]>0)<.35 or np.mean(k[b]>0)<.35:return -np.inf
-    roi=r*risk*k
-    p23=float(np.sum(roi[a]));p24=float(np.sum(roi[b]))
-    # Multiple-testing control heuristic: demand improvement across both
-    # development folds and use the WORSE fold as objective.
-    base23=float(np.sum((r*risk)[a]));base24=float(np.sum((r*risk)[b]))
-    gain23=p23-base23;gain24=p24-base24
-    return 0.8*min(gain23,gain24)+.2*(gain23+gain24)/2
+    def unit_edge(mask):
+        # Divide outcome by TOTAL EXPOSURE: cannot win by turning up
+        # unconditional leverage and cannot win by hiding lost trades.
+        selected=float(np.sum((r*risk*k)[mask]))/max(1e-8,float(np.sum((risk*k)[mask])))
+        reference=float(np.sum((r*risk)[mask]))/max(1e-8,float(np.sum(risk[mask])))
+        return selected-reference
+    gain23=unit_edge(a);gain24=unit_edge(b)
+    # Both independent validation years must have strictly positive
+    # per-risk-unit outcome improvement (not merely gross PnL growth).
+    if gain23<=0 or gain24<=0:return -np.inf
+    return 0.80*min(gain23,gain24)+0.20*(gain23+gain24)/2
 
 def selection():
     OUT.mkdir(parents=True,exist_ok=True)
@@ -220,21 +220,30 @@ def selection():
         pred,mask,ntr,nte=fit_predict(chosen["spec"],t,cols,cats,st,en)
         q[mask]=pred;has[mask]=True
         testfits.append({"start":st,"train":ntr,"test":nte})
-    k=size_rule(q,chosen["rule"])
-    k[~has]=1.
+    k=size_rule(q,chosen["rule"]).astype(float)
     side=t.side.astype(int).to_numpy()
-    k[side<0]*=chosen["short_factor"]
+    k[(side<0)&has]*=chosen["short_factor"]
+    k[~has]=1.  # No backdating of risk choices into pre-2023 history
     keep={str(r.root):bool(k[j]>.01) for j,r in enumerate(t.itertuples())}
     sizing={str(r.root):float(min(2.,max(0.,k[j]))) for j,r in enumerate(t.itertuples())}
     base_accept={str(r.root):True for r in t.itertuples()}
     base_size={str(r.root):1. for r in t.itertuples()}
     comparisons={}
+    # Matched simple non-ML control: only reduce 2023+ short risk by the
+    # SAME selected short multiplier, to isolate incremental ML value.
+    matched_size={
+       str(row.root):(float(chosen["short_factor"])
+                      if int(row.side)<0 and bool(has[j]) else 1.)
+       for j,row in enumerate(t.itertuples())}
     for mode in ("off","proxy"):
         b_daily,b_closed=B.daily_realized_replay(legs,base_accept,base_size,mode=mode)
         d_daily,d_closed=B.daily_realized_replay(legs,keep,sizing,mode=mode)
+        simple_daily,simple_closed=B.daily_realized_replay(
+            legs,base_accept,matched_size,mode=mode)
         key="no_F" if mode=="off" else "F_style_proxy_NOT_real_F"
         comparisons[key]={
             "baseline":B.metrics(b_daily,b_closed),
+            "simple_short_risk_control":B.metrics(simple_daily,simple_closed),
             "selected_ai":B.metrics(d_daily,d_closed),
             "screen_goal_pass":bool(B.metrics(d_daily,d_closed)["CAGR (%)"]>=150
                   and B.metrics(d_daily,d_closed)["Max Drawdown (%)"]<10),
