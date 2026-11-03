@@ -5,6 +5,8 @@ on:
     paths:
       - ai_research/mdd10_frontier.py
       - ai_research/test_mdd10_frontier.py
+      - ai_research/mdd10_stress.py
+      - ai_research/test_mdd10_stress.py
       - .github/workflows/mdd-under10-5y.yml
   workflow_dispatch:
 permissions:
@@ -29,9 +31,11 @@ jobs:
           scikit-learn==1.7.2 numba==0.61.2 matplotlib==3.10.7
           pytest==8.4.2
       - name: Causality and risk-budget invariants
-        run: python -m pytest ai_research/test_mdd10_frontier.py -q
+        run: python -m pytest ai_research/test_mdd10_frontier.py ai_research/test_mdd10_stress.py -q
       - name: Search fixed predeclared risk budget frontier, lock 2025-26 test
         run: python -u -m ai_research.mdd10_frontier
+      - name: Stress 2025-26 losses and run pre-2025 block bootstrap
+        run: python -u -m ai_research.mdd10_stress
       - name: Print evidence and MDD pass/fail
         run: |
           cat ai_research/output/mdd_under10/results.md
