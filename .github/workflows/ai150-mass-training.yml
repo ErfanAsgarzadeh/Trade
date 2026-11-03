@@ -1,0 +1,57 @@
+name: "Research 150pct CAGR under10 MDD - 1010 AI models 2026"
+on:
+  push:
+    branches: [research/ai-150cagr-under10dd-20261103]
+    paths:
+      - ai_research/ai150_mass_screen.py
+      - ai_research/test_ai150_mass_screen.py
+      - .github/workflows/ai150-mass-training.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned reproducibility dependencies
+        run: >-
+          python -m pip install
+          numpy==2.2.6 pandas==2.2.3 scipy==1.15.3
+          scikit-learn==1.7.2 numba==0.61.2
+          matplotlib==3.10.7 pytest==8.4.2
+      - name: Unit tests for future information isolation
+        run: python -m pytest ai_research/test_ai150_mass_screen.py -q
+      - name: Restore SHA256-verified BTC minute archives and original daily reference
+        run: python restore_data.py
+      - name: Train 1010 model specs in 2023 and 2024 temporal folds and scan 128 causal overlays each
+        run: python -u -m ai_research.ai150_mass_screen
+      - name: Show strict acceptance and actual fit counts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("ai_research/output/mdd_under10/ai1000/ai150_result.json").read_text())
+          print("STATUS",d["status"])
+          print("MODEL_FITS",d["diagnostics"]["trained_fits"])
+          print("MODEL_SPECIFICATIONS",d["diagnostics"]["specifications"])
+          print("POLICIES_PER_MODEL",d["diagnostics"]["policies_per_model"])
+          if d.get("no_F_selected_model"): print("NO F",d["no_F_selected_model"])
+          if d.get("F_style_proxy_not_actual_F"):print("F-STYLE NOT F",d["F_style_proxy_not_actual_F"])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai150-mass-training-causal-risk-benchmark
+          path: ai_research/output/mdd_under10/ai1000/
+          retention-days: 45
