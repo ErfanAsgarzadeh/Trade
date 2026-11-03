@@ -140,8 +140,13 @@ def test_thetruetrade_signing_and_requests(monkeypatch):
         return R({'positionId': '7'})
     monkeypatch.setattr(X.urllib.request, 'urlopen', fake)
     t = X.TheTrueTrade('k', 's', 'https://api.test')
-    t.open('BTCUSDT', 'long', .01, 5, 78000.)
-    body = json.loads(sent[-1].data);assert body == {'symbol': 'BTCUSDT', 'side': 'LONG', 'tradeType': 'MARKET', 'leverage': 5, 'size': '0.01', 'walletType': 'debit', 'stopLoss': '78000'}
+    assert t.open('BTCUSDT', 'long', .01, 5, 78000.) == '7'
+    body = json.loads(sent[-1].data);assert body == {
+        'symbol': 'BTCUSDT', 'side': 'LONG', 'tradeType': 'MARKET',
+        'leverage': 5, 'size': '0.01', 'walletType': 'debit',
+        'stopLoss': '78000', 'stopLossOrderType': 'STOP_MARKET',
+        'stopLossStrategy': 'LATEST_PRICE',
+    }
     h = {k.lower(): v for k, v in sent[-1].header_items()};assert h['x-api-key'] == 'k' and h['x-signature'] == X.TheTrueTrade.sign('s', h['x-timestamp'], 'POST', '/futures/positions')
     pos = t.positions()['BTCUSDT'];assert pos.qty == .01 and pos.ids == [7] and t.equity() == 1005.
     t.close(pos, .004);assert sent[-1].full_url.endswith('/futures/positions/7/close') and json.loads(sent[-1].data) == {'orderType': 'MARKET', 'size': '0.004'}
@@ -831,3 +836,66 @@ def test_missing_sleeve_config_fails_closed_without_creating_it(tmp_path, monkey
     with pytest.raises(X.ExchangeError, match="missing PAPER config/database"):
         L.Paper._sleeve_snapshot("c3", c3)
     assert not absent.exists() and not dbpath.exists()
+
+
+
+def test_ttt_documented_position_without_entry_price_is_not_mislabeled():
+    # Page 16 of the API reference lists markPrice but not entryPrice.
+    t = X.TheTrueTrade("key", "secret")
+    row = {
+        "id": 1042, "symbol": "BTCUSDT", "side": "LONG", "status": "OPEN",
+        "size": "0.015", "leverage": 10,
+        "markPrice": "67250.5", "unrealizedPnL": "12.34",
+    }
+    t.request = lambda *a, **kw: [row]
+    pos = t.positions()["BTCUSDT"]
+    assert pos.entry is None
+    assert pos.qty == pytest.approx(.015)
+    assert pos.ids == [1042]
+
+
+def test_ttt_duplicate_position_ids_never_create_false_aggregated_size():
+    t = X.TheTrueTrade("key", "secret")
+    row = {"id": 3, "symbol": "BTCUSDT", "side": "LONG", "status": "OPEN",
+           "size": "0.1", "markPrice": "60000"}
+    t.request = lambda *a, **kw: [dict(row), dict(row)]
+    with pytest.raises(X.ExchangeError, match="duplicate exchange position ID"):
+        t.positions()
+
+
+def test_ttt_open_requires_documented_position_id_after_post(monkeypatch):
+    t = X.TheTrueTrade("key", "secret")
+    calls = []
+    def response(method, path, **kw):
+        calls.append((method, path, kw.get("body")))
+        return {"status": "ok"}
+    monkeypatch.setattr(t, "request", response)
+    with pytest.raises(X.ExchangeError, match="positionId"):
+        t.open("BTCUSDT", "long", .01, 5, 78000.)
+    assert len(calls) == 1
+    assert calls[0][:2] == ("POST", "/futures/positions")
+    assert calls[0][2]["stopLossOrderType"] == "STOP_MARKET"
+    assert calls[0][2]["stopLossStrategy"] == "LATEST_PRICE"
+
+
+def test_ttt_close_all_uses_documented_empty_body():
+    t = X.TheTrueTrade("key", "secret")
+    calls = []
+    t.request = lambda method, path, **kw: calls.append((method, path, kw))
+    t.close_all()
+    assert calls == [("POST", "/futures/positions/close-all", {})]
+
+
+def test_new_position_id_missing_from_readback_is_never_confirmed(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    def entry_with_wrong_id(symbol, side, qty, leverage, stop=None):
+        X.Sim.open(sim, symbol, side, qty, leverage, stop)
+        return "not-the-created-position-id"
+    sim.open = entry_with_wrong_id
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    step()
+    assert m.state["paused"]
+    assert "BTCUSDT" in m.state["pending_orders"]
+    assert "BTCUSDT" not in m.state["managed"]
+    assert len([x for x in sim.log if x[0] == "open"]) == 1
