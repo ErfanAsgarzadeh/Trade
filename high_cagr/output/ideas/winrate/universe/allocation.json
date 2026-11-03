@@ -1,0 +1,3840 @@
+{
+ "rank_2024": [
+  [
+   "BTCUSDT",
+   16239005995.932224
+  ],
+  [
+   "ETHUSDT",
+   7492405594.514205
+  ],
+  [
+   "SOLUSDT",
+   2704800752.835
+  ],
+  [
+   "1000PEPEUSDT",
+   961158308.7961805
+  ],
+  [
+   "DOGEUSDT",
+   655336618.346
+  ],
+  [
+   "XRPUSDT",
+   513526636.7429677
+  ],
+  [
+   "BNBUSDT",
+   445948112.61000127
+  ],
+  [
+   "SUIUSDT",
+   366874760.24203146
+  ],
+  [
+   "WLDUSDT",
+   340549842.3072
+  ],
+  [
+   "AVAXUSDT",
+   279605324.598
+  ],
+  [
+   "1000SHIBUSDT",
+   243605582.247579
+  ],
+  [
+   "LINKUSDT",
+   218873990.04291523
+  ],
+  [
+   "ADAUSDT",
+   208110667.2798
+  ],
+  [
+   "NEARUSDT",
+   200170159.668
+  ],
+  [
+   "FILUSDT",
+   185354032.0068061
+  ],
+  [
+   "ARBUSDT",
+   171380653.10324022
+  ],
+  [
+   "BCHUSDT",
+   168104705.8184809
+  ],
+  [
+   "FETUSDT",
+   160986683.44259998
+  ],
+  [
+   "APTUSDT",
+   154482975.32278854
+  ],
+  [
+   "ETCUSDT",
+   150187508.67092085
+  ],
+  [
+   "OPUSDT",
+   149769561.34381127
+  ],
+  [
+   "LTCUSDT",
+   149330428.54196972
+  ],
+  [
+   "DOTUSDT",
+   145832033.95313832
+  ],
+  [
+   "INJUSDT",
+   125554823.8019328
+  ],
+  [
+   "UNIUSDT",
+   89142538.31
+  ],
+  [
+   "AAVEUSDT",
+   86799442.08878918
+  ],
+  [
+   "ATOMUSDT",
+   79074480.6559925
+  ],
+  [
+   "APEUSDT",
+   69168012.34689999
+  ],
+  [
+   "ICPUSDT",
+   63942018.236
+  ],
+  [
+   "TRXUSDT",
+   63535135.793469995
+  ],
+  [
+   "SANDUSDT",
+   46453588.804299995
+  ],
+  [
+   "HBARUSDT",
+   29608558.32835
+  ],
+  [
+   "XLMUSDT",
+   28741358.930639997
+  ],
+  [
+   "ALGOUSDT",
+   26555261.642779365
+  ],
+  [
+   "ZECUSDT",
+   22207478.596322313
+  ],
+  [
+   "VETUSDT",
+   20374574.972415
+  ],
+  [
+   "CAKEUSDT",
+   13996504.838399999
+  ],
+  [
+   "KSMUSDT",
+   12081125.887785828
+  ],
+  [
+   "BANDUSDT",
+   8379042.767216016
+  ],
+  [
+   "DASHUSDT",
+   7614742.470254078
+  ],
+  [
+   "QNTUSDT",
+   7567540.723079467
+  ]
+ ],
+ "rank_latest": [
+  [
+   "BTCUSDT",
+   11905034572.680962
+  ],
+  [
+   "ETHUSDT",
+   9723592198.02803
+  ],
+  [
+   "SOLUSDT",
+   2080451806.5121207
+  ],
+  [
+   "XRPUSDT",
+   800851398.0887609
+  ],
+  [
+   "ZECUSDT",
+   754933357.5952995
+  ],
+  [
+   "DOGEUSDT",
+   525895308.38645
+  ],
+  [
+   "BNBUSDT",
+   366247537.2716643
+  ],
+  [
+   "1000PEPEUSDT",
+   269725609.4988804
+  ],
+  [
+   "SUIUSDT",
+   228180721.19150987
+  ],
+  [
+   "ADAUSDT",
+   198687546.0501
+  ],
+  [
+   "LINKUSDT",
+   136410683.04048324
+  ],
+  [
+   "AVAXUSDT",
+   134770426.935
+  ],
+  [
+   "ENAUSDT",
+   129183386.36936
+  ],
+  [
+   "NEARUSDT",
+   117900569.64899999
+  ],
+  [
+   "BCHUSDT",
+   109305944.34527066
+  ],
+  [
+   "PUMPUSDT",
+   108483135.692471
+  ],
+  [
+   "WLDUSDT",
+   106477830.99700001
+  ],
+  [
+   "FILUSDT",
+   99352531.09524393
+  ],
+  [
+   "AAVEUSDT",
+   91799176.70647195
+  ],
+  [
+   "UNIUSDT",
+   83848406.70199999
+  ],
+  [
+   "LTCUSDT",
+   81005054.36669944
+  ],
+  [
+   "DOTUSDT",
+   75321444.05097137
+  ],
+  [
+   "TRUMPUSDT",
+   68913214.73135133
+  ],
+  [
+   "XLMUSDT",
+   51712216.43785
+  ],
+  [
+   "TRXUSDT",
+   50953000.09307
+  ],
+  [
+   "ARBUSDT",
+   49226673.56399189
+  ],
+  [
+   "ONDOUSDT",
+   48938094.40637042
+  ],
+  [
+   "1000SHIBUSDT",
+   44889222.512167
+  ],
+  [
+   "APTUSDT",
+   42272073.5764858
+  ],
+  [
+   "DASHUSDT",
+   41148286.17876454
+  ],
+  [
+   "FETUSDT",
+   38980093.3491
+  ],
+  [
+   "HBARUSDT",
+   35890427.31069
+  ],
+  [
+   "INJUSDT",
+   34955215.34140294
+  ],
+  [
+   "OPUSDT",
+   34075637.977170035
+  ],
+  [
+   "ICPUSDT",
+   30433015.808999997
+  ],
+  [
+   "ETCUSDT",
+   28392651.20196418
+  ],
+  [
+   "ATOMUSDT",
+   20793410.071410142
+  ],
+  [
+   "ALGOUSDT",
+   16442553.972465001
+  ],
+  [
+   "SANDUSDT",
+   11627329.42309
+  ],
+  [
+   "KAITOUSDT",
+   11492224.113010287
+  ],
+  [
+   "CAKEUSDT",
+   10101350.4855
+  ],
+  [
+   "APEUSDT",
+   8915536.8553
+  ],
+  [
+   "VETUSDT",
+   7927395.640968
+  ],
+  [
+   "QNTUSDT",
+   4506267.546061456
+  ],
+  [
+   "NOTUSDT",
+   3704633.0139564998
+  ],
+  [
+   "KSMUSDT",
+   2554000.020738379
+  ],
+  [
+   "TUTUSDT",
+   2496733.44164
+  ],
+  [
+   "BANDUSDT",
+   1411513.2699441325
+  ],
+  [
+   "BMTUSDT",
+   1093260.66677
+  ]
+ ],
+ "runs": {
+  "CURRENT (TTT subset)": {
+   "lists": {
+    "main": [
+     "BTCUSDT",
+     "ETHUSDT",
+     "SOLUSDT",
+     "XRPUSDT",
+     "ADAUSDT"
+    ],
+    "c3": [
+     "AAVEUSDT",
+     "UNIUSDT",
+     "AVAXUSDT",
+     "KSMUSDT",
+     "DOTUSDT",
+     "DOGEUSDT",
+     "TRXUSDT"
+    ],
+    "pa": [
+     "ATOMUSDT",
+     "FILUSDT",
+     "LTCUSDT",
+     "LINKUSDT",
+     "ALGOUSDT",
+     "ETCUSDT",
+     "NEARUSDT",
+     "BCHUSDT",
+     "1000SHIBUSDT",
+     "VETUSDT"
+    ]
+   },
+   "final": 618480.5936995267,
+   "cagr": 128.19927797976254,
+   "dd": 19.31747524705162,
+   "calmar": 6.63644064973394,
+   "train": [
+    4.764497089977511,
+    92.03805460029004,
+    19.31747524705162
+   ],
+   "valid": [
+    11.13074540906963,
+    213.6875881272213,
+    19.19795847213457
+   ],
+   "trades": 1983,
+   "win_rate": {
+    "c3": 56.34146341463414,
+    "main": 49.77777777777778,
+    "pa": 39.92395437262358,
+    "all": 51.18507312153303,
+    "train": 51.37096774193548,
+    "valid": 50.87483176312247
+   },
+   "pf": 1.9120983207455133,
+   "yearly": {
+    "2021": 5.2,
+    "2022": 89.5,
+    "2023": 116.8,
+    "2024": 91.9,
+    "2025": 228.2,
+    "2026": 127.3
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 820,
+     "win": 56.34146341463414
+    },
+    "main": {
+     "trades": 900,
+     "win": 49.77777777777778
+    },
+    "pa": {
+     "trades": 263,
+     "win": 39.92395437262358
+    }
+   }
+  },
+  "LIQ2024 8/15/rest": {
+   "lists": {
+    "main": [
+     "BTCUSDT",
+     "ETHUSDT",
+     "SOLUSDT",
+     "1000PEPEUSDT",
+     "DOGEUSDT",
+     "XRPUSDT",
+     "BNBUSDT",
+     "SUIUSDT"
+    ],
+    "c3": [
+     "WLDUSDT",
+     "AVAXUSDT",
+     "1000SHIBUSDT",
+     "LINKUSDT",
+     "ADAUSDT",
+     "NEARUSDT",
+     "FILUSDT",
+     "ARBUSDT",
+     "BCHUSDT",
+     "FETUSDT",
+     "APTUSDT",
+     "ETCUSDT",
+     "OPUSDT",
+     "LTCUSDT",
+     "DOTUSDT"
+    ],
+    "pa": [
+     "INJUSDT",
+     "UNIUSDT",
+     "AAVEUSDT",
+     "ATOMUSDT",
+     "APEUSDT",
+     "ICPUSDT",
+     "TRXUSDT",
+     "SANDUSDT",
+     "HBARUSDT",
+     "XLMUSDT",
+     "ALGOUSDT",
+     "ZECUSDT",
+     "VETUSDT",
+     "CAKEUSDT",
+     "KSMUSDT",
+     "BANDUSDT",
+     "DASHUSDT",
+     "QNTUSDT"
+    ]
+   },
+   "final": 356150.1576211724,
+   "cagr": 104.34739954197853,
+   "dd": 33.23074511963762,
+   "calmar": 3.1400860608543724,
+   "train": [
+    1.8253390819473407,
+    60.03965881712156,
+    32.89233184722533
+   ],
+   "valid": [
+    6.641889086686604,
+    220.71492335258515,
+    33.230745119637604
+   ],
+   "trades": 3162,
+   "win_rate": {
+    "c3": 55.139593908629436,
+    "main": 48.278985507246375,
+    "pa": 34.85477178423236,
+    "all": 49.65211891208096,
+    "train": 48.59459459459459,
+    "valid": 51.143292682926834
+   },
+   "pf": 1.5387008061344039,
+   "yearly": {
+    "2021": 4.4,
+    "2022": 51.1,
+    "2023": 57.9,
+    "2024": 84.5,
+    "2025": 282.2,
+    "2026": 102.9
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1576,
+     "win": 55.139593908629436
+    },
+    "main": {
+     "trades": 1104,
+     "win": 48.278985507246375
+    },
+    "pa": {
+     "trades": 482,
+     "win": 34.85477178423236
+    }
+   }
+  },
+  "LIQ2024 5/10/20": {
+   "lists": {
+    "main": [
+     "BTCUSDT",
+     "ETHUSDT",
+     "SOLUSDT",
+     "1000PEPEUSDT",
+     "DOGEUSDT"
+    ],
+    "c3": [
+     "XRPUSDT",
+     "BNBUSDT",
+     "SUIUSDT",
+     "WLDUSDT",
+     "AVAXUSDT",
+     "1000SHIBUSDT",
+     "LINKUSDT",
+     "ADAUSDT",
+     "NEARUSDT",
+     "FILUSDT"
+    ],
+    "pa": [
+     "ARBUSDT",
+     "BCHUSDT",
+     "FETUSDT",
+     "APTUSDT",
+     "ETCUSDT",
+     "OPUSDT",
+     "LTCUSDT",
+     "DOTUSDT",
+     "INJUSDT",
+     "UNIUSDT",
+     "AAVEUSDT",
+     "ATOMUSDT",
+     "APEUSDT",
+     "ICPUSDT",
+     "TRXUSDT",
+     "SANDUSDT",
+     "HBARUSDT",
+     "XLMUSDT",
+     "ALGOUSDT",
+     "ZECUSDT"
+    ]
+   },
+   "final": 571141.1790492496,
+   "cagr": 124.59330102104,
+   "dd": 33.73210114720852,
+   "calmar": 3.6936122205168553,
+   "train": [
+    4.24607835872978,
+    88.99036451819148,
+    20.958248294035975
+   ],
+   "valid": [
+    6.189068610380334,
+    208.7702883723626,
+    33.7321011472085
+   ],
+   "trades": 2429,
+   "win_rate": {
+    "c3": 54.96323529411765,
+    "main": 49.00990099009901,
+    "pa": 37.71106941838649,
+    "all": 49.19720049403046,
+    "train": 48.35714285714286,
+    "valid": 50.34013605442177
+   },
+   "pf": 1.6307404964434047,
+   "yearly": {
+    "2021": 8.3,
+    "2022": 79.4,
+    "2023": 76.2,
+    "2024": 130.1,
+    "2025": 279.5,
+    "2026": 91.1
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1088,
+     "win": 54.96323529411765
+    },
+    "main": {
+     "trades": 808,
+     "win": 49.00990099009901
+    },
+    "pa": {
+     "trades": 533,
+     "win": 37.71106941838649
+    }
+   }
+  },
+  "LIQ2024 6/12/rest": {
+   "lists": {
+    "main": [
+     "BTCUSDT",
+     "ETHUSDT",
+     "SOLUSDT",
+     "1000PEPEUSDT",
+     "DOGEUSDT",
+     "XRPUSDT"
+    ],
+    "c3": [
+     "BNBUSDT",
+     "SUIUSDT",
+     "WLDUSDT",
+     "AVAXUSDT",
+     "1000SHIBUSDT",
+     "LINKUSDT",
+     "ADAUSDT",
+     "NEARUSDT",
+     "FILUSDT",
+     "ARBUSDT",
+     "BCHUSDT",
+     "FETUSDT"
+    ],
+    "pa": [
+     "APTUSDT",
+     "ETCUSDT",
+     "OPUSDT",
+     "LTCUSDT",
+     "DOTUSDT",
+     "INJUSDT",
+     "UNIUSDT",
+     "AAVEUSDT",
+     "ATOMUSDT",
+     "APEUSDT",
+     "ICPUSDT",
+     "TRXUSDT",
+     "SANDUSDT",
+     "HBARUSDT",
+     "XLMUSDT",
+     "ALGOUSDT",
+     "ZECUSDT",
+     "VETUSDT",
+     "CAKEUSDT",
+     "KSMUSDT",
+     "BANDUSDT",
+     "DASHUSDT",
+     "QNTUSDT"
+    ]
+   },
+   "final": 504863.39749522245,
+   "cagr": 119.11969455580285,
+   "dd": 36.563299381377576,
+   "calmar": 3.2579033230374415,
+   "train": [
+    2.9662958340438386,
+    74.46986424952374,
+    25.105339593860332
+   ],
+   "valid": [
+    6.388140104772604,
+    233.5714791409853,
+    36.563299381377554
+   ],
+   "trades": 2790,
+   "win_rate": {
+    "c3": 53.8707102952913,
+    "main": 48.764769065520944,
+    "pa": 35.973597359735976,
+    "all": 48.27956989247312,
+    "train": 47.16510903426791,
+    "valid": 49.789029535864984
+   },
+   "pf": 1.5670471748182162,
+   "yearly": {
+    "2021": 6.2,
+    "2022": 73.7,
+    "2023": 66.6,
+    "2024": 97.6,
+    "2025": 324.9,
+    "2026": 95.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1253,
+     "win": 53.8707102952913
+    },
+    "main": {
+     "trades": 931,
+     "win": 48.764769065520944
+    },
+    "pa": {
+     "trades": 606,
+     "win": 35.973597359735976
+    }
+   }
+  },
+  "RANDOM#0 8/15/rest": {
+   "lists": {
+    "main": [
+     "FILUSDT",
+     "BTCUSDT",
+     "1000SHIBUSDT",
+     "OPUSDT",
+     "DOGEUSDT",
+     "BNBUSDT",
+     "ADAUSDT",
+     "DASHUSDT"
+    ],
+    "c3": [
+     "XLMUSDT",
+     "ETCUSDT",
+     "KSMUSDT",
+     "AVAXUSDT",
+     "ALGOUSDT",
+     "UNIUSDT",
+     "APEUSDT",
+     "DOTUSDT",
+     "1000PEPEUSDT",
+     "ATOMUSDT",
+     "QNTUSDT",
+     "ICPUSDT",
+     "NEARUSDT",
+     "FETUSDT",
+     "APTUSDT"
+    ],
+    "pa": [
+     "BCHUSDT",
+     "CAKEUSDT",
+     "VETUSDT",
+     "WLDUSDT",
+     "SUIUSDT",
+     "ETHUSDT",
+     "BANDUSDT",
+     "SANDUSDT",
+     "ARBUSDT",
+     "TRXUSDT",
+     "INJUSDT",
+     "AAVEUSDT",
+     "XRPUSDT",
+     "SOLUSDT",
+     "HBARUSDT",
+     "ZECUSDT",
+     "LTCUSDT",
+     "LINKUSDT"
+    ]
+   },
+   "final": 296240.12833012576,
+   "cagr": 96.9559359740205,
+   "dd": 38.756067580008036,
+   "calmar": 2.5016969478099047,
+   "train": [
+    3.4143419830943227,
+    74.12874580566067,
+    21.71099033802111
+   ],
+   "valid": [
+    3.7978902136994477,
+    147.19128978358734,
+    38.756067580008136
+   ],
+   "trades": 3104,
+   "win_rate": {
+    "c3": 54.1025641025641,
+    "main": 47.985347985347985,
+    "pa": 35.176991150442475,
+    "all": 49.194587628865975,
+    "train": 49.427792915531334,
+    "valid": 48.85736800630418
+   },
+   "pf": 1.4988542091820933,
+   "yearly": {
+    "2021": 6.1,
+    "2022": 28.4,
+    "2023": 88.8,
+    "2024": 134.6,
+    "2025": 147.1,
+    "2026": 98.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1560,
+     "win": 54.1025641025641
+    },
+    "main": {
+     "trades": 1092,
+     "win": 47.985347985347985
+    },
+    "pa": {
+     "trades": 452,
+     "win": 35.176991150442475
+    }
+   }
+  },
+  "RANDOM#1 8/15/rest": {
+   "lists": {
+    "main": [
+     "ETHUSDT",
+     "XLMUSDT",
+     "VETUSDT",
+     "BCHUSDT",
+     "INJUSDT",
+     "ATOMUSDT",
+     "ICPUSDT",
+     "TRXUSDT"
+    ],
+    "c3": [
+     "ETCUSDT",
+     "AAVEUSDT",
+     "ALGOUSDT",
+     "DOGEUSDT",
+     "DASHUSDT",
+     "ADAUSDT",
+     "SUIUSDT",
+     "APEUSDT",
+     "ZECUSDT",
+     "FETUSDT",
+     "1000SHIBUSDT",
+     "BNBUSDT",
+     "KSMUSDT",
+     "APTUSDT",
+     "UNIUSDT"
+    ],
+    "pa": [
+     "LTCUSDT",
+     "LINKUSDT",
+     "BANDUSDT",
+     "NEARUSDT",
+     "AVAXUSDT",
+     "CAKEUSDT",
+     "BTCUSDT",
+     "SOLUSDT",
+     "DOTUSDT",
+     "HBARUSDT",
+     "SANDUSDT",
+     "OPUSDT",
+     "1000PEPEUSDT",
+     "ARBUSDT",
+     "QNTUSDT",
+     "XRPUSDT",
+     "FILUSDT",
+     "WLDUSDT"
+    ]
+   },
+   "final": 469503.0389601098,
+   "cagr": 115.96006761200161,
+   "dd": 29.264659141585337,
+   "calmar": 3.962460900397823,
+   "train": [
+    2.248628079802161,
+    62.825583420411846,
+    27.939517426082915
+   ],
+   "valid": [
+    9.005927286807283,
+    263.5553923023174,
+    29.264659141585312
+   ],
+   "trades": 3282,
+   "win_rate": {
+    "c3": 54.83870967741935,
+    "main": 46.05042016806723,
+    "pa": 40.97995545657015,
+    "all": 49.75624619134674,
+    "train": 48.58156028368794,
+    "valid": 51.52905198776758
+   },
+   "pf": 1.5912774958238882,
+   "yearly": {
+    "2021": 1.9,
+    "2022": 25.2,
+    "2023": 51.5,
+    "2024": 151.3,
+    "2025": 334.6,
+    "2026": 122.5
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1643,
+     "win": 54.83870967741935
+    },
+    "main": {
+     "trades": 1190,
+     "win": 46.05042016806723
+    },
+    "pa": {
+     "trades": 449,
+     "win": 40.97995545657015
+    }
+   }
+  },
+  "RANDOM#2 8/15/rest": {
+   "lists": {
+    "main": [
+     "BNBUSDT",
+     "AAVEUSDT",
+     "ETCUSDT",
+     "ICPUSDT",
+     "HBARUSDT",
+     "BTCUSDT",
+     "NEARUSDT",
+     "SOLUSDT"
+    ],
+    "c3": [
+     "TRXUSDT",
+     "LINKUSDT",
+     "BANDUSDT",
+     "QNTUSDT",
+     "DOTUSDT",
+     "WLDUSDT",
+     "FETUSDT",
+     "KSMUSDT",
+     "XLMUSDT",
+     "VETUSDT",
+     "OPUSDT",
+     "DASHUSDT",
+     "ZECUSDT",
+     "UNIUSDT",
+     "ETHUSDT"
+    ],
+    "pa": [
+     "AVAXUSDT",
+     "1000PEPEUSDT",
+     "SUIUSDT",
+     "LTCUSDT",
+     "BCHUSDT",
+     "XRPUSDT",
+     "INJUSDT",
+     "1000SHIBUSDT",
+     "ARBUSDT",
+     "ATOMUSDT",
+     "DOGEUSDT",
+     "CAKEUSDT",
+     "APTUSDT",
+     "SANDUSDT",
+     "ALGOUSDT",
+     "APEUSDT",
+     "ADAUSDT",
+     "FILUSDT"
+    ]
+   },
+   "final": 676581.4923043071,
+   "cagr": 132.3347336884291,
+   "dd": 31.9442665802395,
+   "calmar": 4.142675598953662,
+   "train": [
+    2.7488637629434933,
+    87.81043683622723,
+    31.9442665802395
+   ],
+   "valid": [
+    8.199970422378467,
+    243.96267948565412,
+    29.7516535937566
+   ],
+   "trades": 3132,
+   "win_rate": {
+    "c3": 53.48120764017252,
+    "main": 50.0,
+    "pa": 39.69465648854962,
+    "all": 50.510855683269476,
+    "train": 50.1884760366182,
+    "valid": 50.98039215686274
+   },
+   "pf": 1.623351984808369,
+   "yearly": {
+    "2021": 12.7,
+    "2022": 127.7,
+    "2023": 64.8,
+    "2024": 82.5,
+    "2025": 311.3,
+    "2026": 113.2
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1623,
+     "win": 53.48120764017252
+    },
+    "main": {
+     "trades": 1116,
+     "win": 50.0
+    },
+    "pa": {
+     "trades": 393,
+     "win": 39.69465648854962
+    }
+   }
+  },
+  "RANDOM#3 8/15/rest": {
+   "lists": {
+    "main": [
+     "LTCUSDT",
+     "ICPUSDT",
+     "ATOMUSDT",
+     "NEARUSDT",
+     "ALGOUSDT",
+     "APEUSDT",
+     "ZECUSDT",
+     "KSMUSDT"
+    ],
+    "c3": [
+     "VETUSDT",
+     "SANDUSDT",
+     "LINKUSDT",
+     "APTUSDT",
+     "SOLUSDT",
+     "DOTUSDT",
+     "1000SHIBUSDT",
+     "XLMUSDT",
+     "BCHUSDT",
+     "QNTUSDT",
+     "DASHUSDT",
+     "ARBUSDT",
+     "UNIUSDT",
+     "BNBUSDT",
+     "SUIUSDT"
+    ],
+    "pa": [
+     "BANDUSDT",
+     "HBARUSDT",
+     "OPUSDT",
+     "XRPUSDT",
+     "FETUSDT",
+     "ADAUSDT",
+     "BTCUSDT",
+     "AAVEUSDT",
+     "WLDUSDT",
+     "ETHUSDT",
+     "FILUSDT",
+     "1000PEPEUSDT",
+     "CAKEUSDT",
+     "ETCUSDT",
+     "DOGEUSDT",
+     "TRXUSDT",
+     "AVAXUSDT",
+     "INJUSDT"
+    ]
+   },
+   "final": 159535.95860618382,
+   "cagr": 74.02219979722824,
+   "dd": 31.862475236089583,
+   "calmar": 2.3231779467461373,
+   "train": [
+    1.5326020904218716,
+    43.277904984703916,
+    28.238187364595746
+   ],
+   "valid": [
+    4.678251178843927,
+    149.06066233412156,
+    31.862475236089594
+   ],
+   "trades": 3115,
+   "win_rate": {
+    "c3": 52.002427184466015,
+    "main": 48.87218045112782,
+    "pa": 39.20595533498759,
+    "all": 49.2776886035313,
+    "train": 49.07608695652174,
+    "valid": 49.568627450980394
+   },
+   "pf": 1.4529635419666875,
+   "yearly": {
+    "2021": 13.6,
+    "2022": 58.4,
+    "2023": 16.1,
+    "2024": 53.6,
+    "2025": 145.1,
+    "2026": 102.9
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1648,
+     "win": 52.002427184466015
+    },
+    "main": {
+     "trades": 1064,
+     "win": 48.87218045112782
+    },
+    "pa": {
+     "trades": 403,
+     "win": 39.20595533498759
+    }
+   }
+  },
+  "RANDOM#4 8/15/rest": {
+   "lists": {
+    "main": [
+     "DOGEUSDT",
+     "ETCUSDT",
+     "BCHUSDT",
+     "BTCUSDT",
+     "ETHUSDT",
+     "AVAXUSDT",
+     "LTCUSDT",
+     "INJUSDT"
+    ],
+    "c3": [
+     "APEUSDT",
+     "ADAUSDT",
+     "SOLUSDT",
+     "AAVEUSDT",
+     "FETUSDT",
+     "SUIUSDT",
+     "SANDUSDT",
+     "VETUSDT",
+     "FILUSDT",
+     "ALGOUSDT",
+     "TRXUSDT",
+     "ICPUSDT",
+     "HBARUSDT",
+     "XRPUSDT",
+     "1000SHIBUSDT"
+    ],
+    "pa": [
+     "QNTUSDT",
+     "ATOMUSDT",
+     "UNIUSDT",
+     "OPUSDT",
+     "KSMUSDT",
+     "LINKUSDT",
+     "DASHUSDT",
+     "XLMUSDT",
+     "ZECUSDT",
+     "BANDUSDT",
+     "ARBUSDT",
+     "1000PEPEUSDT",
+     "APTUSDT",
+     "CAKEUSDT",
+     "DOTUSDT",
+     "WLDUSDT",
+     "NEARUSDT",
+     "BNBUSDT"
+    ]
+   },
+   "final": 433808.0241962759,
+   "cagr": 112.57116323118952,
+   "dd": 35.11775564241283,
+   "calmar": 3.205534100112985,
+   "train": [
+    3.395966076655681,
+    74.95147554450196,
+    22.070737413935994
+   ],
+   "valid": [
+    5.821568716736716,
+    204.4404276498749,
+    35.11775564241284
+   ],
+   "trades": 3189,
+   "win_rate": {
+    "c3": 54.00122174709835,
+    "main": 48.83303411131059,
+    "pa": 38.12785388127854,
+    "all": 50.015678896205706,
+    "train": 48.15200416449766,
+    "valid": 52.83911671924291
+   },
+   "pf": 1.5552529024912123,
+   "yearly": {
+    "2021": 6.2,
+    "2022": 123.6,
+    "2023": 87.2,
+    "2024": 38.0,
+    "2025": 262.2,
+    "2026": 95.4
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1637,
+     "win": 54.00122174709835
+    },
+    "main": {
+     "trades": 1114,
+     "win": 48.83303411131059
+    },
+    "pa": {
+     "trades": 438,
+     "win": 38.12785388127854
+    }
+   }
+  },
+  "RANDOM#5 8/15/rest": {
+   "lists": {
+    "main": [
+     "1000SHIBUSDT",
+     "NEARUSDT",
+     "ATOMUSDT",
+     "VETUSDT",
+     "INJUSDT",
+     "ZECUSDT",
+     "KSMUSDT",
+     "SANDUSDT"
+    ],
+    "c3": [
+     "AVAXUSDT",
+     "XRPUSDT",
+     "BNBUSDT",
+     "1000PEPEUSDT",
+     "FETUSDT",
+     "ICPUSDT",
+     "DOTUSDT",
+     "SUIUSDT",
+     "LINKUSDT",
+     "QNTUSDT",
+     "OPUSDT",
+     "ETHUSDT",
+     "BCHUSDT",
+     "BTCUSDT",
+     "TRXUSDT"
+    ],
+    "pa": [
+     "BANDUSDT",
+     "ETCUSDT",
+     "SOLUSDT",
+     "WLDUSDT",
+     "AAVEUSDT",
+     "APTUSDT",
+     "XLMUSDT",
+     "LTCUSDT",
+     "FILUSDT",
+     "APEUSDT",
+     "ARBUSDT",
+     "CAKEUSDT",
+     "ALGOUSDT",
+     "HBARUSDT",
+     "DASHUSDT",
+     "UNIUSDT",
+     "DOGEUSDT",
+     "ADAUSDT"
+    ]
+   },
+   "final": 193686.4235408255,
+   "cagr": 80.90687833292975,
+   "dd": 32.71133394438098,
+   "calmar": 2.4733591870785694,
+   "train": [
+    2.2773996510555294,
+    60.370081335923096,
+    26.508338713384262
+   ],
+   "valid": [
+    3.8496290991143516,
+    125.92650302313642,
+    32.711333944381074
+   ],
+   "trades": 3021,
+   "win_rate": {
+    "c3": 52.755417956656345,
+    "main": 48.25523429710867,
+    "pa": 39.45409429280397,
+    "all": 49.4869248593181,
+    "train": 49.94219653179191,
+    "valid": 48.876839659178934
+   },
+   "pf": 1.4209349360651968,
+   "yearly": {
+    "2021": 10.6,
+    "2022": 35.9,
+    "2023": 25.6,
+    "2024": 145.0,
+    "2025": 151.5,
+    "2026": 66.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1615,
+     "win": 52.755417956656345
+    },
+    "main": {
+     "trades": 1003,
+     "win": 48.25523429710867
+    },
+    "pa": {
+     "trades": 403,
+     "win": 39.45409429280397
+    }
+   }
+  },
+  "RANDOM#6 8/15/rest": {
+   "lists": {
+    "main": [
+     "NEARUSDT",
+     "ETHUSDT",
+     "SANDUSDT",
+     "ATOMUSDT",
+     "OPUSDT",
+     "CAKEUSDT",
+     "DOTUSDT",
+     "SOLUSDT"
+    ],
+    "c3": [
+     "TRXUSDT",
+     "BTCUSDT",
+     "UNIUSDT",
+     "DASHUSDT",
+     "APEUSDT",
+     "APTUSDT",
+     "HBARUSDT",
+     "ALGOUSDT",
+     "ARBUSDT",
+     "ADAUSDT",
+     "QNTUSDT",
+     "ICPUSDT",
+     "1000PEPEUSDT",
+     "XRPUSDT",
+     "WLDUSDT"
+    ],
+    "pa": [
+     "LTCUSDT",
+     "LINKUSDT",
+     "FETUSDT",
+     "BCHUSDT",
+     "INJUSDT",
+     "FILUSDT",
+     "BANDUSDT",
+     "SUIUSDT",
+     "1000SHIBUSDT",
+     "ETCUSDT",
+     "AAVEUSDT",
+     "ZECUSDT",
+     "XLMUSDT",
+     "AVAXUSDT",
+     "KSMUSDT",
+     "VETUSDT",
+     "BNBUSDT",
+     "DOGEUSDT"
+    ]
+   },
+   "final": 639765.932005346,
+   "cagr": 129.74902388227792,
+   "dd": 33.892801457376265,
+   "calmar": 3.8282177425035475,
+   "train": [
+    4.020970171728304,
+    89.2106162198973,
+    22.186341208682126
+   ],
+   "valid": [
+    6.746365719614022,
+    228.65323389372753,
+    33.89280145737629
+   ],
+   "trades": 3037,
+   "win_rate": {
+    "c3": 53.97329942784488,
+    "main": 49.6078431372549,
+    "pa": 38.06306306306306,
+    "all": 50.18109976950939,
+    "train": 50.340522133938705,
+    "valid": 49.96078431372549
+   },
+   "pf": 1.6260774427001516,
+   "yearly": {
+    "2021": 7.6,
+    "2022": 59.8,
+    "2023": 103.2,
+    "2024": 126.2,
+    "2025": 286.7,
+    "2026": 109.3
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1573,
+     "win": 53.97329942784488
+    },
+    "main": {
+     "trades": 1020,
+     "win": 49.6078431372549
+    },
+    "pa": {
+     "trades": 444,
+     "win": 38.06306306306306
+    }
+   }
+  },
+  "RANDOM#7 8/15/rest": {
+   "lists": {
+    "main": [
+     "QNTUSDT",
+     "BCHUSDT",
+     "FILUSDT",
+     "1000SHIBUSDT",
+     "ZECUSDT",
+     "LINKUSDT",
+     "BTCUSDT",
+     "WLDUSDT"
+    ],
+    "c3": [
+     "HBARUSDT",
+     "XRPUSDT",
+     "FETUSDT",
+     "NEARUSDT",
+     "LTCUSDT",
+     "ADAUSDT",
+     "INJUSDT",
+     "XLMUSDT",
+     "DOTUSDT",
+     "DOGEUSDT",
+     "ARBUSDT",
+     "VETUSDT",
+     "SANDUSDT",
+     "ICPUSDT",
+     "APTUSDT"
+    ],
+    "pa": [
+     "TRXUSDT",
+     "AVAXUSDT",
+     "CAKEUSDT",
+     "SOLUSDT",
+     "ETCUSDT",
+     "KSMUSDT",
+     "ATOMUSDT",
+     "AAVEUSDT",
+     "OPUSDT",
+     "BANDUSDT",
+     "APEUSDT",
+     "ETHUSDT",
+     "SUIUSDT",
+     "1000PEPEUSDT",
+     "BNBUSDT",
+     "DASHUSDT",
+     "ALGOUSDT",
+     "UNIUSDT"
+    ]
+   },
+   "final": 366077.70253554324,
+   "cagr": 105.47428108258386,
+   "dd": 43.61895965863499,
+   "calmar": 2.4180833726442104,
+   "train": [
+    1.9062995317999152,
+    54.94891232827299,
+    28.824909942872722
+   ],
+   "valid": [
+    5.634773952512503,
+    245.7829777201703,
+    43.61895965863503
+   ],
+   "trades": 3085,
+   "win_rate": {
+    "c3": 53.425518541797615,
+    "main": 47.42268041237113,
+    "pa": 37.23653395784544,
+    "all": 49.10858995137764,
+    "train": 48.88765294771969,
+    "valid": 49.417249417249415
+   },
+   "pf": 1.7911147562074463,
+   "yearly": {
+    "2021": 2.7,
+    "2022": 39.8,
+    "2023": 71.1,
+    "2024": 68.4,
+    "2025": 171.9,
+    "2026": 225.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1591,
+     "win": 53.425518541797615
+    },
+    "main": {
+     "trades": 1067,
+     "win": 47.42268041237113
+    },
+    "pa": {
+     "trades": 427,
+     "win": 37.23653395784544
+    }
+   }
+  },
+  "RANDOM#8 8/15/rest": {
+   "lists": {
+    "main": [
+     "AVAXUSDT",
+     "AAVEUSDT",
+     "VETUSDT",
+     "KSMUSDT",
+     "DOTUSDT",
+     "SUIUSDT",
+     "DASHUSDT",
+     "LTCUSDT"
+    ],
+    "c3": [
+     "INJUSDT",
+     "UNIUSDT",
+     "1000PEPEUSDT",
+     "BTCUSDT",
+     "DOGEUSDT",
+     "QNTUSDT",
+     "ADAUSDT",
+     "WLDUSDT",
+     "ALGOUSDT",
+     "CAKEUSDT",
+     "XLMUSDT",
+     "BCHUSDT",
+     "ETCUSDT",
+     "APTUSDT",
+     "ARBUSDT"
+    ],
+    "pa": [
+     "1000SHIBUSDT",
+     "BNBUSDT",
+     "ZECUSDT",
+     "NEARUSDT",
+     "TRXUSDT",
+     "APEUSDT",
+     "FETUSDT",
+     "HBARUSDT",
+     "ICPUSDT",
+     "ATOMUSDT",
+     "FILUSDT",
+     "OPUSDT",
+     "ETHUSDT",
+     "SANDUSDT",
+     "XRPUSDT",
+     "LINKUSDT",
+     "SOLUSDT",
+     "BANDUSDT"
+    ]
+   },
+   "final": 296331.0427738452,
+   "cagr": 96.9680250809696,
+   "dd": 30.454758296210738,
+   "calmar": 3.1840024516968377,
+   "train": [
+    2.252298646800107,
+    53.985553360999816,
+    23.96909194866247
+   ],
+   "valid": [
+    6.900444223867407,
+    210.15136097436522,
+    30.454758296210716
+   ],
+   "trades": 3031,
+   "win_rate": {
+    "c3": 51.64257555847569,
+    "main": 50.29126213592233,
+    "pa": 37.36951983298539,
+    "all": 48.927746618277794,
+    "train": 47.68703597944032,
+    "valid": 50.625
+   },
+   "pf": 1.6089737346196253,
+   "yearly": {
+    "2021": 6.2,
+    "2022": 30.0,
+    "2023": 53.0,
+    "2024": 91.8,
+    "2025": 197.5,
+    "2026": 145.8
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1522,
+     "win": 51.64257555847569
+    },
+    "main": {
+     "trades": 1030,
+     "win": 50.29126213592233
+    },
+    "pa": {
+     "trades": 479,
+     "win": 37.36951983298539
+    }
+   }
+  },
+  "RANDOM#9 8/15/rest": {
+   "lists": {
+    "main": [
+     "1000PEPEUSDT",
+     "BTCUSDT",
+     "ARBUSDT",
+     "SUIUSDT",
+     "FILUSDT",
+     "LTCUSDT",
+     "OPUSDT",
+     "ICPUSDT"
+    ],
+    "c3": [
+     "APEUSDT",
+     "ALGOUSDT",
+     "AVAXUSDT",
+     "BNBUSDT",
+     "VETUSDT",
+     "UNIUSDT",
+     "INJUSDT",
+     "BANDUSDT",
+     "XRPUSDT",
+     "ATOMUSDT",
+     "ETCUSDT",
+     "FETUSDT",
+     "XLMUSDT",
+     "ZECUSDT",
+     "QNTUSDT"
+    ],
+    "pa": [
+     "WLDUSDT",
+     "KSMUSDT",
+     "HBARUSDT",
+     "DASHUSDT",
+     "DOGEUSDT",
+     "NEARUSDT",
+     "LINKUSDT",
+     "SOLUSDT",
+     "TRXUSDT",
+     "SANDUSDT",
+     "ETHUSDT",
+     "APTUSDT",
+     "BCHUSDT",
+     "ADAUSDT",
+     "DOTUSDT",
+     "1000SHIBUSDT",
+     "CAKEUSDT",
+     "AAVEUSDT"
+    ]
+   },
+   "final": 239382.37884959352,
+   "cagr": 88.73663092895039,
+   "dd": 34.81163392289809,
+   "calmar": 2.549051019135933,
+   "train": [
+    3.217949995054875,
+    68.72034078805234,
+    21.35531655049241
+   ],
+   "valid": [
+    3.794319224510791,
+    132.08645183028426,
+    34.811633922898096
+   ],
+   "trades": 3029,
+   "win_rate": {
+    "c3": 52.12895377128953,
+    "main": 48.795811518324605,
+    "pa": 33.48837209302326,
+    "all": 48.43182568504457,
+    "train": 47.84313725490196,
+    "valid": 49.27652733118971
+   },
+   "pf": 1.462272845592737,
+   "yearly": {
+    "2021": 9.2,
+    "2022": 51.4,
+    "2023": 48.1,
+    "2024": 122.6,
+    "2025": 132.4,
+    "2026": 89.0
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1644,
+     "win": 52.12895377128953
+    },
+    "main": {
+     "trades": 955,
+     "win": 48.795811518324605
+    },
+    "pa": {
+     "trades": 430,
+     "win": 33.48837209302326
+    }
+   }
+  },
+  "RANDOM#10 8/15/rest": {
+   "lists": {
+    "main": [
+     "CAKEUSDT",
+     "DOTUSDT",
+     "KSMUSDT",
+     "OPUSDT",
+     "1000SHIBUSDT",
+     "DOGEUSDT",
+     "ETHUSDT",
+     "NEARUSDT"
+    ],
+    "c3": [
+     "APTUSDT",
+     "XLMUSDT",
+     "SUIUSDT",
+     "1000PEPEUSDT",
+     "TRXUSDT",
+     "ATOMUSDT",
+     "FILUSDT",
+     "FETUSDT",
+     "BNBUSDT",
+     "QNTUSDT",
+     "AVAXUSDT",
+     "ADAUSDT",
+     "ZECUSDT",
+     "DASHUSDT",
+     "BTCUSDT"
+    ],
+    "pa": [
+     "SANDUSDT",
+     "ICPUSDT",
+     "HBARUSDT",
+     "APEUSDT",
+     "SOLUSDT",
+     "LTCUSDT",
+     "LINKUSDT",
+     "ARBUSDT",
+     "XRPUSDT",
+     "UNIUSDT",
+     "BANDUSDT",
+     "AAVEUSDT",
+     "WLDUSDT",
+     "BCHUSDT",
+     "ALGOUSDT",
+     "VETUSDT",
+     "INJUSDT",
+     "ETCUSDT"
+    ]
+   },
+   "final": 640957.6601387885,
+   "cagr": 129.83456518627565,
+   "dd": 31.61333807681891,
+   "calmar": 4.106955262705376,
+   "train": [
+    3.3087331460958587,
+    81.63870199701995,
+    24.6737039199881
+   ],
+   "valid": [
+    8.057965441068442,
+    254.73918569981956,
+    31.613338076818877
+   ],
+   "trades": 3070,
+   "win_rate": {
+    "c3": 52.97805642633229,
+    "main": 48.5207100591716,
+    "pa": 38.39479392624729,
+    "all": 49.31596091205211,
+    "train": 49.35064935064935,
+    "valid": 49.26866820631255
+   },
+   "pf": 1.6270552256396627,
+   "yearly": {
+    "2021": 7.3,
+    "2022": 97.3,
+    "2023": 78.7,
+    "2024": 82.9,
+    "2025": 288.4,
+    "2026": 138.4
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1595,
+     "win": 52.97805642633229
+    },
+    "main": {
+     "trades": 1014,
+     "win": 48.5207100591716
+    },
+    "pa": {
+     "trades": 461,
+     "win": 38.39479392624729
+    }
+   }
+  },
+  "RANDOM#11 8/15/rest": {
+   "lists": {
+    "main": [
+     "OPUSDT",
+     "QNTUSDT",
+     "FILUSDT",
+     "SOLUSDT",
+     "LINKUSDT",
+     "KSMUSDT",
+     "UNIUSDT",
+     "SANDUSDT"
+    ],
+    "c3": [
+     "TRXUSDT",
+     "APEUSDT",
+     "CAKEUSDT",
+     "XLMUSDT",
+     "ICPUSDT",
+     "LTCUSDT",
+     "SUIUSDT",
+     "BTCUSDT",
+     "1000PEPEUSDT",
+     "NEARUSDT",
+     "ALGOUSDT",
+     "ETHUSDT",
+     "XRPUSDT",
+     "BNBUSDT",
+     "APTUSDT"
+    ],
+    "pa": [
+     "FETUSDT",
+     "DOGEUSDT",
+     "WLDUSDT",
+     "AVAXUSDT",
+     "ETCUSDT",
+     "DOTUSDT",
+     "ZECUSDT",
+     "INJUSDT",
+     "1000SHIBUSDT",
+     "VETUSDT",
+     "HBARUSDT",
+     "ATOMUSDT",
+     "ADAUSDT",
+     "BCHUSDT",
+     "DASHUSDT",
+     "ARBUSDT",
+     "AAVEUSDT",
+     "BANDUSDT"
+    ]
+   },
+   "final": 130425.98418852879,
+   "cagr": 67.14883951194408,
+   "dd": 41.938837944347796,
+   "calmar": 1.6011134977332844,
+   "train": [
+    3.4748676707928134,
+    73.29429601602983,
+    21.092686962467056
+   ],
+   "valid": [
+    1.3443631884230842,
+    56.38102989762246,
+    41.93883794434782
+   ],
+   "trades": 3029,
+   "win_rate": {
+    "c3": 52.674638137193206,
+    "main": 48.81656804733728,
+    "pa": 37.08920187793427,
+    "all": 49.19115219544404,
+    "train": 50.57405281285878,
+    "valid": 47.31934731934732
+   },
+   "pf": 1.2408372546190318,
+   "yearly": {
+    "2021": 8.4,
+    "2022": 79.5,
+    "2023": 101.1,
+    "2024": 52.0,
+    "2025": 99.7,
+    "2026": 9.9
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1589,
+     "win": 52.674638137193206
+    },
+    "main": {
+     "trades": 1014,
+     "win": 48.81656804733728
+    },
+    "pa": {
+     "trades": 426,
+     "win": 37.08920187793427
+    }
+   }
+  },
+  "RANDOM#12 8/15/rest": {
+   "lists": {
+    "main": [
+     "ETCUSDT",
+     "BTCUSDT",
+     "OPUSDT",
+     "CAKEUSDT",
+     "BNBUSDT",
+     "LINKUSDT",
+     "WLDUSDT",
+     "SOLUSDT"
+    ],
+    "c3": [
+     "ADAUSDT",
+     "BCHUSDT",
+     "BANDUSDT",
+     "INJUSDT",
+     "1000SHIBUSDT",
+     "APEUSDT",
+     "NEARUSDT",
+     "AVAXUSDT",
+     "FILUSDT",
+     "SUIUSDT",
+     "UNIUSDT",
+     "VETUSDT",
+     "ATOMUSDT",
+     "ETHUSDT",
+     "SANDUSDT"
+    ],
+    "pa": [
+     "DOGEUSDT",
+     "TRXUSDT",
+     "DOTUSDT",
+     "AAVEUSDT",
+     "ZECUSDT",
+     "APTUSDT",
+     "LTCUSDT",
+     "KSMUSDT",
+     "ALGOUSDT",
+     "XLMUSDT",
+     "FETUSDT",
+     "HBARUSDT",
+     "DASHUSDT",
+     "ARBUSDT",
+     "ICPUSDT",
+     "XRPUSDT",
+     "1000PEPEUSDT",
+     "QNTUSDT"
+    ]
+   },
+   "final": 353367.95400944515,
+   "cagr": 104.02708576941725,
+   "dd": 27.92543991279861,
+   "calmar": 3.725172677467481,
+   "train": [
+    2.276465236213816,
+    60.86068068538815,
+    26.734728787956698
+   ],
+   "valid": [
+    7.745203267395297,
+    216.28820845605858,
+    27.925439912798577
+   ],
+   "trades": 3094,
+   "win_rate": {
+    "c3": 53.61963190184049,
+    "main": 49.853085210577866,
+    "pa": 36.56884875846501,
+    "all": 49.93535875888817,
+    "train": 48.572996706915475,
+    "valid": 51.886792452830186
+   },
+   "pf": 1.5967703178793047,
+   "yearly": {
+    "2021": 10.7,
+    "2022": 76.8,
+    "2023": 75.7,
+    "2024": 35.8,
+    "2025": 197.7,
+    "2026": 154.2
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1630,
+     "win": 53.61963190184049
+    },
+    "main": {
+     "trades": 1021,
+     "win": 49.853085210577866
+    },
+    "pa": {
+     "trades": 443,
+     "win": 36.56884875846501
+    }
+   }
+  },
+  "RANDOM#13 8/15/rest": {
+   "lists": {
+    "main": [
+     "ZECUSDT",
+     "OPUSDT",
+     "AAVEUSDT",
+     "BTCUSDT",
+     "KSMUSDT",
+     "TRXUSDT",
+     "APEUSDT",
+     "WLDUSDT"
+    ],
+    "c3": [
+     "ETCUSDT",
+     "SOLUSDT",
+     "SANDUSDT",
+     "UNIUSDT",
+     "1000PEPEUSDT",
+     "ICPUSDT",
+     "CAKEUSDT",
+     "APTUSDT",
+     "VETUSDT",
+     "LTCUSDT",
+     "XLMUSDT",
+     "SUIUSDT",
+     "NEARUSDT",
+     "LINKUSDT",
+     "INJUSDT"
+    ],
+    "pa": [
+     "ARBUSDT",
+     "BANDUSDT",
+     "FETUSDT",
+     "1000SHIBUSDT",
+     "ETHUSDT",
+     "FILUSDT",
+     "AVAXUSDT",
+     "QNTUSDT",
+     "DOTUSDT",
+     "BCHUSDT",
+     "DASHUSDT",
+     "ALGOUSDT",
+     "DOGEUSDT",
+     "ADAUSDT",
+     "HBARUSDT",
+     "BNBUSDT",
+     "ATOMUSDT",
+     "XRPUSDT"
+    ]
+   },
+   "final": 261052.34418464958,
+   "cagr": 92.03673463637718,
+   "dd": 29.427021918829077,
+   "calmar": 3.127626536258053,
+   "train": [
+    2.3554287377172187,
+    64.61640759839126,
+    27.43297072150641
+   ],
+   "valid": [
+    5.272141810031681,
+    155.14343260297738,
+    29.427021918829055
+   ],
+   "trades": 3075,
+   "win_rate": {
+    "c3": 52.295918367346935,
+    "main": 47.88990825688074,
+    "pa": 40.28776978417266,
+    "all": 49.105691056910565,
+    "train": 49.27937915742794,
+    "valid": 48.85916601101495
+   },
+   "pf": 1.4678384146685322,
+   "yearly": {
+    "2021": 7.6,
+    "2022": 89.9,
+    "2023": 46.6,
+    "2024": 68.0,
+    "2025": 154.5,
+    "2026": 103.9
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1568,
+     "win": 52.295918367346935
+    },
+    "main": {
+     "trades": 1090,
+     "win": 47.88990825688074
+    },
+    "pa": {
+     "trades": 417,
+     "win": 40.28776978417266
+    }
+   }
+  },
+  "RANDOM#14 8/15/rest": {
+   "lists": {
+    "main": [
+     "ARBUSDT",
+     "AVAXUSDT",
+     "ICPUSDT",
+     "LTCUSDT",
+     "ALGOUSDT",
+     "OPUSDT",
+     "FETUSDT",
+     "SOLUSDT"
+    ],
+    "c3": [
+     "1000SHIBUSDT",
+     "UNIUSDT",
+     "QNTUSDT",
+     "BTCUSDT",
+     "BNBUSDT",
+     "AAVEUSDT",
+     "APEUSDT",
+     "BCHUSDT",
+     "VETUSDT",
+     "SANDUSDT",
+     "DOGEUSDT",
+     "DOTUSDT",
+     "ADAUSDT",
+     "CAKEUSDT",
+     "ETHUSDT"
+    ],
+    "pa": [
+     "BANDUSDT",
+     "WLDUSDT",
+     "SUIUSDT",
+     "INJUSDT",
+     "APTUSDT",
+     "ZECUSDT",
+     "XLMUSDT",
+     "LINKUSDT",
+     "ETCUSDT",
+     "DASHUSDT",
+     "HBARUSDT",
+     "1000PEPEUSDT",
+     "ATOMUSDT",
+     "FILUSDT",
+     "XRPUSDT",
+     "NEARUSDT",
+     "TRXUSDT",
+     "KSMUSDT"
+    ]
+   },
+   "final": 327342.29156556464,
+   "cagr": 100.92866921744586,
+   "dd": 27.18301613336589,
+   "calmar": 3.7129312186060397,
+   "train": [
+    1.8724295858275126,
+    50.89828364014088,
+    27.18301613336589
+   ],
+   "valid": [
+    9.757605751871047,
+    240.71148988938526,
+    24.66911412599635
+   ],
+   "trades": 3033,
+   "win_rate": {
+    "c3": 52.90556900726392,
+    "main": 50.62893081761006,
+    "pa": 37.93911007025761,
+    "all": 50.082426640290144,
+    "train": 48.9432703003337,
+    "valid": 51.740890688259114
+   },
+   "pf": 1.675953217094384,
+   "yearly": {
+    "2021": 13.7,
+    "2022": 19.3,
+    "2023": 103.9,
+    "2024": 37.3,
+    "2025": 230.9,
+    "2026": 160.7
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1652,
+     "win": 52.90556900726392
+    },
+    "main": {
+     "trades": 954,
+     "win": 50.62893081761006
+    },
+    "pa": {
+     "trades": 427,
+     "win": 37.93911007025761
+    }
+   }
+  },
+  "RANDOM#15 8/15/rest": {
+   "lists": {
+    "main": [
+     "AAVEUSDT",
+     "SOLUSDT",
+     "FETUSDT",
+     "LTCUSDT",
+     "1000SHIBUSDT",
+     "BTCUSDT",
+     "INJUSDT",
+     "XRPUSDT"
+    ],
+    "c3": [
+     "VETUSDT",
+     "APEUSDT",
+     "HBARUSDT",
+     "ETCUSDT",
+     "ALGOUSDT",
+     "UNIUSDT",
+     "SUIUSDT",
+     "DOTUSDT",
+     "APTUSDT",
+     "ETHUSDT",
+     "ICPUSDT",
+     "AVAXUSDT",
+     "ADAUSDT",
+     "KSMUSDT",
+     "BNBUSDT"
+    ],
+    "pa": [
+     "TRXUSDT",
+     "FILUSDT",
+     "DOGEUSDT",
+     "DASHUSDT",
+     "BANDUSDT",
+     "SANDUSDT",
+     "ATOMUSDT",
+     "LINKUSDT",
+     "ZECUSDT",
+     "WLDUSDT",
+     "XLMUSDT",
+     "QNTUSDT",
+     "OPUSDT",
+     "1000PEPEUSDT",
+     "CAKEUSDT",
+     "ARBUSDT",
+     "BCHUSDT",
+     "NEARUSDT"
+    ]
+   },
+   "final": 308414.2608618031,
+   "cagr": 98.54898265530205,
+   "dd": 34.00813057196033,
+   "calmar": 2.897806524436118,
+   "train": [
+    2.367128269603657,
+    64.00658256114981,
+    27.039760955525594
+   ],
+   "valid": [
+    5.365075544940565,
+    182.45618966077024,
+    34.00813057196038
+   ],
+   "trades": 3181,
+   "win_rate": {
+    "c3": 54.096385542168676,
+    "main": 48.8328664799253,
+    "pa": 38.0,
+    "all": 50.04715498270984,
+    "train": 48.907388137356925,
+    "valid": 51.787132644956316
+   },
+   "pf": 1.5444309957952254,
+   "yearly": {
+    "2021": 9.8,
+    "2022": 40.6,
+    "2023": 119.3,
+    "2024": 46.8,
+    "2025": 164.4,
+    "2026": 134.7
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1660,
+     "win": 54.096385542168676
+    },
+    "main": {
+     "trades": 1071,
+     "win": 48.8328664799253
+    },
+    "pa": {
+     "trades": 450,
+     "win": 38.0
+    }
+   }
+  },
+  "RANDOM#16 8/15/rest": {
+   "lists": {
+    "main": [
+     "SANDUSDT",
+     "ARBUSDT",
+     "BCHUSDT",
+     "LINKUSDT",
+     "NEARUSDT",
+     "APEUSDT",
+     "INJUSDT",
+     "OPUSDT"
+    ],
+    "c3": [
+     "ICPUSDT",
+     "SUIUSDT",
+     "ZECUSDT",
+     "ETCUSDT",
+     "ALGOUSDT",
+     "BTCUSDT",
+     "WLDUSDT",
+     "ATOMUSDT",
+     "ETHUSDT",
+     "DOGEUSDT",
+     "AVAXUSDT",
+     "AAVEUSDT",
+     "ADAUSDT",
+     "1000PEPEUSDT",
+     "TRXUSDT"
+    ],
+    "pa": [
+     "DOTUSDT",
+     "FETUSDT",
+     "BANDUSDT",
+     "1000SHIBUSDT",
+     "KSMUSDT",
+     "SOLUSDT",
+     "DASHUSDT",
+     "LTCUSDT",
+     "HBARUSDT",
+     "CAKEUSDT",
+     "BNBUSDT",
+     "XRPUSDT",
+     "FILUSDT",
+     "APTUSDT",
+     "UNIUSDT",
+     "QNTUSDT",
+     "XLMUSDT",
+     "VETUSDT"
+    ]
+   },
+   "final": 276431.9516557925,
+   "cagr": 94.24825314741155,
+   "dd": 32.54378853122131,
+   "calmar": 2.8960442960411097,
+   "train": [
+    2.403956946179403,
+    44.21482541441924,
+    18.392519668328354
+   ],
+   "valid": [
+    7.265202023071321,
+    236.43719827543399,
+    32.54378853122126
+   ],
+   "trades": 2995,
+   "win_rate": {
+    "c3": 54.679802955665025,
+    "main": 48.933901918976545,
+    "pa": 37.1824480369515,
+    "all": 50.350584307178636,
+    "train": 49.37833037300178,
+    "valid": 51.60796324655437
+   },
+   "pf": 1.6412832705563687,
+   "yearly": {
+    "2021": 10.5,
+    "2022": 21.7,
+    "2023": 64.8,
+    "2024": 47.8,
+    "2025": 257.9,
+    "2026": 135.7
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1624,
+     "win": 54.679802955665025
+    },
+    "main": {
+     "trades": 938,
+     "win": 48.933901918976545
+    },
+    "pa": {
+     "trades": 433,
+     "win": 37.1824480369515
+    }
+   }
+  },
+  "RANDOM#17 8/15/rest": {
+   "lists": {
+    "main": [
+     "VETUSDT",
+     "FILUSDT",
+     "NEARUSDT",
+     "LINKUSDT",
+     "APEUSDT",
+     "ETCUSDT",
+     "SANDUSDT",
+     "1000PEPEUSDT"
+    ],
+    "c3": [
+     "BNBUSDT",
+     "XRPUSDT",
+     "INJUSDT",
+     "HBARUSDT",
+     "WLDUSDT",
+     "DASHUSDT",
+     "OPUSDT",
+     "QNTUSDT",
+     "AVAXUSDT",
+     "CAKEUSDT",
+     "BCHUSDT",
+     "ZECUSDT",
+     "FETUSDT",
+     "SOLUSDT",
+     "BANDUSDT"
+    ],
+    "pa": [
+     "ATOMUSDT",
+     "APTUSDT",
+     "1000SHIBUSDT",
+     "ADAUSDT",
+     "UNIUSDT",
+     "ARBUSDT",
+     "ALGOUSDT",
+     "ICPUSDT",
+     "BTCUSDT",
+     "TRXUSDT",
+     "XLMUSDT",
+     "LTCUSDT",
+     "KSMUSDT",
+     "DOGEUSDT",
+     "DOTUSDT",
+     "ETHUSDT",
+     "SUIUSDT",
+     "AAVEUSDT"
+    ]
+   },
+   "final": 278618.31359922886,
+   "cagr": 94.55459814545529,
+   "dd": 35.96861931048093,
+   "calmar": 2.628808109904372,
+   "train": [
+    1.9587440041093058,
+    69.60631128729258,
+    35.536196226389706
+   ],
+   "valid": [
+    4.186598123684213,
+    150.58615411677158,
+    35.96861931048102
+   ],
+   "trades": 2961,
+   "win_rate": {
+    "c3": 52.989821882951645,
+    "main": 47.75808133472367,
+    "pa": 38.139534883720934,
+    "all": 49.13880445795339,
+    "train": 48.60035735556879,
+    "valid": 49.84399375975039
+   },
+   "pf": 1.468781503760994,
+   "yearly": {
+    "2021": 8.7,
+    "2022": 82.1,
+    "2023": -12.8,
+    "2024": 221.4,
+    "2025": 212.5,
+    "2026": 60.8
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1572,
+     "win": 52.989821882951645
+    },
+    "main": {
+     "trades": 959,
+     "win": 47.75808133472367
+    },
+    "pa": {
+     "trades": 430,
+     "win": 38.139534883720934
+    }
+   }
+  },
+  "RANDOM#18 8/15/rest": {
+   "lists": {
+    "main": [
+     "INJUSDT",
+     "XLMUSDT",
+     "1000PEPEUSDT",
+     "ALGOUSDT",
+     "BCHUSDT",
+     "SANDUSDT",
+     "BNBUSDT",
+     "AVAXUSDT"
+    ],
+    "c3": [
+     "ICPUSDT",
+     "KSMUSDT",
+     "APTUSDT",
+     "ETHUSDT",
+     "VETUSDT",
+     "TRXUSDT",
+     "ARBUSDT",
+     "ATOMUSDT",
+     "FILUSDT",
+     "DOTUSDT",
+     "1000SHIBUSDT",
+     "APEUSDT",
+     "AAVEUSDT",
+     "FETUSDT",
+     "LTCUSDT"
+    ],
+    "pa": [
+     "SUIUSDT",
+     "ETCUSDT",
+     "XRPUSDT",
+     "NEARUSDT",
+     "HBARUSDT",
+     "DASHUSDT",
+     "CAKEUSDT",
+     "LINKUSDT",
+     "BTCUSDT",
+     "DOGEUSDT",
+     "QNTUSDT",
+     "OPUSDT",
+     "ZECUSDT",
+     "SOLUSDT",
+     "WLDUSDT",
+     "BANDUSDT",
+     "ADAUSDT",
+     "UNIUSDT"
+    ]
+   },
+   "final": 334803.6223535737,
+   "cagr": 101.8365349697663,
+   "dd": 29.699482478373085,
+   "calmar": 3.4288993097412663,
+   "train": [
+    3.3381142278504266,
+    84.71836189135367,
+    25.3791081157543
+   ],
+   "valid": [
+    4.635610461810602,
+    137.67523168710704,
+    29.699482478373106
+   ],
+   "trades": 3066,
+   "win_rate": {
+    "c3": 54.67762326169405,
+    "main": 50.37593984962406,
+    "pa": 38.095238095238095,
+    "all": 50.91324200913242,
+    "train": 50.62807209175314,
+    "valid": 51.336032388663966
+   },
+   "pf": 1.4865043568709098,
+   "yearly": {
+    "2021": 3.7,
+    "2022": 50.2,
+    "2023": 92.6,
+    "2024": 143.8,
+    "2025": 163.8,
+    "2026": 73.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1582,
+     "win": 54.67762326169405
+    },
+    "main": {
+     "trades": 1064,
+     "win": 50.37593984962406
+    },
+    "pa": {
+     "trades": 420,
+     "win": 38.095238095238095
+    }
+   }
+  },
+  "RANDOM#19 8/15/rest": {
+   "lists": {
+    "main": [
+     "XRPUSDT",
+     "UNIUSDT",
+     "BTCUSDT",
+     "ETCUSDT",
+     "LINKUSDT",
+     "HBARUSDT",
+     "FETUSDT",
+     "LTCUSDT"
+    ],
+    "c3": [
+     "FILUSDT",
+     "1000SHIBUSDT",
+     "SUIUSDT",
+     "KSMUSDT",
+     "BCHUSDT",
+     "ICPUSDT",
+     "WLDUSDT",
+     "NEARUSDT",
+     "APTUSDT",
+     "TRXUSDT",
+     "ATOMUSDT",
+     "OPUSDT",
+     "ZECUSDT",
+     "AVAXUSDT",
+     "XLMUSDT"
+    ],
+    "pa": [
+     "ETHUSDT",
+     "SOLUSDT",
+     "QNTUSDT",
+     "DASHUSDT",
+     "DOTUSDT",
+     "ADAUSDT",
+     "CAKEUSDT",
+     "INJUSDT",
+     "APEUSDT",
+     "ALGOUSDT",
+     "AAVEUSDT",
+     "BNBUSDT",
+     "BANDUSDT",
+     "DOGEUSDT",
+     "SANDUSDT",
+     "1000PEPEUSDT",
+     "ARBUSDT",
+     "VETUSDT"
+    ]
+   },
+   "final": 272007.90065311035,
+   "cagr": 93.62239410771993,
+   "dd": 28.680434782620846,
+   "calmar": 3.264329666454402,
+   "train": [
+    2.413151736929289,
+    69.2102410115687,
+    28.680434782620846
+   ],
+   "valid": [
+    5.567323812942266,
+    148.25431833779206,
+    26.62936867317609
+   ],
+   "trades": 3091,
+   "win_rate": {
+    "c3": 55.58375634517766,
+    "main": 49.03758020164986,
+    "pa": 34.90566037735849,
+    "all": 50.436751860239404,
+    "train": 50.35345296356716,
+    "valid": 50.5591054313099
+   },
+   "pf": 1.437484162023254,
+   "yearly": {
+    "2021": 8.3,
+    "2022": 140.1,
+    "2023": 43.4,
+    "2024": 47.6,
+    "2025": 180.0,
+    "2026": 76.6
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1576,
+     "win": 55.58375634517766
+    },
+    "main": {
+     "trades": 1091,
+     "win": 49.03758020164986
+    },
+    "pa": {
+     "trades": 424,
+     "win": 34.90566037735849
+    }
+   }
+  },
+  "RANDOM#20 8/15/rest": {
+   "lists": {
+    "main": [
+     "ZECUSDT",
+     "ICPUSDT",
+     "CAKEUSDT",
+     "ETCUSDT",
+     "AVAXUSDT",
+     "SUIUSDT",
+     "ARBUSDT",
+     "XRPUSDT"
+    ],
+    "c3": [
+     "1000PEPEUSDT",
+     "ADAUSDT",
+     "HBARUSDT",
+     "DOGEUSDT",
+     "ATOMUSDT",
+     "FILUSDT",
+     "APTUSDT",
+     "FETUSDT",
+     "KSMUSDT",
+     "OPUSDT",
+     "LTCUSDT",
+     "AAVEUSDT",
+     "1000SHIBUSDT",
+     "INJUSDT",
+     "WLDUSDT"
+    ],
+    "pa": [
+     "DASHUSDT",
+     "NEARUSDT",
+     "VETUSDT",
+     "ETHUSDT",
+     "ALGOUSDT",
+     "UNIUSDT",
+     "BNBUSDT",
+     "TRXUSDT",
+     "BTCUSDT",
+     "SOLUSDT",
+     "BANDUSDT",
+     "LINKUSDT",
+     "DOTUSDT",
+     "SANDUSDT",
+     "QNTUSDT",
+     "XLMUSDT",
+     "APEUSDT",
+     "BCHUSDT"
+    ]
+   },
+   "final": 531114.1090156527,
+   "cagr": 121.35269158946831,
+   "dd": 27.99739374278525,
+   "calmar": 4.334428150861012,
+   "train": [
+    2.1398001519654257,
+    59.908827385447736,
+    27.99739374278525
+   ],
+   "valid": [
+    11.454898937648938,
+    303.1938030247359,
+    26.46848345629883
+   ],
+   "trades": 2952,
+   "win_rate": {
+    "c3": 55.43905635648755,
+    "main": 50.053590568060024,
+    "pa": 36.91683569979716,
+    "all": 50.643631436314365,
+    "train": 49.21098772647575,
+    "valid": 52.61885576148268
+   },
+   "pf": 1.8036486242955518,
+   "yearly": {
+    "2021": 6.9,
+    "2022": 48.4,
+    "2023": 26.6,
+    "2024": 128.0,
+    "2025": 347.4,
+    "2026": 159.2
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1526,
+     "win": 55.43905635648755
+    },
+    "main": {
+     "trades": 933,
+     "win": 50.053590568060024
+    },
+    "pa": {
+     "trades": 493,
+     "win": 36.91683569979716
+    }
+   }
+  },
+  "RANDOM#21 8/15/rest": {
+   "lists": {
+    "main": [
+     "SOLUSDT",
+     "DOGEUSDT",
+     "ATOMUSDT",
+     "ARBUSDT",
+     "AVAXUSDT",
+     "1000SHIBUSDT",
+     "XRPUSDT",
+     "1000PEPEUSDT"
+    ],
+    "c3": [
+     "AAVEUSDT",
+     "LTCUSDT",
+     "HBARUSDT",
+     "BCHUSDT",
+     "OPUSDT",
+     "FILUSDT",
+     "XLMUSDT",
+     "SUIUSDT",
+     "ALGOUSDT",
+     "TRXUSDT",
+     "KSMUSDT",
+     "INJUSDT",
+     "ETHUSDT",
+     "CAKEUSDT",
+     "ICPUSDT"
+    ],
+    "pa": [
+     "BNBUSDT",
+     "FETUSDT",
+     "VETUSDT",
+     "ZECUSDT",
+     "BANDUSDT",
+     "WLDUSDT",
+     "DOTUSDT",
+     "APTUSDT",
+     "ETCUSDT",
+     "APEUSDT",
+     "NEARUSDT",
+     "QNTUSDT",
+     "SANDUSDT",
+     "DASHUSDT",
+     "ADAUSDT",
+     "UNIUSDT",
+     "BTCUSDT",
+     "LINKUSDT"
+    ]
+   },
+   "final": 256016.24453913292,
+   "cagr": 91.28991143208492,
+   "dd": 35.27997823424309,
+   "calmar": 2.58758411997766,
+   "train": [
+    2.148360495877415,
+    63.4206317731236,
+    29.520479405027366
+   ],
+   "valid": [
+    4.414599939926476,
+    155.74698979349688,
+    35.27997823424308
+   ],
+   "trades": 3053,
+   "win_rate": {
+    "c3": 53.324968632371395,
+    "main": 47.85276073619632,
+    "pa": 37.21413721413722,
+    "all": 49.03373730756633,
+    "train": 48.13162297824874,
+    "valid": 50.317460317460316
+   },
+   "pf": 1.486964481107643,
+   "yearly": {
+    "2021": 0.7,
+    "2022": 48.2,
+    "2023": 51.8,
+    "2024": 116.8,
+    "2025": 185.7,
+    "2026": 82.3
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1594,
+     "win": 53.324968632371395
+    },
+    "main": {
+     "trades": 978,
+     "win": 47.85276073619632
+    },
+    "pa": {
+     "trades": 481,
+     "win": 37.21413721413722
+    }
+   }
+  },
+  "RANDOM#22 8/15/rest": {
+   "lists": {
+    "main": [
+     "ETHUSDT",
+     "VETUSDT",
+     "ETCUSDT",
+     "ZECUSDT",
+     "ARBUSDT",
+     "APTUSDT",
+     "BNBUSDT",
+     "UNIUSDT"
+    ],
+    "c3": [
+     "SANDUSDT",
+     "QNTUSDT",
+     "AVAXUSDT",
+     "LTCUSDT",
+     "INJUSDT",
+     "LINKUSDT",
+     "ALGOUSDT",
+     "AAVEUSDT",
+     "FETUSDT",
+     "CAKEUSDT",
+     "DOGEUSDT",
+     "NEARUSDT",
+     "XRPUSDT",
+     "ATOMUSDT",
+     "TRXUSDT"
+    ],
+    "pa": [
+     "DASHUSDT",
+     "SUIUSDT",
+     "OPUSDT",
+     "SOLUSDT",
+     "HBARUSDT",
+     "ICPUSDT",
+     "BCHUSDT",
+     "ADAUSDT",
+     "BTCUSDT",
+     "XLMUSDT",
+     "APEUSDT",
+     "WLDUSDT",
+     "FILUSDT",
+     "DOTUSDT",
+     "1000PEPEUSDT",
+     "BANDUSDT",
+     "1000SHIBUSDT",
+     "KSMUSDT"
+    ]
+   },
+   "final": 560494.4554068149,
+   "cagr": 123.74953631439185,
+   "dd": 29.371905467529313,
+   "calmar": 4.213194014640867,
+   "train": [
+    3.595654168452235,
+    80.29941054024599,
+    22.33235088201244
+   ],
+   "valid": [
+    7.939226593295286,
+    233.19021298356404,
+    29.371905467529324
+   ],
+   "trades": 3036,
+   "win_rate": {
+    "c3": 53.9622641509434,
+    "main": 49.47569113441373,
+    "pa": 40.050377833753146,
+    "all": 50.59288537549407,
+    "train": 50.05524861878453,
+    "valid": 51.386623164763456
+   },
+   "pf": 1.6142216119783148,
+   "yearly": {
+    "2021": 6.2,
+    "2022": 124.9,
+    "2023": 25.9,
+    "2024": 124.7,
+    "2025": 329.7,
+    "2026": 93.0
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1590,
+     "win": 53.9622641509434
+    },
+    "main": {
+     "trades": 1049,
+     "win": 49.47569113441373
+    },
+    "pa": {
+     "trades": 397,
+     "win": 40.050377833753146
+    }
+   }
+  },
+  "RANDOM#23 8/15/rest": {
+   "lists": {
+    "main": [
+     "DASHUSDT",
+     "TRXUSDT",
+     "CAKEUSDT",
+     "ICPUSDT",
+     "ETHUSDT",
+     "BANDUSDT",
+     "HBARUSDT",
+     "FILUSDT"
+    ],
+    "c3": [
+     "BTCUSDT",
+     "ALGOUSDT",
+     "LTCUSDT",
+     "VETUSDT",
+     "LINKUSDT",
+     "QNTUSDT",
+     "1000SHIBUSDT",
+     "APTUSDT",
+     "KSMUSDT",
+     "ARBUSDT",
+     "APEUSDT",
+     "ATOMUSDT",
+     "FETUSDT",
+     "UNIUSDT",
+     "NEARUSDT"
+    ],
+    "pa": [
+     "OPUSDT",
+     "SOLUSDT",
+     "ZECUSDT",
+     "BNBUSDT",
+     "XRPUSDT",
+     "DOTUSDT",
+     "AAVEUSDT",
+     "XLMUSDT",
+     "SUIUSDT",
+     "SANDUSDT",
+     "1000PEPEUSDT",
+     "WLDUSDT",
+     "INJUSDT",
+     "BCHUSDT",
+     "DOGEUSDT",
+     "ADAUSDT",
+     "AVAXUSDT",
+     "ETCUSDT"
+    ]
+   },
+   "final": 266245.2964937303,
+   "cagr": 92.79484448651286,
+   "dd": 36.03879206824574,
+   "calmar": 2.574860009480607,
+   "train": [
+    1.897604245129901,
+    57.998733233336594,
+    30.564188176848372
+   ],
+   "valid": [
+    4.947471086069208,
+    178.30088173450594,
+    36.038792068245705
+   ],
+   "trades": 3124,
+   "win_rate": {
+    "c3": 53.68156073001889,
+    "main": 47.11191335740072,
+    "pa": 34.42622950819672,
+    "all": 48.719590268886044,
+    "train": 48.32535885167464,
+    "valid": 49.316170555108606
+   },
+   "pf": 1.4914185528524657,
+   "yearly": {
+    "2021": 10.4,
+    "2022": 44.2,
+    "2023": 9.4,
+    "2024": 153.0,
+    "2025": 236.2,
+    "2026": 79.7
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1589,
+     "win": 53.68156073001889
+    },
+    "main": {
+     "trades": 1108,
+     "win": 47.11191335740072
+    },
+    "pa": {
+     "trades": 427,
+     "win": 34.42622950819672
+    }
+   }
+  },
+  "RANDOM#24 8/15/rest": {
+   "lists": {
+    "main": [
+     "ICPUSDT",
+     "OPUSDT",
+     "ETHUSDT",
+     "LTCUSDT",
+     "BNBUSDT",
+     "SANDUSDT",
+     "FILUSDT",
+     "1000PEPEUSDT"
+    ],
+    "c3": [
+     "TRXUSDT",
+     "SUIUSDT",
+     "XRPUSDT",
+     "DOGEUSDT",
+     "APEUSDT",
+     "DASHUSDT",
+     "AAVEUSDT",
+     "BTCUSDT",
+     "DOTUSDT",
+     "APTUSDT",
+     "KSMUSDT",
+     "FETUSDT",
+     "ADAUSDT",
+     "BANDUSDT",
+     "1000SHIBUSDT"
+    ],
+    "pa": [
+     "UNIUSDT",
+     "ATOMUSDT",
+     "HBARUSDT",
+     "CAKEUSDT",
+     "INJUSDT",
+     "ARBUSDT",
+     "ALGOUSDT",
+     "VETUSDT",
+     "LINKUSDT",
+     "BCHUSDT",
+     "ZECUSDT",
+     "AVAXUSDT",
+     "XLMUSDT",
+     "SOLUSDT",
+     "WLDUSDT",
+     "ETCUSDT",
+     "QNTUSDT",
+     "NEARUSDT"
+    ]
+   },
+   "final": 538978.8740361553,
+   "cagr": 122.00449247140548,
+   "dd": 31.764572379686108,
+   "calmar": 3.8408983131606416,
+   "train": [
+    5.393856602371174,
+    110.04071101285918,
+    20.401119111042842
+   ],
+   "valid": [
+    4.5926755733628,
+    145.8843756664991,
+    31.76457237968612
+   ],
+   "trades": 3140,
+   "win_rate": {
+    "c3": 54.56204379562044,
+    "main": 48.33174451858913,
+    "pa": 38.47874720357942,
+    "all": 50.19108280254777,
+    "train": 51.157781367797526,
+    "valid": 48.791893998441154
+   },
+   "pf": 1.4510044373866071,
+   "yearly": {
+    "2021": 8.0,
+    "2022": 71.9,
+    "2023": 54.9,
+    "2024": 285.6,
+    "2025": 209.0,
+    "2026": 57.4
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1644,
+     "win": 54.56204379562044
+    },
+    "main": {
+     "trades": 1049,
+     "win": 48.33174451858913
+    },
+    "pa": {
+     "trades": 447,
+     "win": 38.47874720357942
+    }
+   }
+  },
+  "RANDOM#25 8/15/rest": {
+   "lists": {
+    "main": [
+     "ARBUSDT",
+     "ATOMUSDT",
+     "QNTUSDT",
+     "ETCUSDT",
+     "DOGEUSDT",
+     "FETUSDT",
+     "SUIUSDT",
+     "XLMUSDT"
+    ],
+    "c3": [
+     "ADAUSDT",
+     "CAKEUSDT",
+     "APTUSDT",
+     "ICPUSDT",
+     "AAVEUSDT",
+     "KSMUSDT",
+     "OPUSDT",
+     "VETUSDT",
+     "DASHUSDT",
+     "UNIUSDT",
+     "INJUSDT",
+     "BTCUSDT",
+     "ALGOUSDT",
+     "DOTUSDT",
+     "AVAXUSDT"
+    ],
+    "pa": [
+     "APEUSDT",
+     "SANDUSDT",
+     "XRPUSDT",
+     "ZECUSDT",
+     "1000PEPEUSDT",
+     "HBARUSDT",
+     "BANDUSDT",
+     "FILUSDT",
+     "ETHUSDT",
+     "LINKUSDT",
+     "NEARUSDT",
+     "WLDUSDT",
+     "BCHUSDT",
+     "TRXUSDT",
+     "1000SHIBUSDT",
+     "SOLUSDT",
+     "BNBUSDT",
+     "LTCUSDT"
+    ]
+   },
+   "final": 894187.6757773584,
+   "cagr": 145.6626715839747,
+   "dd": 32.034870166467755,
+   "calmar": 4.547003650304971,
+   "train": [
+    2.4695406326013543,
+    79.11141353620104,
+    32.034870166467755
+   ],
+   "valid": [
+    11.658581221685926,
+    339.94440027207145,
+    29.158299265415476
+   ],
+   "trades": 3011,
+   "win_rate": {
+    "c3": 54.351909830932996,
+    "main": 47.30848861283644,
+    "pa": 37.276785714285715,
+    "all": 49.55164397210229,
+    "train": 48.47307051637979,
+    "valid": 51.15702479338843
+   },
+   "pf": 2.295911633218584,
+   "yearly": {
+    "2021": 7.1,
+    "2022": 52.0,
+    "2023": 36.0,
+    "2024": 198.6,
+    "2025": 222.3,
+    "2026": 319.4
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1597,
+     "win": 54.351909830932996
+    },
+    "main": {
+     "trades": 966,
+     "win": 47.30848861283644
+    },
+    "pa": {
+     "trades": 448,
+     "win": 37.276785714285715
+    }
+   }
+  },
+  "RANDOM#26 8/15/rest": {
+   "lists": {
+    "main": [
+     "FETUSDT",
+     "ATOMUSDT",
+     "WLDUSDT",
+     "HBARUSDT",
+     "LINKUSDT",
+     "TRXUSDT",
+     "AVAXUSDT",
+     "FILUSDT"
+    ],
+    "c3": [
+     "1000SHIBUSDT",
+     "DASHUSDT",
+     "SANDUSDT",
+     "ZECUSDT",
+     "ADAUSDT",
+     "SUIUSDT",
+     "ETHUSDT",
+     "DOGEUSDT",
+     "INJUSDT",
+     "QNTUSDT",
+     "APTUSDT",
+     "XRPUSDT",
+     "BANDUSDT",
+     "BNBUSDT",
+     "DOTUSDT"
+    ],
+    "pa": [
+     "UNIUSDT",
+     "ICPUSDT",
+     "BTCUSDT",
+     "APEUSDT",
+     "VETUSDT",
+     "AAVEUSDT",
+     "LTCUSDT",
+     "SOLUSDT",
+     "NEARUSDT",
+     "KSMUSDT",
+     "1000PEPEUSDT",
+     "ETCUSDT",
+     "ALGOUSDT",
+     "XLMUSDT",
+     "CAKEUSDT",
+     "OPUSDT",
+     "BCHUSDT",
+     "ARBUSDT"
+    ]
+   },
+   "final": 349484.60974197515,
+   "cagr": 103.57660789522049,
+   "dd": 30.492297378534005,
+   "calmar": 3.3968122050435086,
+   "train": [
+    2.399531276041928,
+    73.16722123816363,
+    30.492297378534005
+   ],
+   "valid": [
+    5.967862934606096,
+    174.35190442274342,
+    29.21513217264454
+   ],
+   "trades": 3097,
+   "win_rate": {
+    "c3": 53.366275478690554,
+    "main": 45.42829643888354,
+    "pa": 38.724373576309794,
+    "all": 48.627704229899905,
+    "train": 49.031543995572775,
+    "valid": 48.06201550387597
+   },
+   "pf": 1.4511982858666674,
+   "yearly": {
+    "2021": 12.1,
+    "2022": 38.0,
+    "2023": 46.3,
+    "2024": 161.9,
+    "2025": 272.0,
+    "2026": 58.5
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1619,
+     "win": 53.366275478690554
+    },
+    "main": {
+     "trades": 1039,
+     "win": 45.42829643888354
+    },
+    "pa": {
+     "trades": 439,
+     "win": 38.724373576309794
+    }
+   }
+  },
+  "RANDOM#27 8/15/rest": {
+   "lists": {
+    "main": [
+     "UNIUSDT",
+     "WLDUSDT",
+     "DOTUSDT",
+     "BNBUSDT",
+     "LTCUSDT",
+     "ICPUSDT",
+     "ADAUSDT",
+     "XRPUSDT"
+    ],
+    "c3": [
+     "SUIUSDT",
+     "SOLUSDT",
+     "FETUSDT",
+     "AAVEUSDT",
+     "KSMUSDT",
+     "QNTUSDT",
+     "AVAXUSDT",
+     "XLMUSDT",
+     "BANDUSDT",
+     "ARBUSDT",
+     "1000PEPEUSDT",
+     "LINKUSDT",
+     "SANDUSDT",
+     "NEARUSDT",
+     "VETUSDT"
+    ],
+    "pa": [
+     "BCHUSDT",
+     "BTCUSDT",
+     "FILUSDT",
+     "DOGEUSDT",
+     "TRXUSDT",
+     "ETHUSDT",
+     "ATOMUSDT",
+     "HBARUSDT",
+     "ZECUSDT",
+     "APTUSDT",
+     "1000SHIBUSDT",
+     "ETCUSDT",
+     "ALGOUSDT",
+     "CAKEUSDT",
+     "DASHUSDT",
+     "APEUSDT",
+     "INJUSDT",
+     "OPUSDT"
+    ]
+   },
+   "final": 424113.26444571064,
+   "cagr": 111.61231349614025,
+   "dd": 30.374167480984493,
+   "calmar": 3.6745801696791935,
+   "train": [
+    2.71674550522583,
+    82.35847514662804,
+    30.315123366618757
+   ],
+   "valid": [
+    5.874193583049635,
+    178.42373970727374,
+    30.374167480984447
+   ],
+   "trades": 3088,
+   "win_rate": {
+    "c3": 52.75142314990512,
+    "main": 50.91911764705882,
+    "pa": 39.37947494033413,
+    "all": 50.29145077720207,
+    "train": 50.218102508178845,
+    "valid": 50.398724082934606
+   },
+   "pf": 1.515821128846798,
+   "yearly": {
+    "2021": 8.4,
+    "2022": 116.7,
+    "2023": 35.3,
+    "2024": 120.5,
+    "2025": 227.9,
+    "2026": 84.5
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1581,
+     "win": 52.75142314990512
+    },
+    "main": {
+     "trades": 1088,
+     "win": 50.91911764705882
+    },
+    "pa": {
+     "trades": 419,
+     "win": 39.37947494033413
+    }
+   }
+  },
+  "RANDOM#28 8/15/rest": {
+   "lists": {
+    "main": [
+     "ICPUSDT",
+     "INJUSDT",
+     "WLDUSDT",
+     "CAKEUSDT",
+     "AVAXUSDT",
+     "SUIUSDT",
+     "FETUSDT",
+     "SOLUSDT"
+    ],
+    "c3": [
+     "VETUSDT",
+     "XRPUSDT",
+     "QNTUSDT",
+     "ETHUSDT",
+     "BTCUSDT",
+     "DASHUSDT",
+     "OPUSDT",
+     "NEARUSDT",
+     "ETCUSDT",
+     "DOTUSDT",
+     "BANDUSDT",
+     "1000PEPEUSDT",
+     "APTUSDT",
+     "SANDUSDT",
+     "ATOMUSDT"
+    ],
+    "pa": [
+     "ARBUSDT",
+     "XLMUSDT",
+     "LTCUSDT",
+     "AAVEUSDT",
+     "1000SHIBUSDT",
+     "ALGOUSDT",
+     "ZECUSDT",
+     "LINKUSDT",
+     "FILUSDT",
+     "UNIUSDT",
+     "TRXUSDT",
+     "ADAUSDT",
+     "BNBUSDT",
+     "KSMUSDT",
+     "BCHUSDT",
+     "DOGEUSDT",
+     "HBARUSDT",
+     "APEUSDT"
+    ]
+   },
+   "final": 235975.9823151907,
+   "cagr": 88.1963311742535,
+   "dd": 28.9743289786351,
+   "calmar": 3.043947324519133,
+   "train": [
+    1.844470723888635,
+    53.442301545410544,
+    28.9743289786351
+   ],
+   "valid": [
+    6.13551185517099,
+    174.2409717560999,
+    28.398767025321636
+   ],
+   "trades": 2897,
+   "win_rate": {
+    "c3": 53.641975308641975,
+    "main": 50.84337349397591,
+    "pa": 37.360178970917225,
+    "all": 50.327925440110455,
+    "train": 50.0,
+    "valid": 50.78577336641853
+   },
+   "pf": 1.5162637103075385,
+   "yearly": {
+    "2021": 12.6,
+    "2022": 33.3,
+    "2023": 52.7,
+    "2024": 74.8,
+    "2025": 234.5,
+    "2026": 76.1
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1620,
+     "win": 53.641975308641975
+    },
+    "main": {
+     "trades": 830,
+     "win": 50.84337349397591
+    },
+    "pa": {
+     "trades": 447,
+     "win": 37.360178970917225
+    }
+   }
+  },
+  "RANDOM#29 8/15/rest": {
+   "lists": {
+    "main": [
+     "BCHUSDT",
+     "FETUSDT",
+     "1000PEPEUSDT",
+     "INJUSDT",
+     "DASHUSDT",
+     "APTUSDT",
+     "ADAUSDT",
+     "QNTUSDT"
+    ],
+    "c3": [
+     "BTCUSDT",
+     "LTCUSDT",
+     "APEUSDT",
+     "ZECUSDT",
+     "BNBUSDT",
+     "ARBUSDT",
+     "BANDUSDT",
+     "HBARUSDT",
+     "SANDUSDT",
+     "DOGEUSDT",
+     "ETHUSDT",
+     "CAKEUSDT",
+     "ETCUSDT",
+     "LINKUSDT",
+     "ALGOUSDT"
+    ],
+    "pa": [
+     "VETUSDT",
+     "SOLUSDT",
+     "KSMUSDT",
+     "FILUSDT",
+     "TRXUSDT",
+     "UNIUSDT",
+     "AVAXUSDT",
+     "OPUSDT",
+     "1000SHIBUSDT",
+     "WLDUSDT",
+     "SUIUSDT",
+     "XRPUSDT",
+     "DOTUSDT",
+     "XLMUSDT",
+     "AAVEUSDT",
+     "NEARUSDT",
+     "ICPUSDT",
+     "ATOMUSDT"
+    ]
+   },
+   "final": 829260.8217272881,
+   "cagr": 141.98629355990198,
+   "dd": 40.698767880923256,
+   "calmar": 3.488712335845804,
+   "train": [
+    2.7685663598883585,
+    66.10009354264506,
+    23.87520649687823
+   ],
+   "valid": [
+    9.444275697237494,
+    384.37038440531353,
+    40.69876788092327
+   ],
+   "trades": 3101,
+   "win_rate": {
+    "c3": 53.0791788856305,
+    "main": 49.73656480505795,
+    "pa": 35.79418344519016,
+    "all": 49.56465656239923,
+    "train": 48.716517857142854,
+    "valid": 50.72574484339191
+   },
+   "pf": 2.3611347406851464,
+   "yearly": {
+    "2021": 7.6,
+    "2022": 5.8,
+    "2023": 77.9,
+    "2024": 155.8,
+    "2025": 205.5,
+    "2026": 424.0
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1705,
+     "win": 53.0791788856305
+    },
+    "main": {
+     "trades": 949,
+     "win": 49.73656480505795
+    },
+    "pa": {
+     "trades": 447,
+     "win": 35.79418344519016
+    }
+   }
+  },
+  "DEPLOY (latest 12m) 8/15/rest": {
+   "lists": {
+    "main": [
+     "BTCUSDT",
+     "ETHUSDT",
+     "SOLUSDT",
+     "XRPUSDT",
+     "ZECUSDT",
+     "DOGEUSDT",
+     "BNBUSDT",
+     "1000PEPEUSDT"
+    ],
+    "c3": [
+     "SUIUSDT",
+     "ADAUSDT",
+     "LINKUSDT",
+     "AVAXUSDT",
+     "ENAUSDT",
+     "NEARUSDT",
+     "BCHUSDT",
+     "PUMPUSDT",
+     "WLDUSDT",
+     "FILUSDT",
+     "AAVEUSDT",
+     "UNIUSDT",
+     "LTCUSDT",
+     "DOTUSDT",
+     "TRUMPUSDT"
+    ],
+    "pa": [
+     "XLMUSDT",
+     "TRXUSDT",
+     "ARBUSDT",
+     "ONDOUSDT",
+     "1000SHIBUSDT",
+     "APTUSDT",
+     "DASHUSDT",
+     "FETUSDT",
+     "HBARUSDT",
+     "INJUSDT",
+     "OPUSDT",
+     "ICPUSDT",
+     "ETCUSDT",
+     "ATOMUSDT",
+     "ALGOUSDT",
+     "SANDUSDT",
+     "KAITOUSDT",
+     "CAKEUSDT",
+     "APEUSDT",
+     "VETUSDT",
+     "QNTUSDT",
+     "NOTUSDT",
+     "KSMUSDT",
+     "TUTUSDT",
+     "BANDUSDT",
+     "BMTUSDT"
+    ]
+   },
+   "final": 691647.4999196806,
+   "cagr": 133.3604977695758,
+   "dd": 37.331219812984486,
+   "calmar": 3.5723584291556034,
+   "train": [
+    2.653309108488491,
+    78.87952652494268,
+    29.728736193076998
+   ],
+   "valid": [
+    7.528394206664533,
+    281.04413896779255,
+    37.33121981298447
+   ],
+   "trades": 3133,
+   "win_rate": {
+    "c3": 54.78018143754362,
+    "main": 49.06500445235975,
+    "pa": 37.26169844020797,
+    "all": 49.50526651771465,
+    "train": 49.36635944700461,
+    "valid": 49.677881173944165
+   },
+   "pf": 1.5430361231818015,
+   "yearly": {
+    "2021": 3.5,
+    "2022": 78.5,
+    "2023": 68.0,
+    "2024": 112.3,
+    "2025": 382.0,
+    "2026": 117.9
+   },
+   "by_bot": {
+    "c3": {
+     "trades": 1433,
+     "win": 54.78018143754362
+    },
+    "main": {
+     "trades": 1123,
+     "win": 49.06500445235975
+    },
+    "pa": {
+     "trades": 577,
+     "win": 37.26169844020797
+    }
+   }
+  }
+ },
+ "random_valid_calmar": {
+  "values": [
+   3.7978902136994477,
+   9.005927286807283,
+   8.199970422378467,
+   4.678251178843927,
+   5.821568716736716,
+   3.8496290991143516,
+   6.746365719614022,
+   5.634773952512503,
+   6.900444223867407,
+   3.794319224510791,
+   8.057965441068442,
+   1.3443631884230842,
+   7.745203267395297,
+   5.272141810031681,
+   9.757605751871047,
+   5.365075544940565,
+   7.265202023071321,
+   4.186598123684213,
+   4.635610461810602,
+   5.567323812942266,
+   11.454898937648938,
+   4.414599939926476,
+   7.939226593295286,
+   4.947471086069208,
+   4.5926755733628,
+   11.658581221685926,
+   5.967862934606096,
+   5.874193583049635,
+   6.13551185517099,
+   9.444275697237494
+  ],
+  "median": 5.847881149893176,
+  "p10": 3.8444552105728613,
+  "p90": 9.47560870270085
+ },
+ "deploy": {
+  "main": [
+   "BTCUSDT",
+   "ETHUSDT",
+   "SOLUSDT",
+   "XRPUSDT",
+   "ZECUSDT",
+   "DOGEUSDT",
+   "BNBUSDT",
+   "1000PEPEUSDT"
+  ],
+  "c3": [
+   "SUIUSDT",
+   "ADAUSDT",
+   "LINKUSDT",
+   "AVAXUSDT",
+   "ENAUSDT",
+   "NEARUSDT",
+   "BCHUSDT",
+   "PUMPUSDT",
+   "WLDUSDT",
+   "FILUSDT",
+   "AAVEUSDT",
+   "UNIUSDT",
+   "LTCUSDT",
+   "DOTUSDT",
+   "TRUMPUSDT"
+  ],
+  "pa": [
+   "XLMUSDT",
+   "TRXUSDT",
+   "ARBUSDT",
+   "ONDOUSDT",
+   "1000SHIBUSDT",
+   "APTUSDT",
+   "DASHUSDT",
+   "FETUSDT",
+   "HBARUSDT",
+   "INJUSDT",
+   "OPUSDT",
+   "ICPUSDT",
+   "ETCUSDT",
+   "ATOMUSDT",
+   "ALGOUSDT",
+   "SANDUSDT",
+   "KAITOUSDT",
+   "CAKEUSDT",
+   "APEUSDT",
+   "VETUSDT",
+   "QNTUSDT",
+   "NOTUSDT",
+   "KSMUSDT",
+   "TUTUSDT",
+   "BANDUSDT",
+   "BMTUSDT"
+  ]
+ }
+}

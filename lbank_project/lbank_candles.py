@@ -145,6 +145,9 @@ def main(argv: list[str]) -> int:
     symbols = config_symbols()
     if not symbols:
         sys.exit("no symbols: set BOT_CONFIG / C3_CONFIG / PA_CONFIG")
+    if os.getenv('LBANK_OFFICIAL_CANDLES') == '1':
+        from lbank_official_candles import run
+        return run(symbols, OUT, once='--once' in argv)
     collector = Collector(symbols)
     stop = {"now": False}
     signal.signal(signal.SIGTERM, lambda *_: stop.update(now=True))

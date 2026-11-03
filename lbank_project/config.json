@@ -112,6 +112,9 @@
     "btc_regime_symbol": "BTC/USDT:USDT",
     "atr_regime_filter_enabled": true,
     "atr_regime_window": 60,
-    "atr_regime_min_ratio": 1.0
+    "atr_regime_min_ratio": 1.0,
+    "late_entry_filter_enabled": true,
+    "late_entry_bars": 60,
+    "late_entry_max_log_move": 0.1521
   }
 }
