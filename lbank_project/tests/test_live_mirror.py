@@ -651,3 +651,86 @@ def test_paper_positions_cannot_silently_overwrite_same_symbol():
     with pytest.raises(X.ExchangeError, match="overlapping paper positions"):
         L.Paper._add_unique(out, "BTC/USDT:USDT", b)
     assert out["BTC/USDT:USDT"] == a
+
+
+def test_restarted_session_cannot_adopt_old_main_paper_from_recent_state(env):
+    m, sim, paper, step, tmp, clock = env
+    step()  # prior live process recorded a recent last_cycle
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    restarted = L.Mirror(sim, paper, m.cfg, now=lambda: clock[0])
+    restarted.cycle()
+    assert "BTCUSDT" not in sim.positions()
+    assert not [item for item in sim.log if item[0] == "open"]
+
+
+def test_managed_exchange_side_drift_is_paused_not_closed(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    step()
+    assert sim.positions()["BTCUSDT"].side == "long"
+    sim.pos["BTCUSDT"].side = "short"
+    paper.book.clear()  # A stale owned position should not close an opposing manual trade.
+    before = len(sim.log)
+    step()
+    assert m.state["paused"]
+    assert "BTCUSDT" in m.state["managed"]
+    assert "BTCUSDT" in sim.positions()
+    assert len(sim.log) == before
+
+
+def test_paper_side_flipped_in_place_does_not_send_order(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    step()
+    paper.book["BTC/USDT:USDT"].update(side="short", stop=82000.)
+    before = len(sim.log)
+    step()
+    assert m.state["paused"]
+    assert sim.positions()["BTCUSDT"].side == "long"
+    assert len(sim.log) == before
+
+
+def test_entry_with_incorrect_confirmed_quantity_is_journaled_uncertain(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    def short_fill(symbol, side, qty, leverage, stop=None):
+        X.Sim.open(sim, symbol, side, qty / 2, leverage, stop)
+    sim.open = short_fill
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    step()
+    assert m.state["paused"]
+    assert m.state["pending_orders"]["BTCUSDT"]["action"] == "open"
+    assert "BTCUSDT" not in m.state["managed"]
+    assert len([x for x in sim.log if x[0] == "open"]) == 1
+
+
+def test_pyramid_add_missing_part_of_fill_is_journaled_uncertain(env):
+    m, sim, paper, step, tmp, clock = env
+    step()
+    paper.book["BTC/USDT:USDT"] = main_pos(qty=.1)
+    step()
+    assert sim.positions()["BTCUSDT"].qty == pytest.approx(.01)
+    def short_fill(symbol, side, qty, leverage, stop=None):
+        X.Sim.open(sim, symbol, side, qty / 2, leverage, stop)
+    sim.open = short_fill
+    paper.book["BTC/USDT:USDT"]["qty"] = .2
+    step()
+    assert m.state["paused"]
+    assert m.state["pending_orders"]["BTCUSDT"]["action"] == "open"
+    assert sim.positions()["BTCUSDT"].qty == pytest.approx(.015)
+    before = len(sim.log)
+    step()
+    assert len(sim.log) == before
+
+
+@pytest.mark.parametrize("invalid_equity", [float("nan"), float("inf"), 0, -1])
+def test_bad_paper_equity_does_not_send_order(env, invalid_equity):
+    m, sim, paper, step, tmp, clock = env
+    paper.eq = invalid_equity
+    paper.book["BTC/USDT:USDT"] = main_pos()
+    with pytest.raises(X.ExchangeError, match="Invalid live/paper equity"):
+        step()
+    assert not sim.positions()
+    assert not sim.log
