@@ -752,6 +752,7 @@ def test_paper_collects_conflict_without_discarding_other_symbols():
         dict(symbol="BTC/USDT:USDT", side="short", qty=3., stop=110., opened=25.)
     ])
     paper.pa = mod_store([])
+    paper._sleeve_snapshot = lambda name, mod: ({}, mod.paths()[1].positions(), 0.)
     positions = paper.positions()
     assert "BTC/USDT:USDT" not in positions
     assert "BTC/USDT:USDT" in paper.conflicts
@@ -798,3 +799,35 @@ def test_real_mirror_refuses_synthetic_paper_feed_before_adapters_or_orders(tmp_
     L.run(once=True)
     assert touched == []
     assert not list(tmp_path.glob("live_state*"))
+
+
+def test_sleeve_snapshot_is_read_only_and_does_not_prepare_config(tmp_path, monkeypatch):
+    import c3_sleeve as c3
+    dbpath = tmp_path / "mojsavar.db"
+    store = c3.Store(dbpath)
+    config_path = tmp_path / "mojsavar_config.json"
+    config_path.write_text(json.dumps(c3.DEFAULTS))
+    original_content = config_path.read_bytes()
+    original_mtime = config_path.stat().st_mtime_ns
+    monkeypatch.setenv("C3_CONFIG", str(config_path))
+    monkeypatch.setenv("C3_DB", str(dbpath))
+    def never_prepare(*args, **kwargs):
+        raise AssertionError("Live Mirror may never call config-preparation methods")
+    monkeypatch.setattr(c3, "paths", never_prepare)
+    config, positions, realized = L.Paper._sleeve_snapshot("c3", c3)
+    assert isinstance(config, dict)
+    assert positions == []
+    assert realized == 0
+    assert config_path.read_bytes() == original_content
+    assert config_path.stat().st_mtime_ns == original_mtime
+
+
+def test_missing_sleeve_config_fails_closed_without_creating_it(tmp_path, monkeypatch):
+    import c3_sleeve as c3
+    absent = tmp_path / "missing.json"
+    dbpath = tmp_path / "missing.db"
+    monkeypatch.setenv("C3_CONFIG", str(absent))
+    monkeypatch.setenv("C3_DB", str(dbpath))
+    with pytest.raises(X.ExchangeError, match="missing PAPER config/database"):
+        L.Paper._sleeve_snapshot("c3", c3)
+    assert not absent.exists() and not dbpath.exists()
