@@ -165,7 +165,7 @@ def surrogate_score(t,scores,have,rule,short_factor):
     gain23=unit_edge(a);gain24=unit_edge(b)
     # Both independent validation years must have strictly positive
     # per-risk-unit outcome improvement (not merely gross PnL growth).
-    if gain23<=0 or gain24<=0:return -np.inf
+    if gain23<=1e-5 or gain24<=1e-5:return -np.inf  # reject numerical noise
     return 0.80*min(gain23,gain24)+0.20*(gain23+gain24)/2
 
 def selection():
