@@ -87,14 +87,76 @@ class Paper:
         return out
 
     def equity(self) -> float:
-        """Paper equity from closed trades (no prices needed); the size ratio does not need open P&L precision."""
-        with self.db.connect() as db:
-            r = float(db.execute("SELECT COALESCE(SUM(pnl_usd),0) FROM trade_history WHERE dry_run=1").fetchone()[0])
-        for mod in (self.c3, self.pa):
+        """Mark-to-market the three PAPER sleeves using public LBank futures prices.
+
+        Realized-only equity understates/overstates the live/paper sizing ratio
+        while trades are open. A missing sleeve DB, quote or invalid balance
+        is UNKNOWN: never silently omit a bot or fabricate a $1 equity.
+        """
+        from lbank_candles import fetch_prices, lbank_name
+
+        def number(value, name: str) -> float:
+            if isinstance(value, bool):
+                raise X.ExchangeError(f"Invalid paper {name}")
             try:
-                with mod.paths()[1].db() as db:r += float(db.execute("SELECT COALESCE(SUM(pnl),0) FROM trades").fetchone()[0])
-            except Exception:pass
-        return max(1.0, self.seed + r)
+                n = float(value)
+            except (TypeError, ValueError, OverflowError):
+                raise X.ExchangeError(f"Invalid paper {name}") from None
+            if not math.isfinite(n):
+                raise X.ExchangeError(f"Invalid paper {name}")
+            return n
+
+        total = number(self.seed, "initial equity")
+        if total <= 0:
+            raise X.ExchangeError("Non-positive paper initial equity")
+        with self.db.connect() as db:
+            total += number(db.execute(
+                "SELECT COALESCE(SUM(pnl_usd),0) FROM trade_history WHERE dry_run=1"
+            ).fetchone()[0], "main realized PnL")
+
+        main_open = [p for p in self.db.positions() if p["state"] != self.bot.PENDING]
+        sleeves = []
+        for name, mod in (("c3", self.c3), ("pa", self.pa)):
+            path, store = mod.paths()
+            config = mod.load(path)
+            with store.db() as db:
+                realized = db.execute("SELECT COALESCE(SUM(pnl),0) FROM trades").fetchone()[0]
+            total += number(realized, f"{name} realized PnL")
+            sleeves.append((name, config, store.positions()))
+
+        if main_open or any(positions for _, _, positions in sleeves):
+            quotes = fetch_prices()  # GET only; do not use spot or synthetic/demo prices.
+            def price(symbol):
+                raw = quotes.get(lbank_name(symbol))
+                px = number(raw, f"futures quote for {symbol}")
+                if px <= 0:
+                    raise X.ExchangeError(f"Missing/invalid futures quote for {symbol}")
+                return px
+
+            for p in main_open:
+                if p.get("dry_run") != 1:
+                    raise X.ExchangeError("Main paper position is not dry-run")
+                total += number(self.bot.net_pnl(p, price(p["symbol"]), p["qty"]),
+                                "main open PnL")
+            for name, config, positions in sleeves:
+                fee = number(config["round_trip_fee"], f"{name} round trip fee")
+                if fee < 0:
+                    raise X.ExchangeError(f"Invalid {name} round trip fee")
+                for p in positions:
+                    side = p["side"]
+                    if side not in ("long", "short"):
+                        raise X.ExchangeError(f"Invalid {name} position direction")
+                    entry = number(p["entry"], f"{name} entry")
+                    qty = number(p["qty"], f"{name} quantity")
+                    if entry <= 0 or qty <= 0:
+                        raise X.ExchangeError(f"Invalid {name} open position")
+                    px = price(p["symbol"])
+                    sign = 1 if side == "long" else -1
+                    total += sign * (px - entry) * qty - (px + entry) * qty * fee / 2
+
+        if not math.isfinite(total) or total <= 0:
+            raise X.ExchangeError("Paper equity is invalid or exhausted; entries blocked")
+        return total
 
 
 class Mirror:
@@ -104,6 +166,7 @@ class Mirror:
         # separate state per mode and exchange: a dry run can never forget (orphan) positions of the live account
         self.state_path = folder() / f"live_state_{self.cfg['mode']}_{self.cfg['exchange']}.json";self.log_path = folder() / "live_log.jsonl"
         self.state = self._load()
+        self._session_has_completed_cycle = False
 
     # ---------------- persistence
     def _load(self) -> dict:
@@ -189,7 +252,7 @@ class Mirror:
             return False
         return True
 
-    def _submit_entry(self, esym, side, qty, stop, key):
+    def _submit_entry(self, esym, side, qty, stop, key, before_qty=0.0):
         """Write-ahead journal: no automatic retry after an ambiguous order outcome."""
         if self.state["pending_orders"]:
             raise X.ExchangeError("Unresolved exchange order exists; manual reconciliation required")
@@ -201,6 +264,13 @@ class Mirror:
             observed = self.ex.positions().get(esym)
             if observed is None or observed.side != side or observed.qty <= 0:
                 raise X.ExchangeError(f"{esym}: exchange entry was not confirmed")
+            market = self.ex.markets().get(esym, {})
+            tolerance = max(1e-10, float(market.get("step") or 0) * 0.05)
+            expected = before_qty + qty
+            if not math.isfinite(observed.qty) or abs(observed.qty - expected) > tolerance:
+                raise X.ExchangeError(
+                    f"{esym}: entry size not confirmed (expected {expected}, got {observed.qty})"
+                )
             self.ex.verify_stop(observed, stop)
         except Exception as exc:
             self.state["paused"] = True
@@ -229,6 +299,8 @@ class Mirror:
             after = self.ex.positions().get(esym)
             actual = 0.0 if after is None else after.qty
             expected = max(0.0, initial - closing)
+            if after is not None and (after.side != position.side or not math.isfinite(after.qty)):
+                raise X.ExchangeError(f"{esym}: close resulted in wrong side/invalid quantity")
             market = self.ex.markets().get(esym) or {}
             # Exchange quantity precision and partial-fill behavior can vary.
             # A missing/inconsistent confirmation is UNKNOWN, never success.
@@ -291,9 +363,17 @@ class Mirror:
             self.state["paused"] = True
             self.save()
             return  # Never replay or overwrite an ambiguous order after restart.
-        now = self.now();was_running = now - self.state["last_cycle"] < 180
+        now = self.now()
+        was_running = (self._session_has_completed_cycle and
+                       0 <= now - self.state["last_cycle"] < 180)
         paper = self.paper.positions();markets = self.ex.markets();live = self.ex.positions()
-        eq_live = self.ex.equity();eq_paper = self.paper.equity();ratio = eq_live / eq_paper * self.cfg["size_factor"]
+        eq_live = self.ex.equity();eq_paper = self.paper.equity()
+        if (not math.isfinite(eq_live) or not math.isfinite(eq_paper) or
+                eq_live <= 0 or eq_paper <= 0):
+            raise X.ExchangeError("Invalid live/paper equity: no reconciliation")
+        ratio = eq_live / eq_paper * self.cfg["size_factor"]
+        if not math.isfinite(ratio) or ratio <= 0:
+            raise X.ExchangeError("Invalid live/paper sizing ratio: no reconciliation")
         self.state.update(equity_live=eq_live, equity_paper=eq_paper, ratio=ratio)
         seen = self.state["seen"]
         for k in [k for k in seen if k not in {p["key"] for p in paper.values()}]:del seen[k]
@@ -313,9 +393,19 @@ class Mirror:
                     self.state["paused"] = True;self.event("paused", reason="5 consecutive errors; new entries stopped until settings are saved again")
         self.state["unmanaged"] = sorted(s for s in live if s not in managed)
         self.state["last_cycle"] = now;self.save()
+        self._session_has_completed_cycle = True
 
     def _reconcile(self, esym, t, l, ratio, was_running):
         managed = self.state["managed"];m = managed.get(esym)
+        # Position ownership is bound to its side and entry key. If an
+        # operator/broker changes the direction or paper record in place,
+        # never submit an order against an ambiguous live exposure.
+        if m and l is not None and (l.side != m.get("side") or not math.isfinite(l.qty) or l.qty <= 0):
+            self.state["paused"] = True
+            raise X.ExchangeError(f"{esym}: managed exchange position drift; manual reconciliation required")
+        if m and t is not None and m.get("key") == t.get("key") and t.get("side") != m.get("side"):
+            self.state["paused"] = True
+            raise X.ExchangeError(f"{esym}: PAPER side changed without new trade key; manual reconciliation required")
         if m and l is None:                               # closed on the exchange (stop hit / liquidated / manual)
             self.event("exchange_closed", symbol=esym, note="position no longer on the exchange (stop hit / liquidation / manual); not re-entered")
             self.state.setdefault("skipped", {})[m["key"]] = True;del managed[esym];m = None
@@ -363,7 +453,7 @@ class Mirror:
             if add > 0:
                 px = self.ex.price(esym)
                 if self._entry_preflight(esym, l.side, add, px, t["ex_stop"]):
-                    self._submit_entry(esym, l.side, add, t["ex_stop"], t["key"])
+                    self._submit_entry(esym, l.side, add, t["ex_stop"], t["key"], before_qty=l.qty)
                     # Existing ownership is already durable; resolve pending only
                     # after the exchange has acknowledged the protected add.
                     self.save()
@@ -405,7 +495,13 @@ def run(once: bool = False):
     while True:
         try:
             cfg = read_config()
-            if cfg["mode"] != "off":
+            if cfg["mode"] == "off":
+                # Toggling OFF must end the old live session. A quick
+                # re-enable cannot inherit a recent last_cycle and adopt an
+                # already-open main PAPER position.
+                mirror = None
+                key = None
+            else:
                 if paper is None:paper = Paper()
                 k = (cfg["mode"], cfg["exchange"])
                 if mirror is None or key != k:
