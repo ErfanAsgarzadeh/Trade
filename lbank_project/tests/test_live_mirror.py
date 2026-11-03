@@ -1,5 +1,5 @@
 """Live mirror (paper -> exchange) and exchange adapters, with a simulated exchange and fake paper books."""
-import json, time
+import copy, json, time
 import pytest
 import exchanges as X
 import live_mirror as L
@@ -18,7 +18,7 @@ class FakePaper:
 @pytest.fixture
 def env(tmp_path, monkeypatch):
     monkeypatch.setenv('RISK_DIR', str(tmp_path));clock = [1_000_000.]
-    ex = X.Sim(price_fn=lambda s: PX[s], equity=1000., markets=MK);paper = FakePaper()
+    ex = X.Sim(price_fn=lambda s: PX[s], equity=1000., markets=copy.deepcopy(MK));paper = FakePaper()
     m = L.Mirror(ex, paper, L.validate({'mode': 'live'}), now=lambda: clock[0])
     def step(dt=10):clock[0] += dt;m.cycle()
     return m, ex, paper, step, tmp_path, clock
