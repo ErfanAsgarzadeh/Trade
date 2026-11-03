@@ -786,3 +786,15 @@ def test_conflict_on_managed_symbol_pauses_without_unwanted_close(env):
     assert "BTCUSDT" in sim.positions()
     assert "BTCUSDT" in m.state["managed"]
     assert len(sim.log) == before
+
+
+def test_real_mirror_refuses_synthetic_paper_feed_before_adapters_or_orders(tmp_path, monkeypatch):
+    monkeypatch.setenv("RISK_DIR", str(tmp_path))
+    monkeypatch.setenv("PAPER_DATA_MODE", "demo")
+    L.write_config({"mode": "live"})
+    touched = []
+    monkeypatch.setattr(L, "Paper", lambda: touched.append("paper"))
+    monkeypatch.setattr(L, "adapter_for", lambda *_: touched.append("exchange"))
+    L.run(once=True)
+    assert touched == []
+    assert not list(tmp_path.glob("live_state*"))
