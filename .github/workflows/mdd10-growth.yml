@@ -1,4 +1,4 @@
-name: Growth recovery research: causal BTC hedge vs 10pct MDD
+name: "Growth recovery research - causal BTC hedge vs 10pct MDD"
 on:
   push:
     branches: [research/mdd-under10-20261103]
