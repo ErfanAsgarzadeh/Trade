@@ -19,7 +19,7 @@ class LivePosition:
     symbol: str            # exchange symbol, e.g. BTCUSDT
     side: str              # long / short
     qty: float             # exchange units
-    entry: float
+    entry: float | None  # None if exchange omits entryPrice; markPrice is NOT the fill price.
     ids: list = field(default_factory=list)   # exchange position ids (TheTrueTrade can hold several per symbol)
 
 
@@ -295,8 +295,12 @@ class TheTrueTrade(Adapter):
                 raise ExchangeError(f"Invalid TheTrueTrade position side for {sym}")
             side = "long" if raw_side.upper() == "LONG" else "short"
             q = positive(p.get("size"), f"position size for {sym}")
-            price = (p.get("entryPrice") or p.get("averageEntryPrice") or p.get("markPrice"))
-            entry = positive(price, f"entry price for {sym}")
+            # The API reference's GET /futures/positions example provides
+            # markPrice but does NOT promise entryPrice. Never pretend the
+            # current mark price is the execution price.
+            raw_entry = p.get("entryPrice", p.get("averageEntryPrice"))
+            entry = (positive(raw_entry, f"entry price for {sym}")
+                     if raw_entry is not None else None)
             pid = p.get("id")
             if pid is None or isinstance(pid, bool) or not isinstance(pid, (int, str)) or not str(pid).strip():
                 raise ExchangeError(f"Missing TheTrueTrade position ID for {sym}")
@@ -304,7 +308,12 @@ class TheTrueTrade(Adapter):
             if cur is None:
                 out[sym] = LivePosition(sym, side, q, entry, [pid])
             elif cur.side == side:
-                cur.entry = (cur.entry * cur.qty + entry * q) / (cur.qty + q)
+                if pid in cur.ids or str(pid) in [str(x) for x in cur.ids]:
+                    raise ExchangeError(f"{sym}: duplicate exchange position ID")
+                cur.entry = (
+                    (cur.entry * cur.qty + entry * q) / (cur.qty + q)
+                    if cur.entry is not None and entry is not None else None
+                )
                 cur.qty += q
                 cur.ids.append(pid)
             else:
@@ -324,8 +333,17 @@ class TheTrueTrade(Adapter):
         if side not in ("long", "short"):
             raise ExchangeError("Invalid TheTrueTrade entry side")
         body = {"symbol": symbol, "side": "LONG" if side == "long" else "SHORT", "tradeType": "MARKET", "leverage": int(leverage),
-                "size": self._fmt(qty), "walletType": "debit", "stopLoss": self._fmt(stop)}
-        self.request("POST", "/futures/positions", body=body)
+                "size": self._fmt(qty), "walletType": "debit",
+                "stopLoss": self._fmt(stop),
+                "stopLossOrderType": "STOP_MARKET", "stopLossStrategy": "LATEST_PRICE"}
+        response = self.request("POST", "/futures/positions", body=body)
+        # Per official API reference, HTTP 201 returns {positionId}. A
+        # successful HTTP status without an ID is an ambiguous outcome, NOT
+        # confirmation that we own the position.
+        pid = response.get("positionId") if isinstance(response, dict) else None
+        if pid is None or isinstance(pid, bool) or not isinstance(pid, (int, str)) or not str(pid).strip():
+            raise ExchangeError("TheTrueTrade entry returned no usable positionId")
+        return str(pid)
 
     def close(self, pos, qty=None):
         left = pos.qty if qty is None else qty
@@ -343,7 +361,8 @@ class TheTrueTrade(Adapter):
                                                                          "stopLossStrategy": "LATEST_PRICE"})
 
     def close_all(self):
-        self.request("POST", "/futures/positions/close-all", body={})
+        # API reference: no request body for this endpoint.
+        self.request("POST", "/futures/positions/close-all")
 
 
 # ------------------------------------------------------------------------------------------------ Binance USDT-M
