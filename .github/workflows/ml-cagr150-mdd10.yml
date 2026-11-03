@@ -1,0 +1,47 @@
+name: "CAGR150 MDD10 - 1280 causal AI variants"
+on:
+  push:
+    branches: [research/ml-cagr150-mdd10-20261103]
+    paths:
+      - ai_research/ml_1280_search.py
+      - ai_research/test_ml_1280_search.py
+      - .github/workflows/ml-cagr150-mdd10.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMBA_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned research stack
+        run: >-
+          python -m pip install
+          numpy==2.2.6 pandas==2.2.3 scipy==1.15.3
+          scikit-learn==1.7.2 numba==0.61.2 matplotlib==3.10.7
+          pytest==8.4.2
+      - name: Unit tests for features labels folds and risk causality
+        run: python -m pytest ai_research/test_ml_1280_search.py -q
+      - name: Restore 2021-26 validated BTC futures source minute archives
+        run: python restore_data.py
+      - name: Train walk-forward 40 causal ML models x 32 risk policies each
+        run: python -u -m ai_research.ml_1280_search
+      - name: Show training and validation evidence
+        run: |
+          ls -l ai_research/output/mdd_under10/ml_150_10/
+          cat ai_research/output/mdd_under10/ml_150_10/top10_each_mode.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cagr150-mdd10-causal-1280
+          path: ai_research/output/mdd_under10/ml_150_10/
+          retention-days: 45
