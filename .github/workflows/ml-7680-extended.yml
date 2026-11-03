@@ -1,0 +1,44 @@
+name: "CAGR150 MDD10 - 7680 extended AI variants"
+on:
+  push:
+    branches: [research/ml-cagr150-mdd10-20261103]
+    paths:
+      - ai_research/ml_7680_extended.py
+      - ai_research/test_ml_7680_extended.py
+      - .github/workflows/ml-7680-extended.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMBA_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned packages
+        run: >-
+          python -m pip install
+          numpy==2.2.6 pandas==2.2.3 scipy==1.15.3
+          scikit-learn==1.7.2 numba==0.61.2 pytest==8.4.2
+      - name: Validate future-free decision logic and 7680 policy catalog
+        run: python -m pytest ai_research/test_ml_7680_extended.py -q
+      - name: Restore verified BTC history
+        run: python restore_data.py
+      - name: Refit causal models each year and search 7680 policies in each mode
+        run: python -u -m ai_research.ml_7680_extended
+      - name: Audit eligible and selected results
+        run: ls -lh ai_research/output/mdd_under10/ml_150_10/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cagr150-mdd10-extended-7680
+          path: ai_research/output/mdd_under10/ml_150_10/
+          retention-days: 45
