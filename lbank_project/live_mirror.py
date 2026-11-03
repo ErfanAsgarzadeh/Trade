@@ -524,6 +524,8 @@ def run(once: bool = False):
                 mirror = None
                 key = None
             else:
+                if cfg["mode"] == "live" and os.getenv("PAPER_DATA_MODE", "demo") == "demo":
+                    raise X.ExchangeError("Refusing real orders while PAPER_DATA_MODE is demo/synthetic")
                 if paper is None:paper = Paper()
                 k = (cfg["mode"], cfg["exchange"])
                 if mirror is None or key != k:
