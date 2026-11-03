@@ -1,0 +1,56 @@
+name: "Trade-level 1010 AI experiments plus 27 OOS signal filters"
+on:
+  push:
+    branches: [research/ai-150cagr-under10dd-20261103]
+    paths:
+      - ai_research/ai150_trade_screen.py
+      - ai_research/test_ai150_trade_screen.py
+      - .github/workflows/ai150-trade-training.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  trade_risk_research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install reproducible AI trade research dependencies
+        run: >-
+          python -m pip install
+          numpy==2.2.6 pandas==2.2.3 scipy==1.15.3
+          scikit-learn==1.7.2 numba==0.61.2
+          matplotlib==3.10.7 pytest==8.4.2
+          xgboost==2.1.4 hmmlearn==0.3.3 tabulate==0.9.0
+      - name: Verify causal trade root feature history, model isolation and exit-time purge
+        run: python -m pytest ai_research/test_ai150_trade_screen.py -q
+      - name: Restore SHA256-checked historical 35-symbol cached trade ledger
+        run: python restore_data.py
+      - name: Train 1010 historical trade-level model specs on 2023 and 2024 OOS folds
+        run: python -u -m ai_research.ai150_trade_screen
+      - name: Output candidate and rejection/acceptance metrics
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("ai_research/output/mdd_under10/ai1000/trade_ai_result.json")
+          d=json.loads(p.read_text())
+          print("Status",d["status"],"Models fitted",d.get("fitted_models"))
+          print("Candidate",d.get("winning_selection_pre2025"))
+          print("Comparisons",d.get("all_scenarios"))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai150-trade-level-expectancy-research
+          path: ai_research/output/mdd_under10/ai1000/trade_ai*
+          retention-days: 45
