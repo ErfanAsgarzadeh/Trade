@@ -91,6 +91,8 @@ services:
     init: true
     environment:
       PAPER_EQUITY: ${PAPER_EQUITY:-10000}
+      PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
+      LBANK_OFFICIAL_CANDLES: ${LBANK_OFFICIAL_CANDLES:-0}
       BOT_CONFIG: /app/runtime/config.json
       BOT_DB: ${BOT_DB_PATH:-/app/runtime/lbank_ichimoku_bot.db}
       C3_CONFIG: /app/runtime/c3_config.json
