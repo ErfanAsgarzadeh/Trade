@@ -65,3 +65,12 @@ def test_risk_size_gate_bounds_and_exact_policy_count():
         v=S.size_rule(p,i)
         assert len(v)==len(p)
         assert v.min()>=0 and v.max()<=2.
+
+def test_uniform_risk_scaling_is_not_mistaken_for_predictive_alpha():
+    d=fake_roots(1800)
+    # rule 0 with score .5 simply raises *every* entry to 1.15x risk.
+    # Such a rule cannot increase the R per unit of risk.
+    p=np.full(len(d),.5,float)
+    seen=np.ones(len(d),dtype=bool)
+    score=S.surrogate_score(d,p,seen,0,1.0)
+    assert score==float("-inf")
