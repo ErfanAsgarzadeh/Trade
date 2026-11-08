@@ -63,7 +63,7 @@ def find_signal_end(c,conf):
         return rows,now,C.signal(df,conf),df
 
 def test_long_entry_trail_and_stop(tmp_path):
-    conf=cfg(skip_weekend=False,confirm_bars=0);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
+    conf=cfg(skip_weekend=False,confirm_bars=0,profit_lock_arm_r=0.,partial_target_r=0.);c=uptrend_with_dip();rows,now,side,df=find_signal_end(c,conf)
     assert side=='long'
     st=C.Store(tmp_path/'c3.db');data=FakeData(rows,float(c[-1]));sl=C.Sleeve({**conf},st,data)
     sl.c['symbols']=['AVAX/USDT:USDT'];assert sl.scan(now)
@@ -140,3 +140,66 @@ def test_started_inside_the_bot(tmp_path,monkeypatch):
     stop=threading.Event();stop.set()
     t=C.start_in_bot(E(),stop);t.join(5);assert not t.is_alive() and (tmp_path/'c3_config.json').exists()
     monkeypatch.setenv('C3_IN_BOT','0');assert C.start_in_bot(E(),stop) is None
+
+
+def held(st,side='long',entry=100.,qty=10.,stop=96.):
+    """Insert an open position directly: initial risk = |entry - stop| per unit."""
+    with st.db() as db:db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',('AVAX/USDT:USDT',side,entry,qty,stop,entry,1.,0,0,qty*abs(entry-stop)))
+
+def test_profit_lock_then_partial_then_locked_stop(tmp_path):
+    """Win-rate rule: at +1R the stop goes to +0.1R; half closes once at +2R; the rest exits at the locked stop."""
+    conf=cfg();assert (conf['profit_lock_arm_r'],conf['profit_lock_r'],conf['partial_target_r'],conf['partial_close_frac'])==(1.,.1,2.,.5)
+    st=C.Store(tmp_path/'c3.db');data=FakeData([],103.9);sl=C.Sleeve({**conf,'symbols':['AVAX/USDT:USDT']},st,data);held(st)
+    sl.watchdog(10.);assert st.positions()[0]['stop']==96.                # 0.975R: nothing yet
+    data.px=104.;sl.watchdog(11.);assert st.positions()[0]['stop']==pytest.approx(100.4)
+    data.px=101.;sl.watchdog(12.);assert st.positions()[0]['stop']==pytest.approx(100.4)   # ratchet only
+    data.px=108.;sl.watchdog(13.);p=st.positions()[0]
+    assert p['qty']==pytest.approx(5.) and p['risk_usd']==pytest.approx(20.) and p['stop']==pytest.approx(100.4)
+    data.px=109.;sl.watchdog(14.);assert st.positions()[0]['qty']==pytest.approx(5.)        # partial only once
+    data.px=100.3;sl.watchdog(15.);assert not st.positions()
+    with st.db() as db:rows=db.execute('SELECT reason,qty,exit,pnl FROM trades ORDER BY id').fetchall()
+    assert [r[0] for r in rows]==['partial','stop'] and rows[0][1]==pytest.approx(5.)
+    assert rows[0][3]==pytest.approx(8*5-(100+108)*5*.0006) and rows[1][3]==pytest.approx(.3*5-(100+100.3)*5*.0006)
+    with st.db() as db:assert not db.execute('SELECT * FROM partial_done').fetchall()
+
+def test_profit_lock_short_side(tmp_path):
+    st=C.Store(tmp_path/'c3.db');data=FakeData([],95.);sl=C.Sleeve({**cfg(),'symbols':['AVAX/USDT:USDT']},st,data);held(st,'short',100.,10.,105.)
+    sl.watchdog(10.);assert st.positions()[0]['stop']==pytest.approx(99.5)
+    data.px=99.6;sl.watchdog(11.);assert not st.positions()
+
+def test_rules_off_change_nothing(tmp_path):
+    st=C.Store(tmp_path/'c3.db');data=FakeData([],120.);sl=C.Sleeve({**cfg(profit_lock_arm_r=0.,partial_target_r=0.),'symbols':['AVAX/USDT:USDT']},st,data);held(st)
+    sl.watchdog(10.);p=st.positions()[0];assert p['stop']==96. and p['qty']==10.
+
+def test_partial_too_small_keeps_position_whole(tmp_path):
+    class Coarse(FakeData):
+        def precision(self,s,q):return float(int(q))
+    st=C.Store(tmp_path/'c3.db');data=Coarse([],108.);sl=C.Sleeve({**cfg(),'symbols':['AVAX/USDT:USDT']},st,data);held(st,qty=1.)
+    sl.watchdog(10.);p=st.positions()[0];assert p['qty']==1. and p['stop']==pytest.approx(100.4)
+    with st.db() as db:assert db.execute('SELECT COUNT(*) FROM trades').fetchone()[0]==0
+
+def test_exit_rule_validation():
+    for bad in (dict(profit_lock_arm_r=1.,profit_lock_r=1.),dict(profit_lock_arm_r=-1.),dict(partial_target_r=-.5),dict(partial_close_frac=1.),dict(partial_close_frac=0.)):
+        with pytest.raises(ValueError):cfg(**bad)
+    old=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text())
+    for k in ('profit_lock_arm_r','profit_lock_r','partial_target_r','partial_close_frac'):old.pop(k)
+    v=C.validate(old);assert v['profit_lock_arm_r']==0. and v['partial_target_r']==0.
+
+
+def test_upgrade_keeps_open_positions_on_old_rules(tmp_path):
+    """Upgrading a running install: the runtime config gets profit_rules_from = now, so positions opened before the upgrade are
+    not touched by the profit lock / half close; positions opened after it are."""
+    import time as _t
+    old=json.loads((Path(__file__).parents[1]/'c3_config.json').read_text())
+    for k in ('profit_lock_arm_r','profit_lock_r','partial_target_r','partial_close_frac'):old.pop(k)
+    rt=tmp_path/'runtime_c3.json';rt.write_text(json.dumps(old))
+    before=_t.time();C.prepare_config(rt,Path(__file__).parents[1]/'c3_config.json');conf=C.load(rt)
+    assert conf['profit_lock_arm_r']==1. and conf['profit_rules_from']>=before
+    st=C.Store(tmp_path/'c3.db');data=FakeData([],108.);sl=C.Sleeve({**conf,'symbols':['AVAX/USDT:USDT']},st,data)
+    with st.db() as db:
+        db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',('AVAX/USDT:USDT','long',100.,10.,96.,100.,before-3600,0,0,40.))   # opened before
+        db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',('DOT/USDT:USDT','long',100.,10.,96.,100.,_t.time()+1,0,0,40.))     # opened after
+    sl.watchdog(_t.time()+5);P={p['symbol']:p for p in st.positions()}
+    assert P['AVAX/USDT:USDT']['qty']==10. and P['AVAX/USDT:USDT']['stop']==96.
+    assert P['DOT/USDT:USDT']['qty']==pytest.approx(5.) and P['DOT/USDT:USDT']['stop']==pytest.approx(100.4)
+    fresh=tmp_path/'fresh.json';C.prepare_config(fresh,Path(__file__).parents[1]/'c3_config.json');assert C.load(fresh)['profit_rules_from']==0.

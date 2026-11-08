@@ -66,7 +66,7 @@ def validate(c:dict)->dict:
 
 def features(rows:list,now:float,c:dict)->pd.DataFrame:
     """Closed 4h candles only, with Wilder ATR as in the backtest."""
-    df=pd.DataFrame(rows,columns=['timestamp','open','high','low','close','volume']).astype(float).iloc[:-1]
+    df=pd.DataFrame(bot.closed_rows(rows),columns=['timestamp','open','high','low','close','volume']).astype(float)
     df=df[df.timestamp+H4*1000<=now*1000].reset_index(drop=True)
     if len(df)<c['lookback']+3*c['atr_period']:raise ValueError('Not enough closed candles')
     steps=np.diff(df.timestamp.to_numpy())//(H4*1000)
@@ -151,7 +151,7 @@ class Store(c3.Store):
             else:db.execute('INSERT INTO pending VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET data=excluded.data',(s,json.dumps(order)))
 
 class Sleeve(c3.Sleeve):
-    NAME=NAME;LOG=LOG
+    NAME=NAME;LOG=LOG;GATE='pa'
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
 
@@ -171,6 +171,7 @@ class Sleeve(c3.Sleeve):
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
                 if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now)
                 elif p['target'] is not None and sign*(price-p['target'])>=0:self.close(p,price,'target',now)
+                else:self.f_cut(p,price,now)
             except Exception:LOG.exception('Ghoghnous watchdog failed for %s',p['symbol'])
         held={p['symbol'] for p in self.store.positions()}
         for s,o in self.store.orders().items():
@@ -214,6 +215,9 @@ class Sleeve(c3.Sleeve):
         risk=planned_risk(c,order)
         if risk is None:
             LOG.info('Ghoghnous skips incompatible or invalid pending order for %s',s);return None
+        fmult=c3.risk_gate.multiplier(self.GATE)   # F risk manager; exactly 1.0 while F is switched off
+        if fmult<=0:return None
+        risk*=fmult
         eq=self.equity()
         if eq<=0:return None
         notional=risk*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
@@ -231,6 +235,7 @@ class Sleeve(c3.Sleeve):
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
             db.execute('INSERT OR REPLACE INTO exits VALUES(?,?,?,?)',(s,now,target,entry_bar))
+        c3.risk_gate.record(self.GATE,f'{s}|{now}')
         LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %s qty %.6g policy %s volume x%.3g planned risk %.4f%%',s,order['side'],price,stop,'none' if target is None else f'{target:.6g}',qty,c['strategy_variant'],c['volume_multiplier'],risk*100);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))

@@ -1,0 +1,355 @@
+{
+  "captured_at": 1792138256,
+  "results": [
+    {
+      "symbol": "AAVE/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ADA/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ALGO/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ALICE/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ATOM/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "AVAX/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "AXS/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "BCH/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "BTC/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "C98/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "CELR/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "CRV/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "CVC/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "DOGE/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "DOT/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "EGLD/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ETC/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ETH/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "FIL/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "IOST/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "IOTA/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "KSM/USDT:USDT",
+      "rows": 1000,
+      "closed": 999,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "LINK/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "LTC/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "NEAR/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "ONE/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "SHIB/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "SOL/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "SUSHI/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "THETA/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "TRX/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "UNI/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "VET/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "XRP/USDT:USDT",
+      "rows": 1000,
+      "closed": 999,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    },
+    {
+      "symbol": "XTZ/USDT:USDT",
+      "rows": 1000,
+      "closed": 1000,
+      "bad_ohlcv": 0,
+      "gaps_in_last800": 0,
+      "last": 1792123200,
+      "expected": 1792123200,
+      "ready": true
+    }
+  ]
+}

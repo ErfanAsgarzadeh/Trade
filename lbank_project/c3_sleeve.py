@@ -10,6 +10,10 @@ Rules, on CLOSED 4h candles (same definitions as the backtest):
   entry at the current price, initial stop = entry -/+ 2 x ATR14 of the signal candle; skip stops < 0.4% of price
   trail: at every later closed candle, best close -/+ 4.5 x ATR14 of that candle; the stop only ratchets
   exit when the price touches the stop. One position per coin; own DB and config.
+  profit lock (win-rate study, high_cagr/output/ideas/winrate/report_fa.html): once the price is profit_lock_arm_r x the
+  initial risk in favour, the stop ratchets to entry + profit_lock_r x risk; partial_close_frac of the size closes once at
+  partial_target_r x risk. 0 turns either off. Checked by the stop watchdog on the live price. Only positions opened at or after
+  profit_rules_from (unix time; set to the upgrade time when an existing runtime config first receives these keys) use them.
 Runs inside the main bot (lbank_bot.run starts it in its own thread; C3_IN_BOT=0 turns that off) or alone with
 `python c3_sleeve.py`. Inside the bot it sizes on the shared paper account: one seed + both realized P&Ls + both net unrealized P&Ls.
 Sizing: risk_per_trade_pct of that equity / (stop distance + round-trip fee + slippage allowance),
@@ -21,11 +25,13 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+import risk_gate
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
-    stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[])
+    stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[],
+    profit_lock_arm_r=0.,profit_lock_r=.1,partial_target_r=0.,partial_close_frac=.5,profit_rules_from=0.)
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -36,13 +42,17 @@ def validate(c:dict)->dict:
     if c['timeframe']!='4h':raise ValueError('C3 was researched on 4h only')
     if not (0<c['risk_per_trade_pct']<=.01 and 0<c['max_notional_pct']<=1 and c['stop_atr']>0 and c['trail_atr']>0):raise ValueError('Invalid C3 risk settings')
     if not (type(c['confirm_bars']) is int and 0<=c['confirm_bars']<=12):raise ValueError('confirm_bars must be an int 0..12')
+    if not (0<=c['profit_lock_arm_r']<=20 and 0<=c['profit_lock_r']<=20 and (c['profit_lock_arm_r']==0 or c['profit_lock_r']<c['profit_lock_arm_r'])):
+        raise ValueError('profit lock: 0 <= profit_lock_r < profit_lock_arm_r <= 20 (arm 0 = off)')
+    if not (0<=c['partial_target_r']<=20 and 0<c['partial_close_frac']<1):raise ValueError('partial: 0 <= partial_target_r <= 20 (0 = off), 0 < partial_close_frac < 1')
+    if not (isinstance(c['profit_rules_from'],(int,float)) and c['profit_rules_from']>=0):raise ValueError('profit_rules_from must be a unix time >= 0')
     if c['candle_fetch_limit']<c['ema_slow']*3:raise ValueError('candle_fetch_limit too small for the EMA warm-up')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('C3 needs a list of distinct symbols')
     return c
 
 def features(rows:list,now:float,c:dict)->pd.DataFrame:
     """Closed candles only (the exchange's last, forming candle is dropped), with EMA/RSI/ATR as in the backtest."""
-    df=pd.DataFrame(rows,columns=['timestamp','open','high','low','close','volume']).astype(float).iloc[:-1]
+    df=pd.DataFrame(bot.closed_rows(rows),columns=['timestamp','open','high','low','close','volume']).astype(float)
     df=df[df.timestamp+H4*1000<=now*1000].reset_index(drop=True)
     if len(df)<c['ema_slow']+5:raise ValueError('Not enough closed candles')
     if (np.diff(df.timestamp.to_numpy())!=H4*1000).any():raise ValueError('Gaps in candle history')
@@ -84,6 +94,7 @@ class Store:
             db.execute('CREATE TABLE IF NOT EXISTS scanned(symbol TEXT PRIMARY KEY,candle_ts INTEGER)')
             db.execute('CREATE TABLE IF NOT EXISTS pending(symbol TEXT PRIMARY KEY,data TEXT)')
             db.execute('CREATE TABLE IF NOT EXISTS position_margin(symbol TEXT PRIMARY KEY,opened REAL,isolated_leverage INTEGER NOT NULL)')
+            db.execute('CREATE TABLE IF NOT EXISTS partial_done(symbol TEXT,opened REAL,PRIMARY KEY(symbol,opened))')
     def db(self):return sqlite3.connect(self.path,timeout=30)
     def positions(self)->list[dict]:
         with self.db() as db:
@@ -92,7 +103,7 @@ class Store:
         with self.db() as db:return float(db.execute('SELECT COALESCE(SUM(pnl),0) FROM trades').fetchone()[0])
 
 class Sleeve:
-    NAME='Mojsavar';LOG=LOG
+    NAME='Mojsavar';LOG=LOG;GATE='c3'
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
     @property
@@ -116,8 +127,28 @@ class Sleeve:
             if not db.execute('DELETE FROM positions WHERE symbol=? AND opened=?',(p['symbol'],p['opened'])).rowcount:return 0.0
             else:
                 db.execute('DELETE FROM position_margin WHERE symbol=? AND opened=?',(p['symbol'],p['opened']))
+                db.execute('DELETE FROM partial_done WHERE symbol=? AND opened=?',(p['symbol'],p['opened']))
                 db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,p['qty'],p['opened'],now,pnl,reason))
         self.LOG.info('%s close %s %s at %.6g pnl %.2f (%s)',self.NAME,p['symbol'],p['side'],price,pnl,reason);return pnl
+
+    def reduce(self,p:dict,price:float,keep:float,reason:str,now:float)->float:
+        """Close (1-keep) of a position at price (F risk manager); the rest stays open with the same stop."""
+        with self.execution_lock():
+            cut=p['qty']*(1-keep);sign=1 if p['side']=='long' else -1
+            pnl=sign*(price-p['entry'])*cut-(p['entry']+price)*cut*self.c['round_trip_fee']/2
+            with self.store.db() as db:
+                if not db.execute('UPDATE positions SET qty=qty*?,risk_usd=risk_usd*? WHERE symbol=? AND opened=?',(keep,keep,p['symbol'],p['opened'])).rowcount:return 0.0
+                db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,cut,p['opened'],now,pnl,reason))
+        self.LOG.info('%s reduce %s to %.0f%% at %.6g pnl %.2f (%s)',self.NAME,p['symbol'],keep*100,price,pnl,reason);return pnl
+
+    def f_cut(self,p:dict,price:float,now:float)->bool:
+        """F risk manager on an open position (no-op while F is off). True if the position was reduced or closed."""
+        key=f"{p['symbol']}|{p['opened']}";keep=risk_gate.keep_fraction(self.GATE,key,now)
+        if keep>=1:return False
+        cs=float(self.data.market(p['symbol']).get('contractSize') or 1)
+        if keep<=0 or not self.data.tradable(p['symbol'],p['qty']*keep/cs,price):
+            self.close(p,price,'f_cut',now);risk_gate.forget(self.GATE,key);return True
+        self.reduce(p,price,keep,'f_cut',now);risk_gate.mark(self.GATE,key,now);return True
 
     def close_all(self,reason:str='manual',now:float|None=None)->list[dict]:
         now=now or time.time();out=[]
@@ -131,8 +162,39 @@ class Sleeve:
         for p in self.store.positions():
             try:
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
-                if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now)
+                if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now);continue
+                if self.f_cut(p,price,now):continue   # F reduced/closed it: re-read before the profit rules act
+                self.manage_profit(p,price,now)
             except Exception:LOG.exception('Mojsavar watchdog failed for %s',p['symbol'])
+
+    def manage_profit(self,p:dict,price:float,now:float):
+        """Partial close at partial_target_r, then the profit-lock ratchet (it acts from the next price check on)."""
+        c=self.c;sign=1 if p['side']=='long' else -1
+        if p['qty']<=0 or p['risk_usd']<=0 or p['opened']<c['profit_rules_from']:return   # positions opened before the upgrade keep the old rules
+        dist=p['risk_usd']/p['qty'];move=sign*(price-p['entry'])/dist
+        if c['partial_target_r']>0 and move>=c['partial_target_r']:
+            with self.execution_lock():self._partial(p,price,now)
+        if c['profit_lock_arm_r']>0 and move>=c['profit_lock_arm_r']:
+            lock=p['entry']+sign*c['profit_lock_r']*dist
+            if sign*(lock-p['stop'])>0:
+                ratchet='MAX' if sign==1 else 'MIN'
+                with self.execution_lock(), self.store.db() as db:
+                    db.execute(f'UPDATE positions SET stop={ratchet}(stop,?) WHERE symbol=? AND opened=?',(lock,p['symbol'],p['opened']))
+                self.LOG.info('%s profit lock %s stop -> %.6g (%.2fR reached)',self.NAME,p['symbol'],lock,move)
+
+    def _partial(self,p:dict,price:float,now:float):
+        with self.store.db() as db:
+            if db.execute('SELECT 1 FROM partial_done WHERE symbol=? AND opened=?',(p['symbol'],p['opened'])).fetchone():return 0.0
+            row=db.execute('SELECT qty,risk_usd FROM positions WHERE symbol=? AND opened=?',(p['symbol'],p['opened'])).fetchone()
+            db.execute('INSERT INTO partial_done VALUES(?,?)',(p['symbol'],p['opened']))
+            if not row:return 0.0
+            qty,risk=row;cs=float(self.data.market(p['symbol']).get('contractSize') or 1)
+            part=self.data.precision(p['symbol'],qty*self.c['partial_close_frac']/cs)*cs
+            if part<=0 or part>=qty or not self.data.tradable(p['symbol'],part/cs,price):return 0.0   # too small to split: keep it whole
+            sign=1 if p['side']=='long' else -1;pnl=sign*(price-p['entry'])*part-(p['entry']+price)*part*self.c['round_trip_fee']/2
+            db.execute('UPDATE positions SET qty=?,risk_usd=? WHERE symbol=? AND opened=?',(qty-part,risk*(qty-part)/qty,p['symbol'],p['opened']))
+            db.execute('INSERT INTO trades(symbol,side,entry,exit,qty,opened,closed,pnl,reason) VALUES(?,?,?,?,?,?,?,?,?)',(p['symbol'],p['side'],p['entry'],price,part,p['opened'],now,pnl,'partial'))
+        self.LOG.info('%s partial %s %.6g of %.6g at %.6g pnl %.2f',self.NAME,p['symbol'],part,qty,price,pnl);return pnl
 
     def scan(self,now:float|None=None)->bool:
         now=now or time.time();ok=True;c=self.c
@@ -175,7 +237,9 @@ class Sleeve:
         if dist<=0 or dist/price<c['min_stop_pct']:return None
         eq=self.equity()
         if eq<=0:return None
-        notional=c['risk_per_trade_pct']*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
+        fmult=risk_gate.multiplier(self.GATE)   # F risk manager; exactly 1.0 while F is switched off
+        if fmult<=0:return None
+        notional=c['risk_per_trade_pct']*fmult*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
         account=self.shared_account
         pooled=account is not None and account.engine.config.read()['portfolio_risk']['margin_allocation_mode']=='SHARED_POOL'
         if not pooled:notional=min(notional,c['max_notional_pct']*eq)
@@ -188,6 +252,7 @@ class Sleeve:
         with self.store.db() as db:
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,side,price,qty,stop,float(b.close),now,int(b.timestamp),int(b.timestamp),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
+        risk_gate.record(self.GATE,f'{s}|{now}')
         LOG.info('Mojsavar open %s %s at %.6g stop %.6g qty %.6g',s,side,price,stop,qty);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))
@@ -228,6 +293,8 @@ def prepare_config(path:Path,shipped:Path)->Path:
     if not path.exists():
         path.parent.mkdir(parents=True,exist_ok=True);path.write_text(shipped.read_text());return path
     cur=json.loads(path.read_text());new={**{k:v for k,v in ship.items() if k not in cur},**cur}
+    if 'profit_lock_arm_r' not in cur and 'profit_rules_from' not in cur:
+        new['profit_rules_from']=time.time()   # upgrade of a running install: open positions keep their old exit rules
     if cur.get('risk_per_trade_pct') in (OLD_DEFAULT_RISK,.002):new['risk_per_trade_pct']=ship['risk_per_trade_pct']
     if new!=cur:
         LOG.info('Mojsavar runtime config upgraded: %s',{k:new[k] for k in new if cur.get(k)!=new[k]});path.write_text(json.dumps(new,indent=2))
