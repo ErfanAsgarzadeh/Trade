@@ -421,6 +421,27 @@ def create_app(engine: Engine | None = None) -> FastAPI:
                 "state": {k: st.get(k) for k in ("managed", "paused", "errors", "equity_live", "equity_paper", "ratio", "unmanaged", "last_cycle")},
                 "log": log[::-1]}
 
+    @application.get("/api/live/readiness", dependencies=[Depends(authorized)])
+    def live_readiness():
+        """Run a strictly read-only TheTrueTrade preflight; this endpoint cannot enable trading."""
+        import exchanges as EX
+        import live_mirror as LM
+        import ttt_live_readiness as readiness
+
+        cfg, status = readiness.load_local_config(LM.folder() / "live_config.json")
+        try:
+            return readiness.run(EX.TheTrueTrade(), cfg, status)
+        except Exception as exc:
+            # Do not expose API response bodies, account identifiers, or credentials.
+            return {
+                "read_only": True,
+                "conclusion": "ERROR_NOT_READY",
+                "configuration_file_status": status,
+                "error_category": "READ_ONLY_EXCHANGE_OR_CONFIG_ERROR",
+                "error_type": type(exc).__name__,
+                "live_trading_authorized": False,
+            }
+
     @application.put("/api/live/config", dependencies=[Depends(authorized)])
     def live_config(payload: dict):
         import live_mirror as LM
@@ -652,7 +673,7 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <label class="field">Max position size (USD notional)<input id="lv_cap" type="number" min="1" step="1"></label>
 <label class="field">Max open positions<input id="lv_maxpos" type="number" min="1" max="100" step="1"></label>
 <label class="field">Copy entries up to (minutes late)<input id="lv_delay" type="number" min="1" max="240" step="1"></label></div>
-<div class="gap" style="margin-top:14px"><button id="lv_save" disabled>Save live settings</button><button class="subtle" id="lv_test" disabled>Test connection</button><button class="danger" id="lv_panic" disabled>Close all mirrored positions</button></div>
+<div class="gap" style="margin-top:14px"><button id="lv_save" disabled>Save live settings</button><button class="subtle" id="lv_test" disabled>Test connection</button><button class="subtle" id="lv_readiness" disabled>Read-only readiness audit</button><button class="danger" id="lv_panic" disabled>Close all mirrored positions</button></div>
 <p class="small" id="lv_status">—</p><p class="small" id="lv_result"></p>
 <div class="scroll"><table><thead><tr><th>Symbol</th><th>Bot</th><th>Side</th><th class="num">Live qty</th><th class="num">Stop</th><th>Opened</th></tr></thead><tbody id="lv_rows"></tbody></table></div>
 <details><summary>Mirror log</summary><div class="scroll" style="max-height:320px"><table><tbody id="lv_log"></tbody></table></div></details></section>
@@ -966,8 +987,32 @@ $('lv_save').onclick=async()=>{const body={exchange:$('lv_exchange').value,mode:
  if(body.mode==='live'&&(!lv||lv.config.mode!=='live')){const t=prompt('Real orders with real money on '+body.exchange+'. Type LIVE to confirm.');if(t!=='LIVE'){message('Live mode not confirmed; nothing changed.',true);return;}body.confirm='LIVE';}
  try{await api('/api/live/config','PUT',body);message('Live settings saved ('+body.mode+' on '+body.exchange+').');await loadLive();}catch(e){message(e.message,true);}};
 $('lv_test').onclick=async()=>{$('lv_result').textContent='Testing…';try{const r=(await api('/api/live/test','POST',{exchange:$('lv_exchange').value})).data;$('lv_result').textContent=r.message;$('lv_result').className='small '+(r.ok?'good':'bad');}catch(e){$('lv_result').textContent=e.message;$('lv_result').className='small bad';}};
+$('lv_readiness').onclick=async()=>{
+ $('lv_result').textContent='Running read-only TheTrueTrade readiness audit…';
+ try{
+  const r=(await api('/api/live/readiness')).data;
+  const labels={
+   LOCAL_LIVE_CONFIG_NOT_VALIDATED:'Live configuration is missing or invalid.',
+   LIVE_MIRROR_MUST_BE_OFF_FOR_AUDIT:'Set the mirror to Off before running this audit.',
+   EXCHANGE_CONFIG_NOT_THETRUETRADE:'The selected exchange is not TheTrueTrade.',
+   NON_OFFICIAL_API_BASE:'The API base URL is not the official TheTrueTrade endpoint.',
+   ADAPTER_NOT_THETRUETRADE:'The selected adapter is not TheTrueTrade.',
+   NEW_ENTRY_STOP_READBACK_NOT_IMPLEMENTED:'The exchange stop-loss cannot yet be independently read back after entry.',
+   STOP_MOVE_READBACK_NOT_IMPLEMENTED:'Trailing stop updates cannot yet be independently verified.',
+   RISK_BASED_POSITION_SIZING_NOT_IMPLEMENTED:'Live risk-based position sizing is not yet enforced.',
+   THREE_BOT_SAME_SYMBOL_POSITION_OWNERSHIP_NOT_RESOLVED:'Same-symbol ownership across bots is not resolved.',
+   LIVE_RISK_POLICY_FIELDS_NOT_CONFIGURED:'Required live risk-policy settings are missing.',
+   ADOPT_EXISTING_POSITIONS_ENABLED:'Adopting pre-existing exchange positions is unsafe.',
+   EXCHANGE_ORDER_MINIMUMS_UNVERIFIED:'One or more exchange order minimums are not verified.',
+   EXISTING_REAL_POSITIONS_NEED_INDEPENDENT_REVIEW:'Existing exchange positions need independent review.'
+  };
+  const blockers=(r.blockers||[]).map(x=>labels[x]||x);
+  $('lv_result').textContent=(r.conclusion||'NOT_READY')+' — '+(blockers.length?blockers.join(' '):'No blockers were reported; this audit does not authorize live trading.');
+  $('lv_result').className='small '+(r.live_trading_authorized?'good':'bad');
+ }catch(e){$('lv_result').textContent='Readiness audit failed: '+e.message;$('lv_result').className='small bad';}
+};
 $('lv_panic').onclick=async()=>{if(!confirm('Close every position the mirror opened on the exchange and stop new entries?'))return;try{const r=(await api('/api/live/close-all','POST',{})).data;message(r.note);}catch(e){message(e.message,true);}};
-const _connect3=$('connect').onclick;$('connect').onclick=async()=>{await _connect3();for(const id of ['lv_save','lv_test','lv_panic'])$(id).disabled=false;await loadLive();};
+const _connect3=$('connect').onclick;$('connect').onclick=async()=>{await _connect3();for(const id of ['lv_save','lv_test','lv_readiness','lv_panic'])$(id).disabled=false;await loadLive();};
 setInterval(loadLive,15000);
 </script></body></html>'''
 
