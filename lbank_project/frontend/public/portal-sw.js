@@ -1,7 +1,7 @@
 "use strict";
 // Cache only the public offline screen. Authenticated pages and API responses
 // always use the network: never leave private balances/licenses on a shared device.
-const CACHE = "trade-offline-v2";
+const CACHE = "trade-offline-v3";
 const OFFLINE = "/portal-assets/offline.html";
 self.addEventListener("install", (event) =>
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add(OFFLINE))),

@@ -140,7 +140,7 @@ export default function AdminWorkbench({
           <p>کاربران، درخواست‌ها و فروش؛ با دسترسی اختصاصی مدیر.</p>
           <span className="pill admin-role">مدیر سامانه</span>
         </div>
-        <a className="button secondary" href="/">
+        <a className="button secondary" href="/dashboard/">
           بازگشت به پنل مشتری ←
         </a>
       </section>

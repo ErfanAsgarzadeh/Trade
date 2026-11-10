@@ -80,7 +80,7 @@ export default function Portal({
       const me = await api.request<Me>("/api/me");
       api.csrf = me.csrf;
       if (registering) {
-        window.location.assign("/");
+        window.location.assign("/dashboard/");
         return;
       }
       setUser(me);
@@ -269,7 +269,7 @@ export default function Portal({
                 {registering ? "از قبل حساب دارید؟ " : "هنوز حساب ندارید؟ "}
                 <a
                   className="text-link"
-                  href={registering ? "/" : "/register/"}
+                  href={registering ? "/dashboard/" : "/register/"}
                 >
                   {registering ? "ورود به حساب" : "ساخت حساب رایگان"}
                 </a>
@@ -283,7 +283,7 @@ export default function Portal({
             <section id="admin-forbidden" className="panel">
               <h1>دسترسی مدیریتی ندارید</h1>
               <p>این بخش فقط برای مدیر سامانه است.</p>
-              <a className="button" href="/">
+              <a className="button" href="/dashboard/">
                 بازگشت به پنل خودم
               </a>
             </section>

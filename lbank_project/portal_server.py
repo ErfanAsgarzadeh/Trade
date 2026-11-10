@@ -130,6 +130,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=[parsed.hostname])
     frontend=Path(os.getenv('PORTAL_FRONTEND_DIR',str(Path(__file__).with_name('frontend')/'out')))
     public=Path(__file__).with_name('frontend')/'public'
+    page_files={'/':'index.html','/register':'register.html','/register/':'register.html','/admin':'admin.html','/admin/':'admin.html','/dashboard':'dashboard.html','/dashboard/':'dashboard.html'}
+    app.mount('/backtest',StaticFiles(directory=public/'backtest'),name='backtest-evidence')
     app.mount('/portal-assets',StaticFiles(directory=public/'portal-assets'),name='portal-assets')
     app.mount('/_next',StaticFiles(directory=frontend/'_next',check_dir=False),name='next-assets')
 
@@ -178,8 +180,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
         script_hashes=''
-        if request.url.path in ('/','/register','/register/','/admin','/admin/'):
-            try:script_hashes=frontend_index(frontend,'admin.html' if request.url.path.startswith('/admin') else 'register.html' if request.url.path.startswith('/register') else 'index.html')[1]
+        if request.url.path in page_files:
+            try:script_hashes=frontend_index(frontend,page_files[request.url.path])[1]
             except OSError:pass
         response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
@@ -206,6 +208,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         try:return HTMLResponse(frontend_index(frontend)[0])
         except OSError:
             return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
+
+    @app.get('/dashboard',response_class=HTMLResponse)
+    @app.get('/dashboard/',response_class=HTMLResponse)
+    def dashboard_page():
+        try:return HTMLResponse(frontend_index(frontend,'dashboard.html')[0])
+        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
 
     @app.get('/register',response_class=HTMLResponse)
     @app.get('/register/',response_class=HTMLResponse)

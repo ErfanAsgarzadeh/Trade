@@ -219,7 +219,8 @@ def test_portal_process_starts_with_file_key_and_owns_persistent_sessions(tmp_pa
                     except httpx.TransportError:pass
                     time.sleep(.1)
                 else:pytest.fail('Portal did not become ready')
-                assert 'پنل اختصاصی' in client.get('/').text
+                assert 'Trade' in client.get('/').text
+                assert 'hero-title' in client.get('/').text
                 assert '/_next/static/' in client.get('/').text
                 assert client.get('/api/me').status_code==401
                 r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':origin},json=dict(username='alice',password=PASSWORD))

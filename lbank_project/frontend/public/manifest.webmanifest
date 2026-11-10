@@ -4,7 +4,7 @@
   "short_name": "Trade",
   "lang": "fa",
   "dir": "rtl",
-  "start_url": "/",
+  "start_url": "/dashboard/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#101512",
