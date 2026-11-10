@@ -41,3 +41,36 @@ def test_probe_never_echoes_upstream_error_bodies():
     result=probe.probe('k','s',Broken())
     assert 'PRIVATE_ERROR' not in json.dumps(result)
     assert all(v['status']=='failed' for v in result['checks'].values())
+
+
+def test_env_file_parses_only_ttt_literals_and_never_executes_shell(tmp_path):
+    config=tmp_path/'.env'
+    marker=tmp_path/'must-not-exist'
+    config.write_text('IGNORED=$(touch '+str(marker)+')\nexport TTT_API_KEY="private-key" # note\nTTT_API_SECRET=\'private#secret\'\n')
+    assert probe.file_credentials(config)==('private-key','private#secret')
+    assert not marker.exists()
+    config.write_text('TTT_API_KEY=key\nTTT_API_KEY=other\nTTT_API_SECRET=secret')
+    with pytest.raises(ValueError):probe.file_credentials(config)
+
+
+def test_repo_env_never_mixes_files_or_guesses_between_accounts(tmp_path,monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path/'lbank_project').mkdir()
+    (tmp_path/'.env').write_text('TTT_API_KEY=one\n')
+    (tmp_path/'lbank_project/.env').write_text('TTT_API_SECRET=secret\n')
+    with pytest.raises(ValueError):probe.repo_credentials()
+    (tmp_path/'.env').write_text('TTT_API_KEY=one\nTTT_API_SECRET=secret\n')
+    assert probe.repo_credentials()==('one','secret')
+    (tmp_path/'lbank_project/.env').write_text('TTT_API_KEY=two\nTTT_API_SECRET=other\n')
+    with pytest.raises(ValueError):probe.repo_credentials()
+
+
+def test_env_cli_never_prints_credentials_or_prompts(tmp_path,monkeypatch,capsys):
+    config=tmp_path/'.env';config.write_text('TTT_API_KEY=PRIVATE_KEY\nTTT_API_SECRET=PRIVATE_SECRET\n')
+    monkeypatch.setattr('sys.argv',['probe','--env-file',str(config)])
+    monkeypatch.setattr(probe,'probe',lambda key,secret:{'read_only':True,'orders_sent':False})
+    monkeypatch.setattr(probe.getpass,'getpass',lambda *a:pytest.fail('Unexpected prompt'))
+    probe.main()
+    output=capsys.readouterr().out
+    assert json.loads(output)['read_only']
+    assert 'PRIVATE' not in output

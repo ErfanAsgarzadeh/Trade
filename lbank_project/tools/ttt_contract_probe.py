@@ -7,6 +7,9 @@ import hmac
 import json
 import math
 import os
+from pathlib import Path
+import re
+import shlex
 import time
 import urllib.error
 import urllib.parse
@@ -87,12 +90,45 @@ def probe(key,secret,opener=None):
     return report
 
 
+def file_credentials(path):
+    """Parse two literal dotenv fields without sourcing shell code or other values."""
+    fields={}
+    for line in Path(path).read_text(encoding='utf-8-sig').splitlines():
+        match=re.fullmatch(r"\s*(?:export\s+)?(TTT_API_KEY|TTT_API_SECRET)\s*=(.*)",line)
+        if not match:continue
+        name,value=match.groups()
+        tokens=shlex.split(value,comments=True,posix=True)
+        if name in fields or len(tokens)!=1 or not tokens[0].strip():
+            raise ValueError('Invalid credential field')
+        fields[name]=tokens[0].strip()
+    if set(fields)!={'TTT_API_KEY','TTT_API_SECRET'}:raise ValueError('Credential pair missing')
+    return fields['TTT_API_KEY'],fields['TTT_API_SECRET']
+
+
+def repo_credentials():
+    root=Path.cwd()
+    if root.name=='lbank_project':root=root.parent
+    pairs=[]
+    for path in (root/'.env',root/'lbank_project/.env'):
+        if path.is_file():
+            try:pairs.append(file_credentials(path))
+            except ValueError:continue
+    unique=set(pairs)
+    if len(unique)!=1:raise ValueError('Select an explicit env file')
+    return unique.pop()
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--from-env',action='store_true',help='Explicitly use TTT_API_KEY/TTT_API_SECRET from this process')
+    source=parser.add_mutually_exclusive_group()
+    source.add_argument('--env-file',type=Path,help='Read only the two TTT fields from this local dotenv file; never execute it')
+    source.add_argument('--repo-env',action='store_true',help='Use one unambiguous credential pair from .env or lbank_project/.env')
+    source.add_argument('--from-env',action='store_true',help='Explicitly use TTT_API_KEY/TTT_API_SECRET from this process')
     args=parser.parse_args()
     try:
-        if args.from_env:key,secret=os.getenv('TTT_API_KEY',''),os.getenv('TTT_API_SECRET','')
+        if args.env_file:key,secret=file_credentials(args.env_file)
+        elif args.repo_env:key,secret=repo_credentials()
+        elif args.from_env:key,secret=os.getenv('TTT_API_KEY',''),os.getenv('TTT_API_SECRET','')
         else:
             # Refuse getpass's echoing fallback if no controlling terminal exists.
             tty=os.open('/dev/tty',os.O_RDWR);os.close(tty)
@@ -102,7 +138,7 @@ def main():
         result=probe(key.strip(),secret.strip())
     except (OSError,ValueError,EOFError,KeyboardInterrupt):
         result={'read_only':True,'orders_sent':False,'live_trading_authorized':False,
-                'conclusion':'NOT_RUN_LOCAL_TERMINAL_AND_READ_CREDENTIALS_REQUIRED'}
+                'conclusion':'NOT_RUN_VALID_CREDENTIAL_SOURCE_REQUIRED' if args.env_file or args.repo_env or args.from_env else 'NOT_RUN_LOCAL_TERMINAL_AND_READ_CREDENTIALS_REQUIRED'}
     print(json.dumps(result,indent=2))
 
 
