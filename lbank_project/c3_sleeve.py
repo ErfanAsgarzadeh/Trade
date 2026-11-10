@@ -110,6 +110,11 @@ class Sleeve:
     def shared_account(self):
         return self._shared_account() if callable(self._shared_account) else self._shared_account
 
+    def license_entries_allowed(self,now=None):
+        account=self.shared_account
+        seed=account.engine.paper_seed if account is not None else self.c['paper_capital']
+        return bot.license_access.entries_allowed(now,initial_capital=seed)
+
     def equity(self)->float:
         if self.shared_account is not None:return self.shared_account.equity()
         base=self.base_equity() if self.base_equity else self.c['paper_capital']
@@ -229,7 +234,7 @@ class Sleeve:
         with self.execution_lock():return self._open(s,side,b,now)
 
     def _open(self,s:str,side:str,b:pd.Series,now:float):
-        if not bot.license_access.entries_allowed(now):return None
+        if not self.license_entries_allowed(now):return None
         positions=self.store.positions()
         limit=self.c['max_open_positions']
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None

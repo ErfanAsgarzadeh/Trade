@@ -11,12 +11,15 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from portal_store import PortalStore
 from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
 from portal_exchanges import catalog,validate_connection,UnsupportedAccount
+from portal_billing import Billing, BillingConflict
+from capital_plans import catalog as plan_catalog
 
 COOKIE='trade_session'
 
@@ -43,6 +46,18 @@ class Connection(BaseModel):
     exchange_id:str=Field(default='lbank',min_length=2,max_length=40,pattern=r'^[a-z0-9]+$')
     passphrase:SecretStr|None=Field(default=None,max_length=512)
     uid:SecretStr|None=Field(default=None,max_length=128)
+
+
+class LicenseQuote(BaseModel):
+    model_config=ConfigDict(extra='forbid', strict=True)
+    cap_usd:int=Field(ge=1000,le=100000)
+    months:int=Field(ge=1,le=6)
+    kind:str=Field(default='subscription',pattern=r'^(subscription|upgrade)$')
+
+
+class LicenseOrder(LicenseQuote):
+    request_key:str=Field(min_length=16,max_length=80,pattern=r'^[a-zA-Z0-9-]+$')
+    expected_price_cents:int=Field(ge=1,le=200000)
 
 
 def create_app(store=None,reader=None,origin=None,secure=None):
@@ -72,6 +87,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     app=FastAPI(title='Trade customer portal',lifespan=lifespan,docs_url=None,redoc_url=None,openapi_url=None)
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=[parsed.hostname])
+    app.mount('/portal-assets',StaticFiles(directory=Path(__file__).with_name('portal_assets')),name='portal-assets')
 
     def repository(request:Request):return request.app.state.store
 
@@ -127,8 +143,53 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/portal.js')
     def script():return Response(Path(__file__).with_name('portal.js').read_text(),media_type='application/javascript')
 
+    @app.get('/portal_license.js')
+    def license_script():return Response(Path(__file__).with_name('portal_license.js').read_text(),media_type='application/javascript')
+
     @app.get('/portal.css')
     def css():return Response(Path(__file__).with_name('portal.css').read_text(),media_type='text/css')
+
+    @app.get('/manifest.webmanifest')
+    def manifest():
+        return Response(Path(__file__).with_name('portal_assets').joinpath('manifest.webmanifest').read_text(),media_type='application/manifest+json')
+
+    @app.get('/portal-sw.js')
+    def service_worker():
+        return Response(Path(__file__).with_name('portal_assets').joinpath('service-worker.js').read_text(),
+                        media_type='application/javascript',headers={'Service-Worker-Allowed':'/'})
+
+    @app.get('/api/plans')
+    def plans():return plan_catalog()
+
+    @app.get('/api/me/license')
+    def subscription(request:Request,user=Depends(identity)):
+        return Billing(repository(request)).snapshot(user['id'])
+
+    @app.post('/api/me/license/quote')
+    def quote_license(payload:LicenseQuote,request:Request,user=Depends(mutation)):
+        try:return Billing(repository(request)).quote(user['id'],payload.cap_usd,payload.months,payload.kind)
+        except BillingConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError:raise HTTPException(422,'Unknown tier or term')
+
+    @app.post('/api/me/license/orders',status_code=201)
+    def request_license(payload:LicenseOrder,request:Request,user=Depends(mutation)):
+        try:return Billing(repository(request)).order(user['id'],payload.cap_usd,payload.months,payload.kind,
+                    payload.request_key,payload.expected_price_cents)
+        except BillingConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError:raise HTTPException(422,'Unknown tier or term')
+
+    @app.post('/api/me/license/orders/{order_id}/cancel')
+    def cancel_license(order_id:str,request:Request,user=Depends(mutation)):
+        try:Billing(repository(request)).cancel(user['id'],order_id)
+        except BillingConflict:raise HTTPException(404,'Pending order not found')
+        return {'status':'cancelled'}
+
+    @app.get('/api/me/license/download')
+    def download_license(request:Request,user=Depends(identity)):
+        try:document=Billing(repository(request)).document(user['id'])
+        except BillingConflict:raise HTTPException(404,'No issued license')
+        return Response(document,media_type='application/json',
+                        headers={'Content-Disposition':'attachment; filename="trade-license.json"'})
 
     @app.get('/healthz')
     def health(request:Request):

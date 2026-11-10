@@ -11,6 +11,7 @@ import json
 import os
 from pathlib import Path
 import time
+import math
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -28,7 +29,21 @@ def timestamp(value: str) -> float:
     return dt.timestamp()
 
 
-def status(now: float | None = None) -> dict:
+def verify_document(document: str, public_key: bytes) -> dict:
+    """Verify issuer signature before inspecting or installing a license."""
+    if len(document.encode('utf-8')) > 16384:
+        raise ValueError('License too large')
+    envelope = json.loads(document)
+    if set(envelope) != {'payload', 'signature'}:
+        raise ValueError('Invalid license envelope')
+    key = serialization.load_pem_public_key(public_key)
+    if not isinstance(key, Ed25519PublicKey):
+        raise ValueError('Expected Ed25519 issuer')
+    key.verify(base64.b64decode(envelope['signature'], validate=True), canonical(envelope['payload']))
+    return envelope['payload']
+
+
+def status(now: float | None = None, initial_capital: float | None = None) -> dict:
     now = time.time() if now is None else now
     required = os.getenv('BOT_LICENSE_REQUIRED', '0') == '1'
     license_path = os.getenv('BOT_LICENSE_FILE', '')
@@ -43,29 +58,50 @@ def status(now: float | None = None) -> dict:
         path = Path(license_path)
         if not license_path or not key_path or path.stat().st_size > 16384:
             return result
-        envelope = json.loads(path.read_text(encoding='utf-8'))
-        payload = envelope['payload']
-        if set(envelope) != {'payload', 'signature'} or payload['schema'] != 1:
-            return result
-        key = serialization.load_pem_public_key(Path(key_path).read_bytes())
-        if not isinstance(key, Ed25519PublicKey):
-            return result
-        key.verify(base64.b64decode(envelope['signature'], validate=True), canonical(payload))
+        payload = verify_document(path.read_text(encoding='utf-8'), Path(key_path).read_bytes())
+        if payload['schema'] not in (1, 2):return result
         if payload['customer_id'] != customer:
             return result
         issued = timestamp(payload['issued_at'])
         start = timestamp(payload['not_before'])
         end = timestamp(payload['expires_at'])
-        if not issued <= start < end or not isinstance(payload['plan'], str):
+        if not isinstance(payload['plan'], str) or not start < end or issued >= end:
             return result
+        if payload['schema'] == 1 and not issued <= start:return result
+        if payload['schema'] == 2:
+            from capital_plans import money, price_cents
+            cap = payload['cap_usd']
+            price_cents(cap, payload['months'])
+            funded = money(payload['funded_capital_usd'])
+            activation = money(payload['capital_at_activation_usd'], positive=True)
+            if activation > cap or payload['bots'] != ['main', 'c3', 'pa']:
+                return result
+            binding_file = os.getenv('BOT_LICENSE_ACCOUNT_ID_FILE')
+            bound_account = Path(binding_file).read_text().strip() if binding_file else os.getenv('BOT_LICENSE_ACCOUNT_ID')
+            if payload['account_id'] != bound_account:
+                return result
+            grace = payload['grace_ends_at']
+            if funded > cap and (not grace or timestamp(grace) < issued):return result
+            result.update(cap_usd=cap, months=payload['months'], account_id=payload['account_id'],
+                          capital_at_activation_usd=str(activation), funded_capital_usd=str(funded),
+                          grace_ends_at=grace)
         result.update(customer_id=customer, plan=payload['plan'], expires_at=payload['expires_at'])
         result['state'] = 'not_yet_valid' if now < start else 'expired' if now >= end else 'active'
         result['entries_allowed'] = result['state'] == 'active'
+        if payload['schema'] == 2 and result['entries_allowed']:
+            if funded > cap:
+                result['state'] = 'grace' if now < timestamp(grace) else 'capital_exceeded'
+                result['entries_allowed'] = result['state'] == 'grace'
+            # Verify the immutable paper seed, not current equity: trading profits are exempt.
+            seed = initial_capital if initial_capital is not None else os.getenv('PAPER_EQUITY')
+            if seed is not None and (not math.isfinite(float(seed)) or float(seed) > cap or float(seed) <= 0):
+                result.update(state='capital_exceeded', entries_allowed=False)
     except Exception:
         # Do not leak paths, license bodies or signatures through logs/API errors.
         result['state'] = 'invalid'
+        result['entries_allowed'] = False
     return result
 
 
-def entries_allowed(now: float | None = None) -> bool:
-    return status(now)['entries_allowed']
+def entries_allowed(now: float | None = None, initial_capital: float | None = None) -> bool:
+    return status(now, initial_capital)['entries_allowed']

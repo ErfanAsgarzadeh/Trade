@@ -16,6 +16,9 @@ TABLES={
  'audit':('id','user_id','event','at'),
  'account_jobs':('user_id','revision','state','lease_token','lease_until','not_before','attempts','updated'),
  'service_gate':('name','next_at'),
+ 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref'),
+ 'capital_licenses':('user_id','account_id','document','updated'),
+ 'license_cashflows':('user_id','event_id','amount_usd','at'),
 }
 
 

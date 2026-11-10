@@ -24,7 +24,7 @@ HERE = Path(__file__).resolve().parent
 CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
 APP_FILES = ('lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
-             'lbank_candles.py', 'fetch_funding.py', 'license_access.py',
+             'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py',
              'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
@@ -132,6 +132,10 @@ def create(root: Path, customer: str, private: Path, public: Path, port: int,
 
 def renew(root: Path, customer: str, private: Path, days=30, plan='beta') -> Path:
     directory = checked_customer(root, customer)
+    current = license_access.verify_document((directory / 'license' / 'license.json').read_text(),
+                                             (directory / 'license' / 'license_public.pem').read_bytes())
+    if current['schema'] == 2:
+        raise ValueError('Capital licenses must be renewed through portal billing; legacy renew cannot remove capital limits')
     public = serialization.load_pem_public_key((directory / 'license' / 'license_public.pem').read_bytes())
     key = serialization.load_pem_private_key(private.read_bytes(), password=None)
     if key.public_key().public_bytes(serialization.Encoding.Raw,
@@ -145,12 +149,40 @@ def renew(root: Path, customer: str, private: Path, days=30, plan='beta') -> Pat
     return directory / 'license' / 'license.json'
 
 
+def install_license(root: Path, customer: str, source: Path) -> Path:
+    """Install an issuer-approved license without changing configs, balances or positions."""
+    directory = checked_customer(root, customer)
+    document = source.read_text(encoding='utf-8')
+    public = (directory / 'license' / 'license_public.pem').read_bytes()
+    payload = license_access.verify_document(document, public)
+    if payload.get('schema') != 2 or payload.get('customer_id') != customer:
+        raise ValueError('Expected a capital license issued for this customer')
+    from capital_plans import money, price_cents
+    price_cents(payload['cap_usd'], payload['months'])
+    if money(payload['capital_at_activation_usd'], positive=True) > payload['cap_usd']:
+        raise ValueError('Activation capital exceeds license tier')
+    if license_access.timestamp(payload['not_before']) >= license_access.timestamp(payload['expires_at']):
+        raise ValueError('Invalid license period')
+    account = payload['account_id']
+    if not re.fullmatch(r'[a-z0-9][a-z0-9:._-]{2,119}', account):
+        raise ValueError('Invalid account binding')
+    binding = directory / 'license' / 'account_id'
+    if binding.exists() and binding.read_text().strip() != account:
+        raise ValueError('Customer installation is bound to another exchange account')
+    if not binding.exists():private_write(binding, (account + '\n').encode())
+    with tempfile.NamedTemporaryFile(dir=directory / 'license', delete=False) as out:
+        out.write(document.encode('utf-8'));out.flush();os.fsync(out.fileno());temporary = Path(out.name)
+    temporary.chmod(0o600);temporary.replace(directory / 'license' / 'license.json')
+    return directory / 'license' / 'license.json'
+
+
 def export(root: Path, customer: str, output: Path) -> Path:
     """Initial handoff only: allowlist code + bootstrap config, never databases or issuer keys."""
     directory = checked_customer(root, customer)
     names = ['compose.yml', 'README_FA.md', 'customer.json', '.env', 'license/license.json',
              'license/license_public.pem', 'secrets/dashboard_pin']
     names += ['app/' + name for name in APP_FILES]
+    if (directory / 'license' / 'account_id').is_file():names.append('license/account_id')
     names += ['runtime/' + name for name in ('config.json', 'c3_config.json', 'pa_config.json')]
     configs = [json.loads((directory / 'runtime' / n).read_text())
                for n in ('config.json', 'c3_config.json', 'pa_config.json')]
@@ -175,6 +207,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     actions = parser.add_subparsers(dest='action', required=True)
     keys = actions.add_parser('keygen');keys.add_argument('--private-key', type=Path, required=True);keys.add_argument('--public-key', type=Path, required=True)
+    install = actions.add_parser('install-license');install.add_argument('customer')
+    install.add_argument('--root', type=Path, default=Path('customers'));install.add_argument('--file', type=Path, required=True)
     for action in ('create', 'renew', 'export'):
         sub = actions.add_parser(action);sub.add_argument('customer');sub.add_argument('--root', type=Path, default=Path('customers'))
         if action != 'export':
@@ -186,6 +220,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.action == 'keygen':keygen(args.private_key,args.public_key);print('Issuer keys created; keep the private key private.')
+        elif args.action == 'install-license':print(install_license(args.root,args.customer,args.file))
         elif args.action == 'create':print(create(args.root,args.customer,args.private_key,args.public_key,args.port,args.paper_capital,args.days,args.plan,args.data_mode))
         elif args.action == 'renew':print(renew(args.root,args.customer,args.private_key,args.days,args.plan))
         else:print(export(args.root,args.customer,args.output))

@@ -1069,7 +1069,7 @@ class Engine:
                 pass
 
     def _insert(self, p: dict):
-        if not license_access.entries_allowed():
+        if not license_access.entries_allowed(initial_capital=self.paper_seed):
             raise PermissionError('Customer license does not permit new entries')
         keys = list(p)
         with self.db.connect() as db:
@@ -1082,7 +1082,7 @@ class Engine:
                        (p["symbol"], p["timeframe"], p["signal_ts"]))
 
     def _activate(self, p: dict, price: float, now: float | None = None) -> bool:
-        if not license_access.entries_allowed(now):
+        if not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             return False
         self.assert_paper(p)
         fmult = risk_gate.multiplier("main", now)   # F risk manager; exactly 1.0 while F is switched off
@@ -1244,7 +1244,7 @@ class Engine:
         The paper position stores the weighted entry; costs/PnL remain linear.
         Root entry/R and the scale-in ledger remain separate for audit/restarts.
         """
-        if not license_access.entries_allowed(now):
+        if not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             return False
         frozen = json.loads(p.get("strategy_config", "{}"))
         settings = frozen.get("strategy_settings", {})
@@ -1339,7 +1339,7 @@ class Engine:
         now = now if now is not None else time.time()
         # Never stop risk management solely because config reload failed.
         try:
-            auto = self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now)
+            auto = self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now, initial_capital=self.paper_seed)
         except Exception:
             LOG.exception("Invalid configuration: blocking pending entries")
             auto = False
@@ -1352,7 +1352,7 @@ class Engine:
                     self.assert_paper(p)
                     # Re-read auto under the execution lock after a possible panic.
                     try:
-                        auto_now = auto and self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now)
+                        auto_now = auto and self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now, initial_capital=self.paper_seed)
                     except Exception:
                         auto_now = False
                     if p["state"] == PENDING and (not auto_now or now >= p["expiry_ts"]):
@@ -1488,7 +1488,7 @@ class Engine:
                 failed = True
                 LOG.exception("Trailing scan failed for %s", old["symbol"])
                 self.db.runtime_set("last_error", str(exc))
-        if not c["bot_control"]["auto_trade_enabled"] or not license_access.entries_allowed(now):
+        if not c["bot_control"]["auto_trade_enabled"] or not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             self.db.runtime_set("scanner_at", now)
             return not failed
         candidates, scanned = [], []

@@ -32,6 +32,23 @@ ALTER TABLE connections ADD COLUMN exchange_id TEXT NOT NULL DEFAULT 'lbank';
 CREATE INDEX IF NOT EXISTS connections_exchange ON connections(exchange_id);
 UPDATE service_gate SET name='account-read:lbank' WHERE name='lbank-read';
 '''
+SCHEMA_V4='''
+CREATE TABLE IF NOT EXISTS license_orders(
+ id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),
+ cap_usd INTEGER NOT NULL,months INTEGER NOT NULL,kind TEXT NOT NULL,
+ price_cents INTEGER NOT NULL,price_version TEXT NOT NULL,
+ status TEXT NOT NULL,created REAL NOT NULL,updated REAL NOT NULL,
+ request_key TEXT NOT NULL,payment_ref TEXT UNIQUE,
+ UNIQUE(user_id,request_key));
+CREATE UNIQUE INDEX IF NOT EXISTS one_pending_license_order ON license_orders(user_id) WHERE status='pending';
+CREATE INDEX IF NOT EXISTS license_orders_owner ON license_orders(user_id,created);
+CREATE TABLE IF NOT EXISTS capital_licenses(
+ user_id TEXT PRIMARY KEY REFERENCES users(id),account_id TEXT UNIQUE NOT NULL,
+ document TEXT NOT NULL,updated REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS license_cashflows(
+ user_id TEXT NOT NULL REFERENCES users(id),event_id TEXT NOT NULL,
+ amount_usd TEXT NOT NULL,at REAL NOT NULL,PRIMARY KEY(user_id,event_id));
+'''
 
 
 class PostgresConnection:
@@ -100,8 +117,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3)):
+            if versions-{1,2,3,4}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')
