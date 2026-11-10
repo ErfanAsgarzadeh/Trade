@@ -38,7 +38,7 @@ def eligible(path):
 def collect(root,destination):
     root=Path(root).resolve();destination=Path(destination)
     if not (root/'live_mirror.py').is_file():raise ValueError('Expected lbank_project directory')
-    members={};missing=set(REQUIRED);pdf=False;truncated=False
+    members={};missing=set(REQUIRED);pdf=False;truncated=False;total_bytes=0
     # Prune mutable/sensitive and large data directories, do not traverse symlinks.
     for directory,dirs,files in os.walk(root,followlinks=False):
         directory=Path(directory)
@@ -49,9 +49,11 @@ def collect(root,destination):
             if not eligible(path) or path.is_symlink():continue
             if len(members)>=100:truncated=True;continue
             limit=20_000_000 if path.suffix.lower()=='.pdf' else 2_000_000
-            if path.stat().st_size>limit:truncated=True;continue
+            size=path.stat().st_size
+            if size>limit or total_bytes+size>24_000_000:truncated=True;continue
             content=path.read_bytes()
             members[path.relative_to(root).as_posix()]=content
+            total_bytes+=len(content)
             missing.discard(path.name)
             pdf=pdf or path.suffix.lower()=='.pdf'
     manifest=dict(schema=1,created_utc=datetime.now(timezone.utc).isoformat(),
@@ -71,7 +73,7 @@ def collect(root,destination):
     destination.chmod(0o600)
     return dict(archive=str(destination),source_files=len(members)-1,
                 missing_source_names=sorted(missing),api_reference_found=pdf,
-                orders_sent=False,services_changed=False,
+                collection_truncated=truncated,orders_sent=False,services_changed=False,
                 note='Upload recovery archive for code review. Do not execute recovered pilots.')
 
 
