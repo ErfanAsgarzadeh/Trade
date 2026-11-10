@@ -1,4 +1,5 @@
 "use client";
+import ThemeSwitcher from "./theme-switcher";
 import { useCallback, useEffect, useState } from "react";
 import { ApiClient, ApiError, SessionChanged, errorText } from "@/lib/api";
 import type { BillingSnapshot, Me } from "@/lib/types";
@@ -126,6 +127,7 @@ export default function Portal({
           <span>فضای اختصاصی معامله‌گر</span>
         </div>
         <div className="topbar-actions">
+          <ThemeSwitcher />
           <Pwa notify={setMessage} />
           {user?.role === "admin" && !adminMode && (
             <a id="admin-link" className="text-link" href="/admin/">

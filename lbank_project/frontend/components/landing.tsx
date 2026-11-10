@@ -1,3 +1,4 @@
+import ThemeSwitcher from "./theme-switcher";
 import snapshot from "@/public/backtest/five-year-summary.json";
 import { faNumber, usd } from "@/lib/format";
 import BacktestMotion from "./backtest-motion";
@@ -23,6 +24,7 @@ export default function Landing() {
           <a href="#products">سرویس‌ها</a>
         </nav>
         <div className="landing-header-actions">
+          <ThemeSwitcher />
           <a href="/dashboard/" className="landing-login">
             ورود به پنل
           </a>
@@ -161,7 +163,18 @@ export default function Landing() {
                     <tr key={row.year}>
                       <td>{faNumber(row.year)}</td>
                       <td>{usd(Math.round(row.equity))}</td>
-                      <td>{faNumber(Number(row.return_pct.toFixed(1)))}٪</td>
+                      <td>
+                        <bdi
+                          className={
+                            row.return_pct < 0
+                              ? "financial-loss"
+                              : "financial-profit"
+                          }
+                        >
+                          {row.return_pct > 0 ? "+" : ""}
+                          {faNumber(Number(row.return_pct.toFixed(1)))}٪
+                        </bdi>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

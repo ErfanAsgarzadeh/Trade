@@ -1,3 +1,4 @@
+@import "../public/portal-assets/titanium.css";
 @font-face {
   font-family: TradeArabic;
   src: url("/portal-assets/arabic.woff") format("woff");
@@ -5,14 +6,6 @@
   font-weight: 400;
 }
 :root {
-  color-scheme: dark;
-  --bg: #101512;
-  --panel: #171e19;
-  --line: #303b31;
-  --text: #f0f2e9;
-  --muted: #a0aea0;
-  --accent: #c5f279;
-  --ink: #1e2a18;
   font-family: TradeArabic, Tahoma, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -25,7 +18,11 @@
 }
 body {
   margin: 0;
-  background: radial-gradient(ellipse at 90% 0%, #25302055, transparent 35%);
+  background: radial-gradient(
+    ellipse at 90% 0%,
+    var(--page-tint),
+    transparent 35%
+  );
 }
 button,
 input,
@@ -63,7 +60,7 @@ button {
 }
 button:hover:not(:disabled),
 a.button:hover {
-  background: #d5ff95;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 button:disabled {
@@ -76,13 +73,13 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 4px;
 }
 button.secondary {
-  background: #273229;
+  background: var(--primary-soft);
   color: var(--text);
-  border-color: #384539;
+  border-color: var(--border);
 }
 .text-button {
   background: none;
@@ -159,7 +156,7 @@ button.secondary {
   width: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 12px #c5f27955;
+  box-shadow: 0 0 12px var(--glow-subtle);
 }
 .topbar-actions {
   margin-inline-start: auto;
@@ -172,7 +169,7 @@ main {
   padding: 0 0 30px;
 }
 #message {
-  color: #f1d291;
+  color: var(--warning);
   font-size: 14px;
   margin: 0;
   min-height: 28px;
@@ -213,7 +210,7 @@ h3 {
 }
 label {
   display: block;
-  color: #d4dfd0;
+  color: var(--text-secondary);
   font-size: 13px;
   margin: 16px 0 7px;
 }
@@ -222,15 +219,15 @@ textarea,
 select {
   width: 100%;
   min-width: 0;
-  background: #111813;
-  border: 1px solid #3a493c;
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
   color: var(--text);
   border-radius: 11px;
   padding: 13px 15px;
   font-size: 14px;
 }
 input::placeholder {
-  color: #6e806e;
+  color: var(--placeholder);
 }
 select {
   cursor: pointer;
@@ -242,7 +239,7 @@ textarea {
 .note {
   font-size: 12px;
   line-height: 2;
-  color: #93a18f;
+  color: var(--text-secondary);
 }
 .field-hint {
   float: left;
@@ -287,15 +284,19 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 30px;
   padding: 5px 15px;
-  color: #c8d3c2;
+  color: var(--text-secondary);
 }
 .login-card {
   padding: 36px;
-  border: 1px solid #384735;
+  border: 1px solid var(--border);
   border-radius: 24px;
-  background: linear-gradient(150deg, #253020, #18201a);
+  background: linear-gradient(
+    150deg,
+    var(--surface-elevated),
+    var(--surface-elevated)
+  );
   margin-top: 25px;
-  box-shadow: 0 30px 100px #0003;
+  box-shadow: var(--shadow-card);
 }
 .login-card h2 {
   font-size: 26px;
@@ -322,7 +323,7 @@ textarea {
   left: 20px;
   width: 300px;
   height: 190px;
-  border: 1px solid #78935050;
+  border: 1px solid var(--border);
   border-radius: 50%;
   transform: rotate(-22deg);
 }
@@ -348,8 +349,8 @@ textarea {
   place-items: center;
   height: 40px;
   width: 40px;
-  background: #263b22;
-  border: 1px solid #688048;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--accent);
   font-size: 24px;
@@ -401,9 +402,9 @@ textarea {
 }
 .pill {
   font-size: 11px;
-  color: #e7c782;
-  background: #3c3323;
-  border: 1px solid #685534;
+  color: var(--warning);
+  background: var(--warning-background);
+  border: 1px solid var(--warning-border);
   border-radius: 25px;
   padding: 3px 12px;
 }
@@ -419,8 +420,12 @@ textarea {
   display: grid;
   place-items: center;
   border-radius: 20px;
-  background: linear-gradient(120deg, #26391d, #162016);
-  border: 1px solid #3c4c32;
+  background: linear-gradient(
+    120deg,
+    var(--surface-elevated),
+    var(--surface-elevated)
+  );
+  border: 1px solid var(--border);
   direction: ltr;
 }
 .hero-art > svg {
@@ -435,11 +440,11 @@ textarea {
   letter-spacing: 2px;
   position: absolute;
   bottom: 15px;
-  color: #a5ba87;
+  color: var(--text-secondary);
 }
 .mini-ring {
   position: absolute;
-  border: 1px solid #58713e;
+  border: 1px solid var(--border);
   border-radius: 50%;
   width: 235px;
   height: 235px;
@@ -450,7 +455,7 @@ textarea {
   content: "";
   position: absolute;
   inset: 20px;
-  border: 1px solid #58713e;
+  border: 1px solid var(--border);
   border-radius: 50%;
 }
 .mini-ring:after {
@@ -477,7 +482,7 @@ textarea {
   margin-bottom: 14px;
 }
 .stat-label span {
-  color: #63735f;
+  color: var(--text-secondary);
   font: 11px Arial;
 }
 .stat-card strong {
@@ -510,7 +515,7 @@ textarea {
 .section-number {
   font: 10px Arial;
   letter-spacing: 1.5px;
-  color: #7b8b76;
+  color: var(--text-secondary);
   white-space: nowrap;
   padding-top: 5px;
   direction: ltr;
@@ -550,7 +555,7 @@ textarea {
 }
 .plan-controls > select {
   font-size: 19px;
-  background: #1f2a20;
+  background: var(--primary-soft);
   min-height: 62px;
 }
 .term-fieldset {
@@ -567,7 +572,7 @@ textarea {
   display: flex;
   border-radius: 12px;
   padding: 5px;
-  background: #101713;
+  background: var(--primary-soft);
   border: 1px solid var(--line);
   gap: 4px;
 }
@@ -608,13 +613,13 @@ textarea {
   display: grid;
   grid-template-columns: 1fr 1fr;
   font-size: 11px;
-  color: #c4d2bc;
+  color: var(--text-secondary);
   gap: 9px 10px;
   margin-top: 24px;
 }
 .price-card {
-  background: #e6eeda;
-  color: #23301d;
+  background: var(--price-card);
+  color: var(--price-card-text);
   border-radius: 18px;
   padding: 25px 28px;
   display: flex;
@@ -629,7 +634,7 @@ textarea {
 }
 .price-badge {
   padding: 3px 9px;
-  background: #cfdfb9;
+  background: var(--price-card-badge);
   border-radius: 20px;
   font-size: 10px;
 }
@@ -644,16 +649,16 @@ textarea {
   letter-spacing: -3px;
 }
 .price-line > span {
-  color: #647456;
+  color: var(--price-card-muted);
   font-size: 14px;
 }
 .price-card > p {
-  color: #637455;
+  color: var(--price-card-muted);
   font-size: 11px;
 }
 .price-divider {
   height: 1px;
-  background: #bdcaaa;
+  background: var(--border);
   margin: 20px 0 12px;
 }
 .price-meta {
@@ -664,15 +669,15 @@ textarea {
   margin: 4px 0;
 }
 .price-meta > span {
-  color: #65745a;
+  color: var(--price-card-muted);
 }
 .price-card button {
-  background: #23351d;
-  color: #e6f5da;
+  background: var(--primary);
+  color: var(--primary-foreground);
   margin-top: 20px;
 }
 .price-card button:hover:not(:disabled) {
-  background: #3c532c;
+  background: var(--primary-hover);
 }
 .price-card .price-note {
   font-size: 10px;
@@ -693,7 +698,7 @@ textarea {
   width: 29px;
   height: 29px;
   border-radius: 8px;
-  background: #293a23;
+  background: var(--primary-soft);
   color: var(--accent);
   font: 18px Arial;
   margin-bottom: 12px;
@@ -738,11 +743,11 @@ td {
 }
 th {
   font-size: 11px;
-  color: #94a18d;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 td {
-  color: #d4dece;
+  color: var(--text-secondary);
 }
 .pricing-table {
   margin-top: 15px;
@@ -751,8 +756,8 @@ td {
   color: var(--accent);
 }
 .empty-state {
-  background: #111813;
-  border: 1px dashed #34442e;
+  background: var(--surface-inset);
+  border: 1px dashed var(--border);
   border-radius: 12px;
   padding: 23px;
   text-align: center;
@@ -760,25 +765,25 @@ td {
 }
 .order-status {
   padding: 3px 9px;
-  background: #303c2c;
+  background: var(--primary-soft);
   color: var(--accent);
   border-radius: 20px;
   font-size: 10px;
 }
 .order-status.pending {
-  background: #3d3320;
-  color: #edcf8f;
+  background: var(--warning-background);
+  color: var(--warning);
 }
 .order-status.cancelled {
-  background: #33382f;
-  color: #a7b1a0;
+  background: var(--primary-soft);
+  color: var(--text-secondary);
 }
 .notice {
   padding: 15px 18px;
-  border: 1px solid #846737;
+  border: 1px solid var(--warning-border);
   border-radius: 12px;
-  background: #3a301f;
-  color: #f0d39b;
+  background: var(--warning-background);
+  color: var(--warning);
   font-size: 12px;
   margin-bottom: 18px;
 }
@@ -796,7 +801,7 @@ td {
   margin: 20px 0 6px;
 }
 .connection-summary {
-  background: #111813;
+  background: var(--surface-inset);
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 23px;
@@ -823,7 +828,7 @@ td {
   gap: 16px;
 }
 .bot {
-  background: #111813;
+  background: var(--surface-inset);
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 20px;
@@ -840,19 +845,19 @@ td {
   font: 24px Arial;
   width: 42px;
   height: 42px;
-  background: #273921;
+  background: var(--primary-soft);
   border-radius: 12px;
   margin-inline-end: 12px;
 }
 .bot:nth-child(2) h3:before {
   content: "≈";
-  background: #233637;
-  color: #9cdbd8;
+  background: var(--ai-soft);
+  color: var(--ai-accent);
 }
 .bot:nth-child(3) h3:before {
   content: "✦";
-  background: #3a2b22;
-  color: #e6bc96;
+  background: var(--premium-soft);
+  color: var(--premium-text);
 }
 .bot > p {
   font-size: 11px;
@@ -869,7 +874,7 @@ td {
   align-items: center;
   justify-content: space-between;
   padding: 20px 4px;
-  color: #74836e;
+  color: var(--text-secondary);
 }
 .bottom-note .brand {
   font-size: 17px;
@@ -886,20 +891,20 @@ footer {
   padding: 24px 44px;
   border-top: 1px solid var(--line);
   font-size: 10px;
-  color: #7e8e77;
+  color: var(--text-secondary);
 }
 dialog {
   max-width: 510px;
   width: calc(100% - 32px);
-  border: 1px solid #4e6341;
+  border: 1px solid var(--border);
   border-radius: 22px;
   color: var(--text);
   background: var(--panel);
   padding: 0;
-  box-shadow: 0 30px 100px #0008;
+  box-shadow: var(--shadow-card);
 }
 dialog::backdrop {
-  background: #050b08bb;
+  background: var(--overlay);
   backdrop-filter: blur(6px);
 }
 .dialog-body {
@@ -947,7 +952,7 @@ dialog::backdrop {
   flex: 1;
 }
 #checkout-error {
-  color: #f0b18d;
+  color: var(--error);
 }
 .offline-card {
   max-width: 600px;
@@ -1343,13 +1348,13 @@ dialog::backdrop {
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 16px;
-  background: #111813;
+  background: var(--surface-inset);
   margin: 0;
   cursor: pointer;
 }
 .product-option.selected {
   border-color: var(--accent);
-  background: #202d1b;
+  background: var(--primary-soft);
   box-shadow: 0 0 0 1px var(--accent);
 }
 .product-option input {
@@ -1381,7 +1386,7 @@ dialog::backdrop {
   padding: 22px;
   border: 1px solid var(--line);
   border-radius: 16px;
-  background: #111813;
+  background: var(--surface-inset);
 }
 .signal-card.expired {
   opacity: 0.6;
@@ -1427,8 +1432,8 @@ dialog::backdrop {
 .admin-role {
   display: inline-block;
   margin-top: 12px;
-  background: #293b22;
-  border-color: #577640;
+  background: var(--primary-soft);
+  border-color: var(--border);
   color: var(--accent);
 }
 .admin-layout {
@@ -1482,7 +1487,7 @@ dialog::backdrop {
 }
 .admin-overview-services article {
   padding: 22px;
-  background: #111813;
+  background: var(--surface-inset);
   border: 1px solid var(--line);
   border-radius: 14px;
 }
@@ -1560,7 +1565,7 @@ dialog::backdrop {
 }
 .admin-error,
 .danger {
-  color: #efb39e;
+  color: var(--error);
 }
 .admin-content th,
 .admin-content td {
@@ -1631,7 +1636,8 @@ dialog::backdrop {
 .landing {
   overflow-x: clip;
   background:
-    radial-gradient(ellipse at 60% 0%, #25391f65, transparent 38%), #101512;
+    radial-gradient(ellipse at 60% 0%, var(--page-tint), transparent 38%),
+    var(--background);
 }
 .landing main {
   max-width: 1320px;
@@ -1645,13 +1651,13 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   gap: 40px;
-  border-bottom: 1px solid #82926e22;
+  border-bottom: 1px solid var(--border);
 }
 .landing-header nav {
   display: flex;
   gap: 28px;
   font-size: 12px;
-  color: #b0bda7;
+  color: var(--text-secondary);
 }
 .landing-header nav a:hover,
 .landing-footer a:hover {
@@ -1670,8 +1676,8 @@ dialog::backdrop {
   align-items: center;
   gap: 20px;
   padding: 9px 17px;
-  background: #25341e;
-  border: 1px solid #587243;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
   border-radius: 9px;
   color: var(--accent);
 }
@@ -1688,7 +1694,7 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   gap: 9px;
-  color: #c3d6a9;
+  color: var(--text-secondary);
   font-size: 11px;
   margin-bottom: 22px;
 }
@@ -1697,7 +1703,7 @@ dialog::backdrop {
   height: 6px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 16px #c5f27988;
+  box-shadow: 0 0 16px var(--glow-subtle);
 }
 .landing-hero h1 {
   font-size: 54px;
@@ -1715,7 +1721,7 @@ dialog::backdrop {
   line-height: 2.35;
   max-width: 440px;
   margin: 20px 0;
-  color: #afbea5;
+  color: var(--text-secondary);
 }
 .landing-hero-actions {
   display: flex;
@@ -1731,7 +1737,7 @@ dialog::backdrop {
   gap: 30px;
   padding: 13px 20px;
   background: var(--accent);
-  color: #203018;
+  color: var(--primary-foreground);
   border: 1px solid var(--accent);
   border-radius: 10px;
   font-size: 12px;
@@ -1742,11 +1748,11 @@ dialog::backdrop {
 }
 .landing-primary:hover {
   transform: translateY(-2px);
-  background: #d9ffa6;
+  background: var(--primary-hover);
 }
 .landing-secondary {
   font-size: 12px;
-  color: #d3dfca;
+  color: var(--text-secondary);
   padding: 10px 0;
 }
 .hero-context {
@@ -1756,15 +1762,15 @@ dialog::backdrop {
 }
 .hero-context span {
   font-size: 10px;
-  border: 1px solid #435139;
+  border: 1px solid var(--border);
   border-radius: 30px;
   padding: 3px 10px;
-  color: #a8b79b;
+  color: var(--text-secondary);
 }
 .hero-disclosure {
   font-size: 10px;
   line-height: 2.2;
-  color: #95a587;
+  color: var(--text-secondary);
   max-width: 420px;
   margin-top: 15px;
 }
@@ -1781,7 +1787,7 @@ dialog::backdrop {
 .hero-orbit-background {
   position: absolute;
   inset: 50px 27% 0 -150px;
-  border: 1px solid #a6c27d0c;
+  border: 1px solid var(--decorative-line);
   border-radius: 50%;
   transform: rotate(-30deg);
   pointer-events: none;
@@ -1791,7 +1797,7 @@ dialog::backdrop {
   position: absolute;
   content: "";
   inset: 40px;
-  border: 1px solid #a6c27d0c;
+  border: 1px solid var(--decorative-line);
   border-radius: 50%;
 }
 .hero-orbit-background:after {
@@ -1808,9 +1814,9 @@ dialog::backdrop {
   align-items: center;
   gap: 7px;
   font-size: 10px;
-  color: #bac8ad;
-  border: 1px solid #4d5f3f;
-  background: #1b281a;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  background: var(--primary-soft);
   border-radius: 30px;
   padding: 4px 12px 4px 6px;
 }
@@ -1819,30 +1825,32 @@ dialog::backdrop {
   place-items: center;
   width: 19px;
   height: 19px;
-  background: #364b29;
-  color: #cbec9e;
+  background: var(--primary-soft);
+  color: var(--primary);
   border-radius: 50%;
   font: 10px Arial;
   font-style: normal;
 }
 .strategy-pills > span:nth-child(2) i {
-  background: #24403c;
-  color: #aadbd0;
+  background: var(--ai-soft);
+  color: var(--ai-accent);
 }
 .strategy-pills > span:nth-child(3) i {
-  background: #4a3527;
-  color: #e7bd9d;
+  background: var(--premium-soft);
+  color: var(--premium-text);
 }
 .replay-card {
   position: relative;
   isolation: isolate;
-  border: 1px solid #526a3d;
+  border: 1px solid var(--border);
   border-radius: 22px;
-  background: linear-gradient(145deg, #24311e, #131c16 55%);
+  background: linear-gradient(
+    145deg,
+    var(--surface-elevated),
+    var(--surface-elevated) 55%
+  );
   padding: 21px 22px 0;
-  box-shadow:
-    0 28px 100px #0005,
-    0 0 65px #a6cf6a08;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 .replay-top {
@@ -1855,7 +1863,7 @@ dialog::backdrop {
 .replay-brand {
   font: 10px Arial;
   letter-spacing: 2px;
-  color: #c1d7a8;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1864,15 +1872,15 @@ dialog::backdrop {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #c5f279;
-  box-shadow: 0 0 10px #c5f27988;
+  background: var(--primary);
+  box-shadow: 0 0 10px var(--glow-subtle);
 }
 .replay-tag {
   font-size: 9px;
   padding: 3px 10px;
   border-radius: 30px;
-  background: #34412a;
-  color: #c1d4ac;
+  background: var(--primary-soft);
+  color: var(--text-secondary);
 }
 .replay-value {
   display: flex;
@@ -1884,7 +1892,7 @@ dialog::backdrop {
 .replay-value > div > span {
   display: block;
   font-size: 10px;
-  color: #a7b99a;
+  color: var(--text-secondary);
   margin-bottom: 9px;
 }
 .replay-value strong {
@@ -1897,7 +1905,7 @@ dialog::backdrop {
 }
 .replay-date {
   font: 11px Arial;
-  color: #91a681;
+  color: var(--text-secondary);
   padding-bottom: 8px;
 }
 .equity-motion {
@@ -1908,19 +1916,19 @@ dialog::backdrop {
   direction: ltr;
 }
 .chart-grid {
-  stroke: #75995b23;
+  stroke: var(--chart-grid);
   stroke-width: 1;
 }
 .chart-grid.vertical {
-  stroke: #75995b15;
+  stroke: var(--chart-grid-subtle);
   stroke-dasharray: 2 5;
 }
 .chart-axis {
-  fill: #819375;
+  fill: var(--chart-axis);
   font: 11px Arial;
 }
 .chart-cursor {
-  stroke: #c5f27955;
+  stroke: var(--glow-subtle);
   stroke-width: 1;
   stroke-dasharray: 4 5;
 }
@@ -1931,15 +1939,15 @@ dialog::backdrop {
   gap: 12px;
   margin: 5px 0 19px;
   font-size: 9px;
-  color: #8da17e;
+  color: var(--text-secondary);
 }
 .replay-controls button {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #405434;
-  background: #26351f;
-  color: #bfd8a7;
+  border: 1px solid var(--border);
+  background: var(--primary-soft);
+  color: var(--text-secondary);
   font-size: 9px;
   padding: 6px 10px;
   border-radius: 7px;
@@ -1950,13 +1958,13 @@ dialog::backdrop {
   align-items: center;
   margin: 0 -22px;
   padding: 18px 22px;
-  border-top: 1px solid #78965b2b;
-  background: #101a12;
+  border-top: 1px solid var(--border);
+  background: var(--primary-soft);
 }
 .replay-bottom > div > span {
   display: block;
   font-size: 9px;
-  color: #9bab8e;
+  color: var(--text-secondary);
   margin-bottom: 7px;
 }
 .replay-bottom strong {
@@ -1967,13 +1975,13 @@ dialog::backdrop {
   display: block;
   width: 1px;
   height: 34px;
-  background: #455638;
+  background: var(--primary-soft);
 }
 .replay-dd {
   margin-inline-start: auto;
 }
 .replay-dd strong {
-  color: #e4b490;
+  color: var(--loss);
 }
 .replay-ornament {
   position: absolute;
@@ -1982,7 +1990,7 @@ dialog::backdrop {
   height: 240px;
   left: -50px;
   top: -70px;
-  background: radial-gradient(circle, #b6f77018, transparent 65%);
+  background: radial-gradient(circle, var(--glow-subtle), transparent 65%);
   filter: blur(20px);
   animation: replay-drift 10s ease-in-out infinite alternate;
   pointer-events: none;
@@ -1994,7 +2002,7 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #869b77;
+  color: var(--text-secondary);
   font-size: 9px;
   line-height: 2;
   margin: 16px 14px 0;
@@ -2003,20 +2011,20 @@ dialog::backdrop {
   height: 1px;
   width: 22px;
   flex-shrink: 0;
-  background: #7e995d;
+  background: var(--primary-soft);
 }
 .landing-proof-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border: 1px solid #38472f;
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #182218;
+  background: var(--primary-soft);
   padding: 22px 0;
   margin: 0 0 35px;
 }
 .landing-proof-strip > div {
   padding: 0 25px;
-  border-inline-start: 1px solid #36452c;
+  border-inline-start: 1px solid var(--border);
 }
 .landing-proof-strip > div:first-child {
   border: 0;
@@ -2024,7 +2032,7 @@ dialog::backdrop {
 .landing-proof-strip span {
   display: block;
   font-size: 10px;
-  color: #9dac90;
+  color: var(--text-secondary);
   margin-bottom: 10px;
 }
 .landing-proof-strip strong {
@@ -2032,11 +2040,11 @@ dialog::backdrop {
   font-weight: 600;
 }
 .proof-risk strong {
-  color: #e4b490;
+  color: var(--loss);
 }
 .landing-section {
   padding: 75px 0;
-  border-bottom: 1px solid #34422c;
+  border-bottom: 1px solid var(--border);
   scroll-margin-top: 20px;
 }
 .landing-section-heading {
@@ -2062,13 +2070,17 @@ dialog::backdrop {
   gap: 24px;
 }
 .result-feature {
-  border: 1px solid #405233;
+  border: 1px solid var(--border);
   border-radius: 18px;
   padding: 27px;
-  background: linear-gradient(150deg, #26361e, #192219);
+  background: linear-gradient(
+    150deg,
+    var(--surface-elevated),
+    var(--surface-elevated)
+  );
 }
 .result-feature > span {
-  color: #a8bf91;
+  color: var(--text-secondary);
   font-size: 11px;
 }
 .result-feature h3 {
@@ -2086,7 +2098,7 @@ dialog::backdrop {
   width: 33px;
   height: 33px;
   transform: rotate(90deg);
-  color: #829f64;
+  color: var(--text-secondary);
 }
 .result-feature p {
   font-size: 12px;
@@ -2098,22 +2110,22 @@ dialog::backdrop {
   flex-wrap: wrap;
   padding-top: 15px;
   margin-top: 18px;
-  border-top: 1px solid #405233;
+  border-top: 1px solid var(--border);
 }
 .results-downloads a {
   font-size: 10px;
-  color: #c1dba5;
+  color: var(--text-secondary);
 }
 .annual-result-table {
-  border: 1px solid #34472c;
+  border: 1px solid var(--border);
   border-radius: 18px;
   padding: 16px 24px;
-  background: #151f16;
+  background: var(--primary-soft);
   overflow-x: auto;
 }
 .annual-result-table caption {
   text-align: right;
-  color: #b9cbaa;
+  color: var(--text-secondary);
   font-size: 12px;
   padding: 12px 0 20px;
 }
@@ -2124,14 +2136,14 @@ dialog::backdrop {
   padding: 17px 8px;
 }
 .annual-result-table td:last-child {
-  color: var(--accent);
+  color: var(--profit-text);
 }
 .methodology-details {
   padding: 20px 25px;
-  border: 1px solid #34472c;
+  border: 1px solid var(--border);
   border-radius: 14px;
   margin-top: 24px;
-  background: #141e15;
+  background: var(--primary-soft);
 }
 .methodology-details summary {
   font-size: 12px;
@@ -2144,7 +2156,7 @@ dialog::backdrop {
 }
 .methodology-grid h3 {
   font-size: 13px;
-  color: #c4d8af;
+  color: var(--text-secondary);
 }
 .methodology-grid p {
   font-size: 11px;
@@ -2157,8 +2169,8 @@ dialog::backdrop {
 }
 .strategy-cards article {
   padding: 26px;
-  background: #172017;
-  border: 1px solid #34472c;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
   border-radius: 17px;
 }
 .strategy-card-head {
@@ -2174,26 +2186,26 @@ dialog::backdrop {
   place-items: center;
   width: 46px;
   height: 46px;
-  background: #2c4023;
-  color: #ceeaa9;
-  border: 1px solid #567641;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--border);
   border-radius: 13px;
   font: 22px Arial;
 }
 .strategy-card-head small {
   font: 9px Arial;
-  color: #8da37b;
+  color: var(--text-secondary);
   letter-spacing: 1px;
 }
 .strategy-cards article:nth-child(2) .strategy-card-head > span {
-  background: #233a34;
-  border-color: #476b60;
-  color: #b7e2d4;
+  background: var(--ai-soft);
+  border-color: var(--border-strong);
+  color: var(--ai-accent);
 }
 .strategy-cards article:nth-child(3) .strategy-card-head > span {
-  background: #3a2c20;
-  border-color: #715b3f;
-  color: #e7c39a;
+  background: var(--premium-soft);
+  border-color: var(--warning-border);
+  color: var(--premium-text);
 }
 .strategy-cards h3 {
   font-size: 23px;
@@ -2224,15 +2236,15 @@ dialog::backdrop {
   gap: 14px;
 }
 .landing-product-cards article {
-  border: 1px solid #405333;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 24px;
-  background: #192518;
+  background: var(--primary-soft);
 }
 .landing-product-cards article > span {
   font: 9px Arial;
   letter-spacing: 2px;
-  color: #91aa79;
+  color: var(--text-secondary);
 }
 .landing-product-cards h3 {
   font-size: 22px;
@@ -2246,8 +2258,8 @@ dialog::backdrop {
 .landing-product-cards small {
   display: inline-block;
   font-size: 9px;
-  color: #c2bf9a;
-  background: #373a26;
+  color: var(--warning);
+  background: var(--warning-background);
   border-radius: 20px;
   padding: 2px 10px;
 }
@@ -2363,10 +2375,10 @@ dialog::backdrop {
   .landing-proof-strip > div {
     padding: 20px;
     border: 0;
-    border-bottom: 1px solid #34452b;
+    border-bottom: 1px solid var(--border);
   }
   .landing-proof-strip > div:nth-child(odd) {
-    border-inline-end: 1px solid #34452b;
+    border-inline-end: 1px solid var(--border);
   }
   .landing-proof-strip > div:nth-child(n + 3) {
     border-bottom: 0;
@@ -2692,4 +2704,94 @@ dialog::backdrop {
   min-height: 40px;
   display: inline-flex;
   align-items: center;
+}
+
+/* Appearance states shared across the existing portal screens. */
+button.secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+button:disabled {
+  background: var(--disabled-background);
+  color: var(--disabled-foreground);
+  opacity: 1;
+}
+input,
+select,
+textarea {
+  border-color: var(--input-border);
+}
+tbody tr:hover {
+  background: var(--surface-hover);
+}
+.panel,
+.login-card,
+.replay-card {
+  box-shadow: var(--shadow-soft);
+}
+.panel,
+.login-card,
+.result-feature,
+.replay-card {
+  border-radius: 16px;
+}
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+td,
+strong,
+bdi,
+.price-line {
+  font-variant-numeric: tabular-nums;
+}
+.financial-profit,
+.annual-result-table td .financial-profit {
+  color: var(--profit-text);
+}
+.financial-loss,
+.annual-result-table td .financial-loss {
+  color: var(--loss);
+}
+.financial-neutral {
+  color: var(--text-secondary);
+}
+.financial-value {
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .landing-header,
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .landing-header-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-inline-start: 0;
+  }
+  .topbar-actions {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .theme-switcher {
+    gap: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

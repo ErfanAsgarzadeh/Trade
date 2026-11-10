@@ -22,7 +22,8 @@ import license_access
 
 HERE = Path(__file__).resolve().parent
 CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
-APP_FILES = ('lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
+APP_FILES = ('frontend/public/portal-assets/titanium.css', 'frontend/public/portal-assets/appearance.js',
+             'lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
              'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py', 'signal_feed.py',
              'lbank_official_candles.py',

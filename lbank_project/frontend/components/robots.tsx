@@ -70,6 +70,7 @@ export default function Robots({
               <>
                 <h4>پوزیشن‌های باز</h4>
                 <DataTable
+                  sideColumns={[1]}
                   headers={["نماد", "جهت", "ورود", "استاپ"]}
                   rows={r.positions.map((t) => [
                     t.symbol,
@@ -84,6 +85,8 @@ export default function Robots({
               <>
                 <h4>معاملات اخیر</h4>
                 <DataTable
+                  sideColumns={[1]}
+                  financialColumns={[3]}
                   headers={["نماد", "جهت", "ورود", "سود و زیان"]}
                   rows={r.trades.map((t) => [
                     t.symbol,

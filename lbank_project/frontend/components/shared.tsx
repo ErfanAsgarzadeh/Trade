@@ -39,9 +39,13 @@ export function Heading({
 export function DataTable({
   headers,
   rows,
+  financialColumns = [],
+  sideColumns = [],
 }: {
   headers: string[];
   rows: Cell[][];
+  financialColumns?: number[];
+  sideColumns?: number[];
 }) {
   return (
     <div className="table-wrap">
@@ -59,7 +63,25 @@ export function DataTable({
           {rows.map((r, i) => (
             <tr key={i}>
               {r.map((v, j) => (
-                <td key={j}>{v ?? "—"}</td>
+                <td key={j}>
+                  {financialColumns.includes(j) ? (
+                    <FinancialValue value={v} />
+                  ) : sideColumns.includes(j) ? (
+                    <span
+                      className={
+                        String(v).toLowerCase() === "long"
+                          ? "financial-profit"
+                          : String(v).toLowerCase() === "short"
+                            ? "financial-loss"
+                            : undefined
+                      }
+                    >
+                      {v ?? "—"}
+                    </span>
+                  ) : (
+                    (v ?? "—")
+                  )}
+                </td>
               ))}
             </tr>
           ))}
@@ -67,5 +89,30 @@ export function DataTable({
       </table>
       {!rows.length && <p className="note">داده‌ای برای نمایش وجود ندارد.</p>}
     </div>
+  );
+}
+
+/** Presentation only: preserve the source precision, add an explicit signed status. */
+export function FinancialValue({ value }: { value: Cell }) {
+  const numeric =
+    typeof value === "number"
+      ? value
+      : typeof value === "string" && value.trim() !== ""
+        ? Number(value)
+        : NaN;
+  if (!Number.isFinite(numeric)) return <span>{value ?? "—"}</span>;
+  const status = numeric > 0 ? "profit" : numeric < 0 ? "loss" : "neutral";
+  return (
+    <bdi
+      className={"financial-value financial-" + status}
+      aria-label={
+        (numeric > 0 ? "سود" : numeric < 0 ? "زیان" : "بدون تغییر") +
+        ": " +
+        String(value)
+      }
+    >
+      {numeric > 0 && !String(value).trimStart().startsWith("+") ? "+" : ""}
+      {value}
+    </bdi>
   );
 }

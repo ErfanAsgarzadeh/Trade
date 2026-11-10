@@ -19,11 +19,12 @@ from capital_plans import PRICES,TERMS
 import customer_manager
 
 
-def test_admin_workbench_journey_and_mobile_layout(tmp_path):
+@pytest.mark.parametrize("appearance", ["dark", "light"])
+def test_admin_workbench_journey_and_mobile_layout(tmp_path, appearance):
     module=pytest.importorskip('playwright.sync_api')
     executable=os.getenv('PORTAL_TEST_CHROMIUM') or shutil.which('chromium')
     if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):pytest.skip('Chromium unavailable')
-    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots.mkdir(parents=True,exist_ok=True)
+    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots=screenshots/appearance;screenshots.mkdir(parents=True,exist_ok=True)
     store=PortalStore(tmp_path/'admin.db',Fernet.generate_key())
     store.create_user('manager','disposable-manager-password');store.set_admin('manager')
     alice=store.create_user('alice','disposable-customer-password');bob=store.create_user('bob','disposable-customer-password')
@@ -39,6 +40,7 @@ def test_admin_workbench_journey_and_mobile_layout(tmp_path):
         with module.sync_playwright() as p:
             browser=p.chromium.launch(executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
             context=browser.new_context(viewport={'width':1440,'height':1050},locale='fa-IR',reduced_motion='reduce')
+            context.add_init_script("localStorage.setItem('trade.appearance', '"+appearance+"')")
             page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.on('dialog',lambda d:d.accept())

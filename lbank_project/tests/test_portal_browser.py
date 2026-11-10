@@ -23,12 +23,13 @@ import customer_manager
 from pricing_helpers import enable_test_prices
 
 
-def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
+@pytest.mark.parametrize("appearance", ["dark", "light"])
+def test_portal_desktop_mobile_and_subscription_journey(tmp_path, appearance):
     browser_module=pytest.importorskip('playwright.sync_api')
     executable=os.getenv('PORTAL_TEST_CHROMIUM') or shutil.which('chromium')
     if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):
         pytest.skip('Install Chromium or set PORTAL_TEST_PLAYWRIGHT_BROWSER=1')
-    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots.mkdir(parents=True,exist_ok=True)
+    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots=screenshots/appearance;screenshots.mkdir(parents=True,exist_ok=True)
     store=PortalStore(tmp_path/'portal.db',Fernet.generate_key())
     enable_test_prices(store)
     user=store.create_user('demo-trader','disposable-browser-password')
@@ -45,6 +46,7 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
         with browser_module.sync_playwright() as p:
             browser=p.chromium.launch(executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
             context=browser.new_context(viewport={'width':1440,'height':1050},locale='fa-IR',reduced_motion='reduce')
+            context.add_init_script("localStorage.setItem('trade.appearance', '"+appearance+"')")
             page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
             page.on('dialog',lambda dialog:dialog.accept())
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
@@ -93,7 +95,7 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
             assert 'به اینترنت وصل شوید' in page.locator('h1').inner_text()
             context.set_offline(False);page.goto(origin+'/dashboard/');page.wait_for_selector('#account-panel:not([hidden])')
             cached=page.evaluate("caches.keys().then(async keys=>Promise.all(keys.map(async key=>(await caches.open(key)).keys().then(reqs=>reqs.map(r=>new URL(r.url).pathname)))))")
-            assert all(path=='/portal-assets/offline.html' for paths in cached for path in paths)
+            assert all(path in ('/portal-assets/offline.html','/portal-assets/titanium.css','/portal-assets/appearance.js') for paths in cached for path in paths)
             page.locator('#exchange-id').select_option('okx')
             page.locator('#credential-api_key').fill('old-test-key')
             page.locator('#api-secret').fill('old-test-secret')
@@ -119,13 +121,14 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
         server.should_exit=True;thread.join(timeout=10);listener.close();store.close()
 
 
-def test_signup_and_closed_product_sales_on_mobile(tmp_path):
+@pytest.mark.parametrize("appearance", ["dark", "light"])
+def test_signup_and_closed_product_sales_on_mobile(tmp_path, appearance):
     browser_module=pytest.importorskip('playwright.sync_api')
     executable=os.getenv('PORTAL_TEST_CHROMIUM') or shutil.which('chromium')
     if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):pytest.skip('Chromium not installed')
     import product_pricing
     import signal_feed
-    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots.mkdir(parents=True,exist_ok=True)
+    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots=screenshots/appearance;screenshots.mkdir(parents=True,exist_ok=True)
     store=PortalStore(tmp_path/'registration.db',Fernet.generate_key())
     private,public=tmp_path/'issuer.private.pem',tmp_path/'issuer.public.pem';customer_manager.keygen(private,public)
     listener=socket.socket();listener.bind(('127.0.0.1',0));listener.listen(128)
@@ -139,6 +142,7 @@ def test_signup_and_closed_product_sales_on_mobile(tmp_path):
         with browser_module.sync_playwright() as p:
             browser=p.chromium.launch(executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
             context=browser.new_context(viewport={'width':390,'height':844},locale='fa-IR',reduced_motion='reduce')
+            context.add_init_script("localStorage.setItem('trade.appearance', '"+appearance+"')")
             page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.goto(origin+'/register/');page.wait_for_selector('#register-form')

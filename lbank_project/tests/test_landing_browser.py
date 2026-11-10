@@ -13,11 +13,12 @@ from portal_server import create_app
 from portal_store import PortalStore
 
 
-def test_public_hero_replay_and_navigation_on_mobile_and_desktop(tmp_path):
+@pytest.mark.parametrize("appearance", ["dark", "light"])
+def test_public_hero_replay_and_navigation_on_mobile_and_desktop(tmp_path, appearance):
     module=pytest.importorskip('playwright.sync_api')
     executable=os.getenv('PORTAL_TEST_CHROMIUM') or shutil.which('chromium')
     if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):pytest.skip('Chromium unavailable')
-    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots.mkdir(parents=True,exist_ok=True)
+    screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots=screenshots/appearance;screenshots.mkdir(parents=True,exist_ok=True)
     store=PortalStore(tmp_path/'landing.db',Fernet.generate_key())
     listener=socket.socket();listener.bind(('127.0.0.1',0));listener.listen(128)
     origin='http://127.0.0.1:'+str(listener.getsockname()[1])
@@ -30,6 +31,7 @@ def test_public_hero_replay_and_navigation_on_mobile_and_desktop(tmp_path):
         with module.sync_playwright() as p:
             browser=p.chromium.launch(executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
             context=browser.new_context(viewport={'width':1440,'height':1000},locale='fa-IR',reduced_motion='reduce')
+            context.add_init_script("localStorage.setItem('trade.appearance', '"+appearance+"')")
             page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.goto(origin);page.wait_for_selector('#hero-title')

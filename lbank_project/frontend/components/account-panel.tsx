@@ -281,6 +281,8 @@ export default function AccountPanel({ api, report, notify }: Props) {
           </p>
           <h3 className="positions-title">پوزیشن‌های حساب صرافی</h3>
           <DataTable
+            financialColumns={[5]}
+            sideColumns={[1]}
             headers={[
               "نماد",
               "جهت",

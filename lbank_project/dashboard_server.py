@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import os
+from pathlib import Path
 import secrets
 import time
 
@@ -541,60 +542,75 @@ HTML = r'''<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#070b16;--bg2:#0b1222;--panel:#0f172a;--panel2:#131d33;--line:#1f2b45;--line2:#2b3a5c;--text:#e8eefc;--muted:#8fa0c2;--good:#34d399;--bad:#f87171;--warn:#fbbf24;--accent:#6d8dff;--accent2:#8b5cf6;--main:#5b8cff;--c3:#a78bfa;--pa:#f59e0b}
+
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#16234a 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#251a4a 0,transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1;min-height:100vh}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,var(--page-tint) 0,transparent 60%),radial-gradient(900px 500px at 100% 0,var(--page-tint) 0,transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1;min-height:100vh}
 main{max-width:1480px;margin:auto;padding:22px 28px 40px}
 header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:6px 0 18px}
-.brand{display:flex;align-items:center;gap:14px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 24px -8px #6d8dff88}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 24px -8px var(--glow-subtle)}
 h1{font-size:21px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:16px;margin:0;font-weight:600;letter-spacing:-.01em}h3{font-size:14px;margin:0;font-weight:600}
 p{margin:2px 0;color:var(--muted)}.muted{color:var(--muted)}.small{font-size:12px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.gap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px -18px #000}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:#17223b;border:1px solid var(--line2);font-size:12px;color:#c9d5f2;white-space:nowrap}
-.badge.ok{color:var(--good);border-color:#1f5f4a;background:#0e2a22}.badge.warn{color:var(--warn);border-color:#6b5414;background:#2b220b}.badge.bad{color:var(--bad);border-color:#6b2730;background:#2c1015}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px -18px var(--shadow-color)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:var(--surface-elevated);border:1px solid var(--line2);font-size:12px;color:var(--text-primary);white-space:nowrap}
+.badge.ok{color:var(--good);border-color:var(--success-border);background:var(--success-background)}.badge.warn{color:var(--warn);border-color:var(--warning-border);background:var(--warning-background)}.badge.bad{color:var(--bad);border-color:var(--error-border);background:var(--error-background)}
 .dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:5px;background:#0c1426;border:1px solid var(--line);border-radius:14px;width:fit-content;max-width:100%;overflow:auto}
-.tab{background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-weight:500}.tab:hover{color:var(--text);background:#141f38}.tab.on{background:linear-gradient(135deg,#3557c9,#5b3fc4);color:#fff;box-shadow:0 6px 18px -8px #6d8dff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:5px;background:var(--surface-inset);border:1px solid var(--line);border-radius:14px;width:fit-content;max-width:100%;overflow:auto}
+.tab{background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-weight:500}.tab:hover{color:var(--text);background:var(--surface-hover)}.tab.on{background:linear-gradient(135deg,var(--primary),var(--primary));color:var(--text-primary);box-shadow:0 6px 18px -8px var(--primary)}
 .pane{display:none}.pane.on{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}.kpis .panel{margin-top:0}
 .kpi p:first-child{font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .kpi strong{display:block;font-size:28px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
-.bar{height:6px;border-radius:99px;background:#1a2540;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.bar{height:6px;border-radius:99px;background:var(--surface-elevated);overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .grid2{display:grid;grid-template-columns:2fr 1fr;gap:18px}.grid2 .panel,.grid3 .panel{margin-top:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .chart{position:relative;height:300px;margin-top:12px}.chart.sm{height:200px}
-input,select,textarea{background:#0a1222;border:1px solid var(--line2);color:#fff;border-radius:9px;padding:9px 11px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid #3f5fd0;border-color:transparent}
-input[type=checkbox]{width:18px;height:18px;accent-color:#6d8dff}
-button{border:0;background:#3557c9;color:white;padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-weight:500;transition:filter .15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
-.danger{background:#b4233c}.subtle{background:#1d2945}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
-.view{background:#16213a;color:var(--muted)}.view.on{background:#24356a;color:#fff;outline:1px solid #5b7cff}
-.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:#1b2b55;color:#9db8ff}.tag.c3{background:#2b2150;color:#c4b5fd}.tag.pa{background:#3a2710;color:#fbbf6a}
+input,select,textarea{background:var(--input);border:1px solid var(--line2);color:var(--text-primary);border-radius:9px;padding:9px 11px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid var(--focus-ring);border-color:transparent}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary)}
+button{border:0;background:var(--primary);color:var(--primary-foreground);padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-weight:500;transition:filter .15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
+.danger{background:var(--danger-solid)}.subtle{background:var(--surface-elevated);color:var(--text-primary)}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.view{background:var(--surface-elevated);color:var(--muted)}.view.on{background:var(--primary-soft);color:var(--text-primary);outline:1px solid var(--primary)}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--primary-soft);color:var(--primary)}.tag.c3{background:var(--ai-soft);color:var(--ai-accent)}.tag.pa{background:var(--premium-soft);color:var(--premium-text)}
 .scroll{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12.5px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--panel)}tbody tr:hover{background:#121c33}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--panel)}tbody tr:hover{background:var(--surface-hover)}
 td[dir=ltr],.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px}.num{text-align:right}
 .bots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
-.bot{background:linear-gradient(180deg,#121b31,#0e1628);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;position:relative;overflow:hidden}
+.bot{background:linear-gradient(180deg,var(--surface-elevated),var(--surface));border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;position:relative;overflow:hidden}
 .bot:before{content:'';position:absolute;inset:0 0 auto 0;height:3px}.bot-main:before{background:var(--main)}.bot-c3:before{background:var(--c3)}.bot-pa:before{background:var(--pa)}
 .bot h3{font-size:18px}.bot .sub{margin:0 0 8px;font-size:12px}.bot dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:12px 0 0;font-size:13px}
 .bot dt{color:var(--muted)}.bot dd{margin:0;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}.bot.off{opacity:.55}
-.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;background:#16213a;padding:5px 10px;border-radius:999px}
-.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#c9d5f2}.field{display:flex;flex-direction:column;align-items:stretch;gap:6px;font-size:12.5px}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;background:var(--surface-elevated);padding:5px 10px;border-radius:999px}
+.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--text-primary)}.field{display:flex;flex-direction:column;align-items:stretch;gap:6px;font-size:12.5px}
 textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7 'JetBrains Mono',ui-monospace,monospace;resize:vertical;margin:14px 0}
-#message{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;white-space:pre-wrap;border:1px solid #33456e;background:#121c33}
-.note{border-left:3px solid var(--warn);font-size:13px;color:#cdd6ea}details{margin-top:16px}summary{cursor:pointer;font-weight:600;color:#c9d5f2}footer{margin-top:22px;color:var(--muted);font-size:12px}
-.gauge{position:relative;height:14px;border-radius:99px;background:linear-gradient(90deg,#7f1d1d 0 30%,#1f2b45 30% 70%,#065f46 70%);margin:14px 0 6px}
-.gauge>b{position:absolute;top:-5px;width:4px;height:24px;border-radius:3px;background:#fff;box-shadow:0 0 0 3px #ffffff33;transform:translateX(-2px);transition:left .4s}
+#message{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;white-space:pre-wrap;border:1px solid var(--border-strong);background:var(--surface-hover)}
+.note{border-left:3px solid var(--warn);font-size:13px;color:var(--text-primary)}details{margin-top:16px}summary{cursor:pointer;font-weight:600;color:var(--text-primary)}footer{margin-top:22px;color:var(--muted);font-size:12px}
+.gauge{position:relative;height:14px;border-radius:99px;background:linear-gradient(90deg,var(--loss) 0 30%,var(--border) 30% 70%,var(--profit) 70%);margin:14px 0 6px}
+.gauge>b{position:absolute;top:-5px;width:4px;height:24px;border-radius:3px;background:var(--text-primary);box-shadow:0 0 0 3px var(--primary-soft);transform:translateX(-2px);transition:left .4s}
 .scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 .big{font-size:34px;font-weight:700;letter-spacing:-.02em}.pill{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
-.pill.good{background:#0e2a22}.pill.bad{background:#2c1015}.pill.normal{background:#1b2540;color:#c9d5f2}
+.pill.good{background:var(--success-background)}.pill.bad{background:var(--error-background)}.pill.normal{background:var(--surface-elevated);color:var(--text-primary)}
 .empty{padding:26px;text-align:center;color:var(--muted)}
 .mtab td.pos{color:var(--good)}.mtab td.neg{color:var(--bad)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
 @media(max-width:850px){main{padding:14px}.bots{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:1fr}}
 @media(max-width:450px){.fields{grid-template-columns:1fr}}
+
+.tab.on,.view.on{background:var(--primary);color:var(--primary-foreground);}
+.logo{background:var(--brand-gradient);color:var(--primary-foreground);box-shadow:var(--shadow-soft);}
+.danger{color:var(--danger-on-solid);}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px;}
+button:disabled{background:var(--disabled-background);color:var(--disabled-foreground);opacity:1;}
+#f_control{border-color:var(--ai-accent)!important;}
+#f_ai_pct,#f_comb{color:var(--ai-accent);}
+.chart canvas{background:var(--chart-background);max-width:100%;}
+.panel,.chart,.grid2,.grid3,.kpis,.fields{min-width:0;}
+#views{flex-wrap:wrap;}
+.scale{flex-wrap:wrap;gap:4px;}
+@media(max-width:1100px){.grid2,.grid3{grid-template-columns:minmax(0,1fr);}}
+@media(max-width:450px){.fields,.kpis{grid-template-columns:minmax(0,1fr);}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 </style></head><body><main>
 <header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · F risk manager</p></div></div>
-<div class="gap"><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span><span id="f_badge" class="badge">F: —</span>
+<div class="gap"><div class="theme-switcher"><label for="terminal-appearance">Appearance</label><select id="terminal-appearance" data-legacy-theme-switch><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></div><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span><span id="f_badge" class="badge">F: —</span>
 <input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
 <nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="risk">Risk manager (F)</button><button class="tab" data-tab="settings">Settings</button></nav>
 <div id="message" role="status" aria-live="polite"></div>
@@ -639,15 +655,15 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 
 <section class="pane" data-pane="risk">
 <section class="panel"><div class="row"><div><h2>F risk manager <span class="badge warn" id="f_mode">SHADOW</span></h2><p class="small">Shadow mode: F calculates and records what it would do every day. It does not change, open or close anything in the three bots.</p></div><span class="small muted" id="f_asof">—</span></div>
-<section class="panel" id="f_control" style="border-color:#3b4a75"><div class="row"><div><h3>Apply F to the three bots</h3><p class="small" id="fc_status">—</p></div>
-<div class="gap"><label class="switch"><input id="fc_open" type="checkbox" checked>Also act on open positions</label><label class="switch" style="background:#2a1d3d"><input id="fc_enabled" type="checkbox">F active</label></div></div>
+<section class="panel" id="f_control" style="border-color:var(--ai-accent)"><div class="row"><div><h3>Apply F to the three bots</h3><p class="small" id="fc_status">—</p></div>
+<div class="gap"><label class="switch"><input id="fc_open" type="checkbox" checked>Also act on open positions</label><label class="switch" style="background:var(--ai-soft)"><input id="fc_enabled" type="checkbox">F active</label></div></div>
 <p class="small muted">Off = the bots trade exactly as now and F only records what it would do. On = each bot multiplies its risk by F's multiplier (0 = no new entries) and, if selected, cuts open positions when F's AI score or drawdown brake falls. If F's daily decision is missing or older than 36 hours, the bots automatically use ×1. Applies within seconds, no restart.</p></section>
 <div id="f_empty" class="empty">Waiting for the F service (lbank-risk).</div>
 <div id="f_body" hidden>
 <div class="grid3" style="margin-top:14px">
 <section class="panel"><p class="small">AI market score (next 20 days for the bots)</p><div class="row"><span class="big" id="f_ai_pct">—</span><span class="pill" id="f_zone">—</span></div><div class="gauge"><b id="f_needle" style="left:50%"></b></div><div class="scale"><span>0 · no new entries</span><span>30</span><span>normal ×1</span><span>70</span><span>×1.4 · 100</span></div></section>
 <section class="panel"><p class="small">Combined risk multiplier</p><span class="big" id="f_comb">—</span><p class="small mono" id="f_formula">—</p><p class="small" id="f_action">—</p></section>
-<section class="panel"><p class="small">Drawdown brake (F account)</p><span class="big" id="f_dd">—</span><div class="bar"><i id="f_dd_bar" style="width:0;background:linear-gradient(90deg,#fbbf24,#f87171)"></i></div><div class="scale"><span>0%</span><span>8% brake starts</span><span>14% ×0.2</span></div><p class="small" id="f_vol">—</p></section>
+<section class="panel"><p class="small">Drawdown brake (F account)</p><span class="big" id="f_dd">—</span><div class="bar"><i id="f_dd_bar" style="width:0;background:linear-gradient(90deg,var(--warning),var(--loss))"></i></div><div class="scale"><span>0%</span><span>8% brake starts</span><span>14% ×0.2</span></div><p class="small" id="f_vol">—</p></section>
 </div>
 <section class="panel"><h2>Per bot</h2><div class="scroll"><table><thead><tr><th>Bot</th><th class="num">Risk now</th><th class="num">Last 20 trades (R)</th><th>Losing streak control</th><th class="num">F multiplier</th><th class="num">Risk with F</th></tr></thead><tbody id="f_bots"></tbody></table></div></section>
 <div class="grid2"><section class="panel"><h2>AI score and multiplier history</h2><div class="chart"><canvas id="f_hist_chart"></canvas></div></section>
@@ -659,7 +675,7 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <section class="pane" data-pane="settings">
 <section class="panel"><div class="row"><h2>Trading account</h2><span class="badge ok" id="acct_mode"><span class="dot"></span>PAPER</span></div>
 <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
-<section class="panel" style="border-color:#1f5f4a"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
+<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
 <section class="panel"><div class="row"><h3>🔒 Live LBank futures</h3><span class="pill bad">Locked</span></div>
 <p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (set LBANK_API_KEY and LBANK_SECRET_KEY in the server's .env; keys are never entered in this page)</p>
 <div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test LBank connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
@@ -883,16 +899,22 @@ function setTab(t){tab=t;try{localStorage.setItem('tab',t);}catch(e){}
  for(const c of Object.values(charts))if(c)c.resize();}
 for(const b of document.querySelectorAll('.tab'))b.onclick=()=>setTab(b.dataset.tab);
 setTab(tab);
-const BOTCOL={main:'#5b8cff',c3:'#a78bfa',pa:'#f59e0b'};
+const themeColor=name=>typeof getComputedStyle==='function'?getComputedStyle(document.documentElement).getPropertyValue('--'+name).trim():'';
+const BOTCOL={get main(){return themeColor('primary');},get c3(){return themeColor('ai-accent');},get pa(){return themeColor('premium-accent');}};
 const money=v=>v===null||v===undefined?'—':(v<0?'-$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const pct=(v,n=1)=>v===null||v===undefined||!isFinite(v)?'—':(v>0?'+':'')+Number(v).toFixed(n)+'%';
 const cls=v=>v>0?'good':v<0?'bad':'';
 const day=t=>new Date(t*1000).toISOString().slice(0,10);
 function chart(id,cfg){if(typeof Chart==='undefined')return null;if(charts[id])charts[id].destroy();
- Chart.defaults.color='#8fa0c2';Chart.defaults.borderColor='#1f2b45';Chart.defaults.font.family='Inter';
+ Chart.defaults.color=themeColor('chart-axis');Chart.defaults.borderColor=themeColor('border');Chart.defaults.font.family='Inter';
+ Chart.defaults.plugins.tooltip.backgroundColor=themeColor('surface-elevated');Chart.defaults.plugins.tooltip.titleColor=themeColor('text-primary');Chart.defaults.plugins.tooltip.bodyColor=themeColor('text-primary');Chart.defaults.plugins.tooltip.borderColor=themeColor('border-strong');Chart.defaults.plugins.tooltip.borderWidth=1;
  charts[id]=new Chart($(id),cfg);return charts[id];}
-const baseOpts=(extra={})=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,maxRotation:0}},y:{grid:{color:'#17223a'}}}},extra);
+const baseOpts=(extra={})=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,maxRotation:0}},y:{grid:{color:themeColor('border')}}}},extra);
 let lastPerf=null,lastRisk=null;
+if(typeof window!=='undefined')window.addEventListener('trade:appearancechange',()=>{
+ if(lastPerf)renderPerf(lastPerf);
+ if(lastRisk)renderRisk(lastRisk);
+});
 function td(tr,v,c,num){const x=document.createElement('td');x.textContent=v;if(c)x.className=c;if(num){x.classList.add('num');x.dir='ltr';}tr.append(x);return x;}
 function renderPerf(p){lastPerf=p;const a=p.all,eqNow=(()=>{try{return Number(String($('equity').textContent).replace(/,/g,''));}catch(e){return null;}})();
  const eq=isFinite(eqNow)&&eqNow>0?eqNow:(p.realized_curve.length?p.realized_curve.at(-1).equity:p.seed);
@@ -905,11 +927,11 @@ function renderPerf(p){lastPerf=p;const a=p.all,eqNow=(()=>{try{return Number(St
  const pts=p.snapshots.length>=2?p.snapshots.map(s=>({t:s.t,v:s.equity})):p.realized_curve.map(s=>({t:s.t,v:s.equity}));
  $('eq_src').textContent=p.snapshots.length>=2?'hourly account snapshots (incl. open P&L)':'closed trades only (snapshots start with the F service)';
  if(pts.length){let pk=-Infinity;const dd=pts.map(x=>{pk=Math.max(pk,x.v);return (x.v/pk-1)*100;});const lab=pts.map(x=>new Date(x.t*1000).toISOString().slice(0,10));
-  chart('eq_chart',{type:'line',data:{labels:lab,datasets:[{label:'Equity ($)',data:pts.map(x=>x.v),borderColor:'#6d8dff',backgroundColor:'rgba(109,141,255,.12)',fill:true,pointRadius:0,tension:.2,borderWidth:2}]},options:baseOpts({plugins:{legend:{display:false}}})});
-  chart('dd_chart',{type:'line',data:{labels:lab,datasets:[{label:'Drawdown (%)',data:dd,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.15)',fill:true,pointRadius:0,borderWidth:1.5},{label:'-15% limit',data:dd.map(()=>-15),borderColor:'#fbbf24',borderDash:[5,5],pointRadius:0,borderWidth:1}]},options:baseOpts({scales:{x:{display:false},y:{grid:{color:'#17223a'},suggestedMin:-16,max:0}}})});}
+  chart('eq_chart',{type:'line',data:{labels:lab,datasets:[{label:'Equity ($)',data:pts.map(x=>x.v),borderColor:themeColor('chart-equity'),backgroundColor:themeColor('chart-fill')+'20',fill:true,pointRadius:0,tension:.2,borderWidth:2}]},options:baseOpts({plugins:{legend:{display:false}}})});
+  chart('dd_chart',{type:'line',data:{labels:lab,datasets:[{label:'Drawdown (%)',data:dd,borderColor:themeColor('loss'),backgroundColor:themeColor('loss')+'20',fill:true,pointRadius:0,borderWidth:1.5},{label:'-15% limit',data:dd.map(()=>-15),borderColor:themeColor('warning'),borderDash:[5,5],pointRadius:0,borderWidth:1}]},options:baseOpts({scales:{x:{display:false},y:{grid:{color:themeColor('border')},suggestedMin:-16,max:0}}})});}
  // daily bars
  const days=[];for(let i=29;i>=0;i--)days.push(new Date(Date.now()-i*86400000).toISOString().slice(0,10));
- chart('daily_chart',{type:'bar',data:{labels:days.map(d=>d.slice(5)),datasets:['main','c3','pa'].map(b=>({label:BOTNAME[b==='main'?'bot':b],data:days.map(d=>(p.daily[d]||{})[b]||0),backgroundColor:BOTCOL[b],borderRadius:3,stack:'s'}))},options:baseOpts({indexAxis:'y',scales:{x:{stacked:true,grid:{color:'#17223a'}},y:{stacked:true,grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}}})});
+ chart('daily_chart',{type:'bar',data:{labels:days.map(d=>d.slice(5)),datasets:['main','c3','pa'].map(b=>({label:BOTNAME[b==='main'?'bot':b],data:days.map(d=>(p.daily[d]||{})[b]||0),backgroundColor:days.map(d=>((p.daily[d]||{})[b]||0)<0?themeColor('loss'):themeColor('profit')),borderRadius:3,stack:'s'}))},options:baseOpts({indexAxis:'y',scales:{x:{stacked:true,grid:{color:themeColor('border')}},y:{stacked:true,grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}}})});
  // per-bot cards
  const pc=$('perf_cards');pc.replaceChildren();
  for(const [k,b] of Object.entries(p.bots)){const s=document.createElement('section');s.className='panel bot bot-'+k;
@@ -945,8 +967,8 @@ function renderRisk(r){lastRisk=r;
  for(const [k,b] of Object.entries(c.bots)){const tr=document.createElement('tr');const t=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(k==='main'?'':' '+k);sp.textContent=b.name;t.append(sp);tr.append(t);
   td(tr,number(b.base_risk_pct,2)+'%','',1);td(tr,number(b.streak.sum_r)+' ('+b.streak.trades+' trades)',b.streak.sum_r<0?'bad':'good',1);td(tr,b.streak.active?'ACTIVE: ×0.5':'off',b.streak.active?'warn':'muted');td(tr,'×'+number(b.multiplier),'',1);td(tr,number(b.f_risk_pct,2)+'%','',1);tb.append(tr);}
  const H=r.history;if(H.length){const lab=H.map(x=>x.as_of.slice(5));
-  chart('f_hist_chart',{type:'line',data:{labels:lab,datasets:[{label:'AI score (0-100)',data:H.map(x=>x.ai_pct*100),borderColor:'#6d8dff',pointRadius:2,yAxisID:'y'},{label:'Combined multiplier',data:H.map(x=>x.combined),borderColor:'#34d399',stepped:true,pointRadius:0,yAxisID:'y1'}]},options:baseOpts({scales:{x:{grid:{display:false}},y:{min:0,max:100,grid:{color:'#17223a'}},y1:{position:'right',min:0,grid:{display:false}}}})});
-  chart('f_shadow_chart',{type:'line',data:{labels:lab,datasets:[{label:'Account',data:H.map(x=>x.account_equity),borderColor:'#8fa0c2',pointRadius:0},{label:'F (shadow estimate)',data:H.map(x=>x.shadow_equity),borderColor:'#a78bfa',pointRadius:0}]},options:baseOpts()});}
+  chart('f_hist_chart',{type:'line',data:{labels:lab,datasets:[{label:'AI score (0-100)',data:H.map(x=>x.ai_pct*100),borderColor:themeColor('chart-equity'),pointRadius:2,yAxisID:'y'},{label:'Combined multiplier',data:H.map(x=>x.combined),borderColor:themeColor('primary'),stepped:true,pointRadius:0,yAxisID:'y1'}]},options:baseOpts({scales:{x:{grid:{display:false}},y:{min:0,max:100,grid:{color:themeColor('border')}},y1:{position:'right',min:0,grid:{display:false}}}})});
+  chart('f_shadow_chart',{type:'line',data:{labels:lab,datasets:[{label:'Account',data:H.map(x=>x.account_equity),borderColor:themeColor('chart-axis'),pointRadius:0},{label:'F (shadow estimate)',data:H.map(x=>x.shadow_equity),borderColor:themeColor('primary'),pointRadius:0}]},options:baseOpts()});}
  const ft=$('f_feats');ft.replaceChildren();for(const [k,v] of Object.entries(c.features)){const tr=document.createElement('tr');td(tr,k,'mono');td(tr,v===null?'—':Number(v).toPrecision(4),'',1);ft.append(tr);}
  $('f_data').textContent='Coins with data: '+(c.data_status.coins??'—')+' · inputs filled with training medians: '+((c.data_status.features_missing||[]).join(', ')||'none')+' · model trained until '+(c.model.trained_until||'—');}
 async function loadPerf(){if(!connected)return;try{renderPerf((await api('/api/performance')).data);}catch(e){message('Performance: '+e.message,true);}}
@@ -1015,5 +1037,10 @@ $('lv_panic').onclick=async()=>{if(!confirm('Close every position the mirror ope
 const _connect3=$('connect').onclick;$('connect').onclick=async()=>{await _connect3();for(const id of ['lv_save','lv_test','lv_readiness','lv_panic'])$(id).disabled=false;await loadLive();};
 setInterval(loadLive,15000);
 </script></body></html>'''
+
+_THEME_ASSETS = Path(__file__).with_name('frontend') / 'public' / 'portal-assets'
+HTML = HTML.replace('<title>',
+    '<style id="titanium-tokens">' + (_THEME_ASSETS / 'titanium.css').read_text() + '</style>'
+    + '<script id="trade-appearance-init">' + (_THEME_ASSETS / 'appearance.js').read_text() + '</script><title>', 1)
 
 app = create_app()

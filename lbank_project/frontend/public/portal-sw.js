@@ -1,10 +1,17 @@
 "use strict";
-// Cache only the public offline screen. Authenticated pages and API responses
+// Cache only public offline presentation assets. Authenticated pages and API responses
 // always use the network: never leave private balances/licenses on a shared device.
-const CACHE = "trade-offline-v3";
+const CACHE = "trade-offline-v4";
 const OFFLINE = "/portal-assets/offline.html";
+const PUBLIC_ASSETS = [
+  OFFLINE,
+  "/portal-assets/titanium.css",
+  "/portal-assets/appearance.js",
+];
 self.addEventListener("install", (event) =>
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.add(OFFLINE))),
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(PUBLIC_ASSETS)),
+  ),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(
@@ -26,6 +33,12 @@ self.addEventListener("fetch", (event) => {
     new URL(event.request.url).origin !== self.location.origin
   )
     return;
+  if (PUBLIC_ASSETS.includes(new URL(event.request.url).pathname)) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request)),
+    );
+    return;
+  }
   if (event.request.mode === "navigate")
     event.respondWith(
       fetch(event.request).catch(() =>

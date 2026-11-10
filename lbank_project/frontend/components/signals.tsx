@@ -117,8 +117,14 @@ export default function Signals({
               </div>
               <p>
                 {names[s.bot] || s.bot} ·{" "}
-                {s.side === "long" ? "خرید / Long" : "فروش / Short"} ·{" "}
-                <bdi>{s.timeframe}</bdi>
+                <span
+                  className={
+                    s.side === "long" ? "financial-profit" : "financial-loss"
+                  }
+                >
+                  {s.side === "long" ? "خرید / Long" : "فروش / Short"}
+                </span>{" "}
+                · <bdi>{s.timeframe}</bdi>
               </p>
               <dl>
                 <div>

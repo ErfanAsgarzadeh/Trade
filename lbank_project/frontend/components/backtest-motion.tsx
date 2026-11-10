@@ -159,12 +159,12 @@ export default function BacktestMotion() {
         </desc>
         <defs>
           <linearGradient id="equity-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#c5f279" stopOpacity=".24" />
-            <stop offset="100%" stopColor="#c5f279" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--chart-fill)" stopOpacity=".24" />
+            <stop offset="100%" stopColor="var(--chart-fill)" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="equity-stroke">
-            <stop stopColor="#769f54" />
-            <stop offset="100%" stopColor="#d6ff8f" />
+            <stop stopColor="var(--chart-indicator)" />
+            <stop offset="100%" stopColor="var(--chart-equity)" />
           </linearGradient>
           <clipPath id="replay-clip">
             <rect
@@ -236,7 +236,7 @@ export default function BacktestMotion() {
           cx={point.x}
           cy={point.y}
           r="10"
-          fill="#c5f279"
+          fill="var(--chart-fill)"
           opacity=".55"
           filter="url(#point-glow)"
         />
@@ -244,8 +244,8 @@ export default function BacktestMotion() {
           cx={point.x}
           cy={point.y}
           r="4.5"
-          fill="#eaffc8"
-          stroke="#172218"
+          fill="var(--chart-marker)"
+          stroke="var(--chart-background)"
           strokeWidth="2"
         />
       </svg>
