@@ -1,5 +1,8 @@
 # لایسنس بر اساس سرمایه و وب‌اپ Trade
 
+رابط این پنل با **Next.js / React / TypeScript** پیاده‌سازی شده است. پیش از اجرای محلی، `npm --prefix frontend ci` و `npm --prefix frontend run build` را اجرا کنید؛ [راهنمای فرانت](frontend/README_FA.md).
+
+
 پنل مرکزی در `portal_server.py` اکنون یک رابط فارسی راست‌به‌چپ و واکنش‌گرا دارد:
 انتخاب سقف سرمایه، دورهٔ یک/سه/شش ماهه، نمایش تخفیف، مرور و ثبت سفارش، لغو درخواست،
 تاریخچه، وضعیت اعتبار و دانلود فایل امضاشده. مدیریت اتصال صرافی و وضعیت سه ربات
@@ -147,7 +150,9 @@ python -m pip install -r requirements-dev.txt -r requirements-portal.txt
 PYTHONPATH=. python -m pytest tests/test_capital_licensing.py \
   tests/test_customer_distribution.py tests/test_portal.py \
   tests/test_portal_queue.py tests/test_multi_exchange.py -q
-node tests/test_portal_ui.cjs
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
 ```
 
 تست مرورگر اختیاری با Playwright و Chromium:

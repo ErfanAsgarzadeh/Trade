@@ -45,6 +45,7 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
             context=browser.new_context(viewport={'width':1440,'height':1050},locale='fa-IR',reduced_motion='reduce')
             page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
             page.on('dialog',lambda dialog:dialog.accept())
+            page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.goto(origin);page.wait_for_selector('#login-panel:not([hidden])')
             page.screenshot(path=str(screenshots/'login-desktop.png'),full_page=True)
             page.locator('#username').fill('demo-trader');page.locator('#password').fill('disposable-browser-password')
@@ -91,9 +92,25 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path):
             context.set_offline(False);page.goto(origin);page.wait_for_selector('#account-panel:not([hidden])')
             cached=page.evaluate("caches.keys().then(async keys=>Promise.all(keys.map(async key=>(await caches.open(key)).keys().then(reqs=>reqs.map(r=>new URL(r.url).pathname)))))")
             assert all(path=='/portal-assets/offline.html' for paths in cached for path in paths)
+            page.locator('#exchange-id').select_option('okx')
+            page.locator('#credential-api_key').fill('old-test-key')
+            page.locator('#api-secret').fill('old-test-secret')
+            page.locator('#credential-passphrase').fill('old-test-passphrase')
+            page.locator('#exchange-id').select_option('lbank')
+            assert page.locator('#credential-api_key').input_value()==''
+            assert page.locator('#api-secret').input_value()==''
+            assert page.locator('#credential-passphrase').count()==0
+            page.locator('#credential-api_key').fill('browser-test-key')
+            page.locator('#api-secret').fill('browser-test-secret')
+            page.locator('#connection-form button').click()
+            page.wait_for_function("()=>document.getElementById('connection-status').textContent.includes('ثبت شدند')")
+            assert page.locator('#credential-api_key').input_value()==''
+            assert page.locator('#api-secret').input_value()==''
+            page.locator('#disconnect').click()
+            page.wait_for_function("()=>document.getElementById('connection-status').textContent==='حسابی ثبت نشده'")
             page.locator('#logout').click();page.wait_for_selector('#login-panel:not([hidden])')
             assert page.locator('#order-rows tr').count()==0
-            assert page.locator('#license-account').inner_text()==''
+            assert page.locator('#license-account').count()==0
             assert not errors,errors
             browser.close()
     finally:

@@ -110,7 +110,9 @@ def test_secret_validation_does_not_echo_input_and_http_protection(store):
         r=c.put('/api/me/connection',headers=h,json=dict(market='spot',api_key='private-input-key',secret='x'*17000))
         assert r.status_code==413 and 'private-input' not in r.text
         assert "script-src 'self'" in c.get('/').headers['Content-Security-Policy']
-        assert 'localStorage' not in c.get('/portal.js').text
+        assert '/_next/' in c.get('/').text
+        assert "'sha256-" in c.get('/').headers['Content-Security-Policy']
+        assert c.get('/portal.js').status_code==404
     with pytest.raises(ValueError):create_app(store,origin='http://external.test',secure=False)
     with pytest.raises(ValueError):create_app(store,origin='http://127.0.0.1:8080',secure=True)
     from portal_server import trusted_proxies
@@ -218,7 +220,7 @@ def test_portal_process_starts_with_file_key_and_owns_persistent_sessions(tmp_pa
                     time.sleep(.1)
                 else:pytest.fail('Portal did not become ready')
                 assert 'پنل اختصاصی' in client.get('/').text
-                assert client.get('/portal.css').status_code==200
+                assert '/_next/static/' in client.get('/').text
                 assert client.get('/api/me').status_code==401
                 r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':origin},json=dict(username='alice',password=PASSWORD))
                 assert r.status_code==200 and 'HttpOnly' in r.headers['set-cookie']

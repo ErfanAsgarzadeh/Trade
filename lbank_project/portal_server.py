@@ -20,6 +20,7 @@ from portal_runtime import robots
 from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
 from capital_plans import catalog as plan_catalog
+from portal_frontend import frontend_index
 
 COOKIE='trade_session'
 
@@ -87,7 +88,10 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     app=FastAPI(title='Trade customer portal',lifespan=lifespan,docs_url=None,redoc_url=None,openapi_url=None)
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=[parsed.hostname])
-    app.mount('/portal-assets',StaticFiles(directory=Path(__file__).with_name('portal_assets')),name='portal-assets')
+    frontend=Path(os.getenv('PORTAL_FRONTEND_DIR',str(Path(__file__).with_name('frontend')/'out')))
+    public=Path(__file__).with_name('frontend')/'public'
+    app.mount('/portal-assets',StaticFiles(directory=public/'portal-assets'),name='portal-assets')
+    app.mount('/_next',StaticFiles(directory=frontend/'_next',check_dir=False),name='next-assets')
 
     def repository(request:Request):return request.app.state.store
 
@@ -117,9 +121,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             body=await request.body()
             if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
+        script_hashes=''
+        if request.url.path=='/':
+            try:script_hashes=frontend_index(frontend)[1]
+            except OSError:pass
         response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
-                                 'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
+                                 'Content-Security-Policy':f"default-src 'self'; script-src 'self' {script_hashes}; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
         if secure:response.headers['Strict-Transport-Security']='max-age=31536000'
         return response
 
@@ -138,25 +146,19 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         app.add_exception_handler(TooManyRequests,database_busy)
 
     @app.get('/',response_class=HTMLResponse)
-    def home():return Path(__file__).with_name('portal.html').read_text(encoding='utf-8')
-
-    @app.get('/portal.js')
-    def script():return Response(Path(__file__).with_name('portal.js').read_text(),media_type='application/javascript')
-
-    @app.get('/portal_license.js')
-    def license_script():return Response(Path(__file__).with_name('portal_license.js').read_text(),media_type='application/javascript')
-
-    @app.get('/portal.css')
-    def css():return Response(Path(__file__).with_name('portal.css').read_text(),media_type='text/css')
+    def home():
+        try:return HTMLResponse(frontend_index(frontend)[0])
+        except OSError:
+            return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
 
     @app.get('/manifest.webmanifest')
     def manifest():
-        return Response(Path(__file__).with_name('portal_assets').joinpath('manifest.webmanifest').read_text(),media_type='application/manifest+json')
+        return Response((public/'manifest.webmanifest').read_text(),media_type='application/manifest+json')
 
     @app.get('/portal-sw.js')
     def service_worker():
-        return Response(Path(__file__).with_name('portal_assets').joinpath('service-worker.js').read_text(),
-                        media_type='application/javascript',headers={'Service-Worker-Allowed':'/'})
+        return Response((public/'portal-sw.js').read_text(),media_type='application/javascript',
+                        headers={'Service-Worker-Allowed':'/'})
 
     @app.get('/api/plans')
     def plans():return plan_catalog()

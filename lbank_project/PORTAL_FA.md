@@ -1,5 +1,8 @@
 # پنل مرکزی کاربران و اتصال حساب شخصی صرافی
 
+رابط این پنل با **Next.js / React / TypeScript** پیاده‌سازی شده است. پیش از اجرای محلی، `npm --prefix frontend ci` و `npm --prefix frontend run build` را اجرا کنید؛ [راهنمای فرانت](frontend/README_FA.md).
+
+
 برای تعرفه‌های سرمایه‌ای، وب‌اپ موبایل و روند صدور لایسنس، [راهنمای لایسنس سرمایه‌ای](CAPITAL_LICENSE_FA.md) را ببینید.
 
 
@@ -163,7 +166,9 @@ python -m pip install -r requirements-dev.txt
 python -m pytest tests/test_portal.py -q
 python -m pytest tests/test_portal_queue.py -q
 node --check portal.js
-node tests/test_portal_ui.cjs
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
 ```
 
 تست‌ها شامل جداسازی دو حساب، رد انتخاب مالک دیگر، vault مالک‌محور، ابطال نشست،

@@ -165,6 +165,14 @@ def test_wrong_issuer_cashflow_rolls_back(setup,tmp_path):
     assert b.document(a)==before
 
 
+def test_approval_is_immediately_active_with_submicrosecond_clock(setup):
+    _,b,a,_,private,_,_=setup
+    now=1794254400.1234567
+    oid=order(b,a,now=now)['id']
+    approved=b.approve(oid,private,'binance:alice123','10000','payment:precision',now)
+    assert approved['state']=='active' and approved['entries_allowed']
+
+
 def test_install_license_keeps_positions_and_prevents_account_switch(setup,tmp_path,monkeypatch):
     _,b,a,_,private,public,_=setup
     root=tmp_path/'customers';directory=customers.create(root,'alice',private,public,8101,10000.)

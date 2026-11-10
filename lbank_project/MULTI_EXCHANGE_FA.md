@@ -88,7 +88,9 @@ schema نسخهٔ ۳، ستون exchange_id را با default=lbank اضافه �
 ```bash
 python -m pip install -r requirements-dev.txt -r requirements-portal.txt
 python -m pytest tests -q
-node tests/test_portal_ui.cjs
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
 python portal_capacity.py --users 10000 --requests 2000 --concurrency 40 --drain 1000 --mix-exchanges --mix-markets --output reports/new-multi-exchange-run.json
 ```
 

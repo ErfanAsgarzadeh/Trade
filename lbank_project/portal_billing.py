@@ -132,7 +132,9 @@ class Billing:
 
     def approve(self, oid, private, account_id, equity, payment_ref, now=None):
         """Call only after independently verifying payment, account UID and USD equity."""
-        now = time.time() if now is None else now
+        # Signed ISO timestamps have microsecond precision. Compare the approval
+        # result against the same canonical clock, never an earlier float fraction.
+        now = timestamp(iso(time.time() if now is None else now))
         equity = money(equity, positive=True)
         if not re.fullmatch(r'[a-z0-9][a-z0-9:._-]{2,119}', account_id):
             raise ValueError('Use an exchange-prefixed account UID, e.g. binance:123456')
