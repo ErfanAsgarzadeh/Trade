@@ -71,9 +71,9 @@ export interface Connection {
     snapshot?: {
       balances?: {
         asset: string;
-        free: number;
-        locked: number;
-        total: number;
+        free: number | null;
+        locked: number | null;
+        total: number | null;
       }[];
       positions?: Record<string, Cell>[];
       balance_scope?: string;

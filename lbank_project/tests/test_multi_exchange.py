@@ -31,7 +31,7 @@ class FakeClient:
     def close(self):self.closed=True
 
 
-@pytest.mark.parametrize('exchange_id,market',[(i,m) for i,p in PROFILES.items() for m in ('spot','futures') if m in p and i!='lbank'])
+@pytest.mark.parametrize('exchange_id,market',[(i,m) for i,p in PROFILES.items() for m in ('spot','futures') if m in p and i not in ('lbank','thetruetrade')])
 def test_each_enabled_route_uses_its_own_client_and_strips_raw_info(exchange_id,market):
     clients=[]
     def factory(name,params):
@@ -60,8 +60,8 @@ def test_each_enabled_route_uses_its_own_client_and_strips_raw_info(exchange_id,
 
 
 def test_catalog_matches_installed_capabilities_and_no_urls():
-    entries=catalog();assert len(entries)==9
-    assert sum('futures' in e['markets'] for e in entries)==7
+    entries=catalog();assert len(entries)==10
+    assert sum('futures' in e['markets'] for e in entries)==8
     lbank=next(e for e in entries if e['id']=='lbank')
     assert lbank['markets']==['spot'] and lbank['pending_markets']==['futures']
     assert all(not e['live_execution_supported'] for e in entries)
@@ -89,7 +89,7 @@ def test_two_users_choose_different_exchanges_and_switch_cancels_old_work(tmp_pa
             assert r.status_code==200
             headers.append({'X-Portal-Request':'1','X-CSRF-Token':r.json()['csrf']})
         ah,bh=headers
-        assert len(alice.get('/api/exchanges').json()['exchanges'])==9
+        assert len(alice.get('/api/exchanges').json()['exchanges'])==10
         payload=dict(exchange_id='okx',market='futures',api_key='alice-api-key',secret='alice-secret')
         assert alice.put('/api/me/connection',headers=ah,json=payload).status_code==422
         payload['passphrase']='private-passphrase'

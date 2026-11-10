@@ -13,8 +13,8 @@ const emptyCredentials = { api_key: "", secret: "", passphrase: "", uid: "" };
 export default function AccountPanel({ api, report, notify }: Props) {
   const [catalog, setCatalog] = useState<Exchange[]>([]),
     [connection, setConnection] = useState<Connection | null>(null);
-  const [exchange, setExchange] = useState("lbank"),
-    [market, setMarket] = useState("spot"),
+  const [exchange, setExchange] = useState("thetruetrade"),
+    [market, setMarket] = useState("futures"),
     [credentials, setCredentials] = useState(emptyCredentials),
     [busy, setBusy] = useState(false);
   const generation = useRef(0);
@@ -37,7 +37,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
         setConnection(c);
         const v =
           result.exchanges.find(
-            (v) => v.id === (c.configured ? c.exchange_id : "lbank"),
+            (v) => v.id === (c.configured ? c.exchange_id : "thetruetrade"),
           ) || result.exchanges[0];
         if (v) {
           setExchange(v.id);

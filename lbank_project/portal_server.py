@@ -397,6 +397,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except RefreshLimited:raise HTTPException(429,'Account refresh limited to once per 30 seconds')
         except QueueFull:raise HTTPException(503,'Account queue is full; retry later')
 
+    @app.get('/api/me/execution-readiness')
+    def execution_readiness(request:Request,user=Depends(identity)):
+        from portal_execution import readiness
+        store=repository(request)
+        return readiness(store.public_connection(user['id']),Billing(store).snapshot(user['id'])['license'])
+
     @app.get('/api/me/robots')
     def robot_status(user=Depends(identity)):
         return {'robots':robots(user['runtime'],user['username']),'live_execution_supported':False}

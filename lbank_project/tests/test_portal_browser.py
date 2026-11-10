@@ -154,6 +154,10 @@ def test_signup_and_closed_product_sales_on_mobile(tmp_path, appearance):
             page.locator('#password-confirmation').fill('disposable-signup-password')
             page.locator('#register-form button').click();page.wait_for_selector('#account-panel')
             page.wait_for_selector('#sales-closed');assert page.locator('#request-license').is_disabled()
+            page.wait_for_function("()=>document.getElementById('exchange-id').value==='thetruetrade'")
+            assert page.locator('#market').input_value()=='futures'
+            assert page.locator('#credential-api_key').is_visible()
+            page.wait_for_function("()=>document.getElementById('execution-readiness').textContent.includes('لایسنس معتبر')")
             assert page.locator('#plan-price').inner_text()=='تعیین نشده'
             page.locator('input[name="product"][value="signals"]').check()
             assert page.locator('#request-license').is_disabled()

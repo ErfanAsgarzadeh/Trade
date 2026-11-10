@@ -28,6 +28,7 @@ TESTS = (
     'test_ttt_live_readiness.py', 'test_ttt_stop_audit.py', 'test_ttt_account_audit.py',
     'test_ttt_protection_readback.py', 'test_ttt_one_time_tpsl.py',
     'test_paper_forward_audit.py', 'test_portal_frontend.py', 'test_public_backtest.py',
+    'test_portal_thetruetrade.py',
 )
 PACKAGES = ('ccxt','pandas','numpy','fastapi','uvicorn','pydantic','cryptography',
             'pytest','httpx','yaml')
