@@ -7,6 +7,7 @@ export interface ProductPlan {
   tiers: { cap_usd: number; prices_cents: Record<string, number | null> }[];
 }
 export interface Me {
+  role: "customer" | "admin";
   username: string;
   csrf: string;
   live_execution_supported: boolean;

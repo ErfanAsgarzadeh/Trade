@@ -3,6 +3,7 @@ import json
 import uuid
 import time
 from capital_plans import PRICES, TERMS, money
+from portal_audit import require_admin,record
 
 PRODUCTS=('signals','autotrade')
 LABELS={'signals':'فقط سیگنال','autotrade':'معاملهٔ خودکار'}
@@ -32,7 +33,7 @@ def catalog(store):
                 tiers=next(p['tiers'] for p in products if p['product']=='autotrade'))
 
 
-def configure(store,product,document,enabled=False):
+def configure(store,product,document,enabled=False,expected_version=None,actor=None):
     validate_product(product)
     if type(enabled) is not bool:raise ValueError('Sales flag must be boolean')
     if not isinstance(document,dict):raise ValueError('Expected a JSON tariff object')
@@ -44,22 +45,40 @@ def configure(store,product,document,enabled=False):
         if any(v>20000000 for v in prices[cap].values()):raise ValueError('Price may not exceed 200,000 USD')
     version=str(uuid.uuid4())
     with store.db() as db:
-        store.database.begin_write(db,'product-pricing')
+        store.database.begin_write(db,'admin-authority' if actor else 'product-pricing')
+        if actor:
+            require_admin(db,actor)
+            if store.database.postgres:store.database.begin_write(db,'product-pricing')
+        if expected_version is not None and settings(db,product)['version']!=expected_version:raise ValueError('Tariff version changed')
         db.execute('INSERT INTO product_pricing VALUES(?,?,?,?,?) ON CONFLICT(product) DO UPDATE SET '
                    'prices=excluded.prices,enabled=excluded.enabled,version=excluded.version,updated=excluded.updated',
                    (product,json.dumps(prices),int(enabled),version,time.time()))
+        record(db,actor,'pricing_saved',product,dict(version=version,sales_enabled=enabled))
     return dict(product=product,version=version,sales_enabled=bool(enabled))
 
 
-def close_sales(store,product):
+def close_sales(store,product,expected_version=None,actor=None):
     validate_product(product)
     with store.db() as db:
-        store.database.begin_write(db,'product-pricing')
+        store.database.begin_write(db,'admin-authority' if actor else 'product-pricing')
+        if actor:
+            require_admin(db,actor)
+            if store.database.postgres:store.database.begin_write(db,'product-pricing')
+        if expected_version is not None and settings(db,product)['version']!=expected_version:raise ValueError('Tariff version changed')
         db.execute('UPDATE product_pricing SET enabled=0,version=?,updated=? WHERE product=?',
                    (str(uuid.uuid4()),time.time(),product))
+        record(db,actor,'sales_closed',product)
 
 
 def priced(config,cap,months):
     if not config['sales_enabled']:raise ValueError('Sales are closed until tariffs are finalized')
     try:return config['prices'][str(cap)][str(months)]
     except KeyError:raise ValueError('Price is not configured') from None
+
+
+def open_sales(store,product,expected_version,actor):
+    # Reuse the current, fully validated tariff. The expected-version check in
+    # configure fences any edit between reading it and opening sales.
+    with store.db() as db:config=settings(db,product)
+    document={cap:{term:str(value/100) for term,value in terms.items()} for cap,terms in config['prices'].items()}
+    return configure(store,product,document,True,expected_version,actor)

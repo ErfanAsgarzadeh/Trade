@@ -106,7 +106,7 @@ def test_sales_default_closed_and_cannot_be_bypassed_by_client(store):
             assert client.post('/api/me/license/quote',headers=h,json=body).status_code==409
             assert client.post('/api/me/license/orders',headers=h,json={**body,'request_key':str(uuid.uuid4()),'expected_price_cents':1}).status_code==409
         assert client.post('/api/me/license/quote',headers=h,json={**body,'product':'admin'}).status_code==422
-        assert client.put('/api/admin/pricing',headers=h,json={}).status_code==404
+        assert client.get('/api/admin/pricing',headers=h).status_code==403
         assert not client.get('/api/me/license').json()['orders']
 
 

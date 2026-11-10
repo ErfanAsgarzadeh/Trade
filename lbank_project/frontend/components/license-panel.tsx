@@ -14,6 +14,7 @@ const orderLabels: Record<string, string> = {
   pending: "در انتظار بررسی",
   approved: "تأیید و صادر شد",
   cancelled: "لغوشده",
+  rejected: "ردشده",
 };
 export default function LicensePanel({
   api,

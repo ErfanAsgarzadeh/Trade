@@ -54,6 +54,18 @@ class PortalStore:
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'registered',time.time()))
         return token,csrf
 
+    def set_admin(self,username,enabled=True):
+        """Operator CLI only. No public route grants roles; all sessions are revoked."""
+        from portal_audit import record
+        with self.db() as db:
+            self.database.begin_write(db,'admin-authority')
+            user=db.execute('SELECT id,role FROM users WHERE username=?',(username,)).fetchone()
+            if not user:raise ValueError('Unknown user')
+            role='admin' if enabled else 'customer'
+            db.execute('UPDATE users SET role=? WHERE id=?',(role,user['id']))
+            db.execute('DELETE FROM sessions WHERE user_id=?',(user['id'],))
+            record(db,None,'role_changed',user['id'],dict(role=role,source='operator_cli'))
+
     def attempt(self, client):
         """Shared across processes. Count all logins before expensive password hashing."""
         with self.db() as db:
@@ -82,7 +94,7 @@ class PortalStore:
 
     def session(self, token):
         with self.db() as db:
-            row=db.execute('SELECT users.id,users.username,users.runtime,sessions.csrf FROM sessions '
+            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,sessions.csrf FROM sessions '
                            'JOIN users ON users.id=sessions.user_id WHERE token_hash=? AND expires>? AND disabled=0',
                            (hashlib.sha256(token.encode()).hexdigest(),time.time())).fetchone()
             return dict(row) if row else None

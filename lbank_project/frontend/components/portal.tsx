@@ -9,13 +9,15 @@ import AccountPanel from "./account-panel";
 import Robots from "./robots";
 import Pwa from "./pwa";
 import Signals from "./signals";
+import AdminWorkbench from "./admin-workbench";
 
 export default function Portal({
   initialMode = "login",
 }: {
-  initialMode?: "login" | "register";
+  initialMode?: "login" | "register" | "admin";
 }) {
   const registering = initialMode === "register";
+  const adminMode = initialMode === "admin";
   const [api] = useState(() => new ApiClient());
   const [user, setUser] = useState<Me | null>(null),
     [ready, setReady] = useState(false),
@@ -125,6 +127,11 @@ export default function Portal({
         </div>
         <div className="topbar-actions">
           <Pwa notify={setMessage} />
+          {user?.role === "admin" && !adminMode && (
+            <a id="admin-link" className="text-link" href="/admin/">
+              کارتابل مدیریت
+            </a>
+          )}
           {user && (
             <button
               id="logout"
@@ -269,6 +276,18 @@ export default function Portal({
               </p>
             </div>
           </section>
+        ) : adminMode ? (
+          user.role === "admin" ? (
+            <AdminWorkbench api={api} report={report} />
+          ) : (
+            <section id="admin-forbidden" className="panel">
+              <h1>دسترسی مدیریتی ندارید</h1>
+              <p>این بخش فقط برای مدیر سامانه است.</p>
+              <a className="button" href="/">
+                بازگشت به پنل خودم
+              </a>
+            </section>
+          )
         ) : (
           <div id="account-panel" key={user.username}>
             <nav className="section-nav" aria-label="بخش‌های پنل">

@@ -56,6 +56,18 @@ CREATE TABLE IF NOT EXISTS product_pricing(product TEXT PRIMARY KEY,prices TEXT 
  enabled INTEGER NOT NULL DEFAULT 0,version TEXT NOT NULL,updated REAL NOT NULL);
 '''
 
+SCHEMA_V6='''
+ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'customer' CHECK(role IN ('customer','admin'));
+CREATE TABLE IF NOT EXISTS admin_events(id TEXT PRIMARY KEY,actor_id TEXT REFERENCES users(id),
+ action TEXT NOT NULL,target TEXT NOT NULL,details TEXT NOT NULL,at REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS admin_events_time ON admin_events(at);
+CREATE TABLE IF NOT EXISTS license_approvals(id TEXT PRIMARY KEY,order_id TEXT UNIQUE NOT NULL REFERENCES license_orders(id),
+ requested_by TEXT NOT NULL REFERENCES users(id),payload TEXT NOT NULL,payment_ref TEXT UNIQUE NOT NULL,
+ state TEXT NOT NULL,lease_token TEXT,lease_until REAL NOT NULL DEFAULT 0,attempts INTEGER NOT NULL DEFAULT 0,
+ created REAL NOT NULL,updated REAL NOT NULL,error_code TEXT);
+CREATE INDEX IF NOT EXISTS license_approvals_due ON license_approvals(state,lease_until);
+'''
+
 
 class PostgresConnection:
     def __init__(self,connection):self.connection=connection
@@ -123,8 +135,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5)):
+            if versions-{1,2,3,4,5,6}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

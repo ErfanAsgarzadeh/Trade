@@ -28,6 +28,7 @@ def main():
     prices.add_argument('--file',type=Path,required=True);prices.add_argument('--enable-sales',action='store_true')
     closed=sub.add_parser('close-sales');closed.add_argument('product',choices=product_pricing.PRODUCTS)
     sub.add_parser('pricing-status')
+    role=sub.add_parser('set-admin');role.add_argument('username');role.add_argument('--remove',action='store_true')
     approval=sub.add_parser('approve-license')
     approval.add_argument('order_id');approval.add_argument('--private-key',type=Path,required=True)
     approval.add_argument('--account-id');approval.add_argument('--equity-usd')
@@ -77,6 +78,7 @@ def main():
             result=Billing(store).approve(args.order_id,args.private_key,args.account_id,args.equity_usd,args.payment_ref)
             print(json.dumps(result,ensure_ascii=False,indent=2));return
         if not re.fullmatch(r'[a-z][a-z0-9-]{1,39}',args.username):raise ValueError('Invalid username')
+        if args.action=='set-admin':store.set_admin(args.username,not args.remove);print('Role updated. Existing sessions revoked.');return
         if args.action=='license-cashflow':
             result=Billing(store).cashflow(args.username,args.private_key,args.event_id,args.amount_usd)
             print(json.dumps(result,ensure_ascii=False,indent=2));return

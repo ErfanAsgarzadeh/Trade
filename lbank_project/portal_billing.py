@@ -143,7 +143,7 @@ class Billing:
             raise BillingConflict('No issued license')
         return document
 
-    def approve(self, oid, private, account_id=None, equity=None, payment_ref=None, now=None):
+    def approve(self, oid, private, account_id=None, equity=None, payment_ref=None, now=None,approval_job=None):
         """Call only after independently verifying payment, account UID and USD equity."""
         # Signed ISO timestamps have microsecond precision. Compare the approval
         # result against the same canonical clock, never an earlier float fraction.
@@ -155,7 +155,17 @@ class Billing:
             if not row:
                 raise BillingConflict('Order not found')
             user = row['user_id']
-            self.store.database.begin_write(db, 'billing:' + user)
+            self.store.database.begin_write(db,'admin-authority' if approval_job else 'billing:'+user)
+            if approval_job and self.store.database.postgres:self.store.database.begin_write(db,'billing:'+user)
+            if approval_job:
+                from portal_audit import require_admin
+                job=db.execute('SELECT * FROM license_approvals WHERE id=? AND order_id=?',(approval_job['id'],oid)).fetchone()
+                clock=self.store.database.clock(db)
+                if not job or job['state']!='running' or job['lease_token']!=approval_job['lease_token'] or job['lease_until']<=clock:
+                    raise BillingConflict('Signing lease is no longer valid')
+                require_admin(db,job['requested_by'])
+            owner=db.execute('SELECT disabled FROM users WHERE id=?',(user,)).fetchone()
+            if owner['disabled']:raise BillingConflict('Customer is disabled')
             order = db.execute('SELECT * FROM license_orders WHERE id=?', (oid,)).fetchone()
             if order['status'] != 'pending':
                 raise BillingConflict('Order is no longer pending')
@@ -202,6 +212,9 @@ class Billing:
             db.execute("UPDATE license_orders SET status='approved',payment_ref=?,updated=? WHERE id=?",
                        (payment_ref, now, oid))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_approved:' + oid, now))
+            db.execute("UPDATE license_approvals SET state='completed',lease_token=NULL,lease_until=0,error_code=NULL,updated=? WHERE order_id=?",(now,oid))
+            from portal_audit import record
+            record(db,job['requested_by'] if approval_job else None,'license_issued',oid,dict(license_id=payload['license_id']))
             return public_license(document, now)
 
     def cashflow(self, username, private, event_id, amount, now=None):

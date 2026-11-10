@@ -6,7 +6,7 @@ from pathlib import Path
 import secrets
 from urllib.parse import urlsplit
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
@@ -22,6 +22,7 @@ from portal_billing import Billing, BillingConflict
 import product_pricing
 from signal_feed import read_feed
 from portal_frontend import frontend_index
+from portal_admin_store import AdminStore
 
 COOKIE='trade_session'
 
@@ -65,6 +66,39 @@ class LicenseQuote(BaseModel):
 class LicenseOrder(LicenseQuote):
     request_key:str=Field(min_length=16,max_length=80,pattern=r'^[a-zA-Z0-9-]+$')
     expected_price_cents:int=Field(ge=1,le=20000000)
+
+
+class AdminUserState(BaseModel):
+    model_config=ConfigDict(extra='forbid',strict=True)
+    disabled:bool
+
+
+class AdminPricing(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    expected_version:str=Field(min_length=1,max_length=80)
+    prices:dict[str,dict[str,str]]=Field(min_length=7,max_length=7)
+
+
+class AdminVersion(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    expected_version:str=Field(min_length=1,max_length=80)
+
+
+class AdminOpenSales(AdminVersion):
+    confirmation:str=Field(pattern=r'^FINAL_PRICES_CONFIRMED$')
+
+
+class AdminRejection(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    reason:str=Field(min_length=3,max_length=500)
+
+
+class AdminApproval(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    payment_ref:str=Field(pattern=r'^[A-Za-z0-9:._-]{4,120}$')
+    account_id:str|None=Field(default=None,max_length=120)
+    equity_usd:str|None=Field(default=None,max_length=30)
+    confirmation:str=Field(pattern=r'^PAYMENT_AND_ACCOUNT_VERIFIED$')
 
 
 def create_app(store=None,reader=None,origin=None,secure=None):
@@ -116,6 +150,22 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             raise HTTPException(403,'Invalid request token')
         return user
 
+    def administrator(user=Depends(identity)):
+        if user['role']!='admin':raise HTTPException(403,'Administrator required')
+        return user
+
+    def admin_mutation(user=Depends(mutation)):
+        if user['role']!='admin':raise HTTPException(403,'Administrator required')
+        return user
+
+    def admin_call(function):
+        try:return function()
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except LookupError:raise HTTPException(404,'Record not found')
+        except BillingConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError as exc:
+            raise HTTPException(409 if 'version changed' in str(exc).lower() else 422,'Check fields and latest version')
+
     @app.middleware('http')
     async def headers(request,call_next):
         # Protect key/password uploads before JSON validation. Reject ambiguous streaming bodies.
@@ -128,8 +178,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
         script_hashes=''
-        if request.url.path in ('/','/register','/register/'):
-            try:script_hashes=frontend_index(frontend,'register.html' if request.url.path.startswith('/register') else 'index.html')[1]
+        if request.url.path in ('/','/register','/register/','/admin','/admin/'):
+            try:script_hashes=frontend_index(frontend,'admin.html' if request.url.path.startswith('/admin') else 'register.html' if request.url.path.startswith('/register') else 'index.html')[1]
             except OSError:pass
         response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
@@ -162,6 +212,58 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def registration_page():
         try:return HTMLResponse(frontend_index(frontend,'register.html')[0])
         except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+
+    @app.get('/admin',response_class=HTMLResponse)
+    @app.get('/admin/',response_class=HTMLResponse)
+    def admin_page():
+        try:return HTMLResponse(frontend_index(frontend,'admin.html')[0])
+        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+
+    @app.get('/api/admin/overview')
+    def admin_overview(request:Request,user=Depends(administrator)):
+        return AdminStore(repository(request)).overview()
+
+    @app.get('/api/admin/users')
+    def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=40),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
+        return AdminStore(repository(request)).users(search,offset,limit)
+
+    @app.patch('/api/admin/users/{user_id}')
+    def admin_user_state(user_id:str,payload:AdminUserState,request:Request,user=Depends(admin_mutation)):
+        return admin_call(lambda:AdminStore(repository(request)).set_disabled(user['id'],user_id,payload.disabled))
+
+    @app.get('/api/admin/orders')
+    def admin_orders(request:Request,user=Depends(administrator),status:str=Query(default='pending',pattern=r'^(pending|approved|cancelled|rejected|all)$'),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
+        return AdminStore(repository(request)).orders(status,offset,limit)
+
+    @app.post('/api/admin/orders/{order_id}/reject')
+    def admin_reject(order_id:str,payload:AdminRejection,request:Request,user=Depends(admin_mutation)):
+        if not payload.reason.strip():raise HTTPException(422,'Reason required')
+        return admin_call(lambda:AdminStore(repository(request)).reject(user['id'],order_id,payload.reason.strip()))
+
+    @app.post('/api/admin/orders/{order_id}/approve',status_code=202)
+    def admin_approve(order_id:str,payload:AdminApproval,request:Request,user=Depends(admin_mutation)):
+        return admin_call(lambda:AdminStore(repository(request)).request_approval(user['id'],order_id,payload.payment_ref,payload.account_id,payload.equity_usd))
+
+    @app.get('/api/admin/pricing')
+    def admin_pricing(request:Request,user=Depends(administrator)):
+        return product_pricing.catalog(repository(request))
+
+    @app.put('/api/admin/pricing/{product}')
+    def admin_save_pricing(product:str,payload:AdminPricing,request:Request,user=Depends(admin_mutation)):
+        return admin_call(lambda:product_pricing.configure(repository(request),product,payload.prices,False,payload.expected_version,user['id']))
+
+    @app.post('/api/admin/pricing/{product}/open')
+    def admin_open_sales(product:str,payload:AdminOpenSales,request:Request,user=Depends(admin_mutation)):
+        return admin_call(lambda:product_pricing.open_sales(repository(request),product,payload.expected_version,user['id']))
+
+    @app.post('/api/admin/pricing/{product}/close')
+    def admin_close_sales(product:str,payload:AdminVersion,request:Request,user=Depends(admin_mutation)):
+        admin_call(lambda:product_pricing.close_sales(repository(request),product,payload.expected_version,user['id']))
+        return {'status':'closed'}
+
+    @app.get('/api/admin/audit')
+    def admin_events(request:Request,user=Depends(administrator),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
+        return AdminStore(repository(request)).events(offset,limit)
 
     @app.get('/manifest.webmanifest')
     def manifest():
@@ -255,7 +357,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/api/me')
     def me(user=Depends(identity)):
-        return dict(username=user['username'],csrf=user['csrf'],live_execution_supported=False)
+        return dict(username=user['username'],csrf=user['csrf'],role=user['role'],live_execution_supported=False)
 
     @app.get('/api/exchanges',dependencies=[Depends(identity)])
     def exchanges():return {'exchanges':catalog(),'live_execution_supported':False}
