@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import time
 import uuid
+import product_pricing as pricing
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -48,7 +49,9 @@ def public_license(document, now=None):
         state = 'grace' if now < timestamp(p['grace_ends_at']) else 'capital_exceeded'
     return {k: p[k] for k in ('license_id', 'account_id', 'cap_usd', 'months', 'not_before',
                               'expires_at', 'capital_at_activation_usd', 'funded_capital_usd', 'grace_ends_at')} | dict(
-        state=state, entries_allowed=state in ('active', 'grace'))
+        state=state, product=p.get('product','autotrade'),
+        signals_allowed=start<=now<end,
+        entries_allowed=state in ('active','grace') and p.get('product','autotrade')=='autotrade')
 
 
 class Billing:
@@ -62,56 +65,66 @@ class Billing:
     def snapshot(self, user, now=None):
         with self.store.db() as db:
             document = self._document(db, user)
-            orders = db.execute('SELECT id,cap_usd,months,kind,price_cents,status,created,updated '
+            orders = db.execute('SELECT id,cap_usd,months,kind,product,price_cents,status,created,updated '
                                 'FROM license_orders WHERE user_id=? ORDER BY created DESC LIMIT 30', (user,)).fetchall()
         return dict(license=public_license(document, now), orders=[dict(r) for r in orders],
                     payment_mode='manual_review', cashflow_monitoring='operator_verified')
 
-    def _quote(self, db, user, cap, months, kind, now):
-        cost = price_cents(cap, months)
-        if kind not in ('subscription', 'upgrade'):
-            raise ValueError('Unknown purchase kind')
-        document = self._document(db, user)
-        p = json.loads(document)['payload'] if document else None
-        active = p is not None and timestamp(p['expires_at']) > now
-        if kind == 'upgrade':
-            if not active or months != p['months'] or cap <= p['cap_usd']:
-                raise BillingConflict('Upgrade requires a higher tier with the current duration')
-            start, end = timestamp(p['not_before']), timestamp(p['expires_at'])
-            cost = prorated_cents(p['cap_usd'], cap, months, start, end, now)
+    def _quote(self, db, user, cap, months, kind, now, product='autotrade'):
+        price_cents(cap,months)  # Validate the supported capital tier and term, never the legacy price.
+        config=pricing.settings(db,product)
+        try:cost=pricing.priced(config,cap,months)
+        except ValueError as exc:raise BillingConflict(str(exc)) from None
+        if kind not in ('subscription','upgrade'):raise ValueError('Unknown purchase kind')
+        document=self._document(db,user)
+        p=json.loads(document)['payload'] if document else None
+        active=p is not None and timestamp(p['expires_at'])>now
+        if kind=='upgrade':
+            if not active or months!=p['months']:raise BillingConflict('No active license with that duration')
+            previous_product=p.get('product','autotrade')
+            if previous_product=='autotrade' and product=='signals':
+                raise BillingConflict('Switch to signals after the current license expires')
+            if product==previous_product and cap<=p['cap_usd']:raise BillingConflict('Choose a higher capital tier')
+            if cap<p['cap_usd']:raise BillingConflict('An upgrade cannot reduce capital tier')
+            # Freeze the paid full-period price on the signed license; tariff changes
+            # must not retroactively change the customer's upgrade credit.
+            old_price=p.get('full_price_cents',price_cents(p['cap_usd'],p['months']))
+            difference=cost-old_price
+            start,end=timestamp(p['not_before']),timestamp(p['expires_at'])
+            if difference<=0 or not start<=now<end:raise BillingConflict('Upgrade price must exceed the current plan')
+            cost=int((Decimal(difference)*Decimal(str(end-now))/Decimal(str(end-start))).to_integral_value(rounding='ROUND_CEILING'))
         else:
-            # No prepaid tier changes; renew after expiry or explicitly upgrade the current tier.
-            if active:
-                raise BillingConflict('An active license can only be upgraded; renew after expiry')
-            start, end = now, add_months(now, months)
-        return dict(cap_usd=cap, months=months, kind=kind, price_cents=cost,
-                    currency='USD', price_version=VERSION, starts_at=iso(start), expires_at=iso(end))
+            if active:raise BillingConflict('Upgrade the active license or renew after expiry')
+            start,end=now,add_months(now,months)
+        return dict(cap_usd=cap,months=months,kind=kind,product=product,price_cents=cost,
+                    full_price_cents=pricing.priced(config,cap,months),currency='USD',
+                    price_version=config['version'],starts_at=iso(start),expires_at=iso(end))
 
-    def quote(self, user, cap, months, kind='subscription', now=None):
+    def quote(self,user,cap,months,kind='subscription',now=None,product='autotrade'):
         with self.store.db() as db:
-            return self._quote(db, user, cap, months, kind, time.time() if now is None else now)
+            return self._quote(db,user,cap,months,kind,time.time() if now is None else now,product)
 
-    def order(self, user, cap, months, kind, request_key, expected_price_cents, now=None):
+    def order(self, user, cap, months, kind, request_key, expected_price_cents, now=None, product='autotrade'):
         now = time.time() if now is None else now
         with self.store.db() as db:
             self.store.database.begin_write(db, 'billing:' + user)
             existing = db.execute('SELECT * FROM license_orders WHERE user_id=? AND request_key=?',
                                   (user, request_key)).fetchone()
             if existing:
-                if ((existing['cap_usd'], existing['months'], existing['kind']) != (cap, months, kind)
+                if ((existing['cap_usd'], existing['months'], existing['kind'],existing['product']) != (cap, months, kind,product)
                         or existing['price_cents'] > expected_price_cents
                         or (kind == 'subscription' and existing['price_cents'] != expected_price_cents)):
                     raise BillingConflict('Request key was already used for another order')
                 return dict(id=existing['id'], status=existing['status'], already_exists=True)
             if db.execute("SELECT id FROM license_orders WHERE user_id=? AND status='pending'", (user,)).fetchone():
                 raise BillingConflict('Cancel or finish your pending order first')
-            quote = self._quote(db, user, cap, months, kind, now)
+            quote = self._quote(db, user, cap, months, kind, now,product)
             # Proration can fall by cents between preview and submit; never charge more than accepted.
             if quote['price_cents'] > expected_price_cents or (kind == 'subscription' and quote['price_cents'] != expected_price_cents):
                 raise BillingConflict('Price changed; request a fresh quote')
             oid = str(uuid.uuid4())
-            db.execute('INSERT INTO license_orders(id,user_id,cap_usd,months,kind,price_cents,price_version,status,created,updated,request_key) '
-                       'VALUES(?,?,?,?,?,?,?,?,?,?,?)', (oid, user, cap, months, kind, quote['price_cents'], VERSION, 'pending', now, now, request_key))
+            db.execute('INSERT INTO license_orders(id,user_id,cap_usd,months,kind,price_cents,price_version,status,created,updated,request_key,product) '
+                       'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', (oid, user, cap, months, kind, quote['price_cents'], quote['price_version'], 'pending', now, now, request_key,product))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_requested:' + oid, now))
             return dict(id=oid, status='pending', already_exists=False)
 
@@ -130,15 +143,12 @@ class Billing:
             raise BillingConflict('No issued license')
         return document
 
-    def approve(self, oid, private, account_id, equity, payment_ref, now=None):
+    def approve(self, oid, private, account_id=None, equity=None, payment_ref=None, now=None):
         """Call only after independently verifying payment, account UID and USD equity."""
         # Signed ISO timestamps have microsecond precision. Compare the approval
         # result against the same canonical clock, never an earlier float fraction.
         now = timestamp(iso(time.time() if now is None else now))
-        equity = money(equity, positive=True)
-        if not re.fullmatch(r'[a-z0-9][a-z0-9:._-]{2,119}', account_id):
-            raise ValueError('Use an exchange-prefixed account UID, e.g. binance:123456')
-        if not re.fullmatch(r'[A-Za-z0-9:._-]{4,120}', payment_ref):
+        if not isinstance(payment_ref,str) or not re.fullmatch(r'[A-Za-z0-9:._-]{4,120}', payment_ref):
             raise ValueError('A unique verified payment reference is required')
         with self.store.db() as db:
             row = db.execute('SELECT user_id FROM license_orders WHERE id=?', (oid,)).fetchone()
@@ -149,33 +159,45 @@ class Billing:
             order = db.execute('SELECT * FROM license_orders WHERE id=?', (oid,)).fetchone()
             if order['status'] != 'pending':
                 raise BillingConflict('Order is no longer pending')
+            username=db.execute('SELECT username FROM users WHERE id=?',(user,)).fetchone()['username']
+            product=order['product']
+            if product=='signals':
+                account_id='signals:'+username
+                equity=money(order['cap_usd'],positive=True)
+            else:
+                if not isinstance(account_id,str) or not re.fullmatch(r'[a-z0-9][a-z0-9:._-]{2,119}',account_id):
+                    raise ValueError('A verified exchange-prefixed account UID is required')
+                equity=money(equity,positive=True)
+
             if order['kind'] == 'subscription' and equity > order['cap_usd']:
                 raise BillingConflict('Verified equity exceeds the selected tier')
             old = self._document(db, user)
-            if old and json.loads(old)['payload']['account_id'] != account_id:
+            if old and product=='autotrade' and json.loads(old)['payload'].get('product','autotrade')=='autotrade' and json.loads(old)['payload']['account_id'] != account_id:
                 raise BillingConflict('License is bound to a different exchange account')
-            quote = self._quote(db, user, order['cap_usd'], order['months'], order['kind'], now)
-            if order['price_version'] != VERSION:
+            quote = self._quote(db, user, order['cap_usd'], order['months'], order['kind'], now,product)
+            if order['price_version'] != quote['price_version']:
                 raise BillingConflict('Price version changed; create a new order')
             if order['kind'] == 'subscription' and quote['price_cents'] != order['price_cents']:
                 raise BillingConflict('Order price changed')
             username = db.execute('SELECT username FROM users WHERE id=?', (user,)).fetchone()['username']
             previous = json.loads(old)['payload'] if old else None
             upgrading = order['kind'] == 'upgrade'
-            funded = money(previous['funded_capital_usd']) if upgrading else equity
+            funded = money(previous['funded_capital_usd']) if upgrading and previous.get('product','autotrade')==product else equity
+            if product=='autotrade' and previous and previous.get('product')=='signals' and equity>order['cap_usd']:
+                raise BillingConflict('Verified equity exceeds the selected tier')
             if funded > order['cap_usd']:
                 raise BillingConflict('Funded capital exceeds the selected tier')
             payload = dict(schema=2, customer_id=username, license_id=str(uuid.uuid4()),
-                           plan='capital-all-three', issued_at=iso(now), not_before=quote['starts_at'],
+                           plan='capital-all-three', product=product,full_price_cents=quote['full_price_cents'],issued_at=iso(now), not_before=quote['starts_at'],
                            expires_at=quote['expires_at'], account_id=account_id,
                            cap_usd=order['cap_usd'], months=order['months'],
                            capital_at_activation_usd=str(funded), funded_capital_usd=str(funded),
-                           grace_ends_at=None, price_version=VERSION,
+                           grace_ends_at=None, price_version=quote['price_version'],
                            bots=['main', 'c3', 'pa'])
             document = sign(payload, private, old)
             # A unique account_id also prevents accidental sharing across portal customers.
             db.execute('INSERT INTO capital_licenses(user_id,account_id,document,updated) VALUES(?,?,?,?) '
-                       'ON CONFLICT(user_id) DO UPDATE SET document=excluded.document,updated=excluded.updated',
+                       'ON CONFLICT(user_id) DO UPDATE SET account_id=excluded.account_id,document=excluded.document,updated=excluded.updated',
                        (user, account_id, document, now))
             db.execute("UPDATE license_orders SET status='approved',payment_ref=?,updated=? WHERE id=?",
                        (payment_ref, now, oid))
@@ -215,6 +237,7 @@ class Billing:
             if not document:
                 raise BillingConflict('No issued license')
             p = json.loads(document)['payload']
+            if p.get('product','autotrade')!='autotrade':raise BillingConflict('Signal subscriptions do not track exchange deposits')
             funded = max(Decimal('0'), money(p['funded_capital_usd']) + value)
             money(funded)
             p['funded_capital_usd'] = str(funded)

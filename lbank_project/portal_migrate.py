@@ -16,7 +16,8 @@ TABLES={
  'audit':('id','user_id','event','at'),
  'account_jobs':('user_id','revision','state','lease_token','lease_until','not_before','attempts','updated'),
  'service_gate':('name','next_at'),
- 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref'),
+ 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref','product'),
+ 'product_pricing':('product','prices','enabled','version','updated'),
  'capital_licenses':('user_id','account_id','document','updated'),
  'license_cashflows':('user_id','event_id','amount_usd','at'),
 }
@@ -47,6 +48,8 @@ def migrate_sqlite(source,target,key):
                 select_fields=fields
                 if table=='connections' and 'exchange_id' not in {r['name'] for r in src.execute('PRAGMA table_info(connections)')}:
                     select_fields=','.join(columns[:-1])+",'lbank' AS exchange_id"
+                if table=='license_orders' and 'product' not in {r['name'] for r in src.execute('PRAGMA table_info(license_orders)')}:
+                    select_fields=','.join(columns[:-1])+",'autotrade' AS product"
                 rows=src.execute('SELECT '+select_fields+' FROM '+table).fetchall()
                 counts[table]=len(rows)
                 query='INSERT INTO '+table+' ('+fields+') VALUES('+','.join('?' for _ in columns)+')'

@@ -40,6 +40,20 @@ class PortalStore:
                        (user,username,password_hash(password)))
         return user
 
+    def register(self,username,password):
+        """Create the user, session and audit event in one transaction."""
+        user=str(uuid.uuid4());token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
+        hashed=password_hash(password)
+        with self.db() as db:
+            self.database.begin_write(db,'register:'+username)
+            if db.execute('SELECT id FROM users WHERE username=?',(username,)).fetchone():
+                raise ValueError('Username unavailable')
+            db.execute('INSERT INTO users(id,username,password) VALUES(?,?,?)',(user,username,hashed))
+            db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
+                       (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+43200))
+            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'registered',time.time()))
+        return token,csrf
+
     def attempt(self, client):
         """Shared across processes. Count all logins before expensive password hashing."""
         with self.db() as db:

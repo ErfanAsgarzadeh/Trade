@@ -36,7 +36,7 @@ def _read_index(path, modified, size):
     return html, ' '.join(hashes)
 
 
-def frontend_index(directory):
-    path = Path(directory) / 'index.html'
+def frontend_index(directory, filename="index.html"):
+    path = Path(directory) / filename
     stat = path.stat()
     return _read_index(str(path), stat.st_mtime_ns, stat.st_size)

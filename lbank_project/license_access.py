@@ -49,7 +49,7 @@ def status(now: float | None = None, initial_capital: float | None = None) -> di
     license_path = os.getenv('BOT_LICENSE_FILE', '')
     key_path = os.getenv('BOT_LICENSE_PUBLIC_KEY_FILE', '')
     if not required and not license_path and not key_path:
-        return dict(state='development', entries_allowed=True, customer_id=None,
+        return dict(state='development', entries_allowed=True, signals_allowed=True,product='autotrade', customer_id=None,
                     plan=None, expires_at=None)
     result = dict(state='invalid', entries_allowed=False, customer_id=None,
                   plan=None, expires_at=None)
@@ -68,6 +68,8 @@ def status(now: float | None = None, initial_capital: float | None = None) -> di
         if not isinstance(payload['plan'], str) or not start < end or issued >= end:
             return result
         if payload['schema'] == 1 and not issued <= start:return result
+        product=payload.get('product','autotrade')
+        if product not in ('signals','autotrade'):return result
         if payload['schema'] == 2:
             from capital_plans import money, price_cents
             cap = payload['cap_usd']
@@ -96,6 +98,9 @@ def status(now: float | None = None, initial_capital: float | None = None) -> di
             seed = initial_capital if initial_capital is not None else os.getenv('PAPER_EQUITY')
             if seed is not None and (not math.isfinite(float(seed)) or float(seed) > cap or float(seed) <= 0):
                 result.update(state='capital_exceeded', entries_allowed=False)
+        result['product']=product
+        result['signals_allowed']=result['state'] in ('active','grace','capital_exceeded')
+        result['entries_allowed']=result['entries_allowed'] and product=='autotrade'
     except Exception:
         # Do not leak paths, license bodies or signatures through logs/API errors.
         result['state'] = 'invalid'
@@ -105,3 +110,7 @@ def status(now: float | None = None, initial_capital: float | None = None) -> di
 
 def entries_allowed(now: float | None = None, initial_capital: float | None = None) -> bool:
     return status(now, initial_capital)['entries_allowed']
+
+
+def signals_allowed(now: float | None = None) -> bool:
+    return status(now).get('signals_allowed',False)

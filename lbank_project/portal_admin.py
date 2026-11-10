@@ -13,6 +13,7 @@ from portal_store import PortalStore,password_hash
 from portal_database import configured_target,PortalDatabase
 from portal_jobs import AccountQueue
 from portal_billing import Billing
+import product_pricing
 
 
 def main():
@@ -23,9 +24,13 @@ def main():
     sub.add_parser('init')
     sub.add_parser('queue-status')
     sub.add_parser('license-orders')
+    prices=sub.add_parser('configure-pricing');prices.add_argument('product',choices=product_pricing.PRODUCTS)
+    prices.add_argument('--file',type=Path,required=True);prices.add_argument('--enable-sales',action='store_true')
+    closed=sub.add_parser('close-sales');closed.add_argument('product',choices=product_pricing.PRODUCTS)
+    sub.add_parser('pricing-status')
     approval=sub.add_parser('approve-license')
     approval.add_argument('order_id');approval.add_argument('--private-key',type=Path,required=True)
-    approval.add_argument('--account-id',required=True);approval.add_argument('--equity-usd',required=True)
+    approval.add_argument('--account-id');approval.add_argument('--equity-usd')
     approval.add_argument('--payment-ref',required=True)
     flow=sub.add_parser('license-cashflow');flow.add_argument('username')
     flow.add_argument('--private-key',type=Path,required=True);flow.add_argument('--event-id',required=True)
@@ -59,9 +64,13 @@ def main():
             print(migrate_sqlite(args.source,target,args.key_file.read_bytes().strip()));return
         store=PortalStore(target,args.key_file.read_bytes().strip())
         if args.action=='queue-status':print(AccountQueue(store).summary());return
+        if args.action=='configure-pricing':
+            print(json.dumps(product_pricing.configure(store,args.product,json.loads(args.file.read_text()),args.enable_sales),ensure_ascii=False));return
+        if args.action=='close-sales':product_pricing.close_sales(store,args.product);print('Sales closed.');return
+        if args.action=='pricing-status':print(json.dumps(product_pricing.catalog(store),ensure_ascii=False,indent=2));return
         if args.action=='license-orders':
             with store.db() as db:
-                rows=db.execute('SELECT o.id,u.username,o.cap_usd,o.months,o.kind,o.price_cents,o.status FROM license_orders o '
+                rows=db.execute('SELECT o.id,u.username,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.status FROM license_orders o '
                                 'JOIN users u ON u.id=o.user_id ORDER BY o.created DESC LIMIT 100').fetchall()
             print(json.dumps([dict(row) for row in rows],ensure_ascii=False,indent=2));return
         if args.action=='approve-license':

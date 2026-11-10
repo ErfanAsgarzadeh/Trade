@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiClient, errorText } from "@/lib/api";
-import type { BillingSnapshot, Plans, Quote } from "@/lib/types";
+import type { BillingSnapshot, Plans, Quote, Product } from "@/lib/types";
 import { faDate, faNumber, usd } from "@/lib/format";
 import { Arrow, Heading } from "./shared";
 interface Props {
@@ -23,6 +23,7 @@ export default function LicensePanel({
 }: Props) {
   const [plans, setPlans] = useState<Plans | null>(null),
     [snapshot, setSnapshot] = useState<BillingSnapshot | null>(null);
+  const [product, setProduct] = useState<Product>("autotrade");
   const [cap, setCap] = useState(10000),
     [months, setMonths] = useState(1),
     [quote, setQuote] = useState<Quote | null>(null);
@@ -44,6 +45,7 @@ export default function LicensePanel({
       const active =
         s.license.expires_at && Date.parse(s.license.expires_at) > Date.now();
       if (active) {
+        setProduct(s.license.product || "autotrade");
         setCap(s.license.cap_usd!);
         setMonths(s.license.months!);
       }
@@ -79,8 +81,22 @@ export default function LicensePanel({
   const active = !!(p?.expires_at && Date.parse(p.expires_at) > Date.now());
   const kind = active ? "upgrade" : "subscription",
     pending = !!snapshot?.orders.some((o) => o.status === "pending");
+  const selectedProduct = plans?.products.find(
+    (item) => item.product === product,
+  );
+  const salesEnabled = selectedProduct?.sales_enabled === true;
+  const productUpgrade =
+    active &&
+    p?.product === "signals" &&
+    product === "autotrade" &&
+    cap >= (p?.cap_usd || 0);
   const canQuote =
-    !!snapshot && !pending && (!active || cap > (p?.cap_usd || 0));
+    salesEnabled &&
+    !!snapshot &&
+    !pending &&
+    (!active ||
+      (product === (p?.product || "autotrade") && cap > (p?.cap_usd || 0)) ||
+      productUpgrade);
   useEffect(() => {
     let current = true;
     setQuote(null);
@@ -91,6 +107,7 @@ export default function LicensePanel({
           cap_usd: cap,
           months,
           kind,
+          product,
         })
         .then((q) => {
           if (current) setQuote(q);
@@ -101,28 +118,38 @@ export default function LicensePanel({
     return () => {
       current = false;
     };
-  }, [api, cap, months, kind, canQuote, snapshot]);
+  }, [api, cap, months, kind, product, canQuote, snapshot]);
   useEffect(() => {
     if (checkout && !dialog.current?.open) dialog.current?.showModal();
     else if (!checkout && dialog.current?.open) dialog.current.close();
   }, [checkout]);
-  const tier = plans?.tiers.find((t) => t.cap_usd === cap),
+  const tier = selectedProduct?.tiers.find((t) => t.cap_usd === cap),
     fullPrice = (tier?.prices_cents[String(months)] || 0) / 100;
-  const saving = tier
-    ? Math.round(
-        100 * (1 - fullPrice / ((tier.prices_cents["1"] / 100) * months)),
-      )
-    : 0;
+  const hasPrice = typeof tier?.prices_cents[String(months)] === "number";
+  const saving =
+    tier && tier.prices_cents["1"] && hasPrice
+      ? Math.round(
+          100 *
+            (1 - fullPrice / (((tier.prices_cents["1"] || 0) / 100) * months)),
+        )
+      : 0;
   const currentQuote =
-    quote?.cap_usd === cap && quote.months === months && quote.kind === kind
+    quote?.cap_usd === cap &&
+    quote.months === months &&
+    quote.kind === kind &&
+    quote.product === product
       ? quote
       : null;
-  const purchaseNote = pending
-    ? "یک درخواست در انتظار بررسی دارید؛ ابتدا آن را تکمیل یا لغو کنید."
-    : active && cap <= (p?.cap_usd || 0)
-      ? "برای ارتقا، سقفی بالاتر از پلن فعلی انتخاب کنید. رشد سرمایه از سود در همین دوره نیازی به ارتقا ندارد."
-      : quoteError ||
-        "فعال‌سازی پس از تأیید پرداخت و سرمایهٔ حساب توسط پشتیبانی انجام می‌شود.";
+  const purchaseNote = !salesEnabled
+    ? "فروش این اشتراک تا تعیین و تأیید قیمت نهایی بسته است."
+    : pending
+      ? "یک درخواست در انتظار بررسی دارید؛ ابتدا آن را تکمیل یا لغو کنید."
+      : active && cap <= (p?.cap_usd || 0)
+        ? "برای ارتقا، سقفی بالاتر از پلن فعلی انتخاب کنید. رشد سرمایه از سود در همین دوره نیازی به ارتقا ندارد."
+        : quoteError ||
+          (product === "signals"
+            ? "فعال‌سازی سیگنال‌ها پس از تأیید پرداخت انجام می‌شود؛ اتصال صرافی لازم نیست."
+            : "فعال‌سازی پس از تأیید پرداخت و سرمایهٔ حساب توسط پشتیبانی انجام می‌شود.");
   const alert =
     p?.state === "grace"
       ? "واریز جدید از سقف پلن عبور کرده است. مهلت ارتقا تا " +
@@ -141,6 +168,7 @@ export default function LicensePanel({
         cap_usd: cap,
         months,
         kind,
+        product,
       });
       setConsent(false);
       setCheckoutError("");
@@ -163,6 +191,7 @@ export default function LicensePanel({
           cap_usd: checkout.cap_usd,
           months: checkout.months,
           kind: checkout.kind,
+          product: checkout.product,
           request_key: checkout.requestKey,
           expected_price_cents: checkout.price_cents,
         },
@@ -249,10 +278,68 @@ export default function LicensePanel({
           </button>
         </div>
         <p className="note">
-          وضعیت این بخش مربوط به لایسنس صادرشده است؛ اعمال آن روی ربات پس از نصب
-          فایل توسط مدیر انجام می‌شود. واریز و برداشت‌های مبنای لایسنس با بررسی
-          پشتیبانی ثبت می‌شوند.
+          {product === "signals"
+            ? "اشتراک سیگنال پس از تأیید پرداخت در همین پنل فعال می‌شود؛ نیازی به کلید صرافی یا نصب فایل روی ربات ندارید."
+            : "وضعیت این بخش مربوط به لایسنس صادرشده است؛ اعمال آن روی ربات پس از نصب فایل توسط مدیر انجام می‌شود. واریز و برداشت‌های مبنای لایسنس با بررسی پشتیبانی ثبت می‌شوند."}
         </p>
+        <fieldset className="product-fieldset">
+          <legend>چه سرویسی می‌خواهید؟</legend>
+          <div className="product-options">
+            <label
+              className={
+                product === "signals"
+                  ? "product-option selected"
+                  : "product-option"
+              }
+            >
+              <input
+                type="radio"
+                name="product"
+                value="signals"
+                checked={product === "signals"}
+                disabled={busy}
+                onChange={() => setProduct("signals")}
+              />
+              <span className="eyebrow">SIGNALS</span>
+              <strong>فقط سیگنال</strong>
+              <p>
+                سیگنال ورود، حد ضرر و هدف را در پنل ببینید؛ تصمیم و اجرای معامله
+                با شماست.
+              </p>
+              <span className="quiet-tag">
+                بدون کلید صرافی · بدون اجرای سفارش
+              </span>
+            </label>
+            <label
+              className={
+                product === "autotrade"
+                  ? "product-option selected"
+                  : "product-option"
+              }
+            >
+              <input
+                type="radio"
+                name="product"
+                value="autotrade"
+                checked={product === "autotrade"}
+                disabled={busy}
+                onChange={() => setProduct("autotrade")}
+              />
+              <span className="eyebrow">AUTOTRADE</span>
+              <strong>معاملهٔ خودکار</strong>
+              <p>مجوز ورود و مدیریت معاملات با ربات، همراه با سیگنال‌ها.</p>
+              <span className="quiet-tag">
+                اجرای فعلی آزمایشی است؛ سفارش واقعی فعال نیست
+              </span>
+            </label>
+          </div>
+        </fieldset>
+        {!salesEnabled && (
+          <div id="sales-closed" className="notice">
+            قیمت نهایی این سرویس هنوز تأیید نشده است؛ امکان خرید و پرداخت بسته
+            است.
+          </div>
+        )}
         <div className="plan-builder">
           <div className="plan-controls">
             <label htmlFor="capital-tier">
@@ -265,10 +352,10 @@ export default function LicensePanel({
               onChange={(e) => setCap(Number(e.target.value))}
               aria-describedby="tier-help"
             >
-              {!plans ? (
+              {!selectedProduct ? (
                 <option value={10000}>در حال دریافت تعرفه‌ها…</option>
               ) : (
-                plans.tiers.map((t) => (
+                selectedProduct.tiers.map((t) => (
                   <option key={t.cap_usd} value={t.cap_usd}>
                     تا {usd(t.cap_usd)}
                   </option>
@@ -309,12 +396,20 @@ export default function LicensePanel({
               <span>✓ شاهین، موج‌سوار و ققنوس</span>
               <span>✓ به‌روزرسانی و پشتیبانی نصب</span>
               <span>✓ یک حساب اختصاصی</span>
-              <span>✓ مدیریت معاملات باز پس از انقضا</span>
+              <span>
+                {product === "signals"
+                  ? "✓ ورود، حد ضرر و اعتبار سیگنال"
+                  : "✓ مدیریت معاملات باز پس از انقضا"}
+              </span>
             </div>
           </div>
           <div className="price-card">
             <div className="price-card-top">
-              <span>پکیج هر سه ربات</span>
+              <span>
+                {product === "signals"
+                  ? "سیگنال هر سه ربات"
+                  : "معاملهٔ خودکار هر سه ربات"}
+              </span>
               <span className="price-badge">
                 {active && canQuote
                   ? "ارتقای پلن"
@@ -325,24 +420,28 @@ export default function LicensePanel({
             </div>
             <div className="price-line">
               <strong id="plan-price">
-                {canQuote && !currentQuote
-                  ? "…"
-                  : faNumber(
-                      (currentQuote?.price_cents ?? fullPrice * 100) / 100,
-                    )}
+                {!hasPrice
+                  ? "تعیین نشده"
+                  : canQuote && !currentQuote
+                    ? "…"
+                    : faNumber(
+                        (currentQuote?.price_cents ?? fullPrice * 100) / 100,
+                      )}
               </strong>
-              <span>دلار</span>
+              {hasPrice && <span>دلار</span>}
             </div>
             <p id="monthly-equivalent">
-              {active && currentQuote
-                ? "مابه‌التفاوت تا " +
-                  faDate(currentQuote.expires_at) +
-                  " · پایان دوره تغییر نمی‌کند"
-                : "معادل " +
-                  usd(fullPrice / months) +
-                  " در ماه · قیمت کل " +
-                  faNumber(months) +
-                  " ماه"}
+              {!hasPrice
+                ? "پس از تأیید قیمت‌ها، فروش این سرویس باز می‌شود."
+                : active && currentQuote
+                  ? "مابه‌التفاوت تا " +
+                    faDate(currentQuote.expires_at) +
+                    " · پایان دوره تغییر نمی‌کند"
+                  : "معادل " +
+                    usd(fullPrice / months) +
+                    " در ماه · قیمت کل " +
+                    faNumber(months) +
+                    " ماه"}
             </p>
             <div className="price-divider" />
             <div className="price-meta">
@@ -362,10 +461,10 @@ export default function LicensePanel({
             <button
               id="request-license"
               className="full"
-              disabled={!currentQuote || busy || pending}
+              disabled={!salesEnabled || !currentQuote || busy || pending}
               onClick={openCheckout}
             >
-              بررسی و ثبت درخواست ←
+              {salesEnabled ? "بررسی و ثبت درخواست ←" : "فروش فعلاً بسته است"}
             </button>
             <p className="price-note">{purchaseNote}</p>
           </div>
@@ -416,11 +515,15 @@ export default function LicensePanel({
                 </tr>
               </thead>
               <tbody id="pricing-rows">
-                {plans?.tiers.map((t) => (
+                {selectedProduct?.tiers.map((t) => (
                   <tr key={t.cap_usd}>
                     <td>{usd(t.cap_usd)}</td>
                     {["1", "3", "6"].map((m) => (
-                      <td key={m}>{usd(t.prices_cents[m] / 100)}</td>
+                      <td key={m}>
+                        {t.prices_cents[m] === null
+                          ? "تعیین نشده"
+                          : usd((t.prices_cents[m] || 0) / 100)}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -464,6 +567,7 @@ export default function LicensePanel({
                     <bdi>{o.id.slice(0, 8)}</bdi>
                   </td>
                   <td>
+                    {o.product === "signals" ? "سیگنال" : "معاملهٔ خودکار"} ·{" "}
                     {usd(o.cap_usd)} / {faNumber(o.months)} ماه
                   </td>
                   <td>{usd(o.price_cents / 100)}</td>
@@ -511,7 +615,9 @@ export default function LicensePanel({
           <h2 id="checkout-title">مرور درخواست لایسنس</h2>
           <p>
             {checkout &&
-              "پکیج هر سه ربات، سقف " +
+              (checkout.product === "signals"
+                ? "فقط سیگنال، سقف "
+                : "معاملهٔ خودکار، سقف ") +
                 usd(checkout.cap_usd) +
                 "، " +
                 faNumber(checkout.months) +

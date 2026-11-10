@@ -23,11 +23,13 @@ from test_system import system, cfg, setup_position
 import c3_sleeve as C
 import pa_sleeve as P
 import pandas as pd
+from pricing_helpers import enable_test_prices
 
 
 @pytest.fixture
 def setup(tmp_path):
     key=Fernet.generate_key();store=PortalStore(tmp_path/'portal.db',key)
+    enable_test_prices(store)
     alice=store.create_user('alice','test-password-strong');bob=store.create_user('bob','test-password-strong')
     private,public=tmp_path/'issuer.private.pem',tmp_path/'issuer.public.pem'
     customers.keygen(private,public)

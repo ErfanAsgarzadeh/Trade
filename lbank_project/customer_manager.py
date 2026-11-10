@@ -24,7 +24,7 @@ HERE = Path(__file__).resolve().parent
 CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
 APP_FILES = ('lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
-             'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py',
+             'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py', 'signal_feed.py',
              'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
@@ -157,6 +157,8 @@ def install_license(root: Path, customer: str, source: Path) -> Path:
     payload = license_access.verify_document(document, public)
     if payload.get('schema') != 2 or payload.get('customer_id') != customer:
         raise ValueError('Expected a capital license issued for this customer')
+    if payload.get('product','autotrade')!='autotrade':
+        raise ValueError('Signal-only licenses are used in the portal, not a trading installation')
     from capital_plans import money, price_cents
     price_cents(payload['cap_usd'], payload['months'])
     if money(payload['capital_at_activation_usd'], positive=True) > payload['cap_usd']:

@@ -33,6 +33,7 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+import signal_feed
 import c3_sleeve as c3
 
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
@@ -196,6 +197,8 @@ class Sleeve(c3.Sleeve):
                 raw,sig=tradable_signal(df,c)
                 if pos and c['opposite_exit'] and raw and raw['side']!=pos['side']:
                     self.close(pos,self.data.price(s),'opposite',now);pos=None
+                if sig and signal_feed.enabled(now):
+                    signal_feed.publish('pa',s,sig['side'],sig['level'],sig['stop'],stamp,c['timeframe'],(stamp/1000)+2*H4,now,source_mode=getattr(self.data,'mode',None))
                 if not pos and c['enabled'] and sig and self.license_entries_allowed(now):   # valid until the next candle (stamp + 4h) has closed
                     self.store.set_order(s,dict(sig,signal_ts=stamp,expires=stamp+2*H4*1000,atr=float(b.atr)))
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))

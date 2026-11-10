@@ -1323,3 +1323,104 @@ dialog::backdrop {
 .connection-fields > button {
   margin: 20px 0 6px;
 }
+.product-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+  min-width: 0;
+}
+.product-fieldset legend {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.product-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.product-option {
+  position: relative;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #111813;
+  margin: 0;
+  cursor: pointer;
+}
+.product-option.selected {
+  border-color: var(--accent);
+  background: #202d1b;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.product-option input {
+  position: absolute;
+  inset-inline-end: 18px;
+  top: 18px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.product-option strong {
+  display: block;
+  font-size: 20px;
+}
+.product-option p {
+  font-size: 12px;
+  line-height: 2;
+}
+.product-option .quiet-tag {
+  font-size: 10px;
+}
+.signal-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.signal-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #111813;
+}
+.signal-card.expired {
+  opacity: 0.6;
+}
+.signal-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.signal-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+  font-size: 12px;
+}
+.signal-card dt {
+  color: var(--muted);
+}
+.signal-card dd {
+  margin: 0;
+}
+.price-line:has(strong:only-child) strong {
+  font-family: inherit;
+  font-size: 32px;
+  letter-spacing: 0;
+}
+@media (max-width: 600px) {
+  .product-options,
+  .signal-cards {
+    grid-template-columns: 1fr;
+  }
+  .product-option {
+    padding: 20px;
+  }
+  .product-option strong {
+    font-size: 18px;
+  }
+}

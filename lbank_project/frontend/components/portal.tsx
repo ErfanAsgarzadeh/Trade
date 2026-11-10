@@ -8,8 +8,14 @@ import LicensePanel from "./license-panel";
 import AccountPanel from "./account-panel";
 import Robots from "./robots";
 import Pwa from "./pwa";
+import Signals from "./signals";
 
-export default function Portal() {
+export default function Portal({
+  initialMode = "login",
+}: {
+  initialMode?: "login" | "register";
+}) {
+  const registering = initialMode === "register";
   const [api] = useState(() => new ApiClient());
   const [user, setUser] = useState<Me | null>(null),
     [ready, setReady] = useState(false),
@@ -52,17 +58,34 @@ export default function Portal() {
     setMessage("");
     const form = event.currentTarget,
       data = new FormData(form);
+    if (
+      registering &&
+      data.get("password") !== data.get("password_confirmation")
+    ) {
+      setMessage("رمز عبور و تکرار آن یکسان نیستند.");
+      setBusy(false);
+      return;
+    }
     try {
-      await api.request("/api/login", "POST", {
+      await api.request(registering ? "/api/register" : "/api/login", "POST", {
         username: data.get("username"),
         password: data.get("password"),
+        ...(registering
+          ? { password_confirmation: data.get("password_confirmation") }
+          : {}),
       });
       form.reset();
       const me = await api.request<Me>("/api/me");
       api.csrf = me.csrf;
+      if (registering) {
+        window.location.assign("/");
+        return;
+      }
       setUser(me);
     } catch (error) {
-      report(error);
+      if (registering && error instanceof ApiError && error.status === 409)
+        setMessage("این نام کاربری قابل استفاده نیست؛ نام دیگری انتخاب کنید.");
+      else report(error);
     } finally {
       setBusy(false);
     }
@@ -156,32 +179,70 @@ export default function Portal() {
             </div>
             <div className="login-card">
               <span className="eyebrow">خوش آمدید</span>
-              <h2>ورود به حساب کاربری</h2>
-              <p>با حسابی که برای شما ایجاد شده وارد شوید.</p>
-              <form id="login-form" onSubmit={login}>
+              <h2>
+                {registering ? "ساخت حساب کاربری" : "ورود به حساب کاربری"}
+              </h2>
+              <p>
+                {registering
+                  ? "ثبت‌نام کنید؛ نوع اشتراک را بعد از ورود انتخاب می‌کنید."
+                  : "برای دیدن سیگنال‌ها و مدیریت اشتراک وارد شوید."}
+              </p>
+              <form
+                id={registering ? "register-form" : "login-form"}
+                onSubmit={login}
+              >
                 <label htmlFor="username">نام کاربری</label>
                 <input
                   id="username"
                   name="username"
                   dir="ltr"
                   autoComplete="username"
+                  pattern="[a-z](?:[a-z0-9]|-)+"
+                  aria-describedby="username-help"
                   minLength={2}
                   maxLength={40}
                   placeholder="username"
                   required
                 />
+                <p id="username-help" className="note">
+                  نام کاربری انگلیسی با حروف کوچک، عدد و خط تیره؛ حداقل دو
+                  کاراکتر.
+                </p>
                 <label htmlFor="password">رمز عبور</label>
                 <input
                   id="password"
                   name="password"
                   type="password"
                   dir="ltr"
-                  autoComplete="current-password"
+                  autoComplete={
+                    registering ? "new-password" : "current-password"
+                  }
                   minLength={12}
                   maxLength={128}
                   placeholder="••••••••••••"
                   required
                 />
+                {registering && (
+                  <>
+                    <label htmlFor="password-confirmation">
+                      تکرار رمز عبور
+                    </label>
+                    <input
+                      id="password-confirmation"
+                      name="password_confirmation"
+                      type="password"
+                      dir="ltr"
+                      autoComplete="new-password"
+                      minLength={12}
+                      maxLength={128}
+                      required
+                    />
+                    <p className="note">
+                      رمز عبور حداقل ۱۲ کاراکتر باشد. ثبت‌نام به معنی خرید یا
+                      شروع معامله نیست.
+                    </p>
+                  </>
+                )}
                 <button
                   type="submit"
                   className="full"
@@ -191,12 +252,20 @@ export default function Portal() {
                     ? "در حال بررسی نشست…"
                     : busy
                       ? "در حال ورود…"
-                      : "ورود به پنل"}{" "}
+                      : registering
+                        ? "ساخت حساب"
+                        : "ورود به پنل"}{" "}
                   <span aria-hidden="true">←</span>
                 </button>
               </form>
               <p className="note login-foot">
-                حساب شما، اطلاعات شما. دسترسی فقط برای صاحب حساب.
+                {registering ? "از قبل حساب دارید؟ " : "هنوز حساب ندارید؟ "}
+                <a
+                  className="text-link"
+                  href={registering ? "/" : "/register/"}
+                >
+                  {registering ? "ورود به حساب" : "ساخت حساب رایگان"}
+                </a>
               </p>
             </div>
           </section>
@@ -206,8 +275,13 @@ export default function Portal() {
               {[
                 ["overview", "نمای کلی"],
                 ["license-section", "لایسنس و تعرفه‌ها"],
-                ["connection-section", "حساب صرافی"],
-                ["robot-section", "ربات‌ها"],
+                ["signals-section", "سیگنال‌ها"],
+                ...(p?.product !== "signals"
+                  ? [["connection-section", "حساب صرافی"]]
+                  : []),
+                ...(p?.product !== "signals"
+                  ? [["robot-section", "ربات‌ها"]]
+                  : []),
               ].map(([id, label]) => (
                 <a key={id} href={"#" + id} className="nav-link">
                   {label}
@@ -222,7 +296,11 @@ export default function Portal() {
                 </h1>
                 <p>فضایی برای مدیریت حساب، ربات‌ها و مسیر پیش رو.</p>
                 <div className="hero-badges">
-                  <span className="pill">اجرای ربات: آزمایشی</span>
+                  <span className="pill">
+                    {p?.product === "signals"
+                      ? "اشتراک فقط سیگنال"
+                      : "اجرای ربات: آزمایشی"}
+                  </span>
                   <span className="quiet-tag">سه استراتژی در یک پکیج</span>
                 </div>
               </div>
@@ -257,14 +335,21 @@ export default function Portal() {
               </article>
               <article className="stat-card">
                 <div className="stat-label">
-                  سرمایهٔ مبنای لایسنس <span>03</span>
+                  {p?.product === "signals"
+                    ? "بازهٔ سرمایهٔ انتخابی"
+                    : "سرمایهٔ مبنای لایسنس"}{" "}
+                  <span>03</span>
                 </div>
                 <strong id="license-funded">
                   {p?.funded_capital_usd !== undefined
                     ? usd(Number(p.funded_capital_usd))
                     : "—"}
                 </strong>
-                <p>سرمایهٔ تأییدشده و خالص واریزها؛ بدون سود دوره</p>
+                <p>
+                  {p?.product === "signals"
+                    ? "سرمایهٔ هدف انتخابی شما؛ بدون اتصال به صرافی"
+                    : "سرمایهٔ تأییدشده و خالص واریزها؛ بدون سود دوره"}
+                </p>
               </article>
             </div>
             <LicensePanel
@@ -273,8 +358,11 @@ export default function Portal() {
               notify={setMessage}
               onSnapshot={setBilling}
             />
-            <AccountPanel api={api} report={report} notify={setMessage} />
-            <Robots api={api} report={report} />
+            <Signals api={api} entitlement={p} report={report} />
+            {p?.product !== "signals" && (
+              <AccountPanel api={api} report={report} notify={setMessage} />
+            )}
+            {p?.product !== "signals" && <Robots api={api} report={report} />}
             <div className="bottom-note">
               <span className="brand">TRADE /</span>
               <p>معامله‌گری با ریسک همراه است. هیچ بازدهی تضمین نمی‌شود.</p>

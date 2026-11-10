@@ -1,3 +1,11 @@
+export type Product = "signals" | "autotrade";
+export interface ProductPlan {
+  product: Product;
+  label: string;
+  sales_enabled: boolean;
+  version: string;
+  tiers: { cap_usd: number; prices_cents: Record<string, number | null> }[];
+}
 export interface Me {
   username: string;
   csrf: string;
@@ -6,11 +14,14 @@ export interface Me {
 export interface Plans {
   version: string;
   currency: string;
-  tiers: { cap_usd: number; prices_cents: Record<string, number> }[];
+  tiers: { cap_usd: number; prices_cents: Record<string, number | null> }[];
+  products: ProductPlan[];
 }
 export interface License {
   state: string;
   entries_allowed: boolean;
+  signals_allowed?: boolean;
+  product?: Product;
   license_id?: string;
   account_id?: string;
   cap_usd?: number;
@@ -21,6 +32,7 @@ export interface License {
   grace_ends_at?: string | null;
 }
 export interface Order {
+  product: Product;
   id: string;
   cap_usd: number;
   months: number;
@@ -34,6 +46,7 @@ export interface BillingSnapshot {
   orders: Order[];
 }
 export interface Quote {
+  product: Product;
   cap_usd: number;
   months: number;
   kind: string;

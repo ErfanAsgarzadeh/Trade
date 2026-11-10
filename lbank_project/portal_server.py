@@ -19,7 +19,8 @@ from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
 from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
-from capital_plans import catalog as plan_catalog
+import product_pricing
+from signal_feed import read_feed
 from portal_frontend import frontend_index
 
 COOKIE='trade_session'
@@ -39,6 +40,10 @@ class Login(BaseModel):
     password:SecretStr=Field(min_length=12,max_length=128)
 
 
+class Registration(Login):
+    password_confirmation:SecretStr=Field(min_length=12,max_length=128)
+
+
 class Connection(BaseModel):
     model_config=ConfigDict(extra='forbid')
     market:str=Field(pattern=r'^(spot|futures)$')
@@ -54,11 +59,12 @@ class LicenseQuote(BaseModel):
     cap_usd:int=Field(ge=1000,le=100000)
     months:int=Field(ge=1,le=6)
     kind:str=Field(default='subscription',pattern=r'^(subscription|upgrade)$')
+    product:str=Field(default='autotrade',pattern=r'^(signals|autotrade)$')
 
 
 class LicenseOrder(LicenseQuote):
     request_key:str=Field(min_length=16,max_length=80,pattern=r'^[a-zA-Z0-9-]+$')
-    expected_price_cents:int=Field(ge=1,le=200000)
+    expected_price_cents:int=Field(ge=1,le=20000000)
 
 
 def create_app(store=None,reader=None,origin=None,secure=None):
@@ -122,8 +128,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
         script_hashes=''
-        if request.url.path=='/':
-            try:script_hashes=frontend_index(frontend)[1]
+        if request.url.path in ('/','/register','/register/'):
+            try:script_hashes=frontend_index(frontend,'register.html' if request.url.path.startswith('/register') else 'index.html')[1]
             except OSError:pass
         response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
@@ -151,6 +157,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except OSError:
             return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
 
+    @app.get('/register',response_class=HTMLResponse)
+    @app.get('/register/',response_class=HTMLResponse)
+    def registration_page():
+        try:return HTMLResponse(frontend_index(frontend,'register.html')[0])
+        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+
     @app.get('/manifest.webmanifest')
     def manifest():
         return Response((public/'manifest.webmanifest').read_text(),media_type='application/manifest+json')
@@ -161,7 +173,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
                         headers={'Service-Worker-Allowed':'/'})
 
     @app.get('/api/plans')
-    def plans():return plan_catalog()
+    def plans(request:Request):return product_pricing.catalog(repository(request))
 
     @app.get('/api/me/license')
     def subscription(request:Request,user=Depends(identity)):
@@ -169,14 +181,14 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.post('/api/me/license/quote')
     def quote_license(payload:LicenseQuote,request:Request,user=Depends(mutation)):
-        try:return Billing(repository(request)).quote(user['id'],payload.cap_usd,payload.months,payload.kind)
+        try:return Billing(repository(request)).quote(user['id'],payload.cap_usd,payload.months,payload.kind,product=payload.product)
         except BillingConflict as exc:raise HTTPException(409,str(exc))
         except ValueError:raise HTTPException(422,'Unknown tier or term')
 
     @app.post('/api/me/license/orders',status_code=201)
     def request_license(payload:LicenseOrder,request:Request,user=Depends(mutation)):
         try:return Billing(repository(request)).order(user['id'],payload.cap_usd,payload.months,payload.kind,
-                    payload.request_key,payload.expected_price_cents)
+                    payload.request_key,payload.expected_price_cents,product=payload.product)
         except BillingConflict as exc:raise HTTPException(409,str(exc))
         except ValueError:raise HTTPException(422,'Unknown tier or term')
 
@@ -199,6 +211,27 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             with repository(request).db() as db:db.execute('SELECT 1')
         except Exception:raise HTTPException(503,'Database unavailable')
         return {'status':'ok'}
+
+    @app.post('/api/register',status_code=201)
+    def register(payload:Registration,request:Request,response:Response):
+        same_origin(request)
+        store=repository(request)
+        client=request.client.host if request.client else 'unknown'
+        if not store.attempt('signup:'+client):raise HTTPException(429,'Too many signup attempts')
+        password=payload.password.get_secret_value()
+        if not secrets.compare_digest(password.encode(),payload.password_confirmation.get_secret_value().encode()):
+            raise HTTPException(422,'Password confirmation does not match')
+        try:token,csrf=store.register(payload.username,password)
+        except ValueError:raise HTTPException(409,'Username unavailable')
+        store.logout(request.cookies.get(COOKIE,''))
+        response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=43200,path='/')
+        return {'username':payload.username,'csrf':csrf}
+
+    @app.get('/api/me/signals')
+    def signals(request:Request,user=Depends(identity)):
+        entitlement=Billing(repository(request)).snapshot(user['id'])['license']
+        if not entitlement.get('signals_allowed',False):raise HTTPException(403,'An active subscription is required')
+        return read_feed(os.getenv('PORTAL_SIGNAL_FEED_DB',''))
 
     @app.post('/api/login')
     def login(payload:Login,request:Request,response:Response):
