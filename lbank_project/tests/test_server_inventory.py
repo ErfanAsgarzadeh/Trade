@@ -6,7 +6,7 @@ def test_inventory_only_returns_allowlisted_container_fields(monkeypatch):
     def run(args):
         calls.append(args)
         if args[1:3]==['ps','-aq']:return 0,'a'*64+'\n'
-        if 'inspect' in args and '.State.Running' in args[4]:return 0,'true false running healthy\n'
+        if 'inspect' in args and '.State.Running' in args[3]:return 0,'true false running healthy\n'
         if 'inspect' in args:return 0,'2 536870912 1000000000\n'
         if 'stats' in args:return 0,'{"CPUPerc":"2.5%","MemUsage":"100MiB / 512MiB","Name":"PRIVATE_NAME","ID":"PRIVATE_ID"}'
         return 0,'inactive\ninactive\nactive\n'
