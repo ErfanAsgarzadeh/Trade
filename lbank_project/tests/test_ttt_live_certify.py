@@ -11,13 +11,15 @@ class FakeAPI:
     """In-memory TheTrueTrade: markets, stats, assets, positions (active / page views), orders, open/close/tpsl.
     Stops are real orders here: when the price crosses a position's stopLoss the position is closed by the 'exchange'."""
 
-    def __init__(self, min_notional=5.0, store_stop=True, order_ids=True, list_orders=True, trigger=True, reply=None):
+    def __init__(self, min_notional=5.0, store_stop=True, order_ids=True, list_orders=True, trigger=True, reply=None,
+                 fill_records=None):
         self.px = {"DOGEUSDT": 0.2, "BTCUSDT": 80000.0}
         self.markets = [dict(symbol="DOGEUSDT", stepSize="1", tickSize="0.00001", maxLeverage=50, isActive=True),
                         dict(symbol="BTCUSDT", stepSize="0.001", tickSize="0.1", maxLeverage=100, isActive=True)]
         self.pos = {};self.history = {};self.orders = {};self.next_id = 1000
         self.min_notional, self.store_stop, self.order_ids, self.list_orders, self.trigger = min_notional, store_stop, order_ids, list_orders, trigger
         self.calls = [];self.equity = 100.0;self.reply = reply or (lambda pid: {"positionId": pid})
+        self.fill_records = fill_records;self.fills = {}
 
     def _id(self):
         self.next_id += 1;return str(self.next_id)
@@ -62,14 +64,20 @@ class FakeAPI:
         if method == "GET" and path == "/futures/orders":
             if not self.list_orders:return {"items": []}
             sym = (query or {}).get("symbol")
-            return {"items": [o for o in self.orders.values() if sym in (None, o["symbol"])]}
+            rows = [o for o in self.orders.values() if sym in (None, o["symbol"])]
+            if not (query or {}).get("active"):rows += [o for o in self.fills.values() if sym in (None, o["symbol"])]
+            return {"items": rows}
         if method == "POST" and path == "/futures/positions":
             notional = float(body["size"]) * self.px[body["symbol"]]
             if notional < self.min_notional:raise X.ExchangeError("TheTrueTrade POST /futures/positions: HTTP 400 [{'message': 'Order value too small'}]")
             pid = self._id();p = dict(id=int(pid), symbol=body["symbol"], side=body["side"], status="OPEN", isActive=True,
                                       size=body["size"], leverage=body["leverage"], entryPrice=str(self.px[body["symbol"]]))
             self._set_sl(p, body)
-            self.pos[pid] = p;return self.reply(pid)
+            self.pos[pid] = p;oid = int(self._id())
+            if self.fill_records is not None:
+                self.fills[oid] = dict(id=oid, symbol=body["symbol"], type="MARKET", status="FILLED",
+                                       **({"positionId": int(pid)} if self.fill_records == "with_position" else {}))
+            return self.reply(pid) if self.reply.__code__.co_argcount == 1 else self.reply(pid, oid)
         if method == "POST" and path.endswith("/close") and path.startswith("/futures/positions/"):
             pid = path.split("/")[3];self._close(pid, (body or {}).get("size"));return {}
         if method == "PATCH" and path.endswith("/tpsl"):
@@ -374,3 +382,37 @@ def test_entry_reply_without_id_closes_the_position_it_opened(rt):
     assert not report["passed"] and "a position was opened" in report["reason"]
     assert "reply shape: {success: bool, message: str}" in report["reason"]          # key names only, no values
     assert report["cleanup_confirmed"] and not api.pos
+
+
+
+@pytest.mark.parametrize("records,how", [("with_position", "order_record"), ("plain", "new_position"), (None, "new_position")])
+def test_order_id_reply_is_resolved_to_the_new_position(rt, records, how):
+    """The live gateway answers {orderId}: the position comes from the order record, else from the new position id."""
+    api = FakeAPI(reply=lambda pid, oid: {"orderId": oid}, fill_records=records)
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], (report, out)
+    assert report["entry_resolution"] == how and not api.pos
+
+
+def test_mirror_live_cycle_with_order_id_replies(rt):
+    api = FakeAPI(reply=lambda pid, oid: {"orderId": oid});certify(rt, api);api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    step();assert "BTCUSDT" in m.state["managed"] and not m.state["paused"]
+    del paper.book["BTC/USDT:USDT"];step()
+    assert not api.pos and not m.state["managed"] and not m.state["paused"]
+
+
+def test_netted_entry_resolves_to_the_grown_position(rt):
+    api = FakeAPI(reply=lambda pid, oid: {"orderId": oid});certify(rt, api)
+    t = adapter(api)
+    first = t.open("BTCUSDT", "long", 0.002, 5, 78000.0)
+    real = api.request
+    def netting(method, path, query=None, body=None, auth=True):   # an exchange that adds to the existing position
+        if method == "POST" and path == "/futures/positions" and api.pos:
+            p = next(iter(api.pos.values()));p["size"] = str(float(p["size"]) + float(body["size"]))
+            return {"orderId": 999}
+        return real(method, path, query, body, auth)
+    api.request = netting;t.request = netting
+    assert t.open("BTCUSDT", "long", 0.001, 5, 78000.0) == first and t.entry_resolution == "netted_position"

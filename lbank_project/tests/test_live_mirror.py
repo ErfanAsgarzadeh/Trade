@@ -873,8 +873,9 @@ def test_ttt_duplicate_position_ids_never_create_false_aggregated_size():
 def test_ttt_open_requires_documented_position_id_after_post(monkeypatch):
     t = X.TheTrueTrade("key", "secret")
     calls = []
-    def response(method, path, **kw):
+    def response(method, path, query=None, **kw):
         calls.append((method, path, kw.get("body")))
+        if method == "GET" and path == "/futures/positions":return {"items": []}
         return {"status": "ok"}
     monkeypatch.setattr(t, "request", response)
     with pytest.raises(X.ExchangeError, match="positionId"):

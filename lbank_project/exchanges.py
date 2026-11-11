@@ -485,13 +485,42 @@ class TheTrueTrade(Adapter):
                 "size": self._fmt(qty), "walletType": "debit",
                 "stopLoss": self._fmt(self.round_price(symbol, stop)),
                 "stopLossOrderType": "STOP_MARKET", "stopLossStrategy": "LATEST_PRICE"}
+        before = {str(r.get("id")): float(r.get("size") or 0) for r in self._raw_positions() if r.get("symbol") == symbol}
         response = self.request("POST", "/futures/positions", body=body)
-        # The API reference documents HTTP 201 {positionId}; the live gateway may wrap it (e.g. {data: {...}}) or name it
-        # id. A successful HTTP status without any ID is an ambiguous outcome, NOT confirmation that we own the position.
+        # The API reference documents HTTP 201 {positionId}; the live gateway answers {orderId}. A successful HTTP status
+        # without a position we can identify is an ambiguous outcome, NOT confirmation that we own the position.
         pid = position_id(response)
+        if pid is None and isinstance(response, dict) and _usable_id(response.get("orderId")):
+            pid = self._position_for_order(symbol, str(response["orderId"]).strip(), before, qty)
         if pid is None:
             raise ExchangeError(f"TheTrueTrade entry returned no usable positionId (reply shape: {shape(response)})")
         return pid
+
+    def _position_for_order(self, symbol: str, order_id: str, before: dict, qty: float) -> str | None:
+        """Position created by a filled entry order: the order record's position id if the exchange reports one, else the
+        one position on this symbol that is new (or, if the exchange nets entries, the one that grew by qty)."""
+        self.entry_resolution = None
+        for attempt in range(6):
+            try:
+                for o in self._list(self.request("GET", "/futures/orders", {"symbol": symbol})):
+                    if isinstance(o, dict) and str(o.get("id")) == order_id:
+                        pid = next((_usable_id(o.get(k)) for k in ("positionId", "positionID", "position_id") if _usable_id(o.get(k))), None)
+                        if pid:
+                            self.entry_resolution = "order_record";return pid
+            except ExchangeError:
+                pass
+            now = {str(r.get("id")): float(r.get("size") or 0) for r in self._raw_positions() if r.get("symbol") == symbol}
+            new = [i for i in now if i not in before]
+            if len(new) == 1:
+                self.entry_resolution = "new_position";return new[0]
+            if len(new) > 1:
+                raise ExchangeError(f"{symbol}: several new positions after one entry; cannot tell which is ours")
+            step = (self.markets().get(symbol) or {}).get("step") or 0
+            grown = [i for i in now if i in before and abs(now[i] - before[i] - qty) <= max(step * .05, 1e-12)]
+            if len(grown) == 1:
+                self.entry_resolution = "netted_position";return grown[0]
+            pause(1.0)
+        return None
 
     def close(self, pos, qty=None):
         left = pos.qty if qty is None else qty
