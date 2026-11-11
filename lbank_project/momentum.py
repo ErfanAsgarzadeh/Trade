@@ -6,7 +6,9 @@ the strongest coins get up to x1.5 for longs, the weakest up to x1.5 for shorts.
 4h closes at the two UTC midnights 30 days apart, the last one being the most recent completed UTC day (exactly the daily
 closes of the research). Ranks are computed once per UTC day and cached.
 
-Safe fallback: when the coin itself or fewer than MIN_COINS coins have both closes, the multiplier is 1.0 (no change).
+Safe fallback: when the coin itself or fewer than max(MIN_COINS, 80% of the universe) coins have both closes, the
+multiplier is 1.0 (no change). Right after the UTC midnight close the candle feed needs a few minutes to publish every
+coin, so an incomplete rank set is only provisional: it is recomputed at most every RETRY_S until every coin is present.
 Open positions are never resized; pyramid adds keep their own existing rule.
 """
 from __future__ import annotations
@@ -17,7 +19,8 @@ LOG = logging.getLogger("momentum")
 H4 = 4 * 3600
 LOOKBACK_DAYS = 30
 MIN_COINS = 10
-RETRY_S = 900                       # after an insufficient rank set, try again at most every 15 minutes
+MIN_COVERAGE = 0.8                  # share of the universe that must have history before ranks are used
+RETRY_S = 900                       # after an incomplete rank set, try again at most every 15 minutes
 FETCH = 6 * LOOKBACK_DAYS + 12      # 4h candles needed to reach the close 30 days back, with margin
 _lock = threading.Lock()
 _cache: dict = {}
@@ -83,16 +86,21 @@ def multiplier(data, symbol: str, side: str, now: float, enabled: bool = True) -
     day = int(now) // 86400
     with _lock:
         hit = _cache.get(day)
-        if hit is None or (len(hit[1]) < MIN_COINS and now - hit[0] >= RETRY_S):
-            r = ranks(data, now)
-            _cache.clear();_cache[day] = (now, r)
-            if len(r) >= MIN_COINS:
+        if hit is None or (not hit[2] and now - hit[0] >= RETRY_S):
+            syms = universe()
+            r = ranks(data, now, syms)
+            need = max(MIN_COINS, math.ceil(MIN_COVERAGE * len(syms)))
+            usable = r if len(r) >= need else {}
+            _cache.clear();_cache[day] = (now, usable, len(r) >= len(syms))
+            if len(r) >= len(syms):
                 LOG.info("momentum ranks for UTC day %s: %d coins", day, len(r))
+            elif usable:
+                LOG.warning("momentum: %d/%d coins with 30-day history; provisional ranks, retrying", len(r), len(syms))
             else:
-                LOG.warning("momentum: only %d coins with 30-day history; sizing unchanged", len(r))
+                LOG.warning("momentum: only %d/%d coins with 30-day history; sizing unchanged, retrying", len(r), len(syms))
         else:
-            r = hit[1]
-    if len(r) < MIN_COINS or symbol not in r:
+            usable = hit[1]
+    if symbol not in usable:
         return 1.0
-    v = r[symbol]
+    v = usable[symbol]
     return 0.5 + (v if side == "long" else 1.0 - v)

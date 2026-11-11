@@ -167,3 +167,18 @@ def test_insufficient_history_is_retried_at_most_every_15_minutes(monkeypatch):
     assert M.multiplier(d, syms[0], "long", NOW + 600) == 1.0 and len(d.calls) == n        # not re-fetched within 15 minutes
     d.missing = set()
     assert M.multiplier(d, syms[-1], "long", NOW + 901) == pytest.approx(1.5)             # retried after 15 minutes
+
+
+def test_incomplete_ranks_after_midnight_are_provisional(monkeypatch):
+    """At the UTC midnight close the feed publishes coins over a few minutes: ranks from a partial set are not kept all day."""
+    mv = moves(12) | {f"D{i}/USDT:USDT": (100., 100. * (1 + (i + 20) / 100)) for i in range(2)};syms = list(mv)
+    monkeypatch.setattr(M, "universe", lambda: syms)
+    d = Candles(mv, missing=syms[-2:])                          # the two strongest coins not published yet: 12/14
+    first = M.multiplier(d, "C11/USDT:USDT", "long", NOW);assert first == pytest.approx(1.5)
+    n = len(d.calls);M.multiplier(d, "C11/USDT:USDT", "long", NOW + 600);assert len(d.calls) == n
+    d.missing = set()
+    assert M.multiplier(d, "C11/USDT:USDT", "long", NOW + 901) == pytest.approx(0.5 + 12 / 14)     # recomputed on the full set
+    n = len(d.calls);M.multiplier(d, "C11/USDT:USDT", "long", NOW + 3 * 3600);assert len(d.calls) == n   # complete: cached
+    M._cache.clear()
+    sparse = Candles(mv, missing=syms[:4])                      # 10/14 < 80% coverage: no change
+    assert M.multiplier(sparse, "C11/USDT:USDT", "long", NOW) == 1.0
