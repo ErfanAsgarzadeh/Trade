@@ -5,7 +5,7 @@ databases every few seconds and makes the exchange account follow them:
   * a NEW paper position (first seen while the mirror runs, or opened at most max_entry_delay_min ago) is opened at market,
     size = paper size x (exchange equity / paper equity) x size_factor, with the paper stop as an exchange stop-loss;
   * paper stop moves (trailing / break-even / profit floor) are copied to the exchange stop;
-  * paper reductions (take-profit part, F cuts) and adds (pyramid) are copied in proportion;
+  * paper reductions (take-profit part) and adds (pyramid) are copied in proportion;
   * a paper exit closes the exchange position.
 Only positions the mirror opened itself are ever touched; anything else on the account is left alone.
 Positions that were already open when the mirror was switched on are NOT copied (they would be entered late).
@@ -500,7 +500,7 @@ class Mirror:
         step = self.ex.markets().get(esym, {}).get("step", 0) or 0
         if l.qty - target_q > max(step, l.qty * .02):
             if target_q <= 0:self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper reduced to zero");del managed[esym];return
-            self._close_verified(esym, l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part / F cut)")
+            self._close_verified(esym, l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part)")
         elif target_q - l.qty > max(step, l.qty * .02) and not self.state["paused"]:
             add = self._qty(esym, min(target_q - l.qty, max(0., self.cfg["max_position_usd"] / self.ex.price(esym) - l.qty)))
             if add > 0:

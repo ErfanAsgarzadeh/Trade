@@ -29,7 +29,7 @@ APP_FILES = ('frontend/public/portal-assets/titanium.css', 'frontend/public/port
              'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
-             'risk_gate.py', 'risk_overlay.py', 'performance.py', 'lbank_account.py', 'exchanges.py', 'live_mirror.py', 'models/risk_ai_r20.json')
+             'momentum.py', 'performance.py', 'lbank_account.py', 'exchanges.py', 'live_mirror.py')
 
 
 def validate_id(customer: str):

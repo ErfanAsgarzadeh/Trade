@@ -23,7 +23,7 @@ import urllib.request
 TESTS = (
     'test_capital_licensing.py', 'test_signup_products.py', 'test_customer_distribution.py',
     'test_portal.py', 'test_admin_workbench.py', 'test_portal_queue.py',
-    'test_risk_gate.py', 'test_risk_overlay.py', 'test_shared_paper_account.py',
+    'test_momentum.py', 'test_shared_paper_account.py',
     'test_portfolio_runtime.py', 'test_live_mirror.py', 'test_multi_exchange.py',
     'test_ttt_live_readiness.py', 'test_ttt_stop_audit.py', 'test_ttt_account_audit.py',
     'test_ttt_protection_readback.py', 'test_ttt_one_time_tpsl.py',

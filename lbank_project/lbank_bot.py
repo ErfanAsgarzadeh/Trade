@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 import strategy_archetypes as archetypes
 import license_access
-import risk_gate
+import momentum
 
 LOG = logging.getLogger("lbank_bot")
 PENDING = "STATE_PENDING_TRIGGER"
@@ -76,7 +76,8 @@ SCHEMA = {
         "btc_regime_filter_enabled": bool, "btc_regime_symbol": str,
         "funding_short_filter_enabled": bool, "funding_short_prints": int, "funding_short_threshold": float,
         "atr_regime_filter_enabled": bool, "atr_regime_window": int, "atr_regime_min_ratio": float,
-        "late_entry_filter_enabled": bool, "late_entry_bars": int, "late_entry_max_log_move": float},
+        "late_entry_filter_enabled": bool, "late_entry_bars": int, "late_entry_max_log_move": float,
+        "momentum_sizing_enabled": bool},
     "archetype_strategy": {"family": str, "entry_variant": str, "donchian_lookback": int,
         "stop_source": str, "trail_source": str, "require_h2_l2": bool,
         "trail_close_only": bool, "pending_policy": str}}
@@ -99,7 +100,10 @@ PROFIT_FLOOR_DEFAULTS = {"profit_floor_enabled": False, "profit_floor_trigger_r"
     # Late-entry gate (high_cagr/output/ideas/winrate/report_fa.html): no new root entry when the last closed 4h close
     # has already moved more than max_log_move (log return) in the trade direction over the previous `bars` candles.
     # Pyramid adds are not gated. Older configs: OFF.
-    "late_entry_filter_enabled": False, "late_entry_bars": 60, "late_entry_max_log_move": 0.1521}
+    "late_entry_filter_enabled": False, "late_entry_bars": 60, "late_entry_max_log_move": 0.1521,
+    # Momentum-rank sizing (momentum.py; high_cagr/output/ideas/scorer/report_fa.md): new-entry risk x (0.5 + 30-day
+    # momentum rank of the coin among the three bots' symbols, mirrored for shorts). ON by default, also for older configs.
+    "momentum_sizing_enabled": True}
 ASSUMED_SLIPPAGE_BPS = 2.0  # per fill, what every benchmark assumed
 LEGACY_RISK_DEFAULTS = {"min_stop_distance_pct": 0.0, "min_stop_policy": "NONE",
     "exit_scheme": "LEGACY", "breakeven_policy": "ENTRY", "breakeven_trigger_rr": 2.0,
@@ -1086,11 +1090,9 @@ class Engine:
         if not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             return False
         self.assert_paper(p)
-        fmult = risk_gate.multiplier("main", now)   # F risk manager; exactly 1.0 while F is switched off
-        if fmult <= 0:
-            with self.db.connect() as db:
-                db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
-            return False
+        settings = self.config.read().get("strategy_settings", {})
+        mmult = momentum.multiplier(self.data, p["symbol"], p["side"], now if now is not None else time.time(),
+                                    settings.get("momentum_sizing_enabled", False))
         direction = 1 if p["side"] == "long" else -1
         current = self.config.read()
         modern = "strategy_settings" in current
@@ -1119,9 +1121,9 @@ class Engine:
                     db.execute("DELETE FROM positions WHERE symbol=? AND state=?", (p["symbol"], PENDING))
                 return False
             sized = current
-            if p.get("risk_mult", 1.0) != 1.0 or fmult != 1.0:  # width filter halved this position's risk / F multiplier
+            if p.get("risk_mult", 1.0) != 1.0 or mmult != 1.0:  # width filter halved this position's risk / momentum rank
                 sized = copy.deepcopy(current)
-                sized["risk_and_exit"]["risk_per_trade_pct"] *= p.get("risk_mult", 1.0) * fmult
+                sized["risk_and_exit"]["risk_per_trade_pct"] *= p.get("risk_mult", 1.0) * mmult
             budget = entry_budget(equity, distance / price, sized,
                                   self.available_notional(equity, current, p["symbol"]))
             p["fee_rate"] = current["risk_and_exit"]["lbank_round_trip_fee"]
@@ -1132,9 +1134,6 @@ class Engine:
             p["risk_budget"] = min(p["risk_budget"], equity * current["risk_and_exit"]["risk_per_trade_pct"])
             p["max_notional"] = min(p["max_notional"], self.available_notional(equity, current, p["symbol"]),
                                      equity * current["risk_and_exit"]["max_margin_per_position_pct"] * current["risk_and_exit"]["default_isolated_leverage"])
-        if not modern and fmult != 1.0:
-            p["risk_budget"] *= fmult
-            p["max_notional"] *= min(1.0, fmult)
         # Re-size at the simulated fill after a gap, so risk isn't based on an old trigger.
         cap = min(p["qty"], p["risk_budget"] / (distance + price * (p["fee_rate"] + p.get("sizing_slippage_pct", 0))) / p["contract_size"],
                   p["max_notional"] / price / p["contract_size"])
@@ -1155,24 +1154,8 @@ class Engine:
                  p["initial_sl"], p["initial_sl"], p.get("isolated_leverage", 0), p.get("slot_margin_usd", 0),
                  p.get("sizing_slippage_pct", 0), p["risk_budget"], p["max_notional"], p["fee_rate"], price, distance, p["symbol"], PENDING))
         self._record_fill("entry", p, price, qty)
-        risk_gate.record("main", f'{p["symbol"]}|{p.get("signal_ts", 0)}', now)
-        return True
-
-    def _f_cut(self, p: dict, price: float, now: float) -> bool:
-        """F risk manager on an open position (no-op while F is off). True if the position was reduced or closed."""
-        key = f'{p["symbol"]}|{p.get("signal_ts", 0)}'
-        keep = risk_gate.keep_fraction("main", key, now)
-        if keep >= 1:
-            return False
-        qty = self.data.precision(p["symbol"], p["qty"] * (1 - keep))
-        remainder = self.data.precision(p["symbol"], p["qty"] - qty)
-        if keep <= 0 or not self.data.tradable(p["symbol"], remainder, price):
-            self._close(p, price, p["qty"], "f_cut", now)
-            risk_gate.forget("main", key)
-            return True
-        if qty > 0 and self.data.tradable(p["symbol"], qty, price):
-            self._close(p, price, qty, "f_cut", now)
-        risk_gate.mark("main", key, now)
+        if mmult != 1.0:
+            LOG.info("Momentum sizing %s %s: risk x%.2f", p["symbol"], p["side"], mmult)
         return True
 
     @staticmethod
@@ -1374,8 +1357,6 @@ class Engine:
                             continue
                     price = self.data.price(p["symbol"])
                     sign = 1 if p["side"] == "long" else -1
-                    if p["state"] != PENDING and self._f_cut(p, price, now):
-                        continue
                     self.apply_profit_floor(p, price)
                     self.arm_pyramid(p, price, now)
                     if p["state"] == PENDING:
@@ -1675,15 +1656,13 @@ def run():
     except Exception as exc:
         LOG.exception("PA sleeve failed to start; main bot continues")
         db.runtime_set("pa_error", str(exc))
-    try:   # tells the dashboard that this bot build can apply the F risk manager (still off until switched on)
-        risk_gate.announce()
-    except Exception:
-        LOG.exception("Could not write the F readiness marker")
-    LOG.info("Started PAPER engine. %s F risk manager: %s", LIVE_LIMITATION, risk_gate.status()["reason"])
+    LOG.info("Started PAPER engine. %s Momentum sizing: %s", LIVE_LIMITATION,
+             "on" if config.read().get("strategy_settings", {}).get("momentum_sizing_enabled", False) else "off")
     while not stop.is_set():
         interval = 15
         try:
             engine.watchdog()
+            record_equity(engine)
             interval = config.read()["bot_control"]["check_interval_seconds"]
         except Exception as exc:
             LOG.exception("Watchdog cycle failed")
@@ -1694,6 +1673,26 @@ def run():
         c3_thread.join(timeout=12)
     if pa_thread:
         pa_thread.join(timeout=12)
+
+
+def record_equity(engine, now: float | None = None, every: float = 3300.) -> None:
+    """Append the shared paper account equity to runtime/equity_history.jsonl about once an hour (dashboard chart)."""
+    now = time.time() if now is None else now
+    path = Path(os.getenv("BOT_DB", "data/lbank_ichimoku_bot.db")).resolve().parent / "equity_history.jsonl"
+    try:
+        if path.is_file():
+            with open(path, "rb") as f:
+                f.seek(max(0, path.stat().st_size - 512));last = f.read().decode(errors="ignore").strip().splitlines()[-1]
+            if now - float(json.loads(last)["t"]) < every:
+                return
+        equity = float(engine.paper_equity())
+        if not math.isfinite(equity):
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "a") as f:
+            f.write(json.dumps({"t": now, "equity": equity}) + "\n")
+    except Exception:
+        LOG.exception("Equity snapshot failed")
 
 
 def probe_book(symbol: str, contracts: float):

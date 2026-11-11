@@ -17,7 +17,8 @@ def calm_rows():
 
 def soft_sleeve(tmp_path, factor=1.5, name='soft.db'):
     rows=calm_rows();store=P.Store(tmp_path/name)
-    sl=P.Sleeve(pcfg(symbols=[SYM],volume_multiplier=factor),store,FakeData(rows,rows[-2][4]))
+    # momentum sizing off: these tests isolate the volume multiplier (momentum has its own tests in test_momentum.py)
+    sl=P.Sleeve(pcfg(symbols=[SYM],volume_multiplier=factor,momentum_sizing_enabled=False),store,FakeData(rows,rows[-2][4]))
     return sl,store,rows
 
 def test_shipped_policy_and_old_config_compatibility():
@@ -74,7 +75,7 @@ def test_real_scan_snapshots_weight_and_fill_scales_volume_only(tmp_path):
     other.data.px=sl.data.px;other.watchdog(now+60);p2=st2.positions()[0]
     assert p['qty']==pytest.approx(1.5*p2['qty'],rel=1e-6)
     assert (p['entry'],p['stop'],p['target'])==(p2['entry'],p2['stop'],p2['target'])
-    sl.c=pcfg(symbols=[SYM],volume_multiplier=1.)
+    sl.c=pcfg(symbols=[SYM],volume_multiplier=1.,momentum_sizing_enabled=False)
     sl.watchdog(now+70);assert store.positions()[0]==p  # hot reload never resizes an existing position
 
 @pytest.mark.parametrize('extra',[{}, {'policy_variant':P.SOFT_VARIANT,'risk_weight':float('nan')},

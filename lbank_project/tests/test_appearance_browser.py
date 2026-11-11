@@ -96,13 +96,6 @@ def test_standalone_terminal_and_real_chart_redraw(tmp_path):
             snapshots:snapshot.daily.map(([day,equity])=>({t:Date.parse(day)/1000,equity})),
             realized_curve:[],daily:{},bots:{},monthly:{},recent:[]};
           renderPerf(p);
-          // Isolated display fixture for the existing F panels; no model/execution call.
-          renderRisk({available:true,stale:false,current:{as_of:'2025-12-31',computed_at:1767139200,
-            ai:{percentile:.5,zone:'normal',multiplier:1},combined:1,scale:1,
-            vol:{multiplier:1,daily_vol:null},brake:{multiplier:1,drawdown_pct:0},
-            open_positions_action:'keep',bots:{},features:{},data_status:{coins:0,features_missing:[]},
-            model:{trained_until:'2020-12-31'}},history:[{as_of:'2025-12-31',ai_pct:.5,combined:1,
-            account_equity:snapshot.initial,shadow_equity:snapshot.initial}]});
         }''',snapshot)
         before=page.evaluate("Chart.getChart(document.getElementById('eq_chart')).data.datasets[0].data")
         for theme in ('dark','light'):
@@ -110,9 +103,7 @@ def test_standalone_terminal_and_real_chart_redraw(tmp_path):
             colors=page.evaluate("['eq_chart','dd_chart'].map(id=>Chart.getChart(document.getElementById(id)).data.datasets[0].borderColor)")
             assert [x.lower() for x in colors]==(['#91ddeb','#ff879b'] if theme=='dark' else ['#28657a','#b93856'])
             assert page.evaluate("Chart.getChart(document.getElementById('eq_chart')).data.datasets[0].data")==before
-            analytical=page.evaluate("['f_hist_chart','f_shadow_chart'].map(id=>Chart.getChart(document.getElementById(id)).data.datasets.map(d=>d.borderColor))")
-            assert [[c.lower() for c in row] for row in analytical]==([['#91ddeb','#b5a4ff'],['#a9acc0','#b5a4ff']] if theme=='dark' else [['#28657a','#5746a0'],['#666b80','#5746a0']])
-            for tab in ('overview','positions','performance','risk','settings'):
+            for tab in ('overview','positions','performance','settings'):
                 page.locator('[data-tab="'+tab+'"]').click()
                 for width in (320,768,1440):
                     page.set_viewport_size({'width':width,'height':1000})
