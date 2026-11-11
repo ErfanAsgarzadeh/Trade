@@ -16,6 +16,7 @@ def route(client,params,position_params=None,scope='spot wallet'):
 
 
 PROFILES={
+ 'thetruetrade':dict(name='TheTrueTrade',futures=route('thetruetrade',{}, {},'TheTrueTrade futures account')),
  'lbank':dict(name='LBank',spot=route('lbank',{}),pending=['futures']),
  'binance':dict(name='Binance',spot=route('binance',{'type':'spot'}),
     futures=route('binanceusdm',{'type':'future','subType':'linear'},{'subType':'linear'},'USD-M futures wallet')),
@@ -38,6 +39,7 @@ PROFILES={
 
 @lru_cache(maxsize=32)
 def required_fields(client_id):
+    if client_id=='thetruetrade':return ('apiKey','secret')
     exchange=getattr(ccxt,client_id)()
     fields=[name for name,needed in exchange.requiredCredentials.items() if needed]
     if set(fields)-{'apiKey','secret','password','uid'}:
@@ -52,7 +54,9 @@ def profile(exchange_id,market,allow_pending=False):
     if market not in entry:
         if allow_pending and market in entry.get('pending',[]):return None
         raise UnsupportedAccount('Market not enabled for this exchange')
-    result=deepcopy(entry[market]);client=getattr(ccxt,result['client'])()
+    result=deepcopy(entry[market])
+    if exchange_id=='thetruetrade':return result
+    client=getattr(ccxt,result['client'])()
     if client.has.get('fetchBalance') is not True:raise UnsupportedAccount('Private balance adapter not available')
     if market=='spot' and client.has.get('spot') is not True:raise UnsupportedAccount('Spot adapter not available')
     if market=='futures' and (client.has.get('swap') is not True or client.has.get('fetchPositions') is not True):
@@ -124,10 +128,15 @@ def normalize_positions(positions):
 
 
 class MultiExchangeReader:
-    def __init__(self,factory=None):self.factory=factory
+    def __init__(self,factory=None,ttt_factory=None):self.factory=factory;self.ttt_factory=ttt_factory
 
     def snapshot(self,connection):
         exchange_id=connection.get('exchange_id','lbank');market=connection['market']
+        if exchange_id=='thetruetrade':
+            from portal_thetruetrade import snapshot
+            profile(exchange_id,market)
+            validate_connection(exchange_id,market,connection['api_key'],connection['secret'])
+            return snapshot(connection,self.ttt_factory)
         if exchange_id=='lbank':
             snapshot=LBankAccountReader().snapshot(connection)
             return dict(snapshot,exchange_id='lbank',positions=[],balance_scope='spot wallet',positions_complete=True)

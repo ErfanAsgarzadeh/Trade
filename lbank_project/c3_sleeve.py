@@ -26,6 +26,7 @@ import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
 import risk_gate
+import signal_feed
 
 LOG=logging.getLogger('c3_sleeve');H4=4*3600
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
@@ -109,6 +110,11 @@ class Sleeve:
     @property
     def shared_account(self):
         return self._shared_account() if callable(self._shared_account) else self._shared_account
+
+    def license_entries_allowed(self,now=None):
+        account=self.shared_account
+        seed=account.engine.paper_seed if account is not None else self.c['paper_capital']
+        return bot.license_access.entries_allowed(now,initial_capital=seed)
 
     def equity(self)->float:
         if self.shared_account is not None:return self.shared_account.equity()
@@ -219,6 +225,10 @@ class Sleeve:
                     side,pend=confirm_step(json.loads(row[0]) if row else [],float(b.close),trend,stamp,side,c['confirm_bars'])
                     if side and c['skip_weekend'] and not weekday_close(stamp):side=None
                     with self.store.db() as db:db.execute('INSERT INTO pending VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET data=excluded.data',(s,json.dumps(pend)))
+                if side and signal_feed.enabled(now):
+                    sign=1 if side=='long' else -1
+                    if c['stop_atr']*float(b.atr)/float(b.close)>=c['min_stop_pct']:
+                        signal_feed.publish('c3',s,side,float(b.close),float(b.close)-sign*c['stop_atr']*float(b.atr),stamp,c['timeframe'],(stamp/1000)+2*H4,now,source_mode=getattr(self.data,'mode',None))
                 if not pos and c['enabled'] and side:self.open(s,side,b,now)
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
@@ -229,7 +239,7 @@ class Sleeve:
         with self.execution_lock():return self._open(s,side,b,now)
 
     def _open(self,s:str,side:str,b:pd.Series,now:float):
-        if not bot.license_access.entries_allowed(now):return None
+        if not self.license_entries_allowed(now):return None
         positions=self.store.positions()
         limit=self.c['max_open_positions']
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None

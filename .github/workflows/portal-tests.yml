@@ -28,9 +28,18 @@ jobs:
           python-version: "3.11"
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
+      - name: Build and test Next.js frontend
+        working-directory: lbank_project/frontend
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
       - run: python -m pip install -r lbank_project/requirements-dev.txt -r lbank_project/requirements-portal.txt
-      - run: python -m pytest lbank_project/tests/test_portal.py lbank_project/tests/test_portal_queue.py lbank_project/tests/test_multi_exchange.py -q
+      - run: python -m pytest lbank_project/tests/test_portal.py lbank_project/tests/test_portal_queue.py lbank_project/tests/test_multi_exchange.py lbank_project/tests/test_capital_licensing.py lbank_project/tests/test_customer_distribution.py lbank_project/tests/test_portal_frontend.py lbank_project/tests/test_signup_products.py lbank_project/tests/test_admin_workbench.py lbank_project/tests/test_public_backtest.py -q
         env:
           PYTHONPATH: lbank_project
           PORTAL_TEST_DATABASE_URL: postgresql://portal_test:disposable-ci-password@127.0.0.1:5432/portal_test
@@ -39,4 +48,12 @@ jobs:
         run: python -m pytest lbank_project/tests/test_live_mirror.py lbank_project/tests/test_ttt_stop_audit.py lbank_project/tests/test_ttt_one_time_tpsl.py lbank_project/tests/test_ttt_account_audit.py lbank_project/tests/test_ttt_protection_readback.py lbank_project/tests/test_ttt_live_readiness.py lbank_project/tests/test_paper_forward_audit.py -q
         env:
           PYTHONPATH: lbank_project
-      - run: node lbank_project/tests/test_portal_ui.cjs
+
+      - name: Browser subscription journey and responsive layouts
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps chromium
+          python -m pytest lbank_project/tests/test_portal_browser.py lbank_project/tests/test_admin_browser.py lbank_project/tests/test_landing_browser.py -q
+        env:
+          PYTHONPATH: lbank_project
+          PORTAL_TEST_PLAYWRIGHT_BROWSER: "1"

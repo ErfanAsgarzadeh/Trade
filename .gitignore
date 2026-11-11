@@ -32,3 +32,8 @@ high_cagr/cache_sentiment/
 high_cagr/output/ideas/ml/*.parquet
 high_cagr/cache_universe/
 high_cagr/output/ideas/scorer/*.pkl
+# Next.js generated files
+**/node_modules/
+**/.next/
+lbank_project/frontend/out/
+**/*.tsbuildinfo

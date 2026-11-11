@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import re
 import signal
+import signal_feed
 import sqlite3
 import sys
 import tempfile
@@ -1069,7 +1070,7 @@ class Engine:
                 pass
 
     def _insert(self, p: dict):
-        if not license_access.entries_allowed():
+        if not license_access.entries_allowed(initial_capital=self.paper_seed):
             raise PermissionError('Customer license does not permit new entries')
         keys = list(p)
         with self.db.connect() as db:
@@ -1082,7 +1083,7 @@ class Engine:
                        (p["symbol"], p["timeframe"], p["signal_ts"]))
 
     def _activate(self, p: dict, price: float, now: float | None = None) -> bool:
-        if not license_access.entries_allowed(now):
+        if not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             return False
         self.assert_paper(p)
         fmult = risk_gate.multiplier("main", now)   # F risk manager; exactly 1.0 while F is switched off
@@ -1244,7 +1245,7 @@ class Engine:
         The paper position stores the weighted entry; costs/PnL remain linear.
         Root entry/R and the scale-in ledger remain separate for audit/restarts.
         """
-        if not license_access.entries_allowed(now):
+        if not license_access.entries_allowed(now, initial_capital=self.paper_seed):
             return False
         frozen = json.loads(p.get("strategy_config", "{}"))
         settings = frozen.get("strategy_settings", {})
@@ -1339,7 +1340,7 @@ class Engine:
         now = now if now is not None else time.time()
         # Never stop risk management solely because config reload failed.
         try:
-            auto = self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now)
+            auto = self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now, initial_capital=self.paper_seed)
         except Exception:
             LOG.exception("Invalid configuration: blocking pending entries")
             auto = False
@@ -1352,7 +1353,7 @@ class Engine:
                     self.assert_paper(p)
                     # Re-read auto under the execution lock after a possible panic.
                     try:
-                        auto_now = auto and self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now)
+                        auto_now = auto and self.config.read()["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now, initial_capital=self.paper_seed)
                     except Exception:
                         auto_now = False
                     if p["state"] == PENDING and (not auto_now or now >= p["expiry_ts"]):
@@ -1488,7 +1489,9 @@ class Engine:
                 failed = True
                 LOG.exception("Trailing scan failed for %s", old["symbol"])
                 self.db.runtime_set("last_error", str(exc))
-        if not c["bot_control"]["auto_trade_enabled"] or not license_access.entries_allowed(now):
+        signal_mode=signal_feed.enabled(now) and getattr(self.data,'mode',None)=='csv-lbank'
+        trade_mode=c["bot_control"]["auto_trade_enabled"] and license_access.entries_allowed(now, initial_capital=self.paper_seed)
+        if not trade_mode and not signal_mode:
             self.db.runtime_set("scanner_at", now)
             return not failed
         candidates, scanned = [], []
@@ -1556,6 +1559,18 @@ class Engine:
         with file_lock(self.db.trade_lock):
             if self.config.read() != c:
                 return False
+            if signal_mode:
+                for _,symbol,side,bar,structural in candidates:
+                    setup=size_position(self.data,symbol,side,bar,self.paper_seed,c,ltf,structural)
+                    if setup:
+                        signal_feed.publish('main',symbol,side,setup['entry_price'],setup['initial_sl'],
+                                            int(bar.timestamp),ltf,min(setup['expiry_ts'],bar.timestamp/1000+2*TIMEFRAMES[ltf]),now,setup['tp1_price'],source_mode=getattr(self.data,'mode',None))
+            # Signal-only mode consumes each candle once but never reaches _insert/_activate.
+            if not trade_mode:
+                with self.db.connect() as db:
+                    db.executemany("INSERT INTO scanned_candles VALUES(?,?,?) ON CONFLICT(symbol,timeframe) DO UPDATE SET candle_ts=MAX(candle_ts,excluded.candle_ts)",scanned)
+                self.db.runtime_set("scanner_at",now)
+                return not failed
             equity = self.paper_equity()
             daily, _ = self.db.history_summary(now)
             blocked = equity <= 0 or daily <= -equity * c["risk_and_exit"]["daily_max_loss_pct"]

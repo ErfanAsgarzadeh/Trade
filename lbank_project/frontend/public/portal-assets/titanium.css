@@ -1,0 +1,206 @@
+/* TITANIUM IRIS — canonical palette and semantic tokens for every UI renderer. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0c101b;
+  --surface: #171b2b;
+  --surface-elevated: #24293d;
+  --text-primary: #f3f1f8;
+  --text-secondary: #a9acc0;
+  --primary: #b5a4ff;
+  --primary-foreground: #111322;
+  --ai-accent: #91ddeb;
+  --premium-accent: #dfa18e;
+  --profit: #65d6c2;
+  --loss: #ff879b;
+  --border: #323648;
+  --profit-text: var(--profit);
+  --premium-text: var(--premium-accent);
+  --shadow-color: #000000;
+  --overlay: #050710b8;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --background: #f7f6fa;
+  --surface: #ffffff;
+  --surface-elevated: #efedf5;
+  --text-primary: #1b1d2c;
+  --text-secondary: #666b80;
+  --primary: #5746a0;
+  --primary-foreground: #ffffff;
+  --ai-accent: #28657a;
+  --premium-accent: #a75d49;
+  --profit: #087d70;
+  --loss: #b93856;
+  --border: #e1deeb;
+  --profit-text: color-mix(in srgb, var(--profit) 90%, var(--text-primary));
+  --premium-text: color-mix(
+    in srgb,
+    var(--premium-accent) 85%,
+    var(--text-primary)
+  );
+  --shadow-color: #29233f;
+  --overlay: #1b1d2c66;
+}
+:root {
+  --bg: var(--background);
+  --panel: var(--surface);
+  --panel2: var(--surface-elevated);
+  --bg2: var(--surface-inset);
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+  --line: var(--border);
+  --line2: var(--border-strong);
+  --accent: var(--primary);
+  --accent2: var(--ai-accent);
+  --ink: var(--primary-foreground);
+  --good: var(--profit-text);
+  --bad: var(--loss);
+  --warn: var(--warning);
+  --main: var(--primary);
+  --c3: var(--ai-accent);
+  --pa: var(--premium-accent);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-elevated);
+  --popover-foreground: var(--text-primary);
+  --surface-inset: color-mix(in srgb, var(--background) 75%, var(--surface));
+  --surface-hover: color-mix(
+    in srgb,
+    var(--surface-elevated) 88%,
+    var(--primary) 12%
+  );
+  --primary-hover: color-mix(
+    in srgb,
+    var(--primary) 88%,
+    var(--text-primary) 12%
+  );
+  --primary-soft: color-mix(in srgb, var(--primary) 11%, var(--surface));
+  --ai-soft: color-mix(in srgb, var(--ai-accent) 9%, var(--surface));
+  --premium-soft: color-mix(in srgb, var(--premium-accent) 10%, var(--surface));
+  --primary-border: color-mix(in srgb, var(--primary) 50%, var(--border));
+  --border-strong: color-mix(in srgb, var(--text-secondary) 75%, var(--border));
+  --border-subtle: color-mix(in srgb, var(--border) 70%, transparent);
+  --focus-ring: var(--primary);
+  --input: var(--surface-inset);
+  --input-border: var(--border-strong);
+  --placeholder: var(--text-secondary);
+  --disabled-foreground: var(--text-secondary);
+  --disabled-background: var(--surface-elevated);
+  --warning: var(--premium-text);
+  --warning-background: var(--premium-soft);
+  --warning-border: color-mix(
+    in srgb,
+    var(--premium-accent) 55%,
+    var(--border)
+  );
+  --success: var(--profit-text);
+  --success-background: color-mix(in srgb, var(--profit) 8%, var(--surface));
+  --success-border: color-mix(in srgb, var(--profit) 45%, var(--border));
+  --error: var(--loss);
+  --error-background: color-mix(in srgb, var(--loss) 8%, var(--surface));
+  --error-border: color-mix(in srgb, var(--loss) 45%, var(--border));
+  --info: var(--ai-accent);
+  --info-background: var(--ai-soft);
+  --danger-solid: var(--loss);
+  --danger-on-solid: var(--primary-foreground);
+  --selection-background: var(--primary-soft);
+  --selection-foreground: var(--text-primary);
+  --skeleton: var(--surface-elevated);
+  --price-card: var(--surface-elevated);
+  --price-card-text: var(--text-primary);
+  --price-card-muted: var(--text-secondary);
+  --price-card-badge: var(--primary-soft);
+  --shadow-soft: 0 12px 36px
+    color-mix(in srgb, var(--shadow-color) 9%, transparent);
+  --shadow-card: 0 22px 65px
+    color-mix(in srgb, var(--shadow-color) 15%, transparent);
+  --shadow-dialog: 0 28px 90px
+    color-mix(in srgb, var(--shadow-color) 25%, transparent);
+  --glow-subtle: color-mix(in srgb, var(--primary) 13%, transparent);
+  --surface-gradient: linear-gradient(
+    145deg,
+    var(--surface-elevated),
+    var(--surface) 70%
+  );
+  --brand-gradient: linear-gradient(135deg, var(--primary), var(--ai-accent));
+  --page-tint: color-mix(in srgb, var(--primary) 5%, transparent);
+  --decorative-line: color-mix(in srgb, var(--primary) 7%, transparent);
+  --chart-background: var(--surface);
+  --chart-grid: color-mix(in srgb, var(--border) 80%, transparent);
+  --chart-grid-subtle: color-mix(in srgb, var(--border) 45%, transparent);
+  --chart-axis: var(--text-secondary);
+  --chart-crosshair: var(--text-secondary);
+  --chart-equity: var(--ai-accent);
+  --chart-indicator: var(--primary);
+  --chart-indicator-secondary: var(--text-secondary);
+  --chart-marker: var(--text-primary);
+  --chart-fill: var(--ai-accent);
+  --chart-bullish: var(--profit);
+  --chart-bearish: var(--loss);
+  --chart-volume-up: color-mix(in srgb, var(--profit) 45%, transparent);
+  --chart-volume-down: color-mix(in srgb, var(--loss) 45%, transparent);
+  --chart-tooltip: var(--surface-elevated);
+  --chart-tooltip-text: var(--text-primary);
+  --chart-tooltip-border: var(--border-strong);
+}
+::selection {
+  background: var(--selection-background);
+  color: var(--selection-foreground);
+}
+/* Shared controller is also usable by the standalone terminal and offline page. */
+.theme-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.theme-switcher label {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.theme-switcher select {
+  width: auto;
+  min-width: 85px;
+  min-height: 38px;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.theme-switcher select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.appearance-offline {
+  margin: 0;
+  padding: 30px;
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: Tahoma, Arial, sans-serif;
+  line-height: 2;
+}
+.appearance-offline main {
+  max-width: 620px;
+  margin: 60px auto;
+  padding: 30px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+}
+.appearance-offline h1 {
+  font-size: 25px;
+}
+.appearance-offline p {
+  color: var(--text-secondary);
+}
+.appearance-offline a {
+  color: var(--primary);
+}
