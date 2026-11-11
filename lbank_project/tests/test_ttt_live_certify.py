@@ -329,3 +329,32 @@ def test_live_config_validates_risk_fractions():
                 {"risk_per_trade_pct": 0.2, "max_total_open_risk_pct": 0.1}, {"leverage": 5.0}, {"size_factor": float("nan")}):
         with pytest.raises(ValueError):L.validate(bad)
     with pytest.raises(ValueError):L.validate([])
+
+
+def test_any_unexpected_error_or_signal_still_closes_the_test_position(rt):
+    api = FakeAPI();ex = adapter(api)
+    real = ex.check_stop
+    def boom(*a, **k):raise ValueError("unexpected reply")
+    ex.check_stop = boom                                       # fails right after the first entry
+    c, out = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and "ValueError" in report["reason"] and report["cleanup_confirmed"] and not api.pos
+    ex.check_stop = real
+    def interrupted(*a, **k):raise T.Interrupted("signal 1")   # SSH window closed while waiting
+    c, out = certifier(api, ex)
+    c.sleep = interrupted
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and report["cleanup_confirmed"] and not api.pos
+
+
+def test_detached_run_confirms_up_front_and_logs_every_step(rt, monkeypatch):
+    api = FakeAPI()
+    made = adapter(api)
+    monkeypatch.setattr(T.X, "TheTrueTrade", lambda: made)
+    clock = [1_800_000_000.0]
+    def sleep(s):clock[0] += s;api.move("DOGEUSDT", 0.9995)
+    monkeypatch.setattr(T.time, "sleep", sleep);monkeypatch.setattr(T.time, "time", lambda: clock[0])
+    assert T.main(["--confirm", "TEST", "--trigger-minutes", "0.5"]) == 0
+    log = (rt / "ttt_certify_log.txt").read_text()
+    assert "Type TEST to continue: TEST" in log and "[PASS] stop_triggered" in log and "CERTIFIED" in log
+    assert "position fields by query" in log and (rt / X.CERT_NAME).exists() and not api.pos

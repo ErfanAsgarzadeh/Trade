@@ -1,8 +1,10 @@
 """TheTrueTrade live certification: one supervised end-to-end test with real money, before the Live mirror may trade.
 
-Run it on the server, inside the live container (keys come from .env, nothing is typed into chat or command lines):
+Run it on the server, inside the live container (keys come from .env, nothing is typed into chat or command lines).
+Detached, so a closed SSH window cannot interrupt it; every step is also written to runtime/ttt_certify_log.txt:
 
-    docker compose run --rm lbank-live python -u ttt_live_certify.py
+    docker compose run -d --name ttt-certify lbank-live python -u ttt_live_certify.py --confirm TEST
+    docker logs -f ttt-certify          # Ctrl+C only stops watching; the test continues
 
 Part A is read-only: API host and key, markets and prices of the bots' coins, free margin, open positions, mirror mode.
 Part B needs the operator to type TEST and uses a tiny position (about 6-25 USDT notional, default leverage of the
@@ -23,7 +25,7 @@ and uses the accepted order value as the minimum order size. The output contains
 Any unexpected state stops the test, closes what the test opened and prints what to check by hand.
 """
 from __future__ import annotations
-import argparse, json, math, os, sys, time
+import argparse, json, math, os, signal, sys, time, traceback
 from decimal import Decimal, ROUND_CEILING
 
 import exchanges as X
@@ -34,6 +36,22 @@ DEFAULT_SYMBOL = "DOGEUSDT"
 
 class Abort(RuntimeError):
     pass
+
+
+class Interrupted(BaseException):
+    """SIGTERM/SIGHUP/Ctrl+C during the test: still close what the test opened."""
+
+
+def log_line(text: str, path=None):
+    path = path or (X.runtime_dir() / "ttt_certify_log.txt")
+    try:
+        with open(path, "a") as f:f.write(time.strftime("%Y-%m-%d %H:%M:%S ", time.gmtime()) + text + "\n")
+    except OSError:
+        pass
+
+
+def say(text: str):
+    print(text, flush=True);log_line(text)
 
 
 def bot_symbols() -> list[str]:
@@ -53,9 +71,10 @@ def ceil_step(x: float, step: float) -> float:
 
 class Certifier:
     def __init__(self, ex: X.TheTrueTrade, symbol: str, notional: float, max_notional: float, leverage: int,
-                 trigger_timeout: float, say=print, ask=input, sleep=time.sleep, now=time.time):
+                 trigger_timeout: float, say=print, ask=input, sleep=None, now=None):
         self.ex, self.symbol, self.notional, self.max_notional, self.leverage = ex, symbol, notional, max_notional, leverage
-        self.trigger_timeout, self.say, self.ask, self.sleep, self.now = trigger_timeout, say, ask, sleep, now
+        self.trigger_timeout, self.say, self.ask = trigger_timeout, say, ask
+        self.sleep, self.now = sleep or (lambda s: time.sleep(s)), now or (lambda: time.time())
         self.report = dict(version=X.CERT_VERSION, symbol=symbol, leverage=leverage, read_only={}, checks={}, notes=[])
         self.opened: list[str] = []          # position ids this test opened (closed again on any failure)
 
@@ -141,14 +160,22 @@ class Certifier:
         self.report["min_notional_usd"] = round(accepted * 1.02, 4)
         # B3: which query exposes the stop, and is the stop a real exchange order?
         readback = None;found = {}
+        fields = {}
         for query in X.STOP_QUERIES:
+            r = None
             for _ in range(6):
-                rows = {str(r.get("id")): r for r in self.ex.stop_rows(self.symbol, query)}
+                try:
+                    rows = {str(r.get("id")): r for r in self.ex.stop_rows(self.symbol, query)}
+                except X.ExchangeError as exc:
+                    fields[query] = f"error: {str(exc)[:120]}";break
                 r = rows.get(self.opened[-1])
+                fields[query] = sorted(k for k in r) if r is not None else "position id not in reply"
                 if r is not None and X.dec(r.get("stopLoss")) is not None:break
                 self.sleep(1.5)
             if r is not None and X.dec(r.get("stopLoss")) is not None:
                 found = r;readback = dict(query=query, require_order_id=False, orders_check=False);break
+        self.report["position_fields"] = fields
+        self.say(f"  [INFO] position fields by query: {json.dumps(fields)}")
         self.ok("stop_readback", readback is not None, "stopLoss reported on the open position" if readback else "no endpoint reports the stop")
         oid = found.get("slOrderId")
         has_oid = not isinstance(oid, bool) and isinstance(oid, (int, str)) and bool(str(oid).strip())
@@ -238,7 +265,7 @@ class Certifier:
     def run(self, cfg: dict) -> dict:
         try:
             self.read_only(cfg)
-        except (Abort, X.ExchangeError) as exc:
+        except Exception as exc:
             self.report.update(passed=False, stopped_at="part A", reason=str(exc)[:200]);return self.report
         est = self.notional / self.leverage
         self.say(f"\nPart B places REAL orders on {self.symbol}: about {self.notional:.0f} USDT notional (margin about {est:.2f} USDT at "
@@ -248,7 +275,10 @@ class Certifier:
         try:
             self.lifecycle()
             self.report["passed"] = True
-        except (Abort, X.ExchangeError, KeyError, TypeError, AttributeError) as exc:
+        except (Exception, Interrupted, KeyboardInterrupt) as exc:
+            if not isinstance(exc, (Abort, X.ExchangeError)):
+                log_line("unexpected error:\n" + traceback.format_exc())
+                exc = f"{type(exc).__name__}: {exc}"
             self.say(f"  stopped: {str(exc)[:200]}")
             self.report.update(passed=False, stopped_at="part B", reason=str(exc)[:200])
             self.report["cleanup_confirmed"] = self.cleanup()
@@ -277,19 +307,26 @@ def main(argv=None) -> int:
     ap.add_argument("--notional", type=float, default=6.0, help="first order value tried, USDT (default 6)")
     ap.add_argument("--max-notional", type=float, default=25.0, help="largest order value tried, USDT (default 25)")
     ap.add_argument("--trigger-minutes", type=float, default=20.0, help="how long to wait for the exchange to trigger the stop")
+    ap.add_argument("--confirm", default=None, help="TEST = confirm the real orders up front (for a detached run)")
     a = ap.parse_args(argv)
+    def stop(signum, frame):
+        raise Interrupted(f"signal {signum}")
+    for sig in (signal.SIGTERM, signal.SIGHUP):
+        signal.signal(sig, stop)
+    log_line("---- certification run started")
     cfg = LM.read_config()
     ex = X.TheTrueTrade()
-    c = Certifier(ex, a.symbol.upper(), a.notional, a.max_notional, int(cfg["leverage"]), a.trigger_minutes * 60)
+    ask = (lambda prompt: (say(prompt + a.confirm) or a.confirm)) if a.confirm is not None else input
+    c = Certifier(ex, a.symbol.upper(), a.notional, a.max_notional, int(cfg["leverage"]), a.trigger_minutes * 60, say=say, ask=ask)
     report = c.run(cfg)
     if report.get("passed"):
         cert = write_certificate(ex, report)
-        print(f"\nCERTIFIED: live entries on TheTrueTrade are allowed for this API key until "
+        say(f"\nCERTIFIED: live entries on TheTrueTrade are allowed for this API key until "
               f"{time.strftime('%Y-%m-%d', time.gmtime(cert['created_at'] + X.CERT_MAX_AGE_DAYS * 86400))}; "
               f"minimum order value {cert['min_notional_usd']} USDT.")
     else:
-        print(f"\nNOT CERTIFIED ({report.get('stopped_at')}): {report.get('reason')}")
-    print(json.dumps({k: v for k, v in report.items()}, indent=1))
+        say(f"\nNOT CERTIFIED ({report.get('stopped_at')}): {report.get('reason')}")
+    say(json.dumps({k: v for k, v in report.items()}, indent=1))
     return 0 if report.get("passed") else 1
 
 
