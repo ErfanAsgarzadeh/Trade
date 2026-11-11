@@ -151,6 +151,7 @@ class Certifier:
                 errors.append(text[:160]);self.say(f"  [INFO] order value {notional:.2f} USDT rejected: {text[:120]}")
                 notional *= 2;continue
             self.opened.append(str(pid));self.last_notional = qty * px
+            self.report["entry_resolution"] = getattr(self.ex, "entry_resolution", None) or "reply_position_id"
             p = self.wait_position(qty)
             self.report["rejected_smaller_orders"] = errors
             return p, qty, stop
