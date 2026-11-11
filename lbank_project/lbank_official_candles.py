@@ -21,6 +21,8 @@ import urllib.parse
 import urllib.request
 
 H4 = 14400
+TAIL = 30          # candles fetched on a routine refresh; the rest of the published history is kept
+KEEP = 1000        # closed candles kept in the published file
 URL = 'https://uuapi.lbank.com/cfd/query/v1.0/KLinelst'
 SOURCE = 'lbank-futures-web-klines-v1'
 HEADER = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
@@ -73,7 +75,7 @@ def validate_rows(rows, now, minimum=999):
     return rows
 
 
-def parse(body, symbol, now):
+def parse(body, symbol, now, minimum=999):
     # Both envelopes have been used by the public chart service.
     if body.get('success') is True and body.get('status') == 0:
         raw = body.get('dataWrapper')
@@ -97,7 +99,7 @@ def parse(body, symbol, now):
             continue  # Never use the forming candle, even when the API includes it.
         rows.append([int(ts * 1000)] + [float(r[k]) for k in
                      ('openPrice', 'highestPrice', 'lowestPrice', 'closePrice', 'volume')])
-    return validate_rows(rows, now)
+    return validate_rows(rows, now, minimum)
 
 
 def atomic_write(path, data):
@@ -136,9 +138,8 @@ def publish(root, symbol, rows, now):
     atomic_write(receipt, json.dumps(metadata).encode())
 
 
-def read_history(root, symbol, timeframe, limit, now):
-    if timeframe != '4h' or not 2 <= limit <= 1000:
-        raise ValueError('Official candle feed currently supports 4h, limit 2..1000')
+def _published(root, symbol):
+    """Rows and receipt of the published file, after the provenance and checksum checks (no freshness check)."""
     path, receipt = paths(root, symbol)
     metadata = json.loads(receipt.read_text())
     data = path.read_bytes()
@@ -147,23 +148,51 @@ def read_history(root, symbol, timeframe, limit, now):
             or metadata.get('closed_only') is not True
             or metadata.get('sha256') != hashlib.sha256(data).hexdigest()):
         raise ValueError('Official candle provenance/checksum mismatch')
-    age = now - float(metadata['fetched_at'])
-    if not 0 <= age <= 600:
-        raise ValueError('Official candle refresh is stale/future dated')
     reader = csv.reader(io.StringIO(data.decode()))
     if next(reader, None) != HEADER:
         raise ValueError('Invalid official CSV header')
-    rows = [[float(x) for x in row] for row in reader]
+    return [[float(x) for x in row] for row in reader], metadata
+
+
+def read_history(root, symbol, timeframe, limit, now):
+    if timeframe != '4h' or not 2 <= limit <= 1000:
+        raise ValueError('Official candle feed currently supports 4h, limit 2..1000')
+    rows, metadata = _published(root, symbol)
+    age = now - float(metadata['fetched_at'])
+    if not 0 <= age <= 600:
+        raise ValueError('Official candle refresh is stale/future dated')
     validate_rows(rows, now)
     # Match the previous window size: `limit` formerly included one forming bar.
     return ClosedCandles(rows[-(limit - 1):])
+
+
+def refresh(root, symbol, requested):
+    """Closed history for publication. Routine refreshes fetch only the last TAIL candles and append them to the
+    published file (the full 1000-candle reply is ~230 KB per coin and times out under load); the result passes the same
+    full validation as a complete fetch. Any doubt (no valid file, a gap longer than the tail, a failed check) falls back
+    to the complete fetch."""
+    try:
+        old, _ = _published(root, symbol)
+        boundary = int(requested) // H4 * H4 * 1000
+        if old and old[-1][0] >= boundary - (TAIL - 2) * H4 * 1000:
+            tail = parse(fetch(symbol, requested, TAIL), symbol, requested, minimum=TAIL - 2)
+            merged = {int(r[0]): r for r in old}
+            merged.update({int(r[0]): r for r in tail})
+            rows = [[int(t)] + [float(x) for x in merged[t][1:]] for t in sorted(merged)][-KEEP:]
+            return validate_rows(rows, requested)
+    except (FileNotFoundError, OSError) as exc:
+        if not isinstance(exc, FileNotFoundError):
+            raise          # network failure: do not double the load with a full fetch; the next cycle retries
+    except ValueError as exc:
+        LOG.warning('%s: incremental refresh failed (%s); fetching the full history', symbol, exc)
+    return parse(fetch(symbol, requested), symbol, requested)
 
 
 def sync(symbols, root):
     def one(symbol):
         try:
             requested = time.time()
-            rows = parse(fetch(symbol, requested), symbol, requested)
+            rows = refresh(root, symbol, requested)
             # Re-check the boundary at publication, including a slow boundary-crossing fetch.
             publish(root, symbol, rows, time.time())
             LOG.info('%s: official Futures candles ready (%d closed)', symbol, len(rows))

@@ -126,3 +126,45 @@ def test_marketdata_official_mode_and_collector_dispatch(tmp_path, monkeypatch):
     monkeypatch.setattr(F, 'run', lambda *a, **k: calls.append((a, k)) or 0)
     assert L.main(['--once']) == 0
     assert calls[0][1]['once'] is True
+
+
+def history(count, end_now, close=101.):
+    boundary = end_now // F.H4 * F.H4
+    raw = [dict(InstrumentID='BTCUSDT', ExchangeID='Exchange', PeriodID='4h', BeginTime=boundary - (count - i) * F.H4,
+                OpenPrice='100', HighestPrice='102', LowestPrice='98', ClosePrice=str(close), Volume='12') for i in range(count)]
+    return dict(success=True, status=0, dataWrapper=raw)
+
+
+def test_routine_refresh_fetches_only_the_tail_and_matches_a_full_fetch(tmp_path, monkeypatch):
+    F.publish(tmp_path, SYMBOL, F.parse(payload(), SYMBOL, NOW), NOW)
+    later = NOW + 2 * F.H4;calls = []
+    def fetch(symbol, now, count=1000):
+        calls.append(count);body = history(count - 1, later, 101.5)
+        forming = dict(body['dataWrapper'][-1], BeginTime=later // F.H4 * F.H4)
+        body['dataWrapper'].append(forming);return body               # the reply includes the forming candle
+    monkeypatch.setattr(F, 'fetch', fetch)
+    rows = F.refresh(tmp_path, SYMBOL, later)
+    assert calls == [F.TAIL] and len(rows) == F.KEEP
+    assert rows[-1][0] == (later // F.H4 - 1) * F.H4 * 1000 and rows[-1][4] == 101.5 and rows[0][4] == 101.
+    full = F.parse(fetch(SYMBOL, later), SYMBOL, later)
+    assert [r[0] for r in rows[-len(full):]] == [r[0] for r in full] and rows[-(F.TAIL - 1):] == full[-(F.TAIL - 1):]
+    F.publish(tmp_path, SYMBOL, rows, later)
+    assert len(F.read_history(tmp_path, SYMBOL, '4h', 1000, later + 5)) == 999
+
+
+def test_refresh_falls_back_to_full_history_but_not_on_network_errors(tmp_path, monkeypatch):
+    F.publish(tmp_path, SYMBOL, F.parse(payload(), SYMBOL, NOW), NOW)
+    calls = []
+    monkeypatch.setattr(F, 'fetch', lambda s, now, count=1000: calls.append(count) or history(count, now))
+    far = NOW + F.TAIL * F.H4                                    # gap longer than the tail: full fetch only
+    assert len(F.refresh(tmp_path, SYMBOL, far)) == 1000 and calls == [1000]
+    calls.clear()
+    monkeypatch.setattr(F, 'fetch', lambda s, now, count=1000: calls.append(count) or dict(success=False))
+    with pytest.raises(ValueError):F.refresh(tmp_path, SYMBOL, NOW + F.H4)   # bad tail reply: one full retry, which also fails
+    assert calls == [F.TAIL, 1000]
+    calls.clear()
+    def timeout(s, now, count=1000):
+        calls.append(count);raise TimeoutError('The read operation timed out')
+    monkeypatch.setattr(F, 'fetch', timeout)
+    with pytest.raises(TimeoutError):F.refresh(tmp_path, SYMBOL, NOW + F.H4)
+    assert calls == [F.TAIL]                                     # a timeout is not doubled by a full fetch
