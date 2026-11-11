@@ -879,6 +879,7 @@ def test_ttt_open_requires_documented_position_id_after_post(monkeypatch):
     monkeypatch.setattr(t, "request", response)
     with pytest.raises(X.ExchangeError, match="positionId"):
         t.open("BTCUSDT", "long", .01, 5, 78000.)
+    calls = [c for c in calls if c[0] != "GET"]               # (a GET of the market tick for stop rounding is allowed)
     assert len(calls) == 1
     assert calls[0][:2] == ("POST", "/futures/positions")
     assert calls[0][2]["stopLossOrderType"] == "STOP_MARKET"

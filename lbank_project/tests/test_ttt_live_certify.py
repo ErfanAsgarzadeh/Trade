@@ -1,0 +1,282 @@
+"""TheTrueTrade live certification, certificate-gated stop readback and a full live mirror cycle, against a simulated
+TheTrueTrade REST API (request level: the real adapter code builds and parses every call)."""
+import json
+import pytest
+import exchanges as X
+import live_mirror as L
+import ttt_live_certify as T
+
+
+class FakeAPI:
+    """In-memory TheTrueTrade: markets, stats, assets, positions (active / page views), orders, open/close/tpsl.
+    Stops are real orders here: when the price crosses a position's stopLoss the position is closed by the 'exchange'."""
+
+    def __init__(self, min_notional=5.0, store_stop=True, order_ids=True, list_orders=True, trigger=True):
+        self.px = {"DOGEUSDT": 0.2, "BTCUSDT": 80000.0}
+        self.markets = [dict(symbol="DOGEUSDT", stepSize="1", tickSize="0.00001", maxLeverage=50, isActive=True),
+                        dict(symbol="BTCUSDT", stepSize="0.001", tickSize="0.1", maxLeverage=100, isActive=True)]
+        self.pos = {};self.history = {};self.orders = {};self.next_id = 1000
+        self.min_notional, self.store_stop, self.order_ids, self.list_orders, self.trigger = min_notional, store_stop, order_ids, list_orders, trigger
+        self.calls = [];self.equity = 100.0
+
+    def _id(self):
+        self.next_id += 1;return str(self.next_id)
+
+    def move(self, symbol, factor):
+        self.px[symbol] *= factor;self._fire()
+
+    def _fire(self):
+        if not self.trigger:return
+        for pid, p in list(self.pos.items()):
+            sl = p.get("stopLoss")
+            if sl is None:continue
+            px = self.px[p["symbol"]]
+            if (p["side"] == "LONG" and px <= float(sl)) or (p["side"] == "SHORT" and px >= float(sl)):
+                self._close(pid, None, "STOP_LOSS")
+
+    def _close(self, pid, size, reason="USER"):
+        p = self.pos[pid]
+        if size is None or float(size) >= float(p["size"]) - 1e-12:
+            del self.pos[pid];self.orders.pop(p.get("slOrderId"), None)
+            self.history[pid] = dict(p, status="CLOSED", isActive=False, closingReason=reason)
+        else:
+            p["size"] = str(float(p["size"]) - float(size))
+
+    def _view(self, p):
+        v = dict(p)
+        if not self.store_stop:v.pop("stopLoss", None)
+        if not self.order_ids:v.pop("slOrderId", None)
+        return v
+
+    def request(self, method, path, query=None, body=None, auth=True):
+        self.calls.append((method, path, dict(query or {}), body))
+        if method == "GET" and path == "/futures/markets":return {"items": self.markets}
+        if method == "GET" and path == "/futures/markets/stats":
+            return [dict(symbol=s, markPrice=str(v), lastPrice=str(v)) for s, v in self.px.items()]
+        if method == "GET" and path == "/futures/assets":return {"summary": dict(totalAssets=str(self.equity), availableBalance=str(self.equity))}
+        if method == "GET" and path == "/futures/positions":
+            self._fire();q = query or {};sym = q.get("symbol")
+            rows = [self._view(p) for p in self.pos.values() if sym in (None, p["symbol"])]
+            if q.get("page"):rows = rows + [self._view(h) for h in self.history.values() if sym in (None, h["symbol"])]
+            return {"items": rows, "meta": {"total": len(rows), "hasNextPage": False}}
+        if method == "GET" and path == "/futures/orders":
+            if not self.list_orders:return {"items": []}
+            sym = (query or {}).get("symbol")
+            return {"items": [o for o in self.orders.values() if sym in (None, o["symbol"])]}
+        if method == "POST" and path == "/futures/positions":
+            notional = float(body["size"]) * self.px[body["symbol"]]
+            if notional < self.min_notional:raise X.ExchangeError("TheTrueTrade POST /futures/positions: HTTP 400 [{'message': 'Order value too small'}]")
+            pid = self._id();p = dict(id=int(pid), symbol=body["symbol"], side=body["side"], status="OPEN", isActive=True,
+                                      size=body["size"], leverage=body["leverage"], entryPrice=str(self.px[body["symbol"]]))
+            self._set_sl(p, body)
+            self.pos[pid] = p;return {"positionId": pid}
+        if method == "POST" and path.endswith("/close") and path.startswith("/futures/positions/"):
+            pid = path.split("/")[3];self._close(pid, (body or {}).get("size"));return {}
+        if method == "PATCH" and path.endswith("/tpsl"):
+            pid = path.split("/")[3];p = self.pos[pid];px = self.px[p["symbol"]];sl = float(body["stopLoss"])
+            if (p["side"] == "LONG" and sl >= px) or (p["side"] == "SHORT" and sl <= px):
+                raise X.ExchangeError("TheTrueTrade PATCH tpsl: HTTP 400 stop on the wrong side of the price")
+            self.orders.pop(p.get("slOrderId"), None);self._set_sl(p, body);return {}
+        if method == "POST" and path == "/futures/positions/close-all":
+            for pid in list(self.pos):self._close(pid, None)
+            return {}
+        raise AssertionError(f"unexpected call {method} {path}")
+
+    def _set_sl(self, p, body):
+        if body.get("stopLoss") is None:return
+        oid = "sl" + self._id()
+        p.update(stopLoss=body["stopLoss"], stopLossOrderType=body.get("stopLossOrderType"), stopLossStrategy=body.get("stopLossStrategy"), slOrderId=oid)
+        self.orders[oid] = dict(id=oid, symbol=p["symbol"], type="STOP_MARKET", status="NEW", triggerPrice=body["stopLoss"])
+
+
+def adapter(api, key="key-1"):
+    t = X.TheTrueTrade(key, "secret")
+    t.request = api.request
+    return t
+
+
+@pytest.fixture
+def rt(tmp_path, monkeypatch):
+    monkeypatch.setenv("RISK_DIR", str(tmp_path))
+    for name, f in (("BOT_CONFIG", "config.json"), ("C3_CONFIG", "c3_config.json"), ("PA_CONFIG", "pa_config.json")):
+        monkeypatch.setenv(name, str(__import__("pathlib").Path(__file__).parents[1] / f))
+    return tmp_path
+
+
+def certifier(api, ex, answer="TEST", timeout=600, notional=6.0, drop=True):
+    clock = [0.0];out = []
+    def sleep(s):
+        clock[0] += s
+        if drop:api.move("DOGEUSDT", 0.9995)      # the market drifts down: a tight long stop is reached within minutes
+    c = T.Certifier(ex, "DOGEUSDT", notional, 25.0, 5, timeout, say=out.append, ask=lambda _: answer, sleep=sleep, now=lambda: clock[0])
+    return c, out
+
+
+def test_full_certification_writes_a_bound_certificate_and_unlocks_entries(rt):
+    api = FakeAPI();ex = adapter(api)
+    c, out = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], (report, out)
+    assert all(report["checks"][k] for k in X.CERT_REQUIRED_CHECKS)
+    assert report["readback"] == dict(query="active", require_order_id=True, orders_check=True)
+    assert not api.pos                                         # nothing left open on the account
+    assert report["bot_coins"] == 35
+    cert = T.write_certificate(ex, report)
+    assert (rt / X.CERT_NAME).stat().st_mode & 0o777 == 0o600
+    raw = (rt / X.CERT_NAME).read_text();assert "key-1" not in raw and "secret" not in raw
+    fresh = adapter(api)
+    fresh.ensure_protected_entries()                           # unlocked
+    mk = fresh.markets()["DOGEUSDT"];assert mk["min_qty"] == 1.0 and mk["min_notional"] == pytest.approx(cert["min_notional_usd"])
+    assert 6.0 <= cert["min_notional_usd"] <= 6.5
+    with pytest.raises(X.ExchangeError, match="another API key"):adapter(api, key="other-key").ensure_protected_entries()
+    with pytest.raises(X.ExchangeError, match="expired"):fresh.load_certification(now=cert["created_at"] + 31 * 86400)
+    bad = dict(cert, checks=dict(cert["checks"], stop_triggered=False));(rt / X.CERT_NAME).write_text(json.dumps(bad))
+    with pytest.raises(X.ExchangeError, match="did not pass"):fresh.ensure_protected_entries()
+
+
+def test_too_small_orders_escalate_and_the_accepted_value_becomes_the_minimum(rt):
+    api = FakeAPI(min_notional=10.0);ex = adapter(api)
+    c, out = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"] and len(report["rejected_smaller_orders"]) == 1
+    assert 12.0 <= report["min_notional_usd"] <= 13.0
+
+
+@pytest.mark.parametrize("fault,check", [
+    (dict(store_stop=False), "stop_readback"),                 # exchange does not report the stop at all
+    (dict(trigger=False), "stop_triggered"),                   # stop stored but never executed
+])
+def test_failed_checks_leave_no_certificate_and_close_the_test_position(rt, fault, check):
+    api = FakeAPI(**fault);ex = adapter(api)
+    c, out = certifier(api, ex, timeout=300)
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and report["reason"].startswith(check) and report["cleanup_confirmed"]
+    assert not api.pos and not (rt / X.CERT_NAME).exists()
+    with pytest.raises(X.ExchangeError, match="stop-loss readback has not been validated"):adapter(api).ensure_protected_entries()
+
+
+def test_without_order_ids_the_certificate_records_the_weaker_readback(rt):
+    api = FakeAPI(order_ids=False);ex = adapter(api)
+    c, _ = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"] and report["readback"] == dict(query="active", require_order_id=False, orders_check=False)
+
+
+def test_no_order_without_typed_confirmation_or_with_live_mirror_on(rt):
+    api = FakeAPI();ex = adapter(api)
+    c, _ = certifier(api, ex, answer="yes")
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and report["stopped_at"] == "confirmation"
+    assert not [x for x in api.calls if x[0] != "GET"]
+    c, _ = certifier(api, ex)
+    report = c.run(L.validate({"mode": "live"}))
+    assert report["stopped_at"] == "part A" and not [x for x in api.calls if x[0] != "GET"]
+
+
+def test_existing_position_on_the_test_coin_stops_before_any_order(rt):
+    api = FakeAPI();ex = adapter(api)
+    api.pos["1"] = dict(id=1, symbol="DOGEUSDT", side="SHORT", status="OPEN", isActive=True, size="100", entryPrice="0.2")
+    c, _ = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["stopped_at"] == "part A" and "test_coin_flat" in report["reason"]
+    assert not [x for x in api.calls if x[0] != "GET"] and "1" in api.pos
+
+
+def certify(rt, api):
+    ex = adapter(api);c, _ = certifier(api, ex)
+    report = c.run(L.validate({"mode": "off"}));assert report["passed"]
+    T.write_certificate(ex, report);return report
+
+
+def test_verify_stop_detects_a_missing_or_wrong_exchange_stop(rt):
+    api = FakeAPI();certify(rt, api)
+    t = adapter(api)
+    pid = t.open("BTCUSDT", "long", 0.001, 5, 78000.03)        # rounded to the 0.1 tick before sending
+    body = [x for x in api.calls if x[0] == "POST" and x[1] == "/futures/positions"][-1][3]
+    assert body["stopLoss"] == "78000"
+    p = t.positions()["BTCUSDT"];t.verify_stop(p, 78000.0)
+    with pytest.raises(X.ExchangeError, match="differs"):t.verify_stop(p, 77000.0)
+    api.orders.clear()                                         # stop order vanished on the exchange
+    with pytest.raises(X.ExchangeError, match="not among active"):t.verify_stop(p, 78000.0)
+    api.pos[pid].pop("stopLoss")
+    with pytest.raises(X.ExchangeError, match="no stopLoss"):t.verify_stop(p, 78000.0)
+
+
+class Book:
+    def __init__(self):self.book = {}
+    def positions(self):return {k: dict(v) for k, v in self.book.items()}
+    def equity(self):return 10000.0
+
+
+def test_live_mirror_full_cycle_on_certified_thetruetrade(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    t = adapter(api);paper = Book();clock = [5_000_000.0]
+    m = L.Mirror(t, paper, L.validate({"mode": "live", "exchange": "thetruetrade"}), now=lambda: clock[0])
+    def step():clock[0] += 10;m.cycle()
+    step()
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    step()
+    live = t.positions()["BTCUSDT"];assert live.qty == pytest.approx(0.005)       # 0.05 x 1000 / 10000
+    assert m.state["managed"]["BTCUSDT"]["stop"] == 78000.0 and not m.state["pending_orders"]
+    paper.book["BTC/USDT:USDT"]["stop"] = 79000.0;step()                          # trailing stop copied and read back
+    assert float(next(iter(api.pos.values()))["stopLoss"]) == 79000.0 and m.state["managed"]["BTCUSDT"]["stop"] == 79000.0
+    paper.book["BTC/USDT:USDT"]["qty"] = 0.025;step()                             # partial exit
+    assert t.positions()["BTCUSDT"].qty == pytest.approx(0.002)   # 0.0025 floored to the 0.001 step
+    del paper.book["BTC/USDT:USDT"];step()                                        # paper exit
+    assert "BTCUSDT" not in t.positions() and not m.state["managed"] and not m.state["paused"]
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="short", qty=0.0001, stop=82000.0, key="main|BTC|2", opened=None)
+    step()                                                                        # below the certified minimum: skipped
+    assert "BTCUSDT" not in t.positions()
+    kinds = [json.loads(x)["kind"] for x in (rt / "live_log.jsonl").read_text().splitlines()]
+    assert kinds.count("open") == 1 and "stop" in kinds and "reduce" in kinds and "close" in kinds and "order_uncertain" not in kinds
+
+
+def test_live_mirror_pauses_when_the_exchange_drops_the_stop(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    api.store_stop = False                                     # after certification the exchange stops reporting stops
+    t = adapter(api);paper = Book();clock = [5_000_000.0]
+    m = L.Mirror(t, paper, L.validate({"mode": "live", "exchange": "thetruetrade"}), now=lambda: clock[0])
+    clock[0] += 10;m.cycle()
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    clock[0] += 10;m.cycle()
+    assert m.state["paused"] and m.state["pending_orders"]     # unverified stop: no further orders until reviewed
+
+
+def test_dashboard_unlocks_live_only_with_a_valid_certificate(rt, tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from dashboard_server import create_app
+    import lbank_bot as lb
+    from test_system import FakeData
+    monkeypatch.setenv("BOT_PIN", "test-pin-0123456789")
+    monkeypatch.setenv("TTT_API_KEY", "key-1");monkeypatch.setenv("TTT_API_SECRET", "secret")
+    cfgstore = lb.ConfigStore(tmp_path / "config.json")
+    cfgstore.write(json.loads((__import__("pathlib").Path(__file__).parents[1] / "config.json").read_text()))
+    engine = lb.Engine(cfgstore, lb.Database(tmp_path / "d.db"), FakeData(), paper_equity=10000)
+    H = {"X-Bot-Pin": "test-pin-0123456789"}
+    with TestClient(create_app(engine)) as c:
+        r = c.put("/api/live/config", headers=H, json={"mode": "live", "confirm": "LIVE"})
+        assert r.status_code == 409 and "no TheTrueTrade live certification" in r.json()["detail"]
+        assert c.get("/api/live", headers=H).json()["certification"]["valid"] is False
+        api = FakeAPI();report = certify(rt, api)
+        assert c.get("/api/live", headers=H).json()["certification"]["valid"] is True
+        r = c.put("/api/live/config", headers=H, json={"mode": "live", "exchange": "binance", "confirm": "LIVE"})
+        assert r.status_code == 409
+        r = c.put("/api/live/config", headers=H, json={"mode": "live", "exchange": "thetruetrade", "size_factor": 0.1, "confirm": "LIVE"})
+        assert r.status_code == 200 and r.json()["mode"] == "live"
+
+
+def test_mirror_waits_for_a_position_that_shows_up_a_moment_after_the_fill(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    real = api.request;lag = {"n": 0}
+    def slow(method, path, query=None, body=None, auth=True):
+        if method == "POST" and path == "/futures/positions":lag["n"] = 2
+        if method == "GET" and path == "/futures/positions" and lag["n"] > 0:
+            lag["n"] -= 1;return {"items": [], "meta": {"total": 0}}
+        return real(method, path, query, body, auth)
+    api.request = slow
+    t = adapter(api);paper = Book();clock = [5_000_000.0]
+    m = L.Mirror(t, paper, L.validate({"mode": "live", "exchange": "thetruetrade"}), now=lambda: clock[0])
+    clock[0] += 10;m.cycle()
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    clock[0] += 10;m.cycle()
+    assert "BTCUSDT" in m.state["managed"] and not m.state["paused"] and not m.state["pending_orders"]
