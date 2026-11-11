@@ -12,6 +12,38 @@ permission, restricted to the server's IP.
 from __future__ import annotations
 import hashlib, hmac, json, math, os, time, urllib.error, urllib.parse, urllib.request
 from dataclasses import dataclass, field
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+from pathlib import Path
+
+# Live entries on TheTrueTrade need a certification written by ttt_live_certify.py: a real, tiny position whose stop-loss
+# was read back, moved, partially closed and actually triggered by the exchange. It is bound to the API key and expires.
+CERT_NAME = "ttt_live_certification.json"
+CERT_VERSION = 1
+CERT_MAX_AGE_DAYS = 30
+CERT_REQUIRED_CHECKS = ("entry_confirmed", "stop_readback", "stop_moved", "partial_close", "full_close", "stop_triggered")
+STOP_QUERIES = ("active", "page")
+
+
+def pause(seconds: float) -> None:
+    """Wait between exchange readbacks (replaced by a no-op in tests)."""
+    time.sleep(seconds)
+
+
+def runtime_dir() -> Path:
+    """Same folder as live_mirror.folder() (kept here to avoid an import cycle)."""
+    return Path(os.getenv("RISK_DIR", str(Path(os.getenv("BOT_DB", "data/lbank_ichimoku_bot.db")).resolve().parent)))
+
+
+def key_fingerprint(key: str) -> str:
+    """Short one-way tag of the API key: binds a certification to the key without storing the key."""
+    return hashlib.sha256(("ttt-live-cert:" + key).encode()).hexdigest()[:16]
+
+
+def dec(value) -> Decimal | None:
+    if value is None or isinstance(value, bool):return None
+    try:out = Decimal(str(value))
+    except (InvalidOperation, ValueError, TypeError):return None
+    return out if out.is_finite() else None
 
 
 @dataclass
@@ -133,7 +165,80 @@ class TheTrueTrade(Adapter):
                     max_leverage=int(m.get("maxLeverage") or 20),
                 )
             self._markets = out
+        try:   # the API reports no minimums: use the order value a real certified entry was accepted at, step as min qty
+            cert = self.load_certification()
+        except ExchangeError:
+            cert = None
+        if cert:
+            for v in self._markets.values():
+                if v["min_notional"] is None:v["min_notional"] = float(cert["min_notional_usd"])
+                if v["min_qty"] is None:v["min_qty"] = v["step"]
         return self._markets
+
+    # ---------------- certification (see ttt_live_certify.py)
+    def load_certification(self, now: float | None = None) -> dict:
+        """The verified facts about this key's account, or ExchangeError. Never trusts a stale, foreign or partial file."""
+        path = runtime_dir() / CERT_NAME
+        try:c = json.loads(path.read_text())
+        except FileNotFoundError:raise ExchangeError("no TheTrueTrade live certification; run ttt_live_certify.py") from None
+        except (OSError, ValueError):raise ExchangeError("TheTrueTrade live certification unreadable") from None
+        now = time.time() if now is None else now
+        try:
+            ok = (isinstance(c, dict) and c.get("version") == CERT_VERSION and c.get("passed") is True
+                  and all(c["checks"].get(k) is True for k in CERT_REQUIRED_CHECKS)
+                  and c["readback"]["query"] in STOP_QUERIES and isinstance(c["readback"]["require_order_id"], bool)
+                  and isinstance(c["readback"]["orders_check"], bool))
+            age = now - float(c["created_at"])
+            min_notional = float(c["min_notional_usd"])
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise ExchangeError("TheTrueTrade live certification incomplete") from None
+        if not ok:raise ExchangeError("TheTrueTrade live certification did not pass every check")
+        if not (0 <= age <= CERT_MAX_AGE_DAYS * 86400):raise ExchangeError("TheTrueTrade live certification expired; run ttt_live_certify.py again")
+        if c.get("base") != self.base:raise ExchangeError("TheTrueTrade live certification is for another API host")
+        if not self.key or c.get("key_fingerprint") != key_fingerprint(self.key):
+            raise ExchangeError("TheTrueTrade live certification is for another API key")
+        if not (math.isfinite(min_notional) and min_notional > 0):raise ExchangeError("TheTrueTrade live certification has no minimum order value")
+        return c
+
+    def round_price(self, symbol: str, x: float) -> float:
+        """Round a trigger price to the market tick (the exchange stores tick-aligned prices)."""
+        tick = (self.markets().get(symbol) or {}).get("tick")
+        if not tick:return float(x)
+        t = Decimal(str(tick))
+        return float((Decimal(str(x)) / t).quantize(Decimal(1), rounding=ROUND_HALF_UP) * t)
+
+    def stop_rows(self, symbol: str, query: str) -> list:
+        q = {"symbol": symbol, "active": "true"} if query == "active" else {"symbol": symbol, "page": 1}
+        rows = self._list(self.request("GET", "/futures/positions", q))
+        if not all(isinstance(r, dict) for r in rows):raise ExchangeError("Invalid TheTrueTrade position record")
+        return rows
+
+    def open_orders(self, symbol: str) -> list:
+        rows = self._list(self.request("GET", "/futures/orders", {"symbol": symbol, "active": "true"}))
+        if not all(isinstance(r, dict) for r in rows):raise ExchangeError("Invalid TheTrueTrade order record")
+        return rows
+
+    def check_stop(self, symbol: str, pids: list, stop: float, readback: dict) -> list[str]:
+        """Problems with the exchange-side stop of every position id (empty list = verified)."""
+        want = dec(self.round_price(symbol, stop));tick = dec((self.markets().get(symbol) or {}).get("tick")) or Decimal(0)
+        rows = {str(r.get("id")): r for r in self.stop_rows(symbol, readback["query"])}
+        orders = None;problems = []
+        for pid in pids:
+            r = rows.get(str(pid))
+            if r is None:problems.append("position not in stop readback");continue
+            if str(r.get("status", "OPEN")).upper() not in ("OPEN", "OPENED") or r.get("isActive") is False:
+                problems.append("position not open");continue
+            got = dec(r.get("stopLoss"))
+            if got is None or got <= 0:problems.append("no stopLoss on position");continue
+            if abs(got - want) > tick / 2 + Decimal("1e-12"):problems.append("stopLoss differs from requested stop");continue
+            if r.get("stopLossOrderType") not in (None, "STOP_MARKET"):problems.append("stop order type is not STOP_MARKET")
+            oid = r.get("slOrderId")
+            has_oid = not isinstance(oid, bool) and isinstance(oid, (int, str)) and bool(str(oid).strip())
+            if readback["require_order_id"] and not has_oid:problems.append("stop order id missing");continue
+            if readback["orders_check"]:
+                if orders is None:orders = {str(o.get("id")): o for o in self.open_orders(symbol)}
+                if not has_oid or str(oid) not in orders:problems.append("stop order not among active exchange orders")
+        return problems
 
     def price(self, symbol: str) -> float:
         for s in self._list(self.request("GET", "/futures/markets/stats", auth=False)):
@@ -323,6 +428,21 @@ class TheTrueTrade(Adapter):
     def _fmt(self, x: float) -> str:
         return f"{x:.12f}".rstrip("0").rstrip(".")
 
+    def ensure_protected_entries(self) -> None:
+        try:self.load_certification()
+        except ExchangeError as exc:
+            raise ExchangeError(f"Exchange stop-loss readback has not been validated; live entries are blocked ({exc})") from None
+
+    def verify_stop(self, pos: LivePosition, stop: float) -> None:
+        try:cert = self.load_certification()
+        except ExchangeError as exc:
+            raise ExchangeError(f"Exchange stop-loss readback is not supported without a valid certification ({exc})") from None
+        for attempt in range(5):   # the exchange may attach the stop order a moment after the fill
+            problems = self.check_stop(pos.symbol, list(pos.ids), stop, cert["readback"])
+            if not problems:return
+            pause(1.0)
+        if problems:raise ExchangeError(f"{pos.symbol}: stop not verified: {'; '.join(sorted(set(problems)))}")
+
     def open(self, symbol, side, qty, leverage, stop=None):
         # Never issue a naked futures entry. The mirror also requires an independently
         # verified stop-readback capability before it can call this in live mode.
@@ -334,7 +454,7 @@ class TheTrueTrade(Adapter):
             raise ExchangeError("Invalid TheTrueTrade entry side")
         body = {"symbol": symbol, "side": "LONG" if side == "long" else "SHORT", "tradeType": "MARKET", "leverage": int(leverage),
                 "size": self._fmt(qty), "walletType": "debit",
-                "stopLoss": self._fmt(stop),
+                "stopLoss": self._fmt(self.round_price(symbol, stop)),
                 "stopLossOrderType": "STOP_MARKET", "stopLossStrategy": "LATEST_PRICE"}
         response = self.request("POST", "/futures/positions", body=body)
         # Per official API reference, HTTP 201 returns {positionId}. A
@@ -357,7 +477,7 @@ class TheTrueTrade(Adapter):
 
     def set_stop(self, pos, stop):
         for pid in pos.ids:
-            self.request("PATCH", f"/futures/positions/{pid}/tpsl", body={"stopLoss": self._fmt(stop), "stopLossOrderType": "STOP_MARKET",
+            self.request("PATCH", f"/futures/positions/{pid}/tpsl", body={"stopLoss": self._fmt(self.round_price(pos.symbol, stop)), "stopLossOrderType": "STOP_MARKET",
                                                                          "stopLossStrategy": "LATEST_PRICE"})
 
     def close_all(self):

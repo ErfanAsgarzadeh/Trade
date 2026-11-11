@@ -382,7 +382,14 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             except (ValueError, TypeError, AttributeError, OSError):
                 unresolved.append({"exchange": exchange, "symbol": "unknown",
                                    "action": "unreadable_live_state"})
-        return {"config": cfg, "keys": keys, "running": running,
+        import exchanges as EX
+        try:
+            cert = EX.TheTrueTrade().load_certification()
+            certification = {"valid": True, "created_at": cert["created_at"], "min_notional_usd": cert["min_notional_usd"],
+                             "expires_at": cert["created_at"] + EX.CERT_MAX_AGE_DAYS * 86400}
+        except EX.ExchangeError as exc:
+            certification = {"valid": False, "reason": str(exc)}
+        return {"config": cfg, "keys": keys, "running": running, "certification": certification,
                 "unresolved_live_operations": unresolved,
                 "state": {k: st.get(k) for k in ("managed", "paused", "errors", "equity_live", "equity_paper", "ratio", "unmanaged", "last_cycle")},
                 "log": log[::-1]}
@@ -415,9 +422,15 @@ def create_app(engine: Engine | None = None) -> FastAPI:
         if new["mode"] == "live" and cur["mode"] != "live" and payload.get("confirm") != "LIVE":
             raise HTTPException(422, "Type LIVE to confirm real orders")
         if new["mode"] == "live":
-            # Exchange stop-loss readback is not yet validated on either live adapter.
-            # Keep the user-facing switch locked until end-to-end protection is proven.
-            raise HTTPException(409, "Live execution locked: exchange stop-loss confirmation is not validated. Use dry/off.")
+            # Live entries need proven stop protection: only TheTrueTrade with a valid certification from
+            # ttt_live_certify.py (real stop readback, move, partial close and exchange-triggered stop) is unlocked.
+            import exchanges as EX
+            if new["exchange"] != "thetruetrade":
+                raise HTTPException(409, "Live execution locked: exchange stop-loss confirmation is not validated for this exchange. Use dry/off.")
+            try:
+                EX.TheTrueTrade().load_certification()
+            except EX.ExchangeError as exc:
+                raise HTTPException(409, f"Live execution locked: exchange stop-loss confirmation is not validated ({exc}).")
         try:
             v = LM.write_config(new)
         except ValueError as exc:
@@ -911,7 +924,7 @@ const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _conne
 let lv=null;
 function lvFill(c){$('lv_exchange').value=c.exchange;$('lv_mode').value=c.mode;$('lv_size').value=c.size_factor;$('lv_lev').value=c.leverage;$('lv_cap').value=c.max_position_usd;$('lv_maxpos').value=c.max_positions;$('lv_delay').value=c.max_entry_delay_min;}
 function renderLive(d){lv=d;const c=d.config,s=d.state||{};if(document.activeElement===null||!document.activeElement.id||!document.activeElement.id.startsWith('lv_'))lvFill(c);
- $('lv_badge').textContent=c.mode.toUpperCase()+' · '+c.exchange+(d.running?' · running':c.mode!=='off'?' · service not running':'');$('lv_badge').className='badge '+((d.unresolved_live_operations||[]).length?'bad':c.mode==='live'?'bad':c.mode==='dry'?'warn':'');
+ $('lv_badge').textContent=c.mode.toUpperCase()+' · '+c.exchange+(d.running?' · running':c.mode!=='off'?' · service not running':'')+(d.certification&&d.certification.valid?' · TTT certified':' · not certified for live');$('lv_badge').title=d.certification&&!d.certification.valid?d.certification.reason:'';$('lv_badge').className='badge '+((d.unresolved_live_operations||[]).length?'bad':c.mode==='live'?'bad':c.mode==='dry'?'warn':'');
  $('lv_status').textContent='API key on the server for '+c.exchange+': '+(d.keys[c.exchange]?'configured':'NOT configured')+(s.equity_live!=null?' · exchange equity '+number(s.equity_live)+' USDT · paper equity '+number(s.equity_paper)+' · size ratio '+number(s.ratio,4):'')+(s.paused?' · NEW ENTRIES PAUSED':'')+(s.unmanaged&&s.unmanaged.length?' · other positions on the account (not touched): '+s.unmanaged.join(', '):'')+(d.unresolved_live_operations&&d.unresolved_live_operations.length?' · ⚠ UNRESOLVED LIVE OPERATIONS: '+d.unresolved_live_operations.map(x=>x.exchange+'/'+x.symbol+'/'+x.action).join(', ')+' · MANUAL RECONCILIATION REQUIRED':'');
  const r=$('lv_rows');r.replaceChildren();const m=s.managed||{};const ks=Object.keys(m);
  if(!ks.length){const tr=document.createElement('tr');td(tr,'No mirrored positions.','empty').colSpan=6;r.append(tr);}

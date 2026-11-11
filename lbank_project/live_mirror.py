@@ -208,6 +208,16 @@ class Mirror:
         self.state_path = folder() / f"live_state_{self.cfg['mode']}_{self.cfg['exchange']}.json";self.log_path = folder() / "live_log.jsonl"
         self.state = self._load()
         self._session_has_completed_cycle = False
+        self.wait = lambda s: X.pause(s)
+
+    def _readback(self, esym: str, ok, tries: int = 5):
+        """Exchange position after an order, re-read a few times until `ok(position)` (exchanges settle in a moment)."""
+        pos = None
+        for i in range(tries):
+            pos = self.ex.positions().get(esym)
+            if ok(pos):return pos
+            if i < tries - 1:self.wait(1.0)
+        return pos
 
     # ---------------- persistence
     def _load(self) -> dict:
@@ -302,7 +312,9 @@ class Mirror:
         self.save()  # Durable BEFORE submitting to the exchange.
         try:
             returned_position_id = self.ex.open(esym, side, qty, self.cfg["leverage"], stop)
-            observed = self.ex.positions().get(esym)
+            tol = max(1e-10, float(self.ex.markets().get(esym, {}).get("step") or 0) * 0.05)
+            observed = self._readback(esym, lambda o: o is not None and o.side == side and abs(o.qty - (before_qty + qty)) <= tol
+                                      and (returned_position_id is None or any(str(i) == str(returned_position_id) for i in o.ids)))
             if observed is None or observed.side != side or observed.qty <= 0:
                 raise X.ExchangeError(f"{esym}: exchange entry was not confirmed")
             if returned_position_id is not None and not any(
@@ -342,9 +354,10 @@ class Mirror:
         self.save()
         try:
             self.ex.close(position, qty)
-            after = self.ex.positions().get(esym)
-            actual = 0.0 if after is None else after.qty
             expected = max(0.0, initial - closing)
+            tol = max(1e-10, float((self.ex.markets().get(esym) or {}).get("step") or 0) * 0.05)
+            after = self._readback(esym, lambda o: (o is None and expected <= tol) or (o is not None and abs(o.qty - expected) <= tol))
+            actual = 0.0 if after is None else after.qty
             if after is not None and (after.side != position.side or not math.isfinite(after.qty)):
                 raise X.ExchangeError(f"{esym}: close resulted in wrong side/invalid quantity")
             market = self.ex.markets().get(esym) or {}
