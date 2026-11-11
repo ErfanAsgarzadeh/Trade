@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Trade | پنل ربات‌های معاملاتی",
+  "short_name": "Trade",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/dashboard/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0C101B",
+  "theme_color": "#0C101B",
+  "description": "مدیریت لایسنس و حساب ربات‌های شاهین، موج‌سوار و ققنوس",
+  "icons": [
+    {
+      "src": "/portal-assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/portal-assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ x-environment: &environment
   BOT_LICENSE_REQUIRED: "1"
   BOT_LICENSE_FILE: /app/license/license.json
   BOT_LICENSE_PUBLIC_KEY_FILE: /app/license/license_public.pem
+  BOT_LICENSE_ACCOUNT_ID_FILE: /app/license/account_id
   BOT_PIN_FILE: /run/secrets/dashboard_pin
   PAPER_EQUITY: ${PAPER_EQUITY:-10000}
   PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}

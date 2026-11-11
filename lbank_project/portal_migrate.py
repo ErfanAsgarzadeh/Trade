@@ -8,7 +8,7 @@ from portal_store import PortalStore
 
 
 TABLES={
- 'users':('id','username','password','disabled','runtime'),
+ 'users':('id','username','password','disabled','runtime','role'),
  'sessions':('token_hash','user_id','csrf','expires'),
  'connections':('user_id','encrypted','market','revision','updated','exchange_id'),
  'account_cache':('user_id','revision','snapshot','checked','status'),
@@ -16,6 +16,12 @@ TABLES={
  'audit':('id','user_id','event','at'),
  'account_jobs':('user_id','revision','state','lease_token','lease_until','not_before','attempts','updated'),
  'service_gate':('name','next_at'),
+ 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref','product'),
+ 'product_pricing':('product','prices','enabled','version','updated'),
+ 'capital_licenses':('user_id','account_id','document','updated'),
+ 'admin_events':('id','actor_id','action','target','details','at'),
+ 'license_approvals':('id','order_id','requested_by','payload','payment_ref','state','lease_token','lease_until','attempts','created','updated','error_code'),
+ 'license_cashflows':('user_id','event_id','amount_usd','at'),
 }
 
 
@@ -42,8 +48,12 @@ def migrate_sqlite(source,target,key):
                 if table not in existing:continue
                 fields=','.join(columns)
                 select_fields=fields
+                if table=='users' and 'role' not in {r['name'] for r in src.execute('PRAGMA table_info(users)')}:
+                    select_fields=','.join(columns[:-1])+",'customer' AS role"
                 if table=='connections' and 'exchange_id' not in {r['name'] for r in src.execute('PRAGMA table_info(connections)')}:
                     select_fields=','.join(columns[:-1])+",'lbank' AS exchange_id"
+                if table=='license_orders' and 'product' not in {r['name'] for r in src.execute('PRAGMA table_info(license_orders)')}:
+                    select_fields=','.join(columns[:-1])+",'autotrade' AS product"
                 rows=src.execute('SELECT '+select_fields+' FROM '+table).fetchall()
                 counts[table]=len(rows)
                 query='INSERT INTO '+table+' ('+fields+') VALUES('+','.join('?' for _ in columns)+')'
@@ -56,6 +66,8 @@ def migrate_sqlite(source,target,key):
                         if payload['owner']!=row['user_id']:raise ValueError('Source credential owner mismatch')
                         if payload.get('exchange_id','lbank')!=row['exchange_id'] or ('market' in payload and payload['market']!=row['market']):
                             raise ValueError('Source credential exchange/market mismatch')
+                    if table=='license_approvals' and row['state']=='running':
+                        values[5]='queued';values[6]=None;values[7]=0;values[8]=0
                     if table=='account_jobs' and row['state']=='running':
                         values[2]='queued';values[3]=None;values[4]=0;values[6]=0
                     dst.execute(query,values)

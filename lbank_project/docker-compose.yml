@@ -57,31 +57,6 @@ services:
       options:
         max-size: 10m
         max-file: "3"
-  lbank-risk:
-    # F risk manager, SHADOW MODE: reads the bots' databases and public market data, writes risk_overlay*.json and
-    # equity_history.jsonl into ./runtime. It never touches orders, positions or bot configs.
-    build: .
-    command: ["python", "-u", "risk_overlay.py"]
-    restart: unless-stopped
-    init: true
-    environment:
-      PAPER_EQUITY: ${PAPER_EQUITY:-10000}
-      PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
-      OHLCV_DIR: /app/runtime/ohlcv
-      FUNDING_DIR: /app/runtime/funding
-      BOT_CONFIG: /app/runtime/config.json
-      BOT_DB: ${BOT_DB_PATH:-/app/runtime/lbank_ichimoku_bot.db}
-      C3_CONFIG: /app/runtime/c3_config.json
-      C3_DB: ${C3_DB_PATH:-/app/runtime/c3_sleeve.db}
-      PA_CONFIG: /app/runtime/pa_config.json
-      PA_DB: ${PA_DB_PATH:-/app/runtime/pa_sleeve.db}
-      RISK_DIR: /app/runtime
-    volumes:
-      - ./runtime:/app/runtime
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
   lbank-live:
     # Live mirror (live_mirror.py): copies the bots' paper positions to a real exchange account. Mode is set in the
     # dashboard (Settings > Live execution) and is OFF by default; keys only from .env.

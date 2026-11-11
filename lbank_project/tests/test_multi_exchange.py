@@ -31,7 +31,7 @@ class FakeClient:
     def close(self):self.closed=True
 
 
-@pytest.mark.parametrize('exchange_id,market',[(i,m) for i,p in PROFILES.items() for m in ('spot','futures') if m in p and i!='lbank'])
+@pytest.mark.parametrize('exchange_id,market',[(i,m) for i,p in PROFILES.items() for m in ('spot','futures') if m in p and i not in ('lbank','thetruetrade')])
 def test_each_enabled_route_uses_its_own_client_and_strips_raw_info(exchange_id,market):
     clients=[]
     def factory(name,params):
@@ -60,8 +60,8 @@ def test_each_enabled_route_uses_its_own_client_and_strips_raw_info(exchange_id,
 
 
 def test_catalog_matches_installed_capabilities_and_no_urls():
-    entries=catalog();assert len(entries)==9
-    assert sum('futures' in e['markets'] for e in entries)==7
+    entries=catalog();assert len(entries)==10
+    assert sum('futures' in e['markets'] for e in entries)==8
     lbank=next(e for e in entries if e['id']=='lbank')
     assert lbank['markets']==['spot'] and lbank['pending_markets']==['futures']
     assert all(not e['live_execution_supported'] for e in entries)
@@ -89,7 +89,7 @@ def test_two_users_choose_different_exchanges_and_switch_cancels_old_work(tmp_pa
             assert r.status_code==200
             headers.append({'X-Portal-Request':'1','X-CSRF-Token':r.json()['csrf']})
         ah,bh=headers
-        assert len(alice.get('/api/exchanges').json()['exchanges'])==9
+        assert len(alice.get('/api/exchanges').json()['exchanges'])==10
         payload=dict(exchange_id='okx',market='futures',api_key='alice-api-key',secret='alice-secret')
         assert alice.put('/api/me/connection',headers=ah,json=payload).status_code==422
         payload['passphrase']='private-passphrase'
@@ -154,7 +154,7 @@ def test_upgrade_from_v2_preserves_old_lbank_credentials_and_offline_migration(t
     store=PortalStore(source,key)
     assert store.connection('alice-id',decrypt=True)['secret']=='old-lbank-secret'
     with store.db() as db:
-        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3}
+        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3,4,5,6}
         assert db.execute("SELECT next_at FROM service_gate WHERE name='account-read:lbank'").fetchone()
         db.execute("UPDATE connections SET exchange_id='bybit' WHERE user_id='alice-id'")
     with pytest.raises(ValueError,match='Legacy'):store.connection('alice-id',decrypt=True)

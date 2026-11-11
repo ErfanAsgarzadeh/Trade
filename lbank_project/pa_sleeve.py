@@ -33,6 +33,7 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+import signal_feed
 import c3_sleeve as c3
 
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
@@ -42,7 +43,7 @@ EXHAUSTION_MAX=.146;EMA_SPAN=50;SLOPE_BARS=6
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.004,max_notional_pct=1.,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,atr_period=14,lookback=10,close_frac=.75,stop_buffer_atr=.1,
     target_r=0.,min_range_atr=1.1,vol_rank_max=.354,vol_rank_window=500,opposite_exit=True,time_stop_bars=30,min_stop_pct=.004,
-    candle_fetch_limit=800,check_interval_seconds=15,max_gap_bars=3,symbols=[],strategy_variant='C2_baseline',volume_multiplier=1.)
+    candle_fetch_limit=800,check_interval_seconds=15,max_gap_bars=3,symbols=[],strategy_variant='C2_baseline',volume_multiplier=1.,momentum_sizing_enabled=True)
 
 def validate(c:dict)->dict:
     c={**DEFAULTS,**c}
@@ -62,6 +63,7 @@ def validate(c:dict)->dict:
     need=max(100,c['lookback']+10*c['atr_period'])+(c['vol_rank_window']+1 if c['vol_rank_max']<1 or c['strategy_variant']==SOFT_VARIANT else 0)
     if c['candle_fetch_limit']<need:raise ValueError(f'candle_fetch_limit too small for the ATR warm-up and the volatility window (need >= {need})')
     if not c['symbols'] or len(set(c['symbols']))!=len(c['symbols']):raise ValueError('PA needs a list of distinct symbols')
+    if type(c['momentum_sizing_enabled']) is not bool:raise ValueError('momentum_sizing_enabled must be true or false')
     return c
 
 def features(rows:list,now:float,c:dict)->pd.DataFrame:
@@ -151,7 +153,7 @@ class Store(c3.Store):
             else:db.execute('INSERT INTO pending VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET data=excluded.data',(s,json.dumps(order)))
 
 class Sleeve(c3.Sleeve):
-    NAME=NAME;LOG=LOG;GATE='pa'
+    NAME=NAME;LOG=LOG
     def __init__(self,config:dict,store:Store,data,base_equity=None,shared_account=None):
         self.c=validate(config);self.store=store;self.data=data;self.base_equity=base_equity;self._shared_account=shared_account
 
@@ -171,12 +173,11 @@ class Sleeve(c3.Sleeve):
                 price=self.data.price(p['symbol']);sign=1 if p['side']=='long' else -1
                 if sign*(price-p['stop'])<=0:self.close(p,price,'stop',now)
                 elif p['target'] is not None and sign*(price-p['target'])>=0:self.close(p,price,'target',now)
-                else:self.f_cut(p,price,now)
             except Exception:LOG.exception('Ghoghnous watchdog failed for %s',p['symbol'])
         held={p['symbol'] for p in self.store.positions()}
         for s,o in self.store.orders().items():
             try:
-                if s in held or now*1000>=o['expires'] or not bot.license_access.entries_allowed(now):self.store.set_order(s,None);continue
+                if s in held or now*1000>=o['expires'] or not self.license_entries_allowed(now):self.store.set_order(s,None);continue
                 step=order_step(o,self.data.price(s))
                 if step=='cancel' or (step=='fill' and not self.c['enabled']):self.store.set_order(s,None)
                 elif step=='fill':self.open(s,o,now);self.store.set_order(s,None)
@@ -196,7 +197,9 @@ class Sleeve(c3.Sleeve):
                 raw,sig=tradable_signal(df,c)
                 if pos and c['opposite_exit'] and raw and raw['side']!=pos['side']:
                     self.close(pos,self.data.price(s),'opposite',now);pos=None
-                if not pos and c['enabled'] and sig and bot.license_access.entries_allowed(now):   # valid until the next candle (stamp + 4h) has closed
+                if sig and signal_feed.enabled(now):
+                    signal_feed.publish('pa',s,sig['side'],sig['level'],sig['stop'],stamp,c['timeframe'],(stamp/1000)+2*H4,now,source_mode=getattr(self.data,'mode',None))
+                if not pos and c['enabled'] and sig and self.license_entries_allowed(now):   # valid until the next candle (stamp + 4h) has closed
                     self.store.set_order(s,dict(sig,signal_ts=stamp,expires=stamp+2*H4*1000,atr=float(b.atr)))
                 with self.store.db() as db:db.execute('INSERT INTO scanned VALUES(?,?) ON CONFLICT(symbol) DO UPDATE SET candle_ts=excluded.candle_ts',(s,stamp))
             except Exception:
@@ -207,7 +210,7 @@ class Sleeve(c3.Sleeve):
         with self.execution_lock():return self._open(s,order,now)
 
     def _open(self,s:str,order:dict,now:float):
-        if not bot.license_access.entries_allowed(now):return None
+        if not self.license_entries_allowed(now):return None
         positions=self.store.positions();limit=self.c['max_open_positions']
         if (limit>0 and len(positions)>=limit) or any(p['symbol']==s for p in positions):return None
         c=self.c;sign=1 if order['side']=='long' else -1;price=self.data.price(s);stop=order['stop'];dist=sign*(price-stop)
@@ -215,9 +218,8 @@ class Sleeve(c3.Sleeve):
         risk=planned_risk(c,order)
         if risk is None:
             LOG.info('Ghoghnous skips incompatible or invalid pending order for %s',s);return None
-        fmult=c3.risk_gate.multiplier(self.GATE)   # F risk manager; exactly 1.0 while F is switched off
-        if fmult<=0:return None
-        risk*=fmult
+        mmult=c3.momentum.multiplier(self.data,s,order['side'],now,c['momentum_sizing_enabled'])   # momentum-rank sizing (new entries only)
+        risk*=mmult
         eq=self.equity()
         if eq<=0:return None
         notional=risk*eq/(dist/price+c['round_trip_fee']+c['sizing_slippage_pct'])
@@ -235,7 +237,6 @@ class Sleeve(c3.Sleeve):
             db.execute('INSERT INTO positions VALUES(?,?,?,?,?,?,?,?,?,?)',(s,order['side'],price,qty,stop,price,now,int(order['signal_ts']),int(order['signal_ts']),qty*dist))
             db.execute('INSERT OR REPLACE INTO position_margin VALUES(?,?,?)',(s,now,c['isolated_leverage']))
             db.execute('INSERT OR REPLACE INTO exits VALUES(?,?,?,?)',(s,now,target,entry_bar))
-        c3.risk_gate.record(self.GATE,f'{s}|{now}')
         LOG.info('Ghoghnous open %s %s at %.6g stop %.6g target %s qty %.6g policy %s volume x%.3g planned risk %.4f%%',s,order['side'],price,stop,'none' if target is None else f'{target:.6g}',qty,c['strategy_variant'],c['volume_multiplier'],risk*100);return True
 
 def load(path:Path)->dict:return validate(json.loads(path.read_text()))

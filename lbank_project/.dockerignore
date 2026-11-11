@@ -10,3 +10,8 @@ customers
 issuer-keys
 releases
 *.private.pem
+
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/*.tsbuildinfo

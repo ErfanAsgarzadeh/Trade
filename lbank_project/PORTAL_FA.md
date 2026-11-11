@@ -1,5 +1,20 @@
 # پنل مرکزی کاربران و اتصال حساب شخصی صرافی
 
+صفحهٔ عمومی معرفی در `/` و پنل مشتری در `/dashboard/` است؛ [راهنمای هیروی بک‌تست و صفحهٔ اول](LANDING_FA.md).
+
+
+کارتابل مدیر در `/admin/` برای کاربران مجاز اضافه شده است؛ [راهنمای کارتابل و ساخت اولین مدیر](ADMIN_WORKBENCH_FA.md).
+
+
+ثبت‌نام عمومی و دو سرویس «فقط سیگنال» و «معاملهٔ خودکار» اضافه شده‌اند. **فروش هر دو تا تعیین قیمت نهایی بسته است.** [راهنمای محصولات و قیمت‌گذاری](PRODUCTS_SIGNUP_FA.md).
+
+
+رابط این پنل با **Next.js / React / TypeScript** پیاده‌سازی شده است. پیش از اجرای محلی، `npm --prefix frontend ci` و `npm --prefix frontend run build` را اجرا کنید؛ [راهنمای فرانت](frontend/README_FA.md).
+
+
+برای تعرفه‌های سرمایه‌ای، وب‌اپ موبایل و روند صدور لایسنس، [راهنمای لایسنس سرمایه‌ای](CAPITAL_LICENSE_FA.md) را ببینید.
+
+
 ## آنچه اجرا می‌شود
 
 این سرویس مستقل از داشبورد تک‌مشتری است. هر مشتری با نام کاربری و رمز خودش
@@ -160,7 +175,9 @@ python -m pip install -r requirements-dev.txt
 python -m pytest tests/test_portal.py -q
 python -m pytest tests/test_portal_queue.py -q
 node --check portal.js
-node tests/test_portal_ui.cjs
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix frontend test
 ```
 
 تست‌ها شامل جداسازی دو حساب، رد انتخاب مالک دیگر، vault مالک‌محور، ابطال نشست،

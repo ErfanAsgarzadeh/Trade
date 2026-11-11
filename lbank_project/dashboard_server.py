@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import os
+from pathlib import Path
 import secrets
 import time
 
@@ -314,7 +315,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             LOG.exception("PA close failed for %s", payload.symbol)
             raise HTTPException(503, "Could not close the Ghoghnous position; it is still open")
 
-    # ---- performance (all three bots) and the F risk manager (shadow service risk_overlay.py): read only ----
+    # ---- performance (all three bots): read only ----
     def runtime_folder():
         from pathlib import Path
         return Path(os.getenv("RISK_DIR", str(bot().db.path.parent)))
@@ -337,41 +338,6 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     def performance_view():
         import performance
         return performance.summarize(all_trades(), float(bot().paper_seed), performance.read_snapshots(runtime_folder() / "equity_history.jsonl"))
-
-    @application.get("/api/risk", dependencies=[Depends(authorized)])
-    def risk_view():
-        folder = runtime_folder();cur = folder / "risk_overlay.json";log = folder / "risk_overlay_log.jsonl"
-        if not cur.is_file():
-            return {"available": False, "folder": str(folder),
-                    "hint": "The F risk manager service is not running yet (docker compose up -d --no-deps lbank-risk)."}
-        rows = []
-        if log.is_file():
-            for line in log.read_text().splitlines()[-120:]:
-                try:
-                    r = json.loads(line)
-                    rows.append({k: r.get(k) for k in ("as_of", "account_equity", "shadow_equity", "combined")} |
-                                {"ai_pct": r["ai"]["percentile"], "ai_mult": r["ai"]["multiplier"], "zone": r["ai"]["zone"],
-                                 "vol_mult": r["vol"]["multiplier"], "brake_mult": r["brake"]["multiplier"], "dd": r["brake"]["drawdown_pct"]})
-                except Exception:
-                    pass
-        import risk_overlay
-        return risk_overlay.clean({"available": True, "current": json.loads(cur.read_text()), "history": rows,
-                "stale": time.time() - json.loads(cur.read_text()).get("computed_at", 0) > 36 * 3600})
-
-    @application.get("/api/risk/control", dependencies=[Depends(authorized)])
-    def risk_control_get():
-        import risk_gate
-        return risk_gate.status()
-
-    @application.put("/api/risk/control", dependencies=[Depends(authorized)])
-    def risk_control_put(payload: dict):
-        import risk_gate
-        try:
-            risk_gate.write_control({**risk_gate.read_control(), **{k: payload[k] for k in ("enabled", "open_cuts") if k in payload}})
-        except ValueError as exc:
-            raise HTTPException(422, str(exc))
-        LOG.warning("F risk manager control changed: %s", risk_gate.read_control())
-        return risk_gate.status()
 
     @application.get("/api/account", dependencies=[Depends(authorized)])
     def account_view():
@@ -541,62 +507,75 @@ HTML = r'''<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#070b16;--bg2:#0b1222;--panel:#0f172a;--panel2:#131d33;--line:#1f2b45;--line2:#2b3a5c;--text:#e8eefc;--muted:#8fa0c2;--good:#34d399;--bad:#f87171;--warn:#fbbf24;--accent:#6d8dff;--accent2:#8b5cf6;--main:#5b8cff;--c3:#a78bfa;--pa:#f59e0b}
+
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#16234a 0,transparent 60%),radial-gradient(900px 500px at 100% 0,#251a4a 0,transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1;min-height:100vh}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,var(--page-tint) 0,transparent 60%),radial-gradient(900px 500px at 100% 0,var(--page-tint) 0,transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1,'cv11' 1;min-height:100vh}
 main{max-width:1480px;margin:auto;padding:22px 28px 40px}
 header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:6px 0 18px}
-.brand{display:flex;align-items:center;gap:14px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 24px -8px #6d8dff88}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 24px -8px var(--glow-subtle)}
 h1{font-size:21px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:16px;margin:0;font-weight:600;letter-spacing:-.01em}h3{font-size:14px;margin:0;font-weight:600}
 p{margin:2px 0;color:var(--muted)}.muted{color:var(--muted)}.small{font-size:12px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.gap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px -18px #000}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:#17223b;border:1px solid var(--line2);font-size:12px;color:#c9d5f2;white-space:nowrap}
-.badge.ok{color:var(--good);border-color:#1f5f4a;background:#0e2a22}.badge.warn{color:var(--warn);border-color:#6b5414;background:#2b220b}.badge.bad{color:var(--bad);border-color:#6b2730;background:#2c1015}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px -18px var(--shadow-color)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:var(--surface-elevated);border:1px solid var(--line2);font-size:12px;color:var(--text-primary);white-space:nowrap}
+.badge.ok{color:var(--good);border-color:var(--success-border);background:var(--success-background)}.badge.warn{color:var(--warn);border-color:var(--warning-border);background:var(--warning-background)}.badge.bad{color:var(--bad);border-color:var(--error-border);background:var(--error-background)}
 .dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:5px;background:#0c1426;border:1px solid var(--line);border-radius:14px;width:fit-content;max-width:100%;overflow:auto}
-.tab{background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-weight:500}.tab:hover{color:var(--text);background:#141f38}.tab.on{background:linear-gradient(135deg,#3557c9,#5b3fc4);color:#fff;box-shadow:0 6px 18px -8px #6d8dff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:5px;background:var(--surface-inset);border:1px solid var(--line);border-radius:14px;width:fit-content;max-width:100%;overflow:auto}
+.tab{background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-weight:500}.tab:hover{color:var(--text);background:var(--surface-hover)}.tab.on{background:linear-gradient(135deg,var(--primary),var(--primary));color:var(--text-primary);box-shadow:0 6px 18px -8px var(--primary)}
 .pane{display:none}.pane.on{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}.kpis .panel{margin-top:0}
 .kpi p:first-child{font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .kpi strong{display:block;font-size:28px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
-.bar{height:6px;border-radius:99px;background:#1a2540;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.bar{height:6px;border-radius:99px;background:var(--surface-elevated);overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .grid2{display:grid;grid-template-columns:2fr 1fr;gap:18px}.grid2 .panel,.grid3 .panel{margin-top:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .chart{position:relative;height:300px;margin-top:12px}.chart.sm{height:200px}
-input,select,textarea{background:#0a1222;border:1px solid var(--line2);color:#fff;border-radius:9px;padding:9px 11px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid #3f5fd0;border-color:transparent}
-input[type=checkbox]{width:18px;height:18px;accent-color:#6d8dff}
-button{border:0;background:#3557c9;color:white;padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-weight:500;transition:filter .15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
-.danger{background:#b4233c}.subtle{background:#1d2945}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
-.view{background:#16213a;color:var(--muted)}.view.on{background:#24356a;color:#fff;outline:1px solid #5b7cff}
-.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:#1b2b55;color:#9db8ff}.tag.c3{background:#2b2150;color:#c4b5fd}.tag.pa{background:#3a2710;color:#fbbf6a}
+input,select,textarea{background:var(--input);border:1px solid var(--line2);color:var(--text-primary);border-radius:9px;padding:9px 11px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid var(--focus-ring);border-color:transparent}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary)}
+button{border:0;background:var(--primary);color:var(--primary-foreground);padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-weight:500;transition:filter .15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
+.danger{background:var(--danger-solid)}.subtle{background:var(--surface-elevated);color:var(--text-primary)}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.view{background:var(--surface-elevated);color:var(--muted)}.view.on{background:var(--primary-soft);color:var(--text-primary);outline:1px solid var(--primary)}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--primary-soft);color:var(--primary)}.tag.c3{background:var(--ai-soft);color:var(--ai-accent)}.tag.pa{background:var(--premium-soft);color:var(--premium-text)}
 .scroll{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12.5px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--panel)}tbody tr:hover{background:#121c33}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--panel)}tbody tr:hover{background:var(--surface-hover)}
 td[dir=ltr],.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px}.num{text-align:right}
 .bots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
-.bot{background:linear-gradient(180deg,#121b31,#0e1628);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;position:relative;overflow:hidden}
+.bot{background:linear-gradient(180deg,var(--surface-elevated),var(--surface));border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;position:relative;overflow:hidden}
 .bot:before{content:'';position:absolute;inset:0 0 auto 0;height:3px}.bot-main:before{background:var(--main)}.bot-c3:before{background:var(--c3)}.bot-pa:before{background:var(--pa)}
 .bot h3{font-size:18px}.bot .sub{margin:0 0 8px;font-size:12px}.bot dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:12px 0 0;font-size:13px}
 .bot dt{color:var(--muted)}.bot dd{margin:0;text-align:right;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}.bot.off{opacity:.55}
-.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;background:#16213a;padding:5px 10px;border-radius:999px}
-.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#c9d5f2}.field{display:flex;flex-direction:column;align-items:stretch;gap:6px;font-size:12.5px}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;background:var(--surface-elevated);padding:5px 10px;border-radius:999px}
+.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--text-primary)}.field{display:flex;flex-direction:column;align-items:stretch;gap:6px;font-size:12.5px}
 textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7 'JetBrains Mono',ui-monospace,monospace;resize:vertical;margin:14px 0}
-#message{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;white-space:pre-wrap;border:1px solid #33456e;background:#121c33}
-.note{border-left:3px solid var(--warn);font-size:13px;color:#cdd6ea}details{margin-top:16px}summary{cursor:pointer;font-weight:600;color:#c9d5f2}footer{margin-top:22px;color:var(--muted);font-size:12px}
-.gauge{position:relative;height:14px;border-radius:99px;background:linear-gradient(90deg,#7f1d1d 0 30%,#1f2b45 30% 70%,#065f46 70%);margin:14px 0 6px}
-.gauge>b{position:absolute;top:-5px;width:4px;height:24px;border-radius:3px;background:#fff;box-shadow:0 0 0 3px #ffffff33;transform:translateX(-2px);transition:left .4s}
+#message{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;white-space:pre-wrap;border:1px solid var(--border-strong);background:var(--surface-hover)}
+.note{border-left:3px solid var(--warn);font-size:13px;color:var(--text-primary)}details{margin-top:16px}summary{cursor:pointer;font-weight:600;color:var(--text-primary)}footer{margin-top:22px;color:var(--muted);font-size:12px}
+.gauge{position:relative;height:14px;border-radius:99px;background:linear-gradient(90deg,var(--loss) 0 30%,var(--border) 30% 70%,var(--profit) 70%);margin:14px 0 6px}
+.gauge>b{position:absolute;top:-5px;width:4px;height:24px;border-radius:3px;background:var(--text-primary);box-shadow:0 0 0 3px var(--primary-soft);transform:translateX(-2px);transition:left .4s}
 .scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 .big{font-size:34px;font-weight:700;letter-spacing:-.02em}.pill{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
-.pill.good{background:#0e2a22}.pill.bad{background:#2c1015}.pill.normal{background:#1b2540;color:#c9d5f2}
+.pill.good{background:var(--success-background)}.pill.bad{background:var(--error-background)}.pill.normal{background:var(--surface-elevated);color:var(--text-primary)}
 .empty{padding:26px;text-align:center;color:var(--muted)}
 .mtab td.pos{color:var(--good)}.mtab td.neg{color:var(--bad)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
 @media(max-width:850px){main{padding:14px}.bots{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,1fr)}.kpis{grid-template-columns:1fr}}
 @media(max-width:450px){.fields{grid-template-columns:1fr}}
+
+.tab.on,.view.on{background:var(--primary);color:var(--primary-foreground);}
+.logo{background:var(--brand-gradient);color:var(--primary-foreground);box-shadow:var(--shadow-soft);}
+.danger{color:var(--danger-on-solid);}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px;}
+button:disabled{background:var(--disabled-background);color:var(--disabled-foreground);opacity:1;}
+.chart canvas{background:var(--chart-background);max-width:100%;}
+.panel,.chart,.grid2,.grid3,.kpis,.fields{min-width:0;}
+#views{flex-wrap:wrap;}
+.scale{flex-wrap:wrap;gap:4px;}
+@media(max-width:1100px){.grid2,.grid3{grid-template-columns:minmax(0,1fr);}}
+@media(max-width:450px){.fields,.kpis{grid-template-columns:minmax(0,1fr);}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 </style></head><body><main>
-<header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · F risk manager</p></div></div>
-<div class="gap"><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span><span id="f_badge" class="badge">F: —</span>
+<header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
+<div class="gap"><div class="theme-switcher"><label for="terminal-appearance">Appearance</label><select id="terminal-appearance" data-legacy-theme-switch><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></div><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span>
 <input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
-<nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="risk">Risk manager (F)</button><button class="tab" data-tab="settings">Settings</button></nav>
+<nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
 <div id="message" role="status" aria-live="polite"></div>
 
 <section class="pane" data-pane="overview">
@@ -608,7 +587,7 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <section class="panel kpi"><p>Drawdown now / max</p><strong id="dd_now">—</strong><p id="dd_max" class="small">—</p><div class="bar"><i id="dd_bar" style="width:0"></i></div></section>
 <section class="panel kpi"><p>Margin in use / allowed ($)</p><strong id="margin">—</strong><p id="margin_pct" class="small">—</p><p id="pending_margin" class="small">—</p><div class="bar"><i id="margin_bar" style="width:0"></i></div></section>
 <section class="panel kpi"><p>Win rate (all closed trades)</p><strong id="winrate">—</strong><p id="pf" class="small">—</p></section>
-<section class="panel kpi"><p>F risk manager today</p><strong id="f_mult">—</strong><p id="f_line" class="small">—</p></section>
+<section class="panel kpi"><p>Momentum sizing</p><strong id="mom_state">—</strong><p class="small">New entries: risk x0.5 to x1.5 by 30-day momentum rank</p></section>
 <section class="panel kpi"><p>Slippage vs LBank book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail" class="small">—</p></section>
 </div>
 <div class="grid2" style="margin-top:18px"><section class="panel"><div class="row"><h2>Equity and drawdown</h2><span class="small muted" id="eq_src">—</span></div><div class="chart"><canvas id="eq_chart"></canvas></div><div class="chart sm"><canvas id="dd_chart"></canvas></div></section>
@@ -637,29 +616,10 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <div class="scroll" style="max-height:560px"><table><thead><tr><th>Closed (UTC)</th><th>Bot</th><th>Symbol</th><th>Side</th><th class="num">Entry</th><th class="num">Exit</th><th class="num">P&amp;L ($)</th><th>Reason</th></tr></thead><tbody id="hist_all"></tbody></table></div></section>
 </section>
 
-<section class="pane" data-pane="risk">
-<section class="panel"><div class="row"><div><h2>F risk manager <span class="badge warn" id="f_mode">SHADOW</span></h2><p class="small">Shadow mode: F calculates and records what it would do every day. It does not change, open or close anything in the three bots.</p></div><span class="small muted" id="f_asof">—</span></div>
-<section class="panel" id="f_control" style="border-color:#3b4a75"><div class="row"><div><h3>Apply F to the three bots</h3><p class="small" id="fc_status">—</p></div>
-<div class="gap"><label class="switch"><input id="fc_open" type="checkbox" checked>Also act on open positions</label><label class="switch" style="background:#2a1d3d"><input id="fc_enabled" type="checkbox">F active</label></div></div>
-<p class="small muted">Off = the bots trade exactly as now and F only records what it would do. On = each bot multiplies its risk by F's multiplier (0 = no new entries) and, if selected, cuts open positions when F's AI score or drawdown brake falls. If F's daily decision is missing or older than 36 hours, the bots automatically use ×1. Applies within seconds, no restart.</p></section>
-<div id="f_empty" class="empty">Waiting for the F service (lbank-risk).</div>
-<div id="f_body" hidden>
-<div class="grid3" style="margin-top:14px">
-<section class="panel"><p class="small">AI market score (next 20 days for the bots)</p><div class="row"><span class="big" id="f_ai_pct">—</span><span class="pill" id="f_zone">—</span></div><div class="gauge"><b id="f_needle" style="left:50%"></b></div><div class="scale"><span>0 · no new entries</span><span>30</span><span>normal ×1</span><span>70</span><span>×1.4 · 100</span></div></section>
-<section class="panel"><p class="small">Combined risk multiplier</p><span class="big" id="f_comb">—</span><p class="small mono" id="f_formula">—</p><p class="small" id="f_action">—</p></section>
-<section class="panel"><p class="small">Drawdown brake (F account)</p><span class="big" id="f_dd">—</span><div class="bar"><i id="f_dd_bar" style="width:0;background:linear-gradient(90deg,#fbbf24,#f87171)"></i></div><div class="scale"><span>0%</span><span>8% brake starts</span><span>14% ×0.2</span></div><p class="small" id="f_vol">—</p></section>
-</div>
-<section class="panel"><h2>Per bot</h2><div class="scroll"><table><thead><tr><th>Bot</th><th class="num">Risk now</th><th class="num">Last 20 trades (R)</th><th>Losing streak control</th><th class="num">F multiplier</th><th class="num">Risk with F</th></tr></thead><tbody id="f_bots"></tbody></table></div></section>
-<div class="grid2"><section class="panel"><h2>AI score and multiplier history</h2><div class="chart"><canvas id="f_hist_chart"></canvas></div></section>
-<section class="panel"><h2>Account vs F (shadow estimate)</h2><div class="chart"><canvas id="f_shadow_chart"></canvas></div></section></div>
-<details><summary>Model inputs today</summary><div class="scroll"><table><tbody id="f_feats"></tbody></table></div><p class="small" id="f_data"></p></details>
-</div></section>
-</section>
-
 <section class="pane" data-pane="settings">
 <section class="panel"><div class="row"><h2>Trading account</h2><span class="badge ok" id="acct_mode"><span class="dot"></span>PAPER</span></div>
 <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
-<section class="panel" style="border-color:#1f5f4a"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
+<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
 <section class="panel"><div class="row"><h3>🔒 Live LBank futures</h3><span class="pill bad">Locked</span></div>
 <p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (set LBANK_API_KEY and LBANK_SECRET_KEY in the server's .env; keys are never entered in this page)</p>
 <div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test LBank connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
@@ -694,6 +654,7 @@ textarea{width:100%;min-height:340px;direction:ltr;text-align:left;font:12px/1.7
 <label class="field">Initial stop<select id="initial_stop"><option>ATR2</option><option>KIJUN</option></select></label>
 <label><input id="btc_gate" type="checkbox">Bitcoin trend filter: alts do not enter while BTC's 4h candle is inside the Kumo cloud</label>
 <label><input id="atr_regime" type="checkbox">ATR regime filter (2A): no entry or add when the signal candle's ATR is below the median ATR of the previous 60 4h candles</label>
+<label><input id="momentum" type="checkbox">Momentum sizing: new-entry risk x0.5 to x1.5 by the coin's 30-day momentum rank among the three bots' coins</label>
 <label><input id="late_entry" type="checkbox">Late-entry gate: no new entry when price already moved more than ~16% in the trade direction over the previous 60 4h candles</label>
 <label><input id="funding_short" type="checkbox">Funding filter: no new short while the 3-day mean funding is negative (needs FUNDING_DIR files)</label>
 <label class="field">Initial-stop ATR multiple (2.5 was only tested together with V2 and the BTC filter)<input id="stop_atr_mult" type="number" min="1" max="5" step="0.1"></label>
@@ -752,11 +713,11 @@ function fillControls(){if(!cfg)return;$('shared_account').checked=!!cfg.portfol
  $('strategy').value=cfg.strategy_mode.mode;$('risk').value=cfg.risk_and_exit.risk_per_trade_pct*100;
  $('engaged').value=cfg.risk_and_exit.engaged_capital_pct*100;$('leverage').value=cfg.risk_and_exit.leverage_mode;$('max_positions').value=cfg.risk_and_exit.max_open_positions;
  const settings=cfg.strategy_settings;
- for(const id of ['exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','late_entry','atr_trail'])$(id).disabled=!settings;
+ for(const id of ['exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','late_entry','momentum','atr_trail'])$(id).disabled=!settings;
  $('strategy').disabled=!!settings;
  if(settings){$('atr_trail').value=settings.trail_atr_buffer??0;$('exit_tp').value=settings.exit_tp_mode;$('hybrid_trail').value=settings.hybrid_trail_mode;$('hard_tp').value=settings.hard_tp_rr;$('breakeven').value=settings.breakeven_trigger_rr;$('preset').value=settings.ichimoku_preset;$('donchian_period').value=settings.donchian_entry_period;$('initial_stop').value=settings.initial_stop_mode;$('pyramid').checked=!!settings.pyramid_enabled;$('stop_anchor').value=settings.initial_stop_anchor;
   $('pyramid_fraction').value=settings.pyramid_risk_fraction;$('safe_pyramid').checked=!!settings.safe_pyramid_enabled;$('profit_floor').checked=!!settings.profit_floor_enabled;$('floor_trigger').value=settings.profit_floor_trigger_r;$('floor_lock').value=settings.profit_floor_lock_r;
-  $('width_filter').checked=!!settings.stop_width_filter_enabled;$('width_skip').value=settings.stop_width_skip_pct*100;$('width_mid').value=settings.stop_width_mid_pct*100;$('width_fraction').value=settings.stop_width_mid_risk_fraction;$('stop_atr_mult').value=settings.initial_stop_atr_mult;$('btc_gate').checked=!!settings.btc_regime_filter_enabled;$('funding_short').checked=!!settings.funding_short_filter_enabled;$('atr_regime').checked=!!settings.atr_regime_filter_enabled;$('late_entry').checked=!!settings.late_entry_filter_enabled;}
+  $('width_filter').checked=!!settings.stop_width_filter_enabled;$('width_skip').value=settings.stop_width_skip_pct*100;$('width_mid').value=settings.stop_width_mid_pct*100;$('width_fraction').value=settings.stop_width_mid_risk_fraction;$('stop_atr_mult').value=settings.initial_stop_atr_mult;$('btc_gate').checked=!!settings.btc_regime_filter_enabled;$('funding_short').checked=!!settings.funding_short_filter_enabled;$('atr_regime').checked=!!settings.atr_regime_filter_enabled;$('late_entry').checked=!!settings.late_entry_filter_enabled;$('momentum').checked=!!settings.momentum_sizing_enabled;$('mom_state').textContent=settings.momentum_sizing_enabled?'On':'Off';}
  $('breakout').checked=cfg.al_brooks_filters.require_signal_bar_breakout;$('barb').checked=cfg.al_brooks_filters.enable_barb_wire_filter;$('h2').checked=cfg.al_brooks_filters.require_h2_l2_pullback;
 }
 async function loadConfig(){const result=await api('/api/config');cfg=result.data;etag=result.etag;$('shared_account').checked=!!cfg.portfolio_risk.shared_c3_account;$('margin_allocation').value=cfg.portfolio_risk.margin_allocation_mode;$('editor').value=JSON.stringify(cfg,null,2);fillControls();$('dirty').textContent='Settings saved.';}
@@ -767,11 +728,11 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
  if(cfg.strategy_settings){Object.assign(cfg.strategy_settings,{trail_atr_buffer:Number($('atr_trail').value),exit_tp_mode:$('exit_tp').value,hybrid_trail_mode:$('hybrid_trail').value,hard_tp_rr:Number($('hard_tp').value),breakeven_trigger_rr:Number($('breakeven').value),ichimoku_preset:$('preset').value,donchian_entry_period:Number($('donchian_period').value),initial_stop_mode:$('initial_stop').value});}
  if(cfg.strategy_settings){cfg.strategy_settings.pyramid_enabled=$('pyramid').checked;cfg.strategy_settings.initial_stop_anchor=$('stop_anchor').value;
   Object.assign(cfg.strategy_settings,{pyramid_risk_fraction:Number($('pyramid_fraction').value),safe_pyramid_enabled:$('safe_pyramid').checked,profit_floor_enabled:$('profit_floor').checked,profit_floor_trigger_r:Number($('floor_trigger').value),profit_floor_lock_r:Number($('floor_lock').value),
-   stop_width_filter_enabled:$('width_filter').checked,stop_width_skip_pct:Number($('width_skip').value)/100,stop_width_mid_pct:Number($('width_mid').value)/100,stop_width_mid_risk_fraction:Number($('width_fraction').value),initial_stop_atr_mult:Number($('stop_atr_mult').value),btc_regime_filter_enabled:$('btc_gate').checked,funding_short_filter_enabled:$('funding_short').checked,atr_regime_filter_enabled:$('atr_regime').checked,late_entry_filter_enabled:$('late_entry').checked});}
+   stop_width_filter_enabled:$('width_filter').checked,stop_width_skip_pct:Number($('width_skip').value)/100,stop_width_mid_pct:Number($('width_mid').value)/100,stop_width_mid_risk_fraction:Number($('width_fraction').value),initial_stop_atr_mult:Number($('stop_atr_mult').value),btc_regime_filter_enabled:$('btc_gate').checked,funding_short_filter_enabled:$('funding_short').checked,atr_regime_filter_enabled:$('atr_regime').checked,late_entry_filter_enabled:$('late_entry').checked,momentum_sizing_enabled:$('momentum').checked});}
  cfg.al_brooks_filters.require_signal_bar_breakout=$('breakout').checked;cfg.al_brooks_filters.enable_barb_wire_filter=$('barb').checked;cfg.al_brooks_filters.require_h2_l2_pullback=$('h2').checked;
  $('editor').value=JSON.stringify(cfg,null,2);$('dirty').textContent='Changes were not saved.';
 }
-for(const id of ['margin_allocation','shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','late_entry','atr_trail'])$(id).addEventListener('change',controlsChanged);
+for(const id of ['margin_allocation','shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','late_entry','momentum','atr_trail'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='Changes were not saved.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('Invalid JSON.',true);}});
 function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='No fills recorded yet (only with PAPER_DATA_MODE=csv-lbank and the live order book)'+(fq&&fq.last_error?' | Error: '+fq.last_error:'');return;}
@@ -875,7 +836,7 @@ function renderPA(s){lastPA=s;$('pa_enabled').checked=s.enabled;$('pa_risk_v').t
 async function refreshPA(){if(!connected)return;try{const r=await api('/api/pa/status');renderPA(r.data);}catch(e){message('Ghoghnous: '+e.message,true);}}
 setInterval(()=>{refresh();refreshC3();refreshPA();},5000);
 
-// ---------------- tabs, performance, F risk manager (added) ----------------
+// ---------------- tabs and performance (added) ----------------
 const charts={};let tab='overview';try{tab=localStorage.getItem('tab')||'overview';}catch(e){}
 function setTab(t){tab=t;try{localStorage.setItem('tab',t);}catch(e){}
  for(const b of document.querySelectorAll('.tab'))b.classList.toggle('on',b.dataset.tab===t);
@@ -883,16 +844,21 @@ function setTab(t){tab=t;try{localStorage.setItem('tab',t);}catch(e){}
  for(const c of Object.values(charts))if(c)c.resize();}
 for(const b of document.querySelectorAll('.tab'))b.onclick=()=>setTab(b.dataset.tab);
 setTab(tab);
-const BOTCOL={main:'#5b8cff',c3:'#a78bfa',pa:'#f59e0b'};
+const themeColor=name=>typeof getComputedStyle==='function'?getComputedStyle(document.documentElement).getPropertyValue('--'+name).trim():'';
+const BOTCOL={get main(){return themeColor('primary');},get c3(){return themeColor('ai-accent');},get pa(){return themeColor('premium-accent');}};
 const money=v=>v===null||v===undefined?'—':(v<0?'-$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const pct=(v,n=1)=>v===null||v===undefined||!isFinite(v)?'—':(v>0?'+':'')+Number(v).toFixed(n)+'%';
 const cls=v=>v>0?'good':v<0?'bad':'';
 const day=t=>new Date(t*1000).toISOString().slice(0,10);
 function chart(id,cfg){if(typeof Chart==='undefined')return null;if(charts[id])charts[id].destroy();
- Chart.defaults.color='#8fa0c2';Chart.defaults.borderColor='#1f2b45';Chart.defaults.font.family='Inter';
+ Chart.defaults.color=themeColor('chart-axis');Chart.defaults.borderColor=themeColor('border');Chart.defaults.font.family='Inter';
+ Chart.defaults.plugins.tooltip.backgroundColor=themeColor('surface-elevated');Chart.defaults.plugins.tooltip.titleColor=themeColor('text-primary');Chart.defaults.plugins.tooltip.bodyColor=themeColor('text-primary');Chart.defaults.plugins.tooltip.borderColor=themeColor('border-strong');Chart.defaults.plugins.tooltip.borderWidth=1;
  charts[id]=new Chart($(id),cfg);return charts[id];}
-const baseOpts=(extra={})=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,maxRotation:0}},y:{grid:{color:'#17223a'}}}},extra);
-let lastPerf=null,lastRisk=null;
+const baseOpts=(extra={})=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10,boxHeight:10}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,maxRotation:0}},y:{grid:{color:themeColor('border')}}}},extra);
+let lastPerf=null;
+if(typeof window!=='undefined')window.addEventListener('trade:appearancechange',()=>{
+ if(lastPerf)renderPerf(lastPerf);
+});
 function td(tr,v,c,num){const x=document.createElement('td');x.textContent=v;if(c)x.className=c;if(num){x.classList.add('num');x.dir='ltr';}tr.append(x);return x;}
 function renderPerf(p){lastPerf=p;const a=p.all,eqNow=(()=>{try{return Number(String($('equity').textContent).replace(/,/g,''));}catch(e){return null;}})();
  const eq=isFinite(eqNow)&&eqNow>0?eqNow:(p.realized_curve.length?p.realized_curve.at(-1).equity:p.seed);
@@ -905,11 +871,11 @@ function renderPerf(p){lastPerf=p;const a=p.all,eqNow=(()=>{try{return Number(St
  const pts=p.snapshots.length>=2?p.snapshots.map(s=>({t:s.t,v:s.equity})):p.realized_curve.map(s=>({t:s.t,v:s.equity}));
  $('eq_src').textContent=p.snapshots.length>=2?'hourly account snapshots (incl. open P&L)':'closed trades only (snapshots start with the F service)';
  if(pts.length){let pk=-Infinity;const dd=pts.map(x=>{pk=Math.max(pk,x.v);return (x.v/pk-1)*100;});const lab=pts.map(x=>new Date(x.t*1000).toISOString().slice(0,10));
-  chart('eq_chart',{type:'line',data:{labels:lab,datasets:[{label:'Equity ($)',data:pts.map(x=>x.v),borderColor:'#6d8dff',backgroundColor:'rgba(109,141,255,.12)',fill:true,pointRadius:0,tension:.2,borderWidth:2}]},options:baseOpts({plugins:{legend:{display:false}}})});
-  chart('dd_chart',{type:'line',data:{labels:lab,datasets:[{label:'Drawdown (%)',data:dd,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.15)',fill:true,pointRadius:0,borderWidth:1.5},{label:'-15% limit',data:dd.map(()=>-15),borderColor:'#fbbf24',borderDash:[5,5],pointRadius:0,borderWidth:1}]},options:baseOpts({scales:{x:{display:false},y:{grid:{color:'#17223a'},suggestedMin:-16,max:0}}})});}
+  chart('eq_chart',{type:'line',data:{labels:lab,datasets:[{label:'Equity ($)',data:pts.map(x=>x.v),borderColor:themeColor('chart-equity'),backgroundColor:themeColor('chart-fill')+'20',fill:true,pointRadius:0,tension:.2,borderWidth:2}]},options:baseOpts({plugins:{legend:{display:false}}})});
+  chart('dd_chart',{type:'line',data:{labels:lab,datasets:[{label:'Drawdown (%)',data:dd,borderColor:themeColor('loss'),backgroundColor:themeColor('loss')+'20',fill:true,pointRadius:0,borderWidth:1.5},{label:'-15% limit',data:dd.map(()=>-15),borderColor:themeColor('warning'),borderDash:[5,5],pointRadius:0,borderWidth:1}]},options:baseOpts({scales:{x:{display:false},y:{grid:{color:themeColor('border')},suggestedMin:-16,max:0}}})});}
  // daily bars
  const days=[];for(let i=29;i>=0;i--)days.push(new Date(Date.now()-i*86400000).toISOString().slice(0,10));
- chart('daily_chart',{type:'bar',data:{labels:days.map(d=>d.slice(5)),datasets:['main','c3','pa'].map(b=>({label:BOTNAME[b==='main'?'bot':b],data:days.map(d=>(p.daily[d]||{})[b]||0),backgroundColor:BOTCOL[b],borderRadius:3,stack:'s'}))},options:baseOpts({indexAxis:'y',scales:{x:{stacked:true,grid:{color:'#17223a'}},y:{stacked:true,grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}}})});
+ chart('daily_chart',{type:'bar',data:{labels:days.map(d=>d.slice(5)),datasets:['main','c3','pa'].map(b=>({label:BOTNAME[b==='main'?'bot':b],data:days.map(d=>(p.daily[d]||{})[b]||0),backgroundColor:days.map(d=>((p.daily[d]||{})[b]||0)<0?themeColor('loss'):themeColor('profit')),borderRadius:3,stack:'s'}))},options:baseOpts({indexAxis:'y',scales:{x:{stacked:true,grid:{color:themeColor('border')}},y:{stacked:true,grid:{display:false},ticks:{autoSkip:false,font:{size:10}}}}})});
  // per-bot cards
  const pc=$('perf_cards');pc.replaceChildren();
  for(const [k,b] of Object.entries(p.bots)){const s=document.createElement('section');s.className='panel bot bot-'+k;
@@ -929,50 +895,19 @@ function drawHist(){if(!lastPerf)return;const f=$('hist_filter').value,h=$('hist
   const t=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(x.bot==='main'?'':' '+x.bot);sp.textContent=x.name;t.append(sp);tr.append(t);
   td(tr,x.symbol,'mono');td(tr,x.side==='long'?'Buy':'Sell');td(tr,number(x.entry,6),'',1);td(tr,number(x.exit,6),'',1);td(tr,number(x.pnl),x.pnl<0?'bad':'good',1);td(tr,x.reason||'');h.append(tr);}}
 $('hist_filter').addEventListener('change',drawHist);
-function renderRisk(r){lastRisk=r;
- if(!r.available){$('f_empty').hidden=false;$('f_empty').textContent=r.hint;$('f_body').hidden=true;$('f_badge').textContent='F: not running';$('f_badge').className='badge';$('f_mult').textContent='—';$('f_line').textContent=r.hint;return;}
- const c=r.current;$('f_empty').hidden=true;$('f_body').hidden=false;
- const p=c.ai.percentile*100,zone=c.ai.zone;
- $('f_badge').textContent='F '+(r.stale?'(stale) ':'')+'· AI '+number(p,0)+' · ×'+number(c.combined);$('f_badge').className='badge '+(r.stale?'warn':zone==='bad'?'bad':zone==='good'?'ok':'');
- $('f_mult').textContent='×'+number(c.combined);$('f_mult').className=c.combined<1?'warn':'good';
- $('f_line').textContent='AI '+number(p,0)+'/100 ('+zone+') · shadow mode, no effect on the bots';
- $('f_asof').textContent='Decision for the day after '+c.as_of+' · computed '+new Date(c.computed_at*1000).toISOString().slice(0,16).replace('T',' ')+' UTC'+(r.stale?' · STALE':'');
- $('f_ai_pct').textContent=number(p,0);$('f_zone').textContent=zone==='bad'?'Bad: no new entries':zone==='good'?'Good: ×1.4':'Normal: ×1';$('f_zone').className='pill '+zone;$('f_needle').style.left=Math.max(0,Math.min(100,p))+'%';
- $('f_comb').textContent='×'+number(c.combined);$('f_formula').textContent='scale '+c.scale+' × AI '+c.ai.multiplier+' × vol '+number(c.vol.multiplier)+' × brake '+number(c.brake.multiplier);$('f_action').textContent=c.open_positions_action;
- $('f_dd').textContent=pct(-c.brake.drawdown_pct);$('f_dd_bar').style.width=Math.min(100,c.brake.drawdown_pct/15*100)+'%';
- $('f_vol').textContent='Volatility target: account daily vol '+(c.vol.daily_vol===null?'— (needs 20 days)':number(c.vol.daily_vol*100)+'%')+' → ×'+number(c.vol.multiplier);
- const tb=$('f_bots');tb.replaceChildren();
- for(const [k,b] of Object.entries(c.bots)){const tr=document.createElement('tr');const t=document.createElement('td'),sp=document.createElement('span');sp.className='tag'+(k==='main'?'':' '+k);sp.textContent=b.name;t.append(sp);tr.append(t);
-  td(tr,number(b.base_risk_pct,2)+'%','',1);td(tr,number(b.streak.sum_r)+' ('+b.streak.trades+' trades)',b.streak.sum_r<0?'bad':'good',1);td(tr,b.streak.active?'ACTIVE: ×0.5':'off',b.streak.active?'warn':'muted');td(tr,'×'+number(b.multiplier),'',1);td(tr,number(b.f_risk_pct,2)+'%','',1);tb.append(tr);}
- const H=r.history;if(H.length){const lab=H.map(x=>x.as_of.slice(5));
-  chart('f_hist_chart',{type:'line',data:{labels:lab,datasets:[{label:'AI score (0-100)',data:H.map(x=>x.ai_pct*100),borderColor:'#6d8dff',pointRadius:2,yAxisID:'y'},{label:'Combined multiplier',data:H.map(x=>x.combined),borderColor:'#34d399',stepped:true,pointRadius:0,yAxisID:'y1'}]},options:baseOpts({scales:{x:{grid:{display:false}},y:{min:0,max:100,grid:{color:'#17223a'}},y1:{position:'right',min:0,grid:{display:false}}}})});
-  chart('f_shadow_chart',{type:'line',data:{labels:lab,datasets:[{label:'Account',data:H.map(x=>x.account_equity),borderColor:'#8fa0c2',pointRadius:0},{label:'F (shadow estimate)',data:H.map(x=>x.shadow_equity),borderColor:'#a78bfa',pointRadius:0}]},options:baseOpts()});}
- const ft=$('f_feats');ft.replaceChildren();for(const [k,v] of Object.entries(c.features)){const tr=document.createElement('tr');td(tr,k,'mono');td(tr,v===null?'—':Number(v).toPrecision(4),'',1);ft.append(tr);}
- $('f_data').textContent='Coins with data: '+(c.data_status.coins??'—')+' · inputs filled with training medians: '+((c.data_status.features_missing||[]).join(', ')||'none')+' · model trained until '+(c.model.trained_until||'—');}
 async function loadPerf(){if(!connected)return;try{renderPerf((await api('/api/performance')).data);}catch(e){message('Performance: '+e.message,true);}}
-async function loadRisk(){if(!connected)return;try{renderRisk((await api('/api/risk')).data);}catch(e){message('F risk manager: '+e.message,true);}}
 const _drawSummary=drawSummary;drawSummary=function(){_drawSummary();
  const S=[lastBot,lastC3,lastPA].filter(Boolean),used=S.reduce((a,x)=>a+(x.engaged_margin_usd||0),0),b=lastBot;
  const eq=b&&b.shared_account_enabled?b.equity_usd:(b?b.equity_usd:null),allowed=b&&eq?eq*b.allowed_margin_pct/100:null;
  if(allowed)$('margin_bar').style.width=Math.min(100,used/allowed*100)+'%';};
-const _connect=$('connect').onclick;$('connect').onclick=async()=>{await _connect();await loadPerf();await loadRisk();};
-setInterval(()=>{loadPerf();loadRisk();},60000);
-function renderControl(st){$('fc_enabled').checked=st.control.enabled;$('fc_open').checked=st.control.open_cuts;
- $('fc_status').textContent=(st.active?'ACTIVE: ':st.control.enabled?'ON but not applied: ':'OFF: ')+st.reason+(st.active?' · multipliers Shahin ×'+number(st.multipliers.main)+' · Mojsavar ×'+number(st.multipliers.c3)+' · Ghoghnous ×'+number(st.multipliers.pa):'');
- $('fc_status').className='small '+(st.active?'good':st.control.enabled?'warn':'muted');
- if(!st.bot_ready)$('fc_status').textContent+=' · The running bot does not include F support yet (rebuild lbank-bot once when you decide to connect F).';$('f_mode').textContent=st.active?'ACTIVE':'SHADOW';$('f_mode').className='badge '+(st.active?'ok':'warn');}
-async function loadControl(){if(!connected)return;try{renderControl((await api('/api/risk/control')).data);}catch(e){message('F control: '+e.message,true);}}
-async function saveControl(){const on=$('fc_enabled').checked;
- if(on&&!confirm('Switch F ON? From now on the three bots will size new trades with F\'s multiplier'+($('fc_open').checked?' and F may cut open positions':'')+'.')){$('fc_enabled').checked=false;return;}
- try{renderControl((await api('/api/risk/control','PUT',{enabled:on,open_cuts:$('fc_open').checked})).data);message(on?'F is switched ON.':'F is switched OFF; the bots trade without it.');}catch(e){message(e.message,true);loadControl();}}
-$('fc_enabled').addEventListener('change',saveControl);$('fc_open').addEventListener('change',saveControl);
+const _connect=$('connect').onclick;$('connect').onclick=async()=>{await _connect();await loadPerf();};
+setInterval(loadPerf,60000);
 async function loadAccount(){if(!connected)return;try{const a=(await api('/api/account')).data;$('acct_reason').textContent=a.live_reason;
  $('acct_keys').textContent=a.keys.configured?'configured '+(a.keys.api_key_hint||''):'not configured';$('acct_test').disabled=!a.keys.configured;$('acct_live').disabled=!a.live_available;}catch(e){message('Account: '+e.message,true);}}
 $('acct_test').onclick=async()=>{const b=$('acct_test');b.disabled=true;$('acct_result').textContent='Asking LBank…';
  try{const r=(await api('/api/account/test','POST',{})).data;$('acct_result').textContent=r.message+(r.balances&&r.balances.length?' · '+r.balances.map(x=>Object.entries(x).map(([k,v])=>k+': '+v).join(', ')).join(' | '):'');$('acct_result').className='small '+(r.ok?'good':'bad');}
  catch(e){$('acct_result').textContent=e.message;$('acct_result').className='small bad';}finally{b.disabled=false;}};
-const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _connect2();await loadControl();await loadAccount();};
-setInterval(loadControl,60000);
+const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _connect2();await loadAccount();};
 let lv=null;
 function lvFill(c){$('lv_exchange').value=c.exchange;$('lv_mode').value=c.mode;$('lv_size').value=c.size_factor;$('lv_lev').value=c.leverage;$('lv_cap').value=c.max_position_usd;$('lv_maxpos').value=c.max_positions;$('lv_delay').value=c.max_entry_delay_min;}
 function renderLive(d){lv=d;const c=d.config,s=d.state||{};if(document.activeElement===null||!document.activeElement.id||!document.activeElement.id.startsWith('lv_'))lvFill(c);
@@ -1015,5 +950,10 @@ $('lv_panic').onclick=async()=>{if(!confirm('Close every position the mirror ope
 const _connect3=$('connect').onclick;$('connect').onclick=async()=>{await _connect3();for(const id of ['lv_save','lv_test','lv_readiness','lv_panic'])$(id).disabled=false;await loadLive();};
 setInterval(loadLive,15000);
 </script></body></html>'''
+
+_THEME_ASSETS = Path(__file__).with_name('frontend') / 'public' / 'portal-assets'
+HTML = HTML.replace('<title>',
+    '<style id="titanium-tokens">' + (_THEME_ASSETS / 'titanium.css').read_text() + '</style>'
+    + '<script id="trade-appearance-init">' + (_THEME_ASSETS / 'appearance.js').read_text() + '</script><title>', 1)
 
 app = create_app()

@@ -46,5 +46,6 @@
   "vol_rank_max": 0.354,
   "vol_rank_window": 500,
   "opposite_exit": true,
-  "max_gap_bars": 3
+  "max_gap_bars": 3,
+  "momentum_sizing_enabled": true
 }
