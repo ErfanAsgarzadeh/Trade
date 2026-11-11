@@ -381,8 +381,14 @@ class Mirror:
             self.ex.close(position, qty)
             expected = max(0.0, initial - closing)
             tol = max(1e-10, float((self.ex.markets().get(esym) or {}).get("step") or 0) * 0.05)
-            after = self._readback(esym, lambda o: (o is None and expected <= tol) or (o is not None and abs(o.qty - expected) <= tol))
+            after = self._readback(esym, lambda o: o is None or abs(o.qty - expected) <= tol)
             actual = 0.0 if after is None else after.qty
+            if after is None and expected > tol:
+                # The exchange closed the whole position on a partial close (TheTrueTrade does this when the remainder
+                # would be below its minimum). Less exposure than asked, never more: accept, and say so.
+                self.event("closed_in_full", symbol=esym, qty=initial,
+                           note="partial close closed the whole position on the exchange")
+                expected = 0.0
             if after is not None and (after.side != position.side or not math.isfinite(after.qty)):
                 raise X.ExchangeError(f"{esym}: close resulted in wrong side/invalid quantity")
             market = self.ex.markets().get(esym) or {}

@@ -14,7 +14,7 @@ mirror) on one coin:
   B2 read the position back (id, side, size)
   B3 read the stop back: price, order type, stop order id, and the stop order among the active exchange orders
   B4 move the stop (PATCH tpsl) and read it back
-  B5 close half and read back the rest (the stop must still protect it)
+  B5 close one quantity step and read back the rest (the stop must still protect it)
   B6 close the rest and read back that nothing is left
   B7 open again and move the stop very close to the price, then wait until the EXCHANGE closes the position by itself
      (proof that its stop really triggers); on timeout the position is closed and the check fails
@@ -203,18 +203,19 @@ class Certifier:
         self.ex.set_stop(p, new_stop)
         problems = self.stop_problems(p.ids, new_stop, readback)
         self.ok("stop_moved", not problems, "; ".join(problems))
-        # B5 partial close
-        half = X.round_step(qty / 2, m["step"])
-        if half >= m["step"] and qty - half >= m["step"]:
-            self.ex.close(p, half)
-            rest = self.wait_position(qty - half)
-            good = rest is not None and abs(rest.qty - (qty - half)) <= m["step"] * .05 + 1e-12
-            self.ok("partial_close", good, f"{half} closed, {rest.qty if rest else 0} left")
+        # B5 partial close: the smallest possible part (one step), so the rest stays above any exchange minimum. A partial
+        # close whose remainder is too small can be turned into a full close by the exchange; the mirror accepts that.
+        part = m["step"]
+        if qty - part >= m["step"]:
+            self.ex.close(p, part)
+            rest = self.wait_position(qty - part)
+            left = rest.qty if rest else 0
+            good = rest is not None and abs(left - (qty - part)) <= m["step"] * .05 + 1e-12
+            self.ok("partial_close", good, f"{part} of {qty} closed, {left} left")
             problems = self.stop_problems(rest.ids, new_stop, readback)
             self.ok("stop_kept_after_partial", not problems, "; ".join(problems))
         else:
-            self.report["notes"].append("size too small to split; partial close not exercised")
-            self.ok("partial_close", False, "position too small to close half; raise --notional")
+            self.ok("partial_close", False, "position too small to close one step; raise --notional")
         # B6 full close
         self.ex.close(self.mine())
         self.ok("full_close", self.wait_position(None) is None, "position gone")

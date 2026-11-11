@@ -19,7 +19,7 @@ class FakeAPI:
         self.pos = {};self.history = {};self.orders = {};self.next_id = 1000
         self.min_notional, self.store_stop, self.order_ids, self.list_orders, self.trigger = min_notional, store_stop, order_ids, list_orders, trigger
         self.calls = [];self.equity = 100.0;self.reply = reply or (lambda pid: {"positionId": pid})
-        self.fill_records = fill_records;self.fills = {}
+        self.fill_records = fill_records;self.fills = {};self.dust = False
 
     def _id(self):
         self.next_id += 1;return str(self.next_id)
@@ -38,7 +38,8 @@ class FakeAPI:
 
     def _close(self, pid, size, reason="USER"):
         p = self.pos[pid]
-        if size is None or float(size) >= float(p["size"]) - 1e-12:
+        rest_value = (float(p["size"]) - float(size or 0)) * self.px[p["symbol"]]
+        if size is None or float(size) >= float(p["size"]) - 1e-12 or (self.dust and rest_value < self.min_notional):
             del self.pos[pid];self.orders.pop(p.get("slOrderId"), None)
             self.history[pid] = dict(p, status="CLOSED", isActive=False, closingReason=reason)
         else:
@@ -416,3 +417,19 @@ def test_netted_entry_resolves_to_the_grown_position(rt):
         return real(method, path, query, body, auth)
     api.request = netting;t.request = netting
     assert t.open("BTCUSDT", "long", 0.001, 5, 78000.0) == first and t.entry_resolution == "netted_position"
+
+
+
+def test_exchange_that_closes_a_too_small_remainder_still_certifies_and_the_mirror_accepts_it(rt):
+    """Like the real exchange: a partial close leaving less than the minimum closes everything."""
+    api = FakeAPI();api.dust = True
+    report = certify(rt, api);assert report["checks"]["partial_close"]
+    api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.04, stop=78000.0, key="main|BTC|1", opened=None)
+    step();assert t.positions()["BTCUSDT"].qty == pytest.approx(0.004)      # 320 USDT live
+    api.min_notional = 100.0                                   # the exchange minimum is above the 80 USDT remainder
+    paper.book["BTC/USDT:USDT"]["qty"] = 0.01;step()           # reduce to a quarter: 80 USDT left, the exchange closes all
+    assert "BTCUSDT" not in t.positions() and not m.state["paused"] and not m.state["pending_orders"]
+    kinds = [k for k, _ in kinds_and_reasons(rt)]
+    assert "closed_in_full" in kinds and "order_uncertain" not in kinds
