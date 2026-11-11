@@ -23,10 +23,11 @@ from __future__ import annotations
 import json, logging, math, os, sqlite3, time
 from pathlib import Path
 import exchanges as X
+import live_risk
 
 LOG = logging.getLogger("live_mirror")
 DEFAULT = dict(mode="off", exchange="thetruetrade", size_factor=1.0, leverage=5, max_entry_delay_min=30,
-               max_position_usd=5000.0, max_positions=40, adopt_existing=False)
+               max_position_usd=5000.0, max_positions=40, adopt_existing=False, **live_risk.DEFAULTS)
 MODES = ("off", "dry", "live")
 
 
@@ -35,7 +36,24 @@ def folder() -> Path:
 
 
 def validate(c: dict) -> dict:
+    if not isinstance(c, dict):
+        raise ValueError('Live config must be an object')
     v = {**DEFAULT, **{k: c[k] for k in DEFAULT if k in c}}
+    for key in ('size_factor', 'max_entry_delay_min', 'max_position_usd'):
+        if isinstance(v[key], bool) or not isinstance(v[key], (int, float)) or not math.isfinite(v[key]):
+            raise ValueError(f'{key} must be finite')
+    for key in ('leverage', 'max_positions'):
+        if type(v[key]) is not int:
+            raise ValueError(f'{key} must be an integer')
+    for key in live_risk.KEYS:
+        try:
+            v[key] = live_risk.positive(v[key])
+        except X.ExchangeError:
+            raise ValueError(f'{key} must be a positive fraction') from None
+        if v[key] > 1:
+            raise ValueError('Live risk fractions must be in (0, 1]')
+    if v['risk_per_trade_pct'] > v['max_total_open_risk_pct']:
+        raise ValueError('risk_per_trade_pct must not exceed max_total_open_risk_pct')
     if v["mode"] not in MODES:raise ValueError("mode must be off, dry or live")
     if v["exchange"] not in ("thetruetrade", "binance"):raise ValueError("exchange must be thetruetrade or binance")
     if not (isinstance(v["size_factor"], (int, float)) and 0 < v["size_factor"] <= 3):raise ValueError("size_factor must be in (0, 3]")
@@ -275,6 +293,13 @@ class Mirror:
         # No entry can be sent unless the venue's active stop can be read back.
         # TheTrueTrade and Binance adapters currently block live orders here.
         self.ex.ensure_protected_entries()
+        if self.cfg['mode'] == 'live' and not isinstance(self.ex, X.Sim):
+            try:
+                live_risk.entry_budget(self.cfg, self.state, self.ex, esym, side,
+                                       qty, price, stop, self.now(), self.save)
+            except live_risk.RiskLimit as exc:
+                self.event("skip", symbol=esym, reason=str(exc))
+                return False
         market = self.ex.markets().get(esym)
         if not isinstance(market, dict):
             raise X.ExchangeError(f"{esym}: missing market contract metadata")
@@ -500,6 +525,7 @@ class Mirror:
                 self.event("skip", symbol=esym, reason=f"size {q} below verified exchange minimum");self.state.setdefault("skipped", {})[t["key"]] = True;return
             stop = t["ex_stop"]
             if not self._entry_preflight(esym, t["side"], q, px, stop):
+                self.state.setdefault("skipped", {})[t["key"]] = True   # not retried every cycle (no log flood)
                 return
             observed = self._submit_entry(esym, t["side"], q, stop, t["key"])
             managed[esym] = dict(key=t["key"], bot=t["bot"], side=t["side"], paper_qty0=t["ex_qty"], live_qty0=observed.qty, stop=stop, opened=self.now())
@@ -583,4 +609,11 @@ def run(once: bool = False):
 
 if __name__ == "__main__":
     import sys
-    run(once="--once" in sys.argv)
+    import fcntl
+    folder().mkdir(parents=True, exist_ok=True)
+    with (folder() / 'live_mirror.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            sys.exit('Another live mirror owns this runtime; refusing duplicate process')
+        run(once="--once" in sys.argv)

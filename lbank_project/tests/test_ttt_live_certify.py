@@ -280,3 +280,52 @@ def test_mirror_waits_for_a_position_that_shows_up_a_moment_after_the_fill(rt):
     paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
     clock[0] += 10;m.cycle()
     assert "BTCUSDT" in m.state["managed"] and not m.state["paused"] and not m.state["pending_orders"]
+
+
+def live_mirror(rt, api, **cfg):
+    t = adapter(api);paper = Book();clock = [5_000_000.0]
+    m = L.Mirror(t, paper, L.validate({"mode": "live", "exchange": "thetruetrade", **cfg}), now=lambda: clock[0])
+    def step():clock[0] += 10;m.cycle()
+    step();return m, t, paper, step
+
+
+def kinds_and_reasons(rt):
+    rows = [json.loads(x) for x in (rt / "live_log.jsonl").read_text().splitlines()]
+    return [(r["kind"], r.get("reason", "")) for r in rows]
+
+
+def test_live_risk_limits_skip_entries_without_pausing_the_mirror(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api, risk_per_trade_pct=0.005, max_total_open_risk_pct=0.10)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    step()                                                     # risk about 10.8 USDT > 0.5% of 1000: skipped
+    assert "BTCUSDT" not in t.positions() and not m.state["paused"] and m.state["errors"] == 0
+    assert ("skip", "Live per-trade risk limit exceeded") in kinds_and_reasons(rt)
+    step();assert sum(k == "skip" for k, _ in kinds_and_reasons(rt)) == 1   # not retried every 10 s
+
+
+def test_live_risk_daily_loss_and_foreign_positions_block_new_entries(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    step();assert "BTCUSDT" in t.positions()                    # baseline 1000 recorded
+    api.equity = 940.0                                         # -6% today (default limit 5%)
+    paper.book["ETH/USDT:USDT"] = dict(bot="c3", side="long", qty=1.0, stop=1900.0, key="c3|ETH|1", opened=None)
+    api.px["ETHUSDT"] = 2000.0;api.markets.append(dict(symbol="ETHUSDT", stepSize="0.01", tickSize="0.01", maxLeverage=100, isActive=True))
+    t._markets = None;step()
+    assert "ETHUSDT" not in t.positions() and any("daily loss" in r for _, r in kinds_and_reasons(rt))
+    assert m.state["risk_ledger"]["day_equity"] == 1000.0 and not m.state["paused"]
+    api.pos["9"] = dict(id=9, symbol="DOGEUSDT", side="LONG", status="OPEN", isActive=True, size="100", entryPrice="0.2")
+    api.equity = 1000.0
+    paper.book["ETH/USDT:USDT"]["key"] = "c3|ETH|2";step()      # someone else's position on the account
+    assert "ETHUSDT" not in t.positions() and any("not opened by the mirror" in r for _, r in kinds_and_reasons(rt))
+    assert "9" in api.pos                                      # never touched
+
+
+def test_live_config_validates_risk_fractions():
+    v = L.validate({})
+    assert v["risk_per_trade_pct"] == 0.03 and v["max_daily_loss_pct"] == 0.05
+    for bad in ({"max_daily_loss_pct": 0}, {"max_drawdown_pct": 1.5}, {"risk_per_trade_pct": True},
+                {"risk_per_trade_pct": 0.2, "max_total_open_risk_pct": 0.1}, {"leverage": 5.0}, {"size_factor": float("nan")}):
+        with pytest.raises(ValueError):L.validate(bad)
+    with pytest.raises(ValueError):L.validate([])
