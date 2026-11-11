@@ -27,23 +27,19 @@ def modify(l,arm=0.,lock=0.,pfrac=0.,ptarget=0.,bots=('main','c3','pa')):
     if xm-em<2:return l,None
     seg=P[em:xm];op,hi,lo=seg[:,0],seg[:,1],seg[:,2]
     fav=(hi-e) if s==1 else (e-lo)
-    unit=l['unit'];new_xm=xm;rest=1.;part=0.;tag=None
-    # partial target
-    if pfrac>0:
-        lvl=e+s*ptarget*risk;hit=np.nonzero((hi>=lvl) if s==1 else (lo<=lvl))[0]
+    unit=l['unit'];rest=1.;part=0.;tag=None;jl=len(seg);xl=0.
+    if arm>0:   # the lock exit comes first: nothing can happen to the leg after it
+        armed=np.nonzero(fav>=arm*risk)[0]
+        if len(armed) and armed[0]+1<len(seg):
+            j0=armed[0]+1;lvl=e+s*lock*risk;cross=np.nonzero((lo[j0:]<=lvl) if s==1 else (hi[j0:]>=lvl))[0]
+            if len(cross):jl=j0+cross[0];xl=min(op[jl],lvl) if s==1 else max(op[jl],lvl)
+    if pfrac>0:   # partial target, only while the leg is still open (strictly before the lock exit minute)
+        lvl=e+s*ptarget*risk;hit=np.nonzero((hi[:jl]>=lvl) if s==1 else (lo[:jl]<=lvl))[0]
         if len(hit):
             j=hit[0];xraw=max(op[j],lvl) if s==1 else min(op[j],lvl);part=_net(l,em+j,xraw,pfrac);rest=1-pfrac;tag='partial'
-    if arm>0:
-        armed=np.nonzero(fav>=arm*risk)[0]
-        if len(armed):
-            j0=armed[0]+1;lvl=e+s*lock*risk
-            if j0<len(seg):
-                cross=np.nonzero((lo[j0:]<=lvl) if s==1 else (hi[j0:]>=lvl))[0]
-                if len(cross):
-                    j=j0+cross[0];xraw=min(op[j],lvl) if s==1 else max(op[j],lvl)
-                    new=part+_net(l,em+j,xraw,rest);new_xm=em+j;tag=(tag or '')+'+lock'
-                    nl=dict(l);nl['unit']=new;nl['xm']=int(new_xm);return nl,tag
-    if pfrac>0 and tag:
+    if jl<len(seg):
+        nl=dict(l);nl['unit']=part+_net(l,em+jl,xl,rest);nl['xm']=int(em+jl);return nl,(tag or '')+'+lock'
+    if tag:
         nl=dict(l);nl['unit']=part+rest*unit;return nl,tag
     return l,None
 
