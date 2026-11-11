@@ -11,13 +11,13 @@ class FakeAPI:
     """In-memory TheTrueTrade: markets, stats, assets, positions (active / page views), orders, open/close/tpsl.
     Stops are real orders here: when the price crosses a position's stopLoss the position is closed by the 'exchange'."""
 
-    def __init__(self, min_notional=5.0, store_stop=True, order_ids=True, list_orders=True, trigger=True):
+    def __init__(self, min_notional=5.0, store_stop=True, order_ids=True, list_orders=True, trigger=True, reply=None):
         self.px = {"DOGEUSDT": 0.2, "BTCUSDT": 80000.0}
         self.markets = [dict(symbol="DOGEUSDT", stepSize="1", tickSize="0.00001", maxLeverage=50, isActive=True),
                         dict(symbol="BTCUSDT", stepSize="0.001", tickSize="0.1", maxLeverage=100, isActive=True)]
         self.pos = {};self.history = {};self.orders = {};self.next_id = 1000
         self.min_notional, self.store_stop, self.order_ids, self.list_orders, self.trigger = min_notional, store_stop, order_ids, list_orders, trigger
-        self.calls = [];self.equity = 100.0
+        self.calls = [];self.equity = 100.0;self.reply = reply or (lambda pid: {"positionId": pid})
 
     def _id(self):
         self.next_id += 1;return str(self.next_id)
@@ -69,7 +69,7 @@ class FakeAPI:
             pid = self._id();p = dict(id=int(pid), symbol=body["symbol"], side=body["side"], status="OPEN", isActive=True,
                                       size=body["size"], leverage=body["leverage"], entryPrice=str(self.px[body["symbol"]]))
             self._set_sl(p, body)
-            self.pos[pid] = p;return {"positionId": pid}
+            self.pos[pid] = p;return self.reply(pid)
         if method == "POST" and path.endswith("/close") and path.startswith("/futures/positions/"):
             pid = path.split("/")[3];self._close(pid, (body or {}).get("size"));return {}
         if method == "PATCH" and path.endswith("/tpsl"):
@@ -358,3 +358,19 @@ def test_detached_run_confirms_up_front_and_logs_every_step(rt, monkeypatch):
     log = (rt / "ttt_certify_log.txt").read_text()
     assert "Type TEST to continue: TEST" in log and "[PASS] stop_triggered" in log and "CERTIFIED" in log
     assert "position fields by query" in log and (rt / X.CERT_NAME).exists() and not api.pos
+
+
+
+def test_wrapped_entry_reply_is_accepted(rt):
+    api = FakeAPI(reply=lambda pid: {"data": {"id": int(pid), "status": "OPEN"}})
+    c, _ = certifier(api, adapter(api))
+    assert c.run(L.validate({"mode": "off"}))["passed"]
+
+
+def test_entry_reply_without_id_closes_the_position_it_opened(rt):
+    api = FakeAPI(reply=lambda pid: {"success": True, "message": "ok"})
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and "a position was opened" in report["reason"]
+    assert "reply shape: {success: bool, message: str}" in report["reason"]          # key names only, no values
+    assert report["cleanup_confirmed"] and not api.pos

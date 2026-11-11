@@ -139,8 +139,14 @@ class Certifier:
                 pid = self.ex.open(self.symbol, "long", qty, self.leverage, stop)
             except X.ExchangeError as exc:
                 text = str(exc)
-                if self.mine() is not None:   # ambiguous: something opened despite the error
-                    raise Abort(f"entry returned an error but a position exists ({text[:120]})")
+                # The coin was flat before the test, so any position showing up now is the test's own: give the exchange a
+                # moment, adopt it for cleanup, and stop (the entry reply could not be confirmed).
+                for _ in range(1 if ("HTTP 400" in text or "HTTP 422" in text) else 6):
+                    seen = self.mine()
+                    if seen is not None:
+                        self.opened += [str(i) for i in seen.ids]
+                        raise Abort(f"entry reply not confirmed but a position was opened ({text[:200]})")
+                    self.sleep(1.5)
                 if "HTTP 400" not in text and "HTTP 422" not in text:raise Abort(f"entry failed: {text[:160]}")
                 errors.append(text[:160]);self.say(f"  [INFO] order value {notional:.2f} USDT rejected: {text[:120]}")
                 notional *= 2;continue
@@ -251,7 +257,12 @@ class Certifier:
         """Close whatever this test opened; report anything that could not be confirmed flat."""
         try:
             p = self.mine()
-            if p is not None and any(str(i) in self.opened for i in p.ids):
+            if p is None and self.opened:   # the exchange may show the position a moment late
+                for _ in range(5):
+                    self.sleep(1.5);p = self.mine()
+                    if p is not None:break
+            # The test coin was verified flat before the test and the mirror is not live: whatever is open on it now is ours.
+            if p is not None and (self.opened or self.report["read_only"].get("test_coin_flat")):
                 self.ex.close(p)
                 if self.wait_position(None) is not None:
                     self.say(f"  !! {self.symbol} test position could NOT be confirmed closed - close it by hand in TheTrueTrade")

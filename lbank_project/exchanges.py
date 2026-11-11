@@ -59,6 +59,35 @@ class ExchangeError(RuntimeError):
     pass
 
 
+def _usable_id(v) -> str | None:
+    if isinstance(v, bool) or not isinstance(v, (int, str)) or not str(v).strip():return None
+    return str(v).strip()
+
+
+def position_id(response) -> str | None:
+    """positionId of an entry reply: top level or one wrapper level (data / result / position / item), positionId or id."""
+    layers = [response]
+    if isinstance(response, dict):
+        layers += [response[k] for k in ("data", "result", "position", "item") if isinstance(response.get(k), dict)]
+    for layer in layers:
+        if isinstance(layer, dict):
+            for key in ("positionId", "positionID", "position_id", "id"):
+                pid = _usable_id(layer.get(key))
+                if pid:return pid
+    if isinstance(response, (int, str)) and not isinstance(response, bool):
+        return _usable_id(response)
+    return None
+
+
+def shape(x, depth=0) -> str:
+    """Key names and value types of a reply, never its values (safe to log)."""
+    if isinstance(x, dict):
+        if depth >= 2:return "{...}"
+        return "{" + ", ".join(f"{k}: {shape(v, depth + 1)}" for k, v in list(x.items())[:12] if isinstance(k, str)) + "}"
+    if isinstance(x, list):return f"[{len(x)} items]"
+    return type(x).__name__
+
+
 def bot_to_exchange(symbol: str) -> tuple[str, float]:
     """'BTC/USDT:USDT' -> ('BTCUSDT', 1); 'SHIB/USDT:USDT' -> ('1000SHIBUSDT', 1000): exchange price = price x mult,
     exchange qty = qty / mult."""
@@ -457,13 +486,12 @@ class TheTrueTrade(Adapter):
                 "stopLoss": self._fmt(self.round_price(symbol, stop)),
                 "stopLossOrderType": "STOP_MARKET", "stopLossStrategy": "LATEST_PRICE"}
         response = self.request("POST", "/futures/positions", body=body)
-        # Per official API reference, HTTP 201 returns {positionId}. A
-        # successful HTTP status without an ID is an ambiguous outcome, NOT
-        # confirmation that we own the position.
-        pid = response.get("positionId") if isinstance(response, dict) else None
-        if pid is None or isinstance(pid, bool) or not isinstance(pid, (int, str)) or not str(pid).strip():
-            raise ExchangeError("TheTrueTrade entry returned no usable positionId")
-        return str(pid)
+        # The API reference documents HTTP 201 {positionId}; the live gateway may wrap it (e.g. {data: {...}}) or name it
+        # id. A successful HTTP status without any ID is an ambiguous outcome, NOT confirmation that we own the position.
+        pid = position_id(response)
+        if pid is None:
+            raise ExchangeError(f"TheTrueTrade entry returned no usable positionId (reply shape: {shape(response)})")
+        return pid
 
     def close(self, pos, qty=None):
         left = pos.qty if qty is None else qty
