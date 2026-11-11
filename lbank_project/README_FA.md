@@ -304,7 +304,7 @@ docker compose build lbank-bot lbank-dashboard
 docker compose stop lbank-bot
 tar czf ~/runtime-backup-$(date +%Y%m%d-%H%M).tgz runtime
 docker compose up -d --no-deps lbank-bot lbank-dashboard
-docker compose rm -sf lbank-risk          # سرویس F حذف شده؛ اگر روی سرور در حال اجراست متوقفش کنید
+docker rm -f lbank_project-lbank-risk-1   # سرویس F حذف شده و compose دیگر آن را نمی‌شناسد؛ کانتینر قدیمی را با نامش حذف کنید
 docker compose logs --tail=50 lbank-bot
 ```
 
