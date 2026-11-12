@@ -285,6 +285,1134 @@
           "sha256": "2b2e9da6fb6f48c2d879daf804f5f745cafeecc5e437796cc5f6bc4ce0186f9f"
         }
       ]
+    },
+    "XAUUSD": {
+      "file": "ohlcv/XAU_USD_bid_1m.csv",
+      "rows": 1722990,
+      "sha256": "9cebb106b30964f18bb88b8637c592396ecab540a059c4b1702bc56f4070bf8c",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 10,
+      "duplicate_minutes_identical": 242,
+      "duplicate_minutes_conflicting_kept_first": 1606,
+      "archives": [
+        {
+          "archive": "XAUUSD_2021.zip",
+          "rows_in_range": 47778,
+          "sha256": "312229c9db5b39138c41b1e488d00ed32e158a0d1fc3f23a225b223c3271c0a4"
+        },
+        {
+          "archive": "XAUUSD_2022.zip",
+          "rows_in_range": 354628,
+          "sha256": "e752b9d83a14b934099de372c1419ab476278e7cd949c313c3af06207960b1d8"
+        },
+        {
+          "archive": "XAUUSD_2023.zip",
+          "rows_in_range": 308812,
+          "sha256": "89a4f3f7ec2a52b29fbce8d4ca2ab650971817ae371b332f5fe471a488bcffc2"
+        },
+        {
+          "archive": "XAUUSD_2024.zip",
+          "rows_in_range": 355652,
+          "sha256": "6d47f5cb269e0c4f35c63c7532713aae7dcf98901f605458b00dd6a69e7105de"
+        },
+        {
+          "archive": "XAUUSD_2025.zip",
+          "rows_in_range": 354011,
+          "sha256": "dd0b4dc6983c07fafd89ba83b0c7f514aa16977654eaeb4c9fc8884ed359d98e"
+        },
+        {
+          "archive": "XAUUSD_2026_01.zip",
+          "rows_in_range": 28827,
+          "sha256": "496bbc7d723f67876bc0f35b96ceedaa7b20ec034167e17ebc223816bea70182"
+        },
+        {
+          "archive": "XAUUSD_2026_02.zip",
+          "rows_in_range": 27429,
+          "sha256": "422e89f5f611712e6eb5e5e9920d50a5caaba83c13e5bdf0798c816ceb84513a"
+        },
+        {
+          "archive": "XAUUSD_2026_03.zip",
+          "rows_in_range": 30595,
+          "sha256": "24e4bd74637e3daa39467302ce788a50678f9bdd66d9603a94d16bb76fc26aca"
+        },
+        {
+          "archive": "XAUUSD_2026_04.zip",
+          "rows_in_range": 28976,
+          "sha256": "57389fc67b3797ec4c5523e1cb682c1bd6949ebc9cab81fbec4ed14d6bb6c203"
+        },
+        {
+          "archive": "XAUUSD_2026_05.zip",
+          "rows_in_range": 28822,
+          "sha256": "994a47c7e0a25a3ad3ade007c00aa08baa9bab5eeb5ec9ad23ea769d25891828"
+        },
+        {
+          "archive": "XAUUSD_2026_06.zip",
+          "rows_in_range": 30144,
+          "sha256": "ba5dc6142c5da5fc71f369c12ba785418d3c305de0028781193c05cb1500d192"
+        },
+        {
+          "archive": "XAUUSD_2026_07.zip",
+          "rows_in_range": 31414,
+          "sha256": "b7137dc34dd398895b891d28b40b67179a56408a4543c1b7d9c81694dab1d317"
+        },
+        {
+          "archive": "XAUUSD_2026_08.zip",
+          "rows_in_range": 29437,
+          "sha256": "b6bdb6989098437df2df11cb2e0f16d145c138f66425b0848bd6ce575626fd77"
+        },
+        {
+          "archive": "XAUUSD_2026_09.zip",
+          "rows_in_range": 30582,
+          "sha256": "055f01da8702c5c08e5f345bd174a5e2c320c24fac8e0b970921a106a278d4fa"
+        },
+        {
+          "archive": "XAUUSD_2026_10.zip",
+          "rows_in_range": 30428,
+          "sha256": "399c88d06e8055d4f87b244d77c036491373712dea3aadc0621de030199b3256"
+        },
+        {
+          "archive": "XAUUSD_2026_11.zip",
+          "rows_in_range": 7303,
+          "sha256": "fb0662238d3c596f2853bdae03b85d811b16a51a3b84fad05e48e3bc6dd5065a"
+        }
+      ]
+    },
+    "XAGUSD": {
+      "file": "ohlcv/XAG_USD_bid_1m.csv",
+      "rows": 1711494,
+      "sha256": "0e1c2df60367220b474ec1f526c982bb5eb2cd89cc0bcaa41889612e9d88c613",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 10,
+      "duplicate_minutes_identical": 239,
+      "duplicate_minutes_conflicting_kept_first": 314,
+      "archives": [
+        {
+          "archive": "XAGUSD_2021.zip",
+          "rows_in_range": 47289,
+          "sha256": "7ccccc89c592339ce3ca7712c1ee3758bd15fe6cbc398ef8473a3fbf840d97a3"
+        },
+        {
+          "archive": "XAGUSD_2022.zip",
+          "rows_in_range": 351359,
+          "sha256": "9bd40f501ddb686a2e18ffaf594f827ce63525f5b052fda6c917e2a0f2e69c78"
+        },
+        {
+          "archive": "XAGUSD_2023.zip",
+          "rows_in_range": 304557,
+          "sha256": "68ce5aac0948d1646e4765b74fd9f90e9b360db5038a4c0e9426ca53a833b9e6"
+        },
+        {
+          "archive": "XAGUSD_2024.zip",
+          "rows_in_range": 353379,
+          "sha256": "c7ed66529ef14931a5e3f296b873544f70e830aa544f9e62faca50889c80fd37"
+        },
+        {
+          "archive": "XAGUSD_2025.zip",
+          "rows_in_range": 353701,
+          "sha256": "6ac35be28f9e4214cac7622d7c6f1177fb1760e8c50a7f04b8759c9d1b145179"
+        },
+        {
+          "archive": "XAGUSD_2026_01.zip",
+          "rows_in_range": 28694,
+          "sha256": "4085a4d6b995ae51a45df2fcd8ff928b45dacd6221ce92baf48521bab58379ab"
+        },
+        {
+          "archive": "XAGUSD_2026_02.zip",
+          "rows_in_range": 27337,
+          "sha256": "845a0d26f8c6f3d920b1e931c2487bc69716cbe8c45731c925563d7391c233ff"
+        },
+        {
+          "archive": "XAGUSD_2026_03.zip",
+          "rows_in_range": 30322,
+          "sha256": "6b39d3e1ee985ab6d22654cc7344028a2c7f1755cdfb3e5f10d4ebc4c1e85953"
+        },
+        {
+          "archive": "XAGUSD_2026_04.zip",
+          "rows_in_range": 28940,
+          "sha256": "bc598cc80cb01de5d881ddcdaaff9a1a020b59b627bc15a7614c0810ed4ba4b4"
+        },
+        {
+          "archive": "XAGUSD_2026_05.zip",
+          "rows_in_range": 28821,
+          "sha256": "d77130e302549932f0777645859ee013fdbbcc4b0f70cd14410d485bdddf09a7"
+        },
+        {
+          "archive": "XAGUSD_2026_06.zip",
+          "rows_in_range": 30129,
+          "sha256": "6c540a71af606535ba7016a44c8aee017ee8de8518d4819140a705221541c151"
+        },
+        {
+          "archive": "XAGUSD_2026_07.zip",
+          "rows_in_range": 31186,
+          "sha256": "675a58beb728256f116667c95547d2ade855f59b09b52f7a40fbe3a44eac33aa"
+        },
+        {
+          "archive": "XAGUSD_2026_08.zip",
+          "rows_in_range": 29302,
+          "sha256": "6a9d26916eea3b1d374e8395080080f7ec34c033d9d4cc68d17bee1473d0ab7b"
+        },
+        {
+          "archive": "XAGUSD_2026_09.zip",
+          "rows_in_range": 30137,
+          "sha256": "b59035b38d6ff4a9074a6f8606ebc8e9e9f1ecd37cb30ff565088d5769ad6b8a"
+        },
+        {
+          "archive": "XAGUSD_2026_10.zip",
+          "rows_in_range": 29965,
+          "sha256": "975fd19d5c818aa91f9146acd805d48077088e49564d56c3354a370e115d1fc8"
+        },
+        {
+          "archive": "XAGUSD_2026_11.zip",
+          "rows_in_range": 6929,
+          "sha256": "bc42e236ba7fb15a1a769cfc38b4660fdf8e44693ea9b1580ebb2bf7b801a1ff"
+        }
+      ]
+    },
+    "SPXUSD": {
+      "file": "ohlcv/SPX_USD_bid_1m.csv",
+      "rows": 1643688,
+      "sha256": "9488632507ead426b34fd131f70b11fc8d9a9ed7aacb7afb22c8cbbe30a1e696",
+      "first_ms": 1636675200000,
+      "last_ms": 1793999580000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:13:00+00:00",
+      "gaps_over_3_days": 9,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 10,
+      "archives": [
+        {
+          "archive": "SPXUSD_2021.zip",
+          "rows_in_range": 45446,
+          "sha256": "14f2f6f6070e8a096f377d5d1ddf646c5c742f76912cc1fbe4ecbfb9d9221278"
+        },
+        {
+          "archive": "SPXUSD_2022.zip",
+          "rows_in_range": 341671,
+          "sha256": "fe8869fae70a4e536ce429daae9265e1904dc6323b5e6112ff13aa2bc5790c40"
+        },
+        {
+          "archive": "SPXUSD_2023.zip",
+          "rows_in_range": 291440,
+          "sha256": "ed12d6f59929101f2e09c2f1c5028f39ab8af3b36841b41532d13f7f68c3aef9"
+        },
+        {
+          "archive": "SPXUSD_2024.zip",
+          "rows_in_range": 334398,
+          "sha256": "759e1911963f4b3275cc30a35f8937435afb03ee1eaac2f6a28aa0c9c7068da7"
+        },
+        {
+          "archive": "SPXUSD_2025.zip",
+          "rows_in_range": 339136,
+          "sha256": "5a3729fd46686a0d88d43b7f64f7915bd5df43c940a8fa72ad63e348b64b2ae7"
+        },
+        {
+          "archive": "SPXUSD_2026_01.zip",
+          "rows_in_range": 27739,
+          "sha256": "3b68a5b357979857fe89e1b4940272bdf73a2ccd3e200ecaada067d0bc34662c"
+        },
+        {
+          "archive": "SPXUSD_2026_02.zip",
+          "rows_in_range": 26495,
+          "sha256": "175fb8d71b5f4bdfdb610784aff6a1f4252130304972d671d64d4d98e3abe72d"
+        },
+        {
+          "archive": "SPXUSD_2026_03.zip",
+          "rows_in_range": 29658,
+          "sha256": "cdf8bf5b39bd26cd548dbab0c462d80387e8e1e54ce772e58c6de8932a352983"
+        },
+        {
+          "archive": "SPXUSD_2026_04.zip",
+          "rows_in_range": 27973,
+          "sha256": "3d6cf30c3f29558fdedf8911178ded118b45799cdf397cc06b19653ae4f76593"
+        },
+        {
+          "archive": "SPXUSD_2026_05.zip",
+          "rows_in_range": 27755,
+          "sha256": "a16ca6850ff44b32ad8c5cd8579c3711492001b8bc81df9a161f079344bd725c"
+        },
+        {
+          "archive": "SPXUSD_2026_06.zip",
+          "rows_in_range": 29110,
+          "sha256": "2d969628d3d660bf27b1b5c95c57e778ec8ed502a8ce896ccca8de37d3a7105d"
+        },
+        {
+          "archive": "SPXUSD_2026_07.zip",
+          "rows_in_range": 30108,
+          "sha256": "1b3cd6d9ef551e71e7f05fdc0ca22af40b2e7d571360a8a545d54321d2653c2c"
+        },
+        {
+          "archive": "SPXUSD_2026_08.zip",
+          "rows_in_range": 28277,
+          "sha256": "4f9c72f9d35b0ac76c1caf471ca06820312b5209178cf0cc02ae9bc4342ff9c8"
+        },
+        {
+          "archive": "SPXUSD_2026_09.zip",
+          "rows_in_range": 29113,
+          "sha256": "7b2d3d6dd1f47a9c30a23181f8511356b366d4421d17a705feaf2ce88b26cbce"
+        },
+        {
+          "archive": "SPXUSD_2026_10.zip",
+          "rows_in_range": 28979,
+          "sha256": "d4f008179cec3b81e412f26c259a9bc76c7abef17fba3506792e814947f2b7c5"
+        },
+        {
+          "archive": "SPXUSD_2026_11.zip",
+          "rows_in_range": 6640,
+          "sha256": "4ddbee1c4a7a3428d6ba8b92c609e4d2b06480c486689b6385008893c5a0776b"
+        }
+      ]
+    },
+    "NSXUSD": {
+      "file": "ohlcv/NSX_USD_bid_1m.csv",
+      "rows": 1661748,
+      "sha256": "f639b61dad6dc1d7d5bf208a160fad30a5553683e4c66a0e357a5ed731f87bd9",
+      "first_ms": 1636675200000,
+      "last_ms": 1793999580000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:13:00+00:00",
+      "gaps_over_3_days": 10,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 500,
+      "archives": [
+        {
+          "archive": "NSXUSD_2021.zip",
+          "rows_in_range": 46239,
+          "sha256": "ea22aa9f9a10f234cde03428f8117b2725e550f45ca17eb95fb1e4a9792c2977"
+        },
+        {
+          "archive": "NSXUSD_2022.zip",
+          "rows_in_range": 342771,
+          "sha256": "b6bfac92a74c36719812014a38ce8cfcad05b4f15aca0d0e9e0dc1b1b3a098e7"
+        },
+        {
+          "archive": "NSXUSD_2023.zip",
+          "rows_in_range": 299349,
+          "sha256": "0282f3b419c254d168c5dba86cdcfe6527f0d4ad32dd407a401d9367e2520ecc"
+        },
+        {
+          "archive": "NSXUSD_2024.zip",
+          "rows_in_range": 340986,
+          "sha256": "70429c487544991e42d34ce505be00b2d02b74a6633b23ca07eba0f80bf24566"
+        },
+        {
+          "archive": "NSXUSD_2025.zip",
+          "rows_in_range": 340553,
+          "sha256": "865006539b7a3abe6ce3742e17604e5bf003b89583b349228570d343f78ae16f"
+        },
+        {
+          "archive": "NSXUSD_2026_01.zip",
+          "rows_in_range": 27837,
+          "sha256": "62d23149b48dffeff745915087563f8a712eca4cb3f557376fc53d34071245af"
+        },
+        {
+          "archive": "NSXUSD_2026_02.zip",
+          "rows_in_range": 26500,
+          "sha256": "7904a738862d9dc97e3e0be943765af6e02a8550066cbe8beddd7feb629b1f4e"
+        },
+        {
+          "archive": "NSXUSD_2026_03.zip",
+          "rows_in_range": 29498,
+          "sha256": "d62628b53b06f294f9c62dcd3d165c222391d1e630a59c1e9eba71aff14acf42"
+        },
+        {
+          "archive": "NSXUSD_2026_04.zip",
+          "rows_in_range": 28019,
+          "sha256": "3f16217c1714d9039c9eb0dd28c5c98012dcdc0967151e240d41162303f9fb17"
+        },
+        {
+          "archive": "NSXUSD_2026_05.zip",
+          "rows_in_range": 27750,
+          "sha256": "5fc38b0cc76358f5d0d5ca5b7a68d0195a7148a3e22a320d85e85ad8276dbb94"
+        },
+        {
+          "archive": "NSXUSD_2026_06.zip",
+          "rows_in_range": 29189,
+          "sha256": "5a97ec616b67f0e0fb62cac4e8f8902c10309119629a36f7f651954230c58eb1"
+        },
+        {
+          "archive": "NSXUSD_2026_07.zip",
+          "rows_in_range": 30396,
+          "sha256": "dd8a7ccb5651f614de6a46ba8faceebd73996a984e6a5ed55d9abe563fa18afe"
+        },
+        {
+          "archive": "NSXUSD_2026_08.zip",
+          "rows_in_range": 28432,
+          "sha256": "b8d8cf3f1599ac2ae018883995df88ad552b790dd2a64c14c11d63b8883b8b8e"
+        },
+        {
+          "archive": "NSXUSD_2026_09.zip",
+          "rows_in_range": 29172,
+          "sha256": "f160318e161d0dee92dca055a96285c41087f1d695fe6039d773e61748644224"
+        },
+        {
+          "archive": "NSXUSD_2026_10.zip",
+          "rows_in_range": 29059,
+          "sha256": "5aae8cd4064e226b53331ad274e13a91a94997640c421d2e053f5e82ee586e09"
+        },
+        {
+          "archive": "NSXUSD_2026_11.zip",
+          "rows_in_range": 6738,
+          "sha256": "afddb9c6aaa48d2cdbfa48bc52a10837fac85069a8a8abc0c8355d715c6d50f9"
+        }
+      ]
+    },
+    "AUDUSD": {
+      "file": "ohlcv/AUD_USD_bid_1m.csv",
+      "rows": 1802804,
+      "sha256": "3a7a5c1848dc6ae4a6908fb338906c4c98b39a5e24b7dca938c47061cb2c5e1c",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 10,
+      "archives": [
+        {
+          "archive": "AUDUSD_2021.zip",
+          "rows_in_range": 51341,
+          "sha256": "3195b1b2a78ad67585cd68bbd91c5a775cab3476cf583d2a17acdd28c093e260"
+        },
+        {
+          "archive": "AUDUSD_2022.zip",
+          "rows_in_range": 371555,
+          "sha256": "95eba4fd9049568a40cbb8a7d82c5f6e2e883705cf15368e155a972830867ec4"
+        },
+        {
+          "archive": "AUDUSD_2023.zip",
+          "rows_in_range": 322149,
+          "sha256": "848bac7c7d4ec9db601b2d719bcd2824978f68d1ec01438944e462c3abf5e809"
+        },
+        {
+          "archive": "AUDUSD_2024.zip",
+          "rows_in_range": 370750,
+          "sha256": "56338ceb24d7013137e31810be1fe4326d0a4480342829e74fd9355e5efbb7f0"
+        },
+        {
+          "archive": "AUDUSD_2025.zip",
+          "rows_in_range": 371221,
+          "sha256": "3d2ecffedfc8e1fb5aecb9ceb7dbd7779f24361653e5f30b96b8c7bd9f5b8365"
+        },
+        {
+          "archive": "AUDUSD_2026_01.zip",
+          "rows_in_range": 30102,
+          "sha256": "c0e7460e33ad3d6343ec85a9c2d63e3408e63e4f7aa5ee61330fde2a4c85fdcb"
+        },
+        {
+          "archive": "AUDUSD_2026_02.zip",
+          "rows_in_range": 28694,
+          "sha256": "353d5abbd3780d28436a20e0dc44d71d62776b94ee8b4a98c08173bfbce3403a"
+        },
+        {
+          "archive": "AUDUSD_2026_03.zip",
+          "rows_in_range": 31969,
+          "sha256": "2dad41f3c1e745e8e4e7b8a6ac04885bed89c2a70f19647e0e0e9ca15274c23c"
+        },
+        {
+          "archive": "AUDUSD_2026_04.zip",
+          "rows_in_range": 31505,
+          "sha256": "9dd9739e91398b4becbaa1a0853ed133abbda6e61406c1a72d400cb75f3773c6"
+        },
+        {
+          "archive": "AUDUSD_2026_05.zip",
+          "rows_in_range": 29586,
+          "sha256": "fd68b238af7e5cf2251c3937d6420aa2680494ff9887ba4e53ac5e7e70e96c54"
+        },
+        {
+          "archive": "AUDUSD_2026_06.zip",
+          "rows_in_range": 31528,
+          "sha256": "d61ba274e85dede2f8046880fa13b44579a36ef1be2eccacaf4abd9f226d8819"
+        },
+        {
+          "archive": "AUDUSD_2026_07.zip",
+          "rows_in_range": 32510,
+          "sha256": "959c93c7b8333139b50a147233d1617f980f8b941ed8f652ab389a2f7417ec9f"
+        },
+        {
+          "archive": "AUDUSD_2026_08.zip",
+          "rows_in_range": 30422,
+          "sha256": "6a03b9eff0077dcaafee727868db2598da53836517db0850b87aee62881deab9"
+        },
+        {
+          "archive": "AUDUSD_2026_09.zip",
+          "rows_in_range": 31406,
+          "sha256": "271c7de53cddf9e9447d5ab164f3176b24033d34239c6b2477cb36b72d3a1051"
+        },
+        {
+          "archive": "AUDUSD_2026_10.zip",
+          "rows_in_range": 31125,
+          "sha256": "c35dada8b4aa42d7032e90fc5735919d527ede28ef9ff69dd25c924d49810b21"
+        },
+        {
+          "archive": "AUDUSD_2026_11.zip",
+          "rows_in_range": 7191,
+          "sha256": "5a4e5e76e7ce7a86866cfde77d5e2cb9a11a9a9d067a4525801f5119ea666dd6"
+        }
+      ]
+    },
+    "USDCAD": {
+      "file": "ohlcv/USD_CAD_bid_1m.csv",
+      "rows": 1803220,
+      "sha256": "6e60aa9550e77d51550ef2e8c20da9a66f2a3cc712cc62b1b9e443bfa3b29cad",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 239,
+      "duplicate_minutes_conflicting_kept_first": 26,
+      "archives": [
+        {
+          "archive": "USDCAD_2021.zip",
+          "rows_in_range": 51384,
+          "sha256": "6c40e36b662935c844bd8b80e9444b1c6627352e093c9002e4a1591d71723b0b"
+        },
+        {
+          "archive": "USDCAD_2022.zip",
+          "rows_in_range": 371400,
+          "sha256": "023c13769f84060438344cc27e3be891054ae28604e82ce619af56251d53d6f1"
+        },
+        {
+          "archive": "USDCAD_2023.zip",
+          "rows_in_range": 321338,
+          "sha256": "7e65fa63d8a5875c57114f19ef03441647a4bbef0fbb562021990dce2e821434"
+        },
+        {
+          "archive": "USDCAD_2024.zip",
+          "rows_in_range": 370944,
+          "sha256": "f2a1288cf8bfdde840d694cf62a84cb733edd7fc0efcd9607eb5ed0a9bbbcbce"
+        },
+        {
+          "archive": "USDCAD_2025.zip",
+          "rows_in_range": 372052,
+          "sha256": "aa72ce3de6f6346770f44fad5928b9b2ee65b4d37380dde6ed988cc07a8e2ee3"
+        },
+        {
+          "archive": "USDCAD_2026_01.zip",
+          "rows_in_range": 30181,
+          "sha256": "902178b23b5cc1a81765b9b6be14abb574c67135eba2d9ab93601cf9ac6cb9c8"
+        },
+        {
+          "archive": "USDCAD_2026_02.zip",
+          "rows_in_range": 28666,
+          "sha256": "ecb3d18d6250ab2922bed531885f4245feb68b3f9d1682e5db5e28454fb44852"
+        },
+        {
+          "archive": "USDCAD_2026_03.zip",
+          "rows_in_range": 31940,
+          "sha256": "cbe52716c9eb56ac190d3543a1340cda1632d66c3700b195fdaab3248ad69394"
+        },
+        {
+          "archive": "USDCAD_2026_04.zip",
+          "rows_in_range": 31449,
+          "sha256": "0ad29043e216ec09035a5c6ef2f946f8a9c7271d6c246c53dae010f68c6193d6"
+        },
+        {
+          "archive": "USDCAD_2026_05.zip",
+          "rows_in_range": 30053,
+          "sha256": "62752cc9ae865f3aa9f217e49f3b3aa65393d70015f052f04cbbc58f7567c5a8"
+        },
+        {
+          "archive": "USDCAD_2026_06.zip",
+          "rows_in_range": 31539,
+          "sha256": "a4fa5c554ee591a9dd82afb856dc4e99c3947efe56789cfad42514c5788471b4"
+        },
+        {
+          "archive": "USDCAD_2026_07.zip",
+          "rows_in_range": 32431,
+          "sha256": "0b429798aafe5cb20be485fa8e478d53edcefa66f407f028d846c067a8f3af08"
+        },
+        {
+          "archive": "USDCAD_2026_08.zip",
+          "rows_in_range": 30451,
+          "sha256": "bda5cb1e584ea7409068e5af813166c2d2ea62d23e64db776f0b139a8374438c"
+        },
+        {
+          "archive": "USDCAD_2026_09.zip",
+          "rows_in_range": 31368,
+          "sha256": "6992200abad4371eb95c46db89da8a9250306b81c7b10e5e80d4456638f0008d"
+        },
+        {
+          "archive": "USDCAD_2026_10.zip",
+          "rows_in_range": 31107,
+          "sha256": "3ede76b0781aaa44506ad7af61329a746c64ee399089afb6f24ef245298bcd10"
+        },
+        {
+          "archive": "USDCAD_2026_11.zip",
+          "rows_in_range": 7182,
+          "sha256": "c75d7142bfdc9fae18cea0c6eccc8158881aaf38a0c334ddef82eea3b0005435"
+        }
+      ]
+    },
+    "USDCHF": {
+      "file": "ohlcv/USD_CHF_bid_1m.csv",
+      "rows": 1799190,
+      "sha256": "fd5d951b39698bc942d5660e305f4e0c2b9aba36c503a26e2c3b9c905785cb19",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 10,
+      "archives": [
+        {
+          "archive": "USDCHF_2021.zip",
+          "rows_in_range": 50579,
+          "sha256": "92c2f58a84c1672b8d4515345c9639d01a55799fbb34822ccc34a7d1140816fd"
+        },
+        {
+          "archive": "USDCHF_2022.zip",
+          "rows_in_range": 369408,
+          "sha256": "be2788f2abea047c6bf4d43966976e7edd45282bd67375fccf437322f5e71c74"
+        },
+        {
+          "archive": "USDCHF_2023.zip",
+          "rows_in_range": 320793,
+          "sha256": "1216014396486faa84721c638387f4f6820a9ac0fbc1de0562d29421678eef88"
+        },
+        {
+          "archive": "USDCHF_2024.zip",
+          "rows_in_range": 371034,
+          "sha256": "a93db5099665b113e595b84639e8d3ede610059bab32a44765ebc4b8b8f90431"
+        },
+        {
+          "archive": "USDCHF_2025.zip",
+          "rows_in_range": 371265,
+          "sha256": "831032e80a03626df3612fc38cc17a85b7c98878f264ee8cafd7a3a01d1e8ea0"
+        },
+        {
+          "archive": "USDCHF_2026_01.zip",
+          "rows_in_range": 30073,
+          "sha256": "316990263974e76a6c90fee0559f4e5ede70f07b48a3e2c3251074f2e72d34e5"
+        },
+        {
+          "archive": "USDCHF_2026_02.zip",
+          "rows_in_range": 28649,
+          "sha256": "c1432631133aa9e2cffcdd46b51ebcfd7c41b4388c5504331bfb2cfd0a9aac02"
+        },
+        {
+          "archive": "USDCHF_2026_03.zip",
+          "rows_in_range": 31941,
+          "sha256": "346cc33b705361d74b3551ff5522668fe24c81ea62f5b69c03dc3ddd4bd3d965"
+        },
+        {
+          "archive": "USDCHF_2026_04.zip",
+          "rows_in_range": 31422,
+          "sha256": "7366adedc71b3b20ad9333e0b7181c59a82fdb170130896026d03fd74d2ca050"
+        },
+        {
+          "archive": "USDCHF_2026_05.zip",
+          "rows_in_range": 29997,
+          "sha256": "ed31b164fdc7f9ec8e18dd49729643c97710ee5d2036f7178de961f6b39d58aa"
+        },
+        {
+          "archive": "USDCHF_2026_06.zip",
+          "rows_in_range": 31510,
+          "sha256": "0a0d51642272e63be057a0833e1b4440575fcbe8a161d64acadacdd13b2b6711"
+        },
+        {
+          "archive": "USDCHF_2026_07.zip",
+          "rows_in_range": 32445,
+          "sha256": "30d411a7ef82913f972e6d8a73b7de0ad59ea28cc9bbe3a487fa1db6345503c2"
+        },
+        {
+          "archive": "USDCHF_2026_08.zip",
+          "rows_in_range": 30437,
+          "sha256": "5bdc89e88232f0765b8dd9aea96e07bc9f03cd8089d1ea4d5dc675b7d4630c4a"
+        },
+        {
+          "archive": "USDCHF_2026_09.zip",
+          "rows_in_range": 31534,
+          "sha256": "34a4eaf8960e2c60e74fbb4f993bc4581e09dba9ddde9b9aac048c7e9a138e32"
+        },
+        {
+          "archive": "USDCHF_2026_10.zip",
+          "rows_in_range": 31168,
+          "sha256": "033cc73587e043f3740a7e2acc2a1f9d7a9839564e4669a18de95c5f61a92255"
+        },
+        {
+          "archive": "USDCHF_2026_11.zip",
+          "rows_in_range": 7185,
+          "sha256": "5dbb82e7c6ddad94494a76d7f1f076e3123a9060d86ba911f90e3199398853eb"
+        }
+      ]
+    },
+    "NZDUSD": {
+      "file": "ohlcv/NZD_USD_bid_1m.csv",
+      "rows": 1800508,
+      "sha256": "fd201e7a604c3b1d893246be83c190c458dacb1ce119b54850e6e67637972381",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 24,
+      "archives": [
+        {
+          "archive": "NZDUSD_2021.zip",
+          "rows_in_range": 51415,
+          "sha256": "63f44bf033e57f4ae0cecdfb8a6111530508d1f723ae06d4401d1e53644e9f6b"
+        },
+        {
+          "archive": "NZDUSD_2022.zip",
+          "rows_in_range": 370419,
+          "sha256": "5513315b6106b59f787a8ec88a64dca32e9f8d8706d5c0404844c7c180f1a974"
+        },
+        {
+          "archive": "NZDUSD_2023.zip",
+          "rows_in_range": 321032,
+          "sha256": "46a4637ad894071945598d76ee833cbc09daf370b882a345560302106061a38e"
+        },
+        {
+          "archive": "NZDUSD_2024.zip",
+          "rows_in_range": 370386,
+          "sha256": "94462ccf8ee9d1a23a1c14d4824565c07a5a20c9d97f29896c05d9ee80a2a5f5"
+        },
+        {
+          "archive": "NZDUSD_2025.zip",
+          "rows_in_range": 371135,
+          "sha256": "7a69b46af8916323923f6aaefe7a046b09510da1eece1dd653e0e4bd01d2d98a"
+        },
+        {
+          "archive": "NZDUSD_2026_01.zip",
+          "rows_in_range": 30142,
+          "sha256": "f6802a2b0a38643742b5615f3a5271a1c8dcda605681f0e470e69e8a6824a329"
+        },
+        {
+          "archive": "NZDUSD_2026_02.zip",
+          "rows_in_range": 28684,
+          "sha256": "a99a2da18aa60019f6635532ded9a19fb6b763165595bc2f1f5ab4c7c04ffeba"
+        },
+        {
+          "archive": "NZDUSD_2026_03.zip",
+          "rows_in_range": 31967,
+          "sha256": "9be859502a57272de38ddef7354344cf7b3015bb0327b8897d51c467cb50fa44"
+        },
+        {
+          "archive": "NZDUSD_2026_04.zip",
+          "rows_in_range": 31388,
+          "sha256": "20ab78748d0b56acbef9d8c8ce114346daa8ad5aa6e6972fbb775e8e799c8db1"
+        },
+        {
+          "archive": "NZDUSD_2026_05.zip",
+          "rows_in_range": 29970,
+          "sha256": "0802719f82310b3d4f57d528c151b1b80d06607cd45f109d5986046e4917f317"
+        },
+        {
+          "archive": "NZDUSD_2026_06.zip",
+          "rows_in_range": 31448,
+          "sha256": "5f8056dc53aa3898cb2d5b67685fec84b9fa03495aaba678d817caab502b9ce6"
+        },
+        {
+          "archive": "NZDUSD_2026_07.zip",
+          "rows_in_range": 32498,
+          "sha256": "4cba639356f7700758aaa05f32f8ff6d7c62c2ae2173d4615584706b5d2911a5"
+        },
+        {
+          "archive": "NZDUSD_2026_08.zip",
+          "rows_in_range": 30475,
+          "sha256": "6f113d4145619d4cb70a5eb34627c4f0a73d87545580b8fa8548610188a91e1d"
+        },
+        {
+          "archive": "NZDUSD_2026_09.zip",
+          "rows_in_range": 31463,
+          "sha256": "303a045bf29a41b7d6a6b8da3891bef10673ffce6041d804fdb2abc190409cd3"
+        },
+        {
+          "archive": "NZDUSD_2026_10.zip",
+          "rows_in_range": 31166,
+          "sha256": "f33870c30566cc805272d0c1bfdf2e02d896abac6fb640eacbd1d0a2b794a903"
+        },
+        {
+          "archive": "NZDUSD_2026_11.zip",
+          "rows_in_range": 7184,
+          "sha256": "c3b93eff1a0b0d794174ee4ea946d2bd35e43aa5b0e044b359e2082089667cbd"
+        }
+      ]
+    },
+    "EURJPY": {
+      "file": "ohlcv/EUR_JPY_bid_1m.csv",
+      "rows": 1805607,
+      "sha256": "ab8b94ddf71085ecbb3431c7ea3801de3855c298cd9ed498a30c47860391caae",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 241,
+      "duplicate_minutes_conflicting_kept_first": 248,
+      "archives": [
+        {
+          "archive": "EURJPY_2021.zip",
+          "rows_in_range": 51455,
+          "sha256": "d2381a6de837970aecb8f9f2ffdfb356ea025efa791705099ef2f42a22152b1b"
+        },
+        {
+          "archive": "EURJPY_2022.zip",
+          "rows_in_range": 372194,
+          "sha256": "f6f9f4aed176479f6afbfa702610ab263177feefad2aad96a314c88a6dfcb5c7"
+        },
+        {
+          "archive": "EURJPY_2023.zip",
+          "rows_in_range": 323100,
+          "sha256": "1d211678d44bf3d53678ecfeb9b8081b26931b496bb248cbb554e3d461776780"
+        },
+        {
+          "archive": "EURJPY_2024.zip",
+          "rows_in_range": 371531,
+          "sha256": "2f0e7bf0476ed825d0a359701a343f2c46cc6f61f4a50c60e862e71a01a3707a"
+        },
+        {
+          "archive": "EURJPY_2025.zip",
+          "rows_in_range": 371983,
+          "sha256": "c391d498d350e307c8d144c62993212c2b5d5238bc40184b250c8e1f2e3bca98"
+        },
+        {
+          "archive": "EURJPY_2026_01.zip",
+          "rows_in_range": 30120,
+          "sha256": "9af5633c07075407bc424cffb2d764492960f4cdc9414b9102b3373cf58ff658"
+        },
+        {
+          "archive": "EURJPY_2026_02.zip",
+          "rows_in_range": 28701,
+          "sha256": "b829111e062f5df27a4016cfab022094df1f129981867465cb1b44c26ef34eed"
+        },
+        {
+          "archive": "EURJPY_2026_03.zip",
+          "rows_in_range": 30519,
+          "sha256": "94ddd5d09d6e9c1c48b55f4d7dab8acf63faade7fe16f6be20bf520fc0336b12"
+        },
+        {
+          "archive": "EURJPY_2026_04.zip",
+          "rows_in_range": 31546,
+          "sha256": "cd1508399061af69fbfed2fd34846746820e2571294ca05f757ec8bed92b7aaf"
+        },
+        {
+          "archive": "EURJPY_2026_05.zip",
+          "rows_in_range": 30123,
+          "sha256": "e52885c0551a134901c53a487c1401b622e3eb1e257c727a6b663b283504fba2"
+        },
+        {
+          "archive": "EURJPY_2026_06.zip",
+          "rows_in_range": 31587,
+          "sha256": "3949f1229c2bf1e692ca437fe20bc364146abfe6712de53d94c79c30246a36a3"
+        },
+        {
+          "archive": "EURJPY_2026_07.zip",
+          "rows_in_range": 32718,
+          "sha256": "40e519735d0592d92ce7b6cd1dddac1d84549a44986088da3ec3f7be6d1f11ea"
+        },
+        {
+          "archive": "EURJPY_2026_08.zip",
+          "rows_in_range": 30608,
+          "sha256": "e092407b2fab1a430b04ddd72a84d40b4421e1c7e190af37698e7b496cd4d42b"
+        },
+        {
+          "archive": "EURJPY_2026_09.zip",
+          "rows_in_range": 31609,
+          "sha256": "9a1cfbdb55a224f9fffe2a1711660d6e73decdbafee9744733c993fb9b62fcc3"
+        },
+        {
+          "archive": "EURJPY_2026_10.zip",
+          "rows_in_range": 31118,
+          "sha256": "88d9dba2b581cf9efaa703ddead3349dd96e602acbf17fbfb9f44911b8c9b9ac"
+        },
+        {
+          "archive": "EURJPY_2026_11.zip",
+          "rows_in_range": 7184,
+          "sha256": "4b95d9d001322dbfdc84e076a00f8743fa69f2c6a999ec69dbf213c04d2e2e73"
+        }
+      ]
+    },
+    "GBPJPY": {
+      "file": "ohlcv/GBP_JPY_bid_1m.csv",
+      "rows": 1805985,
+      "sha256": "bf01c18457e78ef187eeccaae8c4f6cb3facaa93e2e981a50146f7f738f1400c",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 241,
+      "duplicate_minutes_conflicting_kept_first": 310,
+      "archives": [
+        {
+          "archive": "GBPJPY_2021.zip",
+          "rows_in_range": 51385,
+          "sha256": "d7fd9ac2e5f6cef855f1b0c887f06bfdf5e360670281e828b0446a6fc98d055e"
+        },
+        {
+          "archive": "GBPJPY_2022.zip",
+          "rows_in_range": 372289,
+          "sha256": "dabe6e55d8c886a430a3e656272001581fa93dfc2d29cb379ec5fdabbf8f30cb"
+        },
+        {
+          "archive": "GBPJPY_2023.zip",
+          "rows_in_range": 322131,
+          "sha256": "9e50431f9d3f7302256d8c3af7cf4b03f8db49d4b53e33ef380aa3b0c8809367"
+        },
+        {
+          "archive": "GBPJPY_2024.zip",
+          "rows_in_range": 372642,
+          "sha256": "1665a25f48715a205853815da41b2709042a3bafb1105fd2d9de529486cb8304"
+        },
+        {
+          "archive": "GBPJPY_2025.zip",
+          "rows_in_range": 371076,
+          "sha256": "0476dd243e2c4d7ca90b1e4f7230a1c598122191c0135f6b5f2752e9e9181940"
+        },
+        {
+          "archive": "GBPJPY_2026_01.zip",
+          "rows_in_range": 30137,
+          "sha256": "5dbc0a9bed2e72519495f687be08a8731b9db73d245b64646507a35d512f78eb"
+        },
+        {
+          "archive": "GBPJPY_2026_02.zip",
+          "rows_in_range": 28694,
+          "sha256": "2743220a27f267f7005f09e39461e5b337e40a1e7912f841936d6b5b7af1a46f"
+        },
+        {
+          "archive": "GBPJPY_2026_03.zip",
+          "rows_in_range": 31930,
+          "sha256": "89633c8fd21c5c4b6d0cf7bac025f3893268c43d4e10f9dddd6ba9c8d9dc29e2"
+        },
+        {
+          "archive": "GBPJPY_2026_04.zip",
+          "rows_in_range": 31472,
+          "sha256": "e6dd6641053a8e54ba03a0325f4f22e5826b9df6524313f665c73f173411a4ce"
+        },
+        {
+          "archive": "GBPJPY_2026_05.zip",
+          "rows_in_range": 30083,
+          "sha256": "b77299d1a1fcacc2f271917df93b6a5e55ff425e8ab0c14bcc8c95f1ab242e9f"
+        },
+        {
+          "archive": "GBPJPY_2026_06.zip",
+          "rows_in_range": 31549,
+          "sha256": "d18349544ba4e570a6b68f22cea1ba73edc766a1930e397ccceebaf24c6b47ac"
+        },
+        {
+          "archive": "GBPJPY_2026_07.zip",
+          "rows_in_range": 32667,
+          "sha256": "ecf62bca5e368e84e01dffe23975d6d642178b579afe545ac128d00cfa3b4da3"
+        },
+        {
+          "archive": "GBPJPY_2026_08.zip",
+          "rows_in_range": 30590,
+          "sha256": "e93a3bfb9fbc855e8d1a0fd3b3bf44a724ace38954911160378e63cf9f853673"
+        },
+        {
+          "archive": "GBPJPY_2026_09.zip",
+          "rows_in_range": 31594,
+          "sha256": "a07a26e816af83f067b57bb442473a5be61a95e224fba374d3ca1227d59e21be"
+        },
+        {
+          "archive": "GBPJPY_2026_10.zip",
+          "rows_in_range": 31117,
+          "sha256": "0bc97dc83c536c38c779de58181385538d5eb837a381747070f2363d2ff719d3"
+        },
+        {
+          "archive": "GBPJPY_2026_11.zip",
+          "rows_in_range": 7180,
+          "sha256": "7a00080b5c2106cfb804d311a471930a9914a16390c4bc55d274444a7773a9cc"
+        }
+      ]
+    },
+    "EURGBP": {
+      "file": "ohlcv/EUR_GBP_bid_1m.csv",
+      "rows": 1803876,
+      "sha256": "7921eca5d7b59611134964f1ecbea51768f0b173638937e1e6e1087f84e91957",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 10,
+      "archives": [
+        {
+          "archive": "EURGBP_2021.zip",
+          "rows_in_range": 51451,
+          "sha256": "89ae90e71df735d67ab7eaa3c3cfc25ca1f82ce7cf74725ccb6484793fb80425"
+        },
+        {
+          "archive": "EURGBP_2022.zip",
+          "rows_in_range": 372271,
+          "sha256": "d54a0b54580ade0ccd102a5fab38227387bfa5700ad8bef91090e3c3b1d6b7da"
+        },
+        {
+          "archive": "EURGBP_2023.zip",
+          "rows_in_range": 322437,
+          "sha256": "284904734c775086c1999ad43593c918e704f615a40a7918bedf3ed9ca8da10e"
+        },
+        {
+          "archive": "EURGBP_2024.zip",
+          "rows_in_range": 370320,
+          "sha256": "09bf9c6641cbd553860e994855d946a6ff479e3e57f2af670a956d39a491740e"
+        },
+        {
+          "archive": "EURGBP_2025.zip",
+          "rows_in_range": 371285,
+          "sha256": "0495a462d011c82e93f1cc52e99c83d4944fe17a3390a4c4ca605d2c45e046d1"
+        },
+        {
+          "archive": "EURGBP_2026_01.zip",
+          "rows_in_range": 30087,
+          "sha256": "4348fa9d1f1ee259c1ff070b138e4eaf122464fc6af7254284e320a22ac8a906"
+        },
+        {
+          "archive": "EURGBP_2026_02.zip",
+          "rows_in_range": 28673,
+          "sha256": "97a7e54ed2e76d6e2704f2780b86dfffae16fdf686c3c3b65ab37bb3d9354b70"
+        },
+        {
+          "archive": "EURGBP_2026_03.zip",
+          "rows_in_range": 31945,
+          "sha256": "f6a924b200fd98479574a77f69a30891f2b5d5631e925b0ef6cc0e90817b31f4"
+        },
+        {
+          "archive": "EURGBP_2026_04.zip",
+          "rows_in_range": 31468,
+          "sha256": "092034be7bc2ccfc3303ccb8bc439bbca20abbd497de336e4b7d7ed060f1774a"
+        },
+        {
+          "archive": "EURGBP_2026_05.zip",
+          "rows_in_range": 29978,
+          "sha256": "d204889a66a71b3a0416544bb08233d04b070a79260703f9be0c987a4f57f9ee"
+        },
+        {
+          "archive": "EURGBP_2026_06.zip",
+          "rows_in_range": 31520,
+          "sha256": "8aaffd233d33e21e8799c7f689bcb40963ace9206ab5a8025a1805c1ea6a6b8e"
+        },
+        {
+          "archive": "EURGBP_2026_07.zip",
+          "rows_in_range": 32579,
+          "sha256": "33645fe365673c3e0dfe0fe72e87da6c7f0fe704f015dff32360b961b6bb8fc1"
+        },
+        {
+          "archive": "EURGBP_2026_08.zip",
+          "rows_in_range": 30391,
+          "sha256": "30c9864bc5fe3169a950c9234cd75eff30d63c6115536b8b18bc58cb75ef337e"
+        },
+        {
+          "archive": "EURGBP_2026_09.zip",
+          "rows_in_range": 31406,
+          "sha256": "accb9cf28e411abecd8128cf19a3b8945d0e7edc539a1574b217143780cc5c7b"
+        },
+        {
+          "archive": "EURGBP_2026_10.zip",
+          "rows_in_range": 31138,
+          "sha256": "daa37f5adcc4537ad1b5a11dfcb05edf9b0a0be9d6ef9057bbed589fbbf0c333"
+        },
+        {
+          "archive": "EURGBP_2026_11.zip",
+          "rows_in_range": 7177,
+          "sha256": "883782781ced17be8f77be40d478d1ffda507dded54430b74682d5feadc5e75d"
+        }
+      ]
+    },
+    "AUDJPY": {
+      "file": "ohlcv/AUD_JPY_bid_1m.csv",
+      "rows": 1807781,
+      "sha256": "89e82f0b74f13a2481ce124bea965731dd96c32610f0702aaca3c88dacfb4c9e",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 109,
+      "archives": [
+        {
+          "archive": "AUDJPY_2021.zip",
+          "rows_in_range": 51595,
+          "sha256": "5a1e8130faffd4b312ae556a247bb82b3d5a81aa6075fdc3c4fa93d1d94c062c"
+        },
+        {
+          "archive": "AUDJPY_2022.zip",
+          "rows_in_range": 372509,
+          "sha256": "0eae48faf6a87365e7ad54d5de299032be36ecc230c2596c4877da27b7fb4f8c"
+        },
+        {
+          "archive": "AUDJPY_2023.zip",
+          "rows_in_range": 322847,
+          "sha256": "8b42bf15216db19035ec704d31d00fc63af653beb10097c5f8168539d3a1429a"
+        },
+        {
+          "archive": "AUDJPY_2024.zip",
+          "rows_in_range": 372437,
+          "sha256": "7750f9b7b29476c4a9c16c59717fd72822923c8cbede6f1b35af7d18bf9d0b22"
+        },
+        {
+          "archive": "AUDJPY_2025.zip",
+          "rows_in_range": 371877,
+          "sha256": "fff5bdcc33b9cd8ca20571f7a597f746f0c5c093fda7cba09dff1b2dd806c486"
+        },
+        {
+          "archive": "AUDJPY_2026_01.zip",
+          "rows_in_range": 30142,
+          "sha256": "6dd120e3c92b4b1634e5838167ba27c2209a998cb69acba89b8449e437dee2a3"
+        },
+        {
+          "archive": "AUDJPY_2026_02.zip",
+          "rows_in_range": 28717,
+          "sha256": "ec38074acd560951366add0090daf618e9aa375b92c2e6517b1f328bf20f86e9"
+        },
+        {
+          "archive": "AUDJPY_2026_03.zip",
+          "rows_in_range": 31963,
+          "sha256": "1e581d779dd444d20dceba2e6bd660d3c73b315941345f3e4e3875b1ae5aacae"
+        },
+        {
+          "archive": "AUDJPY_2026_04.zip",
+          "rows_in_range": 31485,
+          "sha256": "bacedfb9d00d1c081f3d7c751e1bb68bd8e5238f3beb49cdd721dcf050b7203b"
+        },
+        {
+          "archive": "AUDJPY_2026_05.zip",
+          "rows_in_range": 30073,
+          "sha256": "a7aec9b1d9a1b68b4e9594a5d40cb9e426eb563cee09ba90d9cf9a923f3a070c"
+        },
+        {
+          "archive": "AUDJPY_2026_06.zip",
+          "rows_in_range": 31548,
+          "sha256": "f4eb165e5f3f1a2e25c07778c6df45334286d472961074ab354dcfc761d993bd"
+        },
+        {
+          "archive": "AUDJPY_2026_07.zip",
+          "rows_in_range": 32630,
+          "sha256": "1d13a8d248757d6409bf0e35cf72d1bc1bb4f6c79033f32ceb3e07425f85e6df"
+        },
+        {
+          "archive": "AUDJPY_2026_08.zip",
+          "rows_in_range": 30460,
+          "sha256": "eff154108e01f968be264d8119de6a0e28bd4652e7fc2c380ec554fd0381015d"
+        },
+        {
+          "archive": "AUDJPY_2026_09.zip",
+          "rows_in_range": 31527,
+          "sha256": "4319f3a76483429a52493d0d8c9851a3e4b8023d0fedc367554b06fa68eb6ca1"
+        },
+        {
+          "archive": "AUDJPY_2026_10.zip",
+          "rows_in_range": 31138,
+          "sha256": "b7cc345be4d1fd6c6a17c5a56f820d57360f82226439b400004f4aed246367a6"
+        },
+        {
+          "archive": "AUDJPY_2026_11.zip",
+          "rows_in_range": 7182,
+          "sha256": "4416e1253fb7d882c991f0369c5cbbed76c6648632989e0cbb0f809857e851cb"
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,5551 @@
+{
+ "symbols": [
+  "EURUSD",
+  "GBPUSD",
+  "USDJPY",
+  "AUDUSD",
+  "USDCAD",
+  "USDCHF",
+  "NZDUSD",
+  "EURJPY",
+  "GBPJPY",
+  "EURGBP",
+  "AUDJPY",
+  "XAUUSD",
+  "XAGUSD",
+  "SPXUSD",
+  "NSXUSD"
+ ],
+ "streams": 43830,
+ "configs": 2922,
+ "period": [
+  "2021-11-12",
+  "2026-11-08"
+ ],
+ "objective": "max return subject to max drawdown < 10% (daily marks)",
+ "walk_forward_rule": "anchored yearly; risk set so the TRAIN drawdown = 8%",
+ "symbol_overview": {
+  "EURUSD": {
+   "streams": 2122,
+   "share_sharpe_gt_0": 0.174,
+   "share_sharpe_gt_1": 0.004,
+   "best_sharpe": 1.38
+  },
+  "GBPUSD": {
+   "streams": 2153,
+   "share_sharpe_gt_0": 0.212,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.97
+  },
+  "USDJPY": {
+   "streams": 2061,
+   "share_sharpe_gt_0": 0.398,
+   "share_sharpe_gt_1": 0.003,
+   "best_sharpe": 1.21
+  },
+  "AUDUSD": {
+   "streams": 2091,
+   "share_sharpe_gt_0": 0.131,
+   "share_sharpe_gt_1": 0.006,
+   "best_sharpe": 1.56
+  },
+  "USDCAD": {
+   "streams": 2124,
+   "share_sharpe_gt_0": 0.051,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.53
+  },
+  "USDCHF": {
+   "streams": 2105,
+   "share_sharpe_gt_0": 0.146,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.66
+  },
+  "NZDUSD": {
+   "streams": 2130,
+   "share_sharpe_gt_0": 0.123,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.78
+  },
+  "EURJPY": {
+   "streams": 2085,
+   "share_sharpe_gt_0": 0.213,
+   "share_sharpe_gt_1": 0.002,
+   "best_sharpe": 1.09
+  },
+  "GBPJPY": {
+   "streams": 2086,
+   "share_sharpe_gt_0": 0.187,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.83
+  },
+  "EURGBP": {
+   "streams": 2080,
+   "share_sharpe_gt_0": 0.05,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.7
+  },
+  "AUDJPY": {
+   "streams": 2069,
+   "share_sharpe_gt_0": 0.143,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 1.0
+  },
+  "XAUUSD": {
+   "streams": 2026,
+   "share_sharpe_gt_0": 0.521,
+   "share_sharpe_gt_1": 0.007,
+   "best_sharpe": 1.46
+  },
+  "XAGUSD": {
+   "streams": 1991,
+   "share_sharpe_gt_0": 0.104,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.69
+  },
+  "SPXUSD": {
+   "streams": 2097,
+   "share_sharpe_gt_0": 0.207,
+   "share_sharpe_gt_1": 0.007,
+   "best_sharpe": 1.48
+  },
+  "NSXUSD": {
+   "streams": 2070,
+   "share_sharpe_gt_0": 0.386,
+   "share_sharpe_gt_1": 0.0,
+   "best_sharpe": 0.8
+  }
+ },
+ "family_overview": {
+  "shahin": {
+   "streams": 2898,
+   "share_sharpe_gt_0": 0.253,
+   "share_sharpe_gt_1": 0.001
+  },
+  "mojsavar": {
+   "streams": 11789,
+   "share_sharpe_gt_0": 0.201,
+   "share_sharpe_gt_1": 0.001
+  },
+  "ghoghnous": {
+   "streams": 3492,
+   "share_sharpe_gt_0": 0.176,
+   "share_sharpe_gt_1": 0.0
+  },
+  "bbfade": {
+   "streams": 4975,
+   "share_sharpe_gt_0": 0.327,
+   "share_sharpe_gt_1": 0.006
+  },
+  "rsi2": {
+   "streams": 1080,
+   "share_sharpe_gt_0": 0.214,
+   "share_sharpe_gt_1": 0.013
+  },
+  "london": {
+   "streams": 5940,
+   "share_sharpe_gt_0": 0.092,
+   "share_sharpe_gt_1": 0.001
+  },
+  "tsmom": {
+   "streams": 576,
+   "share_sharpe_gt_0": 0.226,
+   "share_sharpe_gt_1": 0.0
+  },
+  "insidebar": {
+   "streams": 540,
+   "share_sharpe_gt_0": 0.15,
+   "share_sharpe_gt_1": 0.007
+  }
+ },
+ "walk_forward": {
+  "M1_greedy25": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 25,
+     "risk_per_trade": 0.07397,
+     "train_cagr": 2420.925,
+     "test_return": -0.7574,
+     "test_maxdd": 0.8763,
+     "test_sharpe": -0.41,
+     "max_leverage": 58.3
+    },
+    {
+     "year": 2024,
+     "streams": 25,
+     "risk_per_trade": 0.01745,
+     "train_cagr": 3.663,
+     "test_return": -0.34,
+     "test_maxdd": 0.3892,
+     "test_sharpe": -1.57,
+     "max_leverage": 17.1
+    },
+    {
+     "year": 2025,
+     "streams": 25,
+     "risk_per_trade": 0.01704,
+     "train_cagr": 3.924,
+     "test_return": -0.0842,
+     "test_maxdd": 0.2926,
+     "test_sharpe": -0.12,
+     "max_leverage": 26.9
+    },
+    {
+     "year": 2026,
+     "streams": 25,
+     "risk_per_trade": 0.01599,
+     "train_cagr": 3.755,
+     "test_return": -0.4027,
+     "test_maxdd": 0.415,
+     "test_sharpe": -1.74,
+     "max_leverage": 21.1
+    }
+   ],
+   "oos_cagr": -0.4683,
+   "oos_maxdd": 0.9288,
+   "oos_total": -0.9124,
+   "meets_dd_limit": false
+  },
+  "M2_greedy40_every_year": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 40,
+     "risk_per_trade": 0.03703,
+     "train_cagr": 298.391,
+     "test_return": -0.7104,
+     "test_maxdd": 0.8051,
+     "test_sharpe": -0.95,
+     "max_leverage": 48.5
+    },
+    {
+     "year": 2024,
+     "streams": 40,
+     "risk_per_trade": 0.01067,
+     "train_cagr": 3.613,
+     "test_return": -0.3686,
+     "test_maxdd": 0.4296,
+     "test_sharpe": -2.08,
+     "max_leverage": 18.7
+    },
+    {
+     "year": 2025,
+     "streams": 40,
+     "risk_per_trade": 0.01514,
+     "train_cagr": 7.623,
+     "test_return": 0.0426,
+     "test_maxdd": 0.2909,
+     "test_sharpe": 0.29,
+     "max_leverage": 23.1
+    },
+    {
+     "year": 2026,
+     "streams": 40,
+     "risk_per_trade": 0.01002,
+     "train_cagr": 2.531,
+     "test_return": -0.344,
+     "test_maxdd": 0.344,
+     "test_sharpe": -1.92,
+     "max_leverage": 17.3
+    }
+   ],
+   "oos_cagr": -0.4169,
+   "oos_maxdd": 0.8891,
+   "oos_total": -0.875,
+   "meets_dd_limit": false
+  },
+  "M3_top50_decorrelated": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 50,
+     "risk_per_trade": 0.00575,
+     "train_cagr": 27.296,
+     "test_return": -0.0704,
+     "test_maxdd": 0.2582,
+     "test_sharpe": -0.07,
+     "max_leverage": 18.6
+    },
+    {
+     "year": 2024,
+     "streams": 50,
+     "risk_per_trade": 0.00549,
+     "train_cagr": 12.339,
+     "test_return": -0.4702,
+     "test_maxdd": 0.5712,
+     "test_sharpe": -1.67,
+     "max_leverage": 19.1
+    },
+    {
+     "year": 2025,
+     "streams": 50,
+     "risk_per_trade": 0.00316,
+     "train_cagr": 2.354,
+     "test_return": -0.3568,
+     "test_maxdd": 0.4583,
+     "test_sharpe": -1.83,
+     "max_leverage": 11.8
+    },
+    {
+     "year": 2026,
+     "streams": 50,
+     "risk_per_trade": 0.00286,
+     "train_cagr": 1.436,
+     "test_return": -0.2684,
+     "test_maxdd": 0.3025,
+     "test_sharpe": -1.72,
+     "max_leverage": 11.2
+    }
+   ],
+   "oos_cagr": -0.3157,
+   "oos_maxdd": 0.7908,
+   "oos_total": -0.7683,
+   "meets_dd_limit": false
+  },
+  "M4_broad_equal": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 400,
+     "risk_per_trade": 0.0003,
+     "train_cagr": 4.426,
+     "test_return": -0.147,
+     "test_maxdd": 0.3213,
+     "test_sharpe": -0.46,
+     "max_leverage": 11.5
+    },
+    {
+     "year": 2024,
+     "streams": 400,
+     "risk_per_trade": 0.00032,
+     "train_cagr": 2.071,
+     "test_return": 0.1054,
+     "test_maxdd": 0.1816,
+     "test_sharpe": 0.54,
+     "max_leverage": 12.3
+    },
+    {
+     "year": 2025,
+     "streams": 400,
+     "risk_per_trade": 0.00017,
+     "train_cagr": 0.703,
+     "test_return": -0.2882,
+     "test_maxdd": 0.3339,
+     "test_sharpe": -1.81,
+     "max_leverage": 5.7
+    },
+    {
+     "year": 2026,
+     "streams": 400,
+     "risk_per_trade": 0.00014,
+     "train_cagr": 0.423,
+     "test_return": -0.0985,
+     "test_maxdd": 0.1083,
+     "test_sharpe": -0.99,
+     "max_leverage": 4.4
+    }
+   ],
+   "oos_cagr": -0.1222,
+   "oos_maxdd": 0.4292,
+   "oos_total": -0.395,
+   "meets_dd_limit": false
+  },
+  "M5_broad_invvol": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 400,
+     "risk_per_trade": 0.00098,
+     "train_cagr": 23.21,
+     "test_return": -0.0705,
+     "test_maxdd": 0.3892,
+     "test_sharpe": 0.0,
+     "max_leverage": 19.4
+    },
+    {
+     "year": 2024,
+     "streams": 400,
+     "risk_per_trade": 0.00064,
+     "train_cagr": 3.717,
+     "test_return": 0.1135,
+     "test_maxdd": 0.2353,
+     "test_sharpe": 0.52,
+     "max_leverage": 16.6
+    },
+    {
+     "year": 2025,
+     "streams": 400,
+     "risk_per_trade": 0.00028,
+     "train_cagr": 0.813,
+     "test_return": -0.2454,
+     "test_maxdd": 0.3105,
+     "test_sharpe": -1.54,
+     "max_leverage": 6.5
+    },
+    {
+     "year": 2026,
+     "streams": 400,
+     "risk_per_trade": 0.00069,
+     "train_cagr": 1.875,
+     "test_return": -0.3429,
+     "test_maxdd": 0.3615,
+     "test_sharpe": -1.92,
+     "max_leverage": 15.2
+    }
+   ],
+   "oos_cagr": -0.1589,
+   "oos_maxdd": 0.5696,
+   "oos_total": -0.4868,
+   "meets_dd_limit": false
+  },
+  "M6_bots_all_symbols": {
+   "years": [
+    {
+     "year": 2023,
+     "streams": 105,
+     "risk_per_trade": 0.01397,
+     "train_cagr": 1.184,
+     "test_return": -0.0696,
+     "test_maxdd": 0.1968,
+     "test_sharpe": -0.23,
+     "max_leverage": 14.6
+    },
+    {
+     "year": 2024,
+     "streams": 75,
+     "risk_per_trade": 0.01159,
+     "train_cagr": 0.432,
+     "test_return": -0.0955,
+     "test_maxdd": 0.2432,
+     "test_sharpe": -0.47,
+     "max_leverage": 14.1
+    },
+    {
+     "year": 2025,
+     "streams": 180,
+     "risk_per_trade": 0.00485,
+     "train_cagr": 0.23,
+     "test_return": 0.0631,
+     "test_maxdd": 0.1293,
+     "test_sharpe": 0.63,
+     "max_leverage": 8.9
+    },
+    {
+     "year": 2026,
+     "streams": 180,
+     "risk_per_trade": 0.00351,
+     "train_cagr": 0.151,
+     "test_return": -0.0413,
+     "test_maxdd": 0.113,
+     "test_sharpe": -0.57,
+     "max_leverage": 9.6
+    }
+   ],
+   "oos_cagr": -0.039,
+   "oos_maxdd": 0.309,
+   "oos_total": -0.1423,
+   "meets_dd_limit": false
+  }
+ },
+ "best_walk_forward_method": "M6_bots_all_symbols",
+ "full_period_hindsight": {
+  "M1_greedy25": {
+   "streams": 25,
+   "risk_per_trade": 0.01042,
+   "cagr": 1.01,
+   "maxdd": 0.099,
+   "sharpe": 4.75,
+   "max_leverage": 17.3,
+   "p99_leverage": 9.1,
+   "yearly": {
+    "2021": 0.0972,
+    "2022": 0.9311,
+    "2023": 0.9258,
+    "2024": 1.1323,
+    "2025": 1.2581,
+    "2026": 0.6596
+   },
+   "members": [
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 88
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 67
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 61
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 118
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 31
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 37
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 58
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 56
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 135
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 59
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "shahin",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "preset": "none",
+      "N": 10,
+      "atr": 3.0,
+      "gate": true,
+      "trailN": 10
+     },
+     "exits": {
+      "trail_mode": 1
+     },
+     "trades": 30
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 30
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 71
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 37
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 97
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 55
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 60
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 64
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "ghoghnous",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "lb": 10,
+      "cf": 0.5,
+      "minr": 1.1,
+      "vgate": 0.35,
+      "oppo": true,
+      "tf": "4h"
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 31
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 32
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 37
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "shahin",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "preset": "none",
+      "N": 10,
+      "atr": 2.0,
+      "gate": false,
+      "trailN": 10
+     },
+     "exits": {
+      "trail_mode": 1,
+      "arm_r": 1.0,
+      "lock_r": 0.5
+     },
+     "trades": 60
+    }
+   ]
+  },
+  "M2_greedy40_every_year": {
+   "streams": 24,
+   "risk_per_trade": 0.01016,
+   "cagr": 0.9903,
+   "maxdd": 0.099,
+   "sharpe": 3.87,
+   "max_leverage": 22.7,
+   "p99_leverage": 9.7,
+   "yearly": {
+    "2021": -0.0335,
+    "2022": 0.7219,
+    "2023": 0.6552,
+    "2024": 1.2811,
+    "2025": 1.3561,
+    "2026": 1.0963
+   },
+   "members": [
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 88
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 67
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 61
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 118
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 135
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 71
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 70
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 47
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "ghoghnous",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "lb": 10,
+      "cf": 0.5,
+      "minr": 1.1,
+      "vgate": 0.35,
+      "oppo": true,
+      "tf": "4h"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 30
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 100
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 46
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 53
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 53
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 47
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 35
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 54
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 132
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 68
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "mojsavar",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 49
+    },
+    {
+     "symbol": "XAGUSD",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 34
+    }
+   ]
+  },
+  "M3_top50_decorrelated": {
+   "streams": 50,
+   "risk_per_trade": 0.00276,
+   "cagr": 0.9947,
+   "maxdd": 0.099,
+   "sharpe": 3.59,
+   "max_leverage": 10.4,
+   "p99_leverage": 7.9,
+   "yearly": {
+    "2021": -0.0062,
+    "2022": 1.5484,
+    "2023": 0.7064,
+    "2024": 1.2368,
+    "2025": 1.1775,
+    "2026": 0.4911
+   },
+   "members": [
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 67
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 88
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 154
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 8
+     },
+     "exits": {
+      "time_stop": 13,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 748
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 118
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 47
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 115
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 31
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 58
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 1.5
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 111
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "shahin",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "preset": "standard",
+      "N": 20,
+      "atr": 3.0,
+      "gate": false,
+      "trailN": 20
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.0,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 144
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 159
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 32
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 61
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 56
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 375
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 14,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 332
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 132
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 56
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "shahin",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "preset": "none",
+      "N": 10,
+      "atr": 2.0,
+      "gate": false,
+      "trailN": 10
+     },
+     "exits": {
+      "trail_mode": 1,
+      "arm_r": 1.0,
+      "lock_r": 0.5
+     },
+     "trades": 60
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 14,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 125
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 70
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 135
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "ghoghnous",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "lb": 20,
+      "cf": 0.5,
+      "minr": 1.1,
+      "vgate": 0.35,
+      "oppo": true,
+      "tf": "4h"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 30
+     },
+     "trades": 32
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 41
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 50
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 97
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 150
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 14,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 146
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 143
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 14,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 89
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 59
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 475
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "rsi2",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 177
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "ghoghnous",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "lb": 10,
+      "cf": 0.75,
+      "minr": 0.0,
+      "vgate": 1.0,
+      "oppo": false,
+      "tf": "4h"
+     },
+     "exits": {
+      "time_stop": 10
+     },
+     "trades": 95
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 14,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 396
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 257
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 130
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 208
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 56
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 220
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 14,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 53
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 53
+    }
+   ]
+  },
+  "M4_broad_equal": {
+   "streams": 205,
+   "risk_per_trade": 0.00026,
+   "cagr": 0.3621,
+   "maxdd": 0.099,
+   "sharpe": 2.53,
+   "max_leverage": 5.1,
+   "p99_leverage": 3.6,
+   "yearly": {
+    "2021": 0.0061,
+    "2022": 0.5075,
+    "2023": 0.2428,
+    "2024": 0.4373,
+    "2025": 0.4223,
+    "2026": 0.2132
+   },
+   "members": [
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 50
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 50
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 52
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 67
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 88
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 154
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 64
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 8
+     },
+     "exits": {
+      "time_stop": 13,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 748
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 118
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 136
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 73
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 83
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 128
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 47
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 93
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 93
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 68
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 73
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 115
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 31
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 95
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 52
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 105
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 95
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 98
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 53
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 98
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 8
+     },
+     "exits": {
+      "time_stop": 13
+     },
+     "trades": 747
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 108
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 58
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 4
+     },
+     "exits": {
+      "time_stop": 13,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 651
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 113
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 1.5
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 37
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 114
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 111
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 124
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "shahin",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "preset": "standard",
+      "N": 20,
+      "atr": 3.0,
+      "gate": false,
+      "trailN": 20
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.0,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 144
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "shahin",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "preset": "standard",
+      "N": 20,
+      "atr": 3.0,
+      "gate": false,
+      "trailN": 10
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.0,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 144
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 103
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 159
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 32
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 58
+    }
+   ]
+  },
+  "M5_broad_invvol": {
+   "streams": 205,
+   "risk_per_trade": 0.00124,
+   "cagr": 1.3894,
+   "maxdd": 0.099,
+   "sharpe": 3.6,
+   "max_leverage": 19.9,
+   "p99_leverage": 10.6,
+   "yearly": {
+    "2021": 0.0403,
+    "2022": 1.7029,
+    "2023": 0.9816,
+    "2024": 1.6789,
+    "2025": 1.4599,
+    "2026": 1.1046
+   },
+   "members": [
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.32,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.318,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.321,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 3.693,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 50
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 3.693,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 50
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.318,
+     "params": {
+      "lo": 10.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 52
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 0.677,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 67
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 3.706,
+     "params": {
+      "lo": 10.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 51
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.71,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.144,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 0.877,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 88
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.27,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.706,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.411,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 154
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 0.695,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "tgt_r": 2.0,
+      "time_stop": 20
+     },
+     "trades": 64
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 0.232,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 8
+     },
+     "exits": {
+      "time_stop": 13,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 748
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 0.768,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 118
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.941,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 2.602,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 0.507,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 136
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.795,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 73
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.464,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 2.983,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 45
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 0.687,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 1.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 83
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.563,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 128
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.699,
+     "params": {
+      "n": 50,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 47
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.598,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 93
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.598,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 93
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.089,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 68
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.131,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 2.5,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 73
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.588,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 115
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.098,
+     "params": {
+      "ef": 20,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 1.5
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 31
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 2.294,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10,
+      "session": true
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 0.327,
+     "params": {
+      "trend": true,
+      "valid": 1,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 36
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.631,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 10
+     },
+     "trades": 95
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.413,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 52
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.39,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 105
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.634,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 95
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 2.659,
+     "params": {
+      "lo": 20.0,
+      "stop": 4.0
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 98
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.816,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.413,
+     "params": {
+      "lo": 10.0,
+      "stop": 1.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 53
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.661,
+     "params": {
+      "lo": 20.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 98
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 2.981,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 0.228,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 8
+     },
+     "exits": {
+      "time_stop": 13
+     },
+     "trades": 747
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.566,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "tgt_r": 2.0
+     },
+     "trades": 108
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 2.038,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 58
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "london",
+     "tf": "1h",
+     "weight": 0.247,
+     "params": {
+      "mode": "break",
+      "hours": 8,
+      "at": 7,
+      "maxw": 0.6,
+      "stopfrac": 0.0,
+      "valid_h": 4
+     },
+     "exits": {
+      "time_stop": 13,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 651
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.124,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 113
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 0.666,
+     "params": {
+      "ef": 50,
+      "es": 200,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 1.5
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 34
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.932,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 2.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 33
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "insidebar",
+     "tf": "D1",
+     "weight": 0.33,
+     "params": {
+      "trend": true,
+      "valid": 3,
+      "tf": "D1"
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0,
+      "time_stop": 40
+     },
+     "trades": 37
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "1h",
+     "weight": 1.229,
+     "params": {
+      "n": 50,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 114
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.629,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 111
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.591,
+     "params": {
+      "ef": 50,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 3.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.5,
+      "arm_r": 1.0,
+      "lock_r": 0.1,
+      "part_r": 2.0
+     },
+     "trades": 124
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "shahin",
+     "tf": "4h",
+     "weight": 0.442,
+     "params": {
+      "preset": "standard",
+      "N": 20,
+      "atr": 3.0,
+      "gate": false,
+      "trailN": 20
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.0,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 144
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "shahin",
+     "tf": "4h",
+     "weight": 0.442,
+     "params": {
+      "preset": "standard",
+      "N": 20,
+      "atr": 3.0,
+      "gate": false,
+      "trailN": 10
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 4.0,
+      "arm_r": 1.0,
+      "lock_r": 0.1
+     },
+     "trades": 144
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.402,
+     "params": {
+      "n": 20,
+      "k": 2.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 103
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "mojsavar",
+     "tf": "4h",
+     "weight": 0.408,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 30.0,
+      "confirm": 0,
+      "stop": 2.0
+     },
+     "exits": {
+      "trail_mode": 2,
+      "chand_k": 3.0
+     },
+     "trades": 159
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "mojsavar",
+     "tf": "D1",
+     "weight": 1.775,
+     "params": {
+      "ef": 20,
+      "es": 100,
+      "rp": 7,
+      "rl": 40.0,
+      "confirm": 3,
+      "stop": 2.0
+     },
+     "exits": {
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 32
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.928,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 30
+     },
+     "trades": 58
+    }
+   ]
+  },
+  "M6_bots_all_symbols": {
+   "streams": 135,
+   "risk_per_trade": 0.00392,
+   "cagr": 0.1197,
+   "maxdd": 0.099,
+   "sharpe": 1.57,
+   "max_leverage": 5.7,
+   "p99_leverage": 4.4,
+   "yearly": {
+    "2021": -0.0035,
+    "2022": 0.1462,
+    "2023": 0.176,
+    "2024": 0.0475,
+    "2025": 0.1027,
+    "2026": 0.1333
+   },
+   "members": [
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 7
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 5
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 10
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "USDCAD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 4
+    },
+    {
+     "symbol": "USDCHF",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 6
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 6
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 10
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 8
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 7
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 7
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 14
+    },
+    {
+     "symbol": "XAGUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 4
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 50,
+      "k": 3.0,
+      "stop": 1.5,
+      "trend": "none"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 6
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 23
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 20
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 16
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 23
+    },
+    {
+     "symbol": "USDCAD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 23
+    },
+    {
+     "symbol": "USDCHF",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 24
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 17
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 18
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 24
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 26
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 25
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 24
+    },
+    {
+     "symbol": "XAGUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 16
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 20
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "rsi2",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "lo": 5.0,
+      "stop": 2.5
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 5
+     },
+     "trades": 21
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 6
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 2
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 11
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 0
+    },
+    {
+     "symbol": "USDCAD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 2
+    },
+    {
+     "symbol": "USDCHF",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 0
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 4
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 6
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 8
+    },
+    {
+     "symbol": "XAGUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 2
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 8
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "bbfade",
+     "tf": "D1",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 2.5,
+      "stop": 1.5,
+      "trend": "with"
+     },
+     "exits": {
+      "xdir": 1,
+      "time_stop": 10
+     },
+     "trades": 3
+    },
+    {
+     "symbol": "EURUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 15
+    },
+    {
+     "symbol": "GBPUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 15
+    },
+    {
+     "symbol": "USDJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 13
+    },
+    {
+     "symbol": "AUDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 5
+    },
+    {
+     "symbol": "USDCAD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 8
+    },
+    {
+     "symbol": "USDCHF",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 15
+    },
+    {
+     "symbol": "NZDUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 9
+    },
+    {
+     "symbol": "EURJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 16
+    },
+    {
+     "symbol": "GBPJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 21
+    },
+    {
+     "symbol": "EURGBP",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 24
+    },
+    {
+     "symbol": "AUDJPY",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 17
+    },
+    {
+     "symbol": "XAUUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 8
+    },
+    {
+     "symbol": "XAGUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 11
+    },
+    {
+     "symbol": "SPXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 16
+    },
+    {
+     "symbol": "NSXUSD",
+     "family": "bbfade",
+     "tf": "4h",
+     "weight": 1.0,
+     "params": {
+      "n": 20,
+      "k": 3.0,
+      "stop": 4.0,
+      "trend": "flat"
+     },
+     "exits": {
+      "xdir": 1,
+      "tgt_r": 1.0,
+      "time_stop": 20
+     },
+     "trades": 15
+    }
+   ]
+  }
+ },
+ "costs_pip_spread_slip_comm": {
+  "EURUSD": [
+   0.0001,
+   6e-05,
+   2e-05,
+   3.5e-05
+  ],
+  "GBPUSD": [
+   0.0001,
+   9e-05,
+   2e-05,
+   3.5e-05
+  ],
+  "USDJPY": [
+   0.01,
+   0.008,
+   0.002,
+   3.5e-05
+  ],
+  "AUDUSD": [
+   0.0001,
+   8e-05,
+   2e-05,
+   3.5e-05
+  ],
+  "USDCAD": [
+   0.0001,
+   0.0001,
+   2e-05,
+   3.5e-05
+  ],
+  "USDCHF": [
+   0.0001,
+   0.0001,
+   2e-05,
+   3.5e-05
+  ],
+  "NZDUSD": [
+   0.0001,
+   0.00012,
+   2e-05,
+   3.5e-05
+  ],
+  "EURJPY": [
+   0.01,
+   0.012,
+   0.003,
+   3.5e-05
+  ],
+  "GBPJPY": [
+   0.01,
+   0.018,
+   0.004,
+   3.5e-05
+  ],
+  "EURGBP": [
+   0.0001,
+   0.0001,
+   2e-05,
+   3.5e-05
+  ],
+  "AUDJPY": [
+   0.01,
+   0.013,
+   0.003,
+   3.5e-05
+  ],
+  "XAUUSD": [
+   0.1,
+   0.25,
+   0.05,
+   3.5e-05
+  ],
+  "XAGUSD": [
+   0.01,
+   0.025,
+   0.005,
+   3.5e-05
+  ],
+  "SPXUSD": [
+   1.0,
+   0.6,
+   0.25,
+   0.0
+  ],
+  "NSXUSD": [
+   2.0,
+   1.5,
+   0.75,
+   0.0
+  ]
+ },
+ "runtime_s": 321.8
+}
