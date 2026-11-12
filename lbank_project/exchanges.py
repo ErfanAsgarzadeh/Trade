@@ -477,7 +477,7 @@ class TheTrueTrade(Adapter):
         try:cert = self.load_certification()
         except ExchangeError as exc:
             raise ExchangeError(f"Exchange stop-loss readback is not supported without a valid certification ({exc})") from None
-        for attempt in range(12):  # the exchange may attach or move the stop order some seconds after the request
+        for attempt in range(25):  # the exchange can attach or move the stop order 30 s and more after the request
             problems = self.check_stop(pos.symbol, list(pos.ids), stop, cert["readback"])
             if not problems:return
             pause(2.0)
