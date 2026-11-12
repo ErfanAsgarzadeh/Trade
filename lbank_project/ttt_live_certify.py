@@ -89,8 +89,8 @@ class Certifier:
     def mine(self) -> X.LivePosition | None:
         return self.ex.positions().get(self.symbol)
 
-    def wait_position(self, want_qty: float | None, tries: int = 10) -> X.LivePosition | None:
-        """Read positions until the expected size shows (the exchange may need a moment); None = flat."""
+    def wait_position(self, want_qty: float | None, tries: int = 30) -> X.LivePosition | None:
+        """Read positions until the expected size shows (the exchange can need 30 s and more); None = flat."""
         step = self.ex.markets()[self.symbol]["step"];p = None
         for _ in range(tries):
             p = self.mine()
@@ -227,9 +227,10 @@ class Certifier:
         # when the rest would fall below it, so: a position of about 2.6x the minimum, close a part worth 1.1x the minimum.
         minimum = self.report["min_notional_usd"]
         p, qty, stop2 = self.open_long(.03, notional=minimum * 2.6)
+        self.ok("second_entry_confirmed", p is not None and abs(p.qty - qty) <= m["step"] * .05 + 1e-12,
+                f"{qty} contracts" if p is not None else "position not shown by the exchange within 45 s")
         if readback["orders_check"]:
             self.stop_ids.update(self.ex.stop_order_ids(self.symbol, p.ids))
-        self.ok("second_entry_confirmed", p is not None and abs(p.qty - qty) <= m["step"] * .05 + 1e-12, f"{qty} contracts")
         part = ceil_step(minimum * 1.1 / self.ex.price(self.symbol), m["step"])
         self.ex.close(p, part)
         rest = self.wait_position(qty - part)

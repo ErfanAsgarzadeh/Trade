@@ -228,13 +228,13 @@ class Mirror:
         self._session_has_completed_cycle = False
         self.wait = lambda s: X.pause(s)
 
-    def _readback(self, esym: str, ok, tries: int = 5):
-        """Exchange position after an order, re-read a few times until `ok(position)` (exchanges settle in a moment)."""
+    def _readback(self, esym: str, ok, tries: int = 25):
+        """Exchange position after an order, re-read until `ok(position)`: TheTrueTrade can need 30 s and more."""
         pos = None
         for i in range(tries):
             pos = self.ex.positions().get(esym)
             if ok(pos):return pos
-            if i < tries - 1:self.wait(1.0)
+            if i < tries - 1:self.wait(2.0)
         return pos
 
     # ---------------- persistence
