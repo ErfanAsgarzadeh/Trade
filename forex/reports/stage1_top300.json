@@ -1,0 +1,8102 @@
+[
+{
+"config": "D1|standard|N10|ATR2|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.37,
+"max_dd_pct": 7.78,
+"calmar": 0.433,
+"sharpe": 0.49,
+"trades": 57,
+"win_rate_pct": 63.2,
+"profit_factor": 1.93,
+"return_pct": 17.97,
+"final_equity": 11796.87,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.12,
+"2023": 4.51,
+"2024": 1.53,
+"2025": 4.83,
+"2026": -5.4
+},
+"per_pair_net_usd": {
+"EURUSD": 315.58,
+"GBPUSD": -351.07,
+"USDJPY": 1832.36
+},
+"swap_usd": -45.14,
+"exposure_pct": 68.4
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.39,
+"max_dd_pct": 8.38,
+"calmar": 0.405,
+"sharpe": 0.47,
+"trades": 69,
+"win_rate_pct": 58.0,
+"profit_factor": 1.86,
+"return_pct": 18.08,
+"final_equity": 11807.54,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 13.2,
+"2023": 3.92,
+"2024": 1.36,
+"2025": 4.68,
+"2026": -5.4
+},
+"per_pair_net_usd": {
+"EURUSD": 265.41,
+"GBPUSD": -399.24,
+"USDJPY": 1941.37
+},
+"swap_usd": -49.64,
+"exposure_pct": 68.4
+},
+{
+"config": "D1|standard|N20|ATR2|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.71,
+"max_dd_pct": 7.14,
+"calmar": 0.38,
+"sharpe": 0.41,
+"trades": 54,
+"win_rate_pct": 64.8,
+"profit_factor": 1.87,
+"return_pct": 14.28,
+"final_equity": 11427.84,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.21,
+"2023": 3.8,
+"2024": 0.81,
+"2025": 5.55,
+"2026": -5.25
+},
+"per_pair_net_usd": {
+"EURUSD": 339.31,
+"GBPUSD": -172.68,
+"USDJPY": 1261.21
+},
+"swap_usd": -113.1,
+"exposure_pct": 64.8
+},
+{
+"config": "D1|standard|N20|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.72,
+"max_dd_pct": 7.77,
+"calmar": 0.35,
+"sharpe": 0.39,
+"trades": 64,
+"win_rate_pct": 60.9,
+"profit_factor": 1.82,
+"return_pct": 14.32,
+"final_equity": 11431.9,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.21,
+"2023": 3.2,
+"2024": 0.65,
+"2025": 5.4,
+"2026": -5.25
+},
+"per_pair_net_usd": {
+"EURUSD": 315.68,
+"GBPUSD": -220.85,
+"USDJPY": 1337.07
+},
+"swap_usd": -121.45,
+"exposure_pct": 64.8
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.11,
+"max_dd_pct": 6.36,
+"calmar": 0.331,
+"sharpe": 0.43,
+"trades": 60,
+"win_rate_pct": 50.0,
+"profit_factor": 1.68,
+"return_pct": 10.96,
+"final_equity": 11095.69,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.57,
+"2023": 3.7,
+"2024": -0.53,
+"2025": 3.01,
+"2026": -4.68
+},
+"per_pair_net_usd": {
+"EURUSD": 300.31,
+"GBPUSD": -137.28,
+"USDJPY": 932.66
+},
+"swap_usd": -51.62,
+"exposure_pct": 69.6
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.07,
+"max_dd_pct": 6.37,
+"calmar": 0.324,
+"sharpe": 0.45,
+"trades": 55,
+"win_rate_pct": 50.9,
+"profit_factor": 1.71,
+"return_pct": 10.74,
+"final_equity": 11073.88,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.26,
+"2023": 3.71,
+"2024": -0.69,
+"2025": 3.25,
+"2026": -4.69
+},
+"per_pair_net_usd": {
+"EURUSD": 289.2,
+"GBPUSD": -70.95,
+"USDJPY": 855.63
+},
+"swap_usd": -44.58,
+"exposure_pct": 69.6
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.98,
+"max_dd_pct": 9.6,
+"calmar": 0.31,
+"sharpe": 0.38,
+"trades": 82,
+"win_rate_pct": 54.9,
+"profit_factor": 1.45,
+"return_pct": 15.77,
+"final_equity": 11576.75,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.29,
+"2023": 7.45,
+"2024": -2.0,
+"2025": 2.86,
+"2026": -4.81
+},
+"per_pair_net_usd": {
+"EURUSD": 123.99,
+"GBPUSD": -406.32,
+"USDJPY": 1859.08
+},
+"swap_usd": -122.33,
+"exposure_pct": 75.3
+},
+{
+"config": "D1|standard|N20|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.3,
+"max_dd_pct": 7.48,
+"calmar": 0.308,
+"sharpe": 0.38,
+"trades": 57,
+"win_rate_pct": 61.4,
+"profit_factor": 1.62,
+"return_pct": 12.02,
+"final_equity": 11202.09,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.85,
+"2023": 3.89,
+"2024": 0.76,
+"2025": 2.63,
+"2026": -5.09
+},
+"per_pair_net_usd": {
+"EURUSD": 336.87,
+"GBPUSD": -413.7,
+"USDJPY": 1278.92
+},
+"swap_usd": -83.31,
+"exposure_pct": 63.7
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.09,
+"max_dd_pct": 10.41,
+"calmar": 0.297,
+"sharpe": 0.38,
+"trades": 96,
+"win_rate_pct": 53.1,
+"profit_factor": 1.45,
+"return_pct": 16.4,
+"final_equity": 11639.74,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 13.0,
+"2023": 6.82,
+"2024": -1.73,
+"2025": 3.15,
+"2026": -4.87
+},
+"per_pair_net_usd": {
+"EURUSD": 37.73,
+"GBPUSD": -386.34,
+"USDJPY": 1988.36
+},
+"swap_usd": -129.84,
+"exposure_pct": 75.1
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.0,
+"max_dd_pct": 6.83,
+"calmar": 0.292,
+"sharpe": 0.41,
+"trades": 60,
+"win_rate_pct": 48.3,
+"profit_factor": 1.63,
+"return_pct": 10.36,
+"final_equity": 11035.68,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.57,
+"2023": 3.7,
+"2024": -0.53,
+"2025": 2.96,
+"2026": -5.16
+},
+"per_pair_net_usd": {
+"EURUSD": 245.23,
+"GBPUSD": -137.28,
+"USDJPY": 927.74
+},
+"swap_usd": -54.06,
+"exposure_pct": 69.6
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.69,
+"max_dd_pct": 9.23,
+"calmar": 0.291,
+"sharpe": 0.4,
+"trades": 58,
+"win_rate_pct": 44.8,
+"profit_factor": 1.54,
+"return_pct": 14.14,
+"final_equity": 11414.22,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.55,
+"2023": 5.97,
+"2024": 0.15,
+"2025": 3.46,
+"2026": -6.8
+},
+"per_pair_net_usd": {
+"EURUSD": 404.51,
+"GBPUSD": -372.14,
+"USDJPY": 1381.84
+},
+"swap_usd": -71.99,
+"exposure_pct": 68.3
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.96,
+"max_dd_pct": 6.84,
+"calmar": 0.286,
+"sharpe": 0.43,
+"trades": 55,
+"win_rate_pct": 49.1,
+"profit_factor": 1.65,
+"return_pct": 10.14,
+"final_equity": 11013.87,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.26,
+"2023": 3.71,
+"2024": -0.69,
+"2025": 3.21,
+"2026": -5.17
+},
+"per_pair_net_usd": {
+"EURUSD": 234.11,
+"GBPUSD": -70.95,
+"USDJPY": 850.7
+},
+"swap_usd": -47.02,
+"exposure_pct": 69.6
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.44,
+"max_dd_pct": 8.54,
+"calmar": 0.285,
+"sharpe": 0.38,
+"trades": 62,
+"win_rate_pct": 58.1,
+"profit_factor": 1.55,
+"return_pct": 12.75,
+"final_equity": 11274.72,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.24,
+"2023": 4.88,
+"2024": -0.49,
+"2025": 2.29,
+"2026": -5.06
+},
+"per_pair_net_usd": {
+"EURUSD": 265.38,
+"GBPUSD": -519.52,
+"USDJPY": 1528.85
+},
+"swap_usd": -72.53,
+"exposure_pct": 65.3
+},
+{
+"config": "D1|standard|N20|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.15,
+"max_dd_pct": 7.64,
+"calmar": 0.282,
+"sharpe": 0.34,
+"trades": 66,
+"win_rate_pct": 57.6,
+"profit_factor": 1.52,
+"return_pct": 11.21,
+"final_equity": 11121.44,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.63,
+"2023": 3.28,
+"2024": 0.21,
+"2025": 2.38,
+"2026": -5.12
+},
+"per_pair_net_usd": {
+"EURUSD": 267.97,
+"GBPUSD": -519.82,
+"USDJPY": 1373.3
+},
+"swap_usd": -90.28,
+"exposure_pct": 63.7
+},
+{
+"config": "D1|none|N10|ATR2|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.4,
+"max_dd_pct": 8.58,
+"calmar": 0.279,
+"sharpe": 0.33,
+"trades": 112,
+"win_rate_pct": 50.0,
+"profit_factor": 1.32,
+"return_pct": 12.53,
+"final_equity": 11252.64,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.11,
+"2023": 2.35,
+"2024": 0.5,
+"2025": 1.51,
+"2026": -3.0
+},
+"per_pair_net_usd": {
+"EURUSD": 99.23,
+"GBPUSD": -1058.88,
+"USDJPY": 2212.28
+},
+"swap_usd": -197.22,
+"exposure_pct": 63.7
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.19,
+"max_dd_pct": 11.54,
+"calmar": 0.276,
+"sharpe": 0.43,
+"trades": 53,
+"win_rate_pct": 49.1,
+"profit_factor": 1.7,
+"return_pct": 16.93,
+"final_equity": 11693.08,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.16,
+"2023": 5.39,
+"2024": 2.97,
+"2025": 5.25,
+"2026": -8.72
+},
+"per_pair_net_usd": {
+"EURUSD": 258.87,
+"GBPUSD": -214.57,
+"USDJPY": 1648.78
+},
+"swap_usd": -87.55,
+"exposure_pct": 72.4
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.56,
+"max_dd_pct": 9.32,
+"calmar": 0.275,
+"sharpe": 0.37,
+"trades": 69,
+"win_rate_pct": 43.5,
+"profit_factor": 1.48,
+"return_pct": 13.45,
+"final_equity": 11344.95,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.39,
+"2023": 5.11,
+"2024": -0.36,
+"2025": 3.16,
+"2026": -6.56
+},
+"per_pair_net_usd": {
+"EURUSD": 330.95,
+"GBPUSD": -468.76,
+"USDJPY": 1482.76
+},
+"swap_usd": -83.07,
+"exposure_pct": 68.3
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.28,
+"max_dd_pct": 8.87,
+"calmar": 0.257,
+"sharpe": 0.34,
+"trades": 73,
+"win_rate_pct": 53.4,
+"profit_factor": 1.46,
+"return_pct": 11.9,
+"final_equity": 11189.89,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.17,
+"2023": 4.02,
+"2024": -1.13,
+"2025": 2.2,
+"2026": -5.09
+},
+"per_pair_net_usd": {
+"EURUSD": 187.16,
+"GBPUSD": -627.46,
+"USDJPY": 1630.19
+},
+"swap_usd": -76.1,
+"exposure_pct": 65.3
+},
+{
+"config": "D1|none|N10|ATR2|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.17,
+"max_dd_pct": 8.62,
+"calmar": 0.252,
+"sharpe": 0.31,
+"trades": 102,
+"win_rate_pct": 51.0,
+"profit_factor": 1.3,
+"return_pct": 11.29,
+"final_equity": 11129.47,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.63,
+"2023": 2.31,
+"2024": -0.02,
+"2025": 1.43,
+"2026": -3.04
+},
+"per_pair_net_usd": {
+"EURUSD": 153.71,
+"GBPUSD": -1041.46,
+"USDJPY": 2017.22
+},
+"swap_usd": -183.87,
+"exposure_pct": 63.7
+},
+{
+"config": "D1|standard|N10|ATR2|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.78,
+"max_dd_pct": 7.14,
+"calmar": 0.249,
+"sharpe": 0.31,
+"trades": 76,
+"win_rate_pct": 52.6,
+"profit_factor": 1.4,
+"return_pct": 9.18,
+"final_equity": 10918.27,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.53,
+"2023": 0.21,
+"2024": -0.82,
+"2025": 2.78,
+"2026": -4.17
+},
+"per_pair_net_usd": {
+"EURUSD": 168.71,
+"GBPUSD": -750.47,
+"USDJPY": 1500.02
+},
+"swap_usd": -122.19,
+"exposure_pct": 50.4
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.38,
+"max_dd_pct": 9.65,
+"calmar": 0.247,
+"sharpe": 0.42,
+"trades": 90,
+"win_rate_pct": 51.1,
+"profit_factor": 1.45,
+"return_pct": 12.46,
+"final_equity": 11245.94,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.63,
+"2023": 3.28,
+"2024": 1.8,
+"2025": 0.82,
+"2026": -5.8
+},
+"per_pair_net_usd": {
+"EURUSD": 428.96,
+"GBPUSD": -350.85,
+"USDJPY": 1167.82
+},
+"swap_usd": 33.73,
+"exposure_pct": 85.5
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.95,
+"max_dd_pct": 11.95,
+"calmar": 0.246,
+"sharpe": 0.39,
+"trades": 61,
+"win_rate_pct": 45.9,
+"profit_factor": 1.62,
+"return_pct": 15.58,
+"final_equity": 11557.61,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.96,
+"2023": 5.24,
+"2024": 2.71,
+"2025": 4.7,
+"2026": -8.79
+},
+"per_pair_net_usd": {
+"EURUSD": 197.44,
+"GBPUSD": -239.48,
+"USDJPY": 1599.65
+},
+"swap_usd": -94.71,
+"exposure_pct": 72.4
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.82,
+"max_dd_pct": 7.49,
+"calmar": 0.244,
+"sharpe": 0.38,
+"trades": 51,
+"win_rate_pct": 54.9,
+"profit_factor": 1.58,
+"return_pct": 9.43,
+"final_equity": 10943.3,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.09,
+"2023": 3.06,
+"2024": 0.04,
+"2025": 3.87,
+"2026": -6.32
+},
+"per_pair_net_usd": {
+"EURUSD": 192.99,
+"GBPUSD": -212.32,
+"USDJPY": 962.63
+},
+"swap_usd": -56.55,
+"exposure_pct": 74.6
+},
+{
+"config": "D1|standard|N10|ATR2|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.68,
+"max_dd_pct": 6.96,
+"calmar": 0.242,
+"sharpe": 0.3,
+"trades": 69,
+"win_rate_pct": 55.1,
+"profit_factor": 1.39,
+"return_pct": 8.67,
+"final_equity": 10867.29,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.55,
+"2023": 0.22,
+"2024": -0.6,
+"2025": 3.0,
+"2026": -4.19
+},
+"per_pair_net_usd": {
+"EURUSD": 200.85,
+"GBPUSD": -710.8,
+"USDJPY": 1377.24
+},
+"swap_usd": -119.46,
+"exposure_pct": 50.4
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.51,
+"max_dd_pct": 6.37,
+"calmar": 0.236,
+"sharpe": 0.33,
+"trades": 58,
+"win_rate_pct": 46.6,
+"profit_factor": 1.52,
+"return_pct": 7.73,
+"final_equity": 10773.42,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.72,
+"2023": 3.07,
+"2024": 0.35,
+"2025": 2.53,
+"2026": -4.8
+},
+"per_pair_net_usd": {
+"EURUSD": 185.56,
+"GBPUSD": -145.38,
+"USDJPY": 733.23
+},
+"swap_usd": -61.66,
+"exposure_pct": 68.0
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.79,
+"max_dd_pct": 7.65,
+"calmar": 0.234,
+"sharpe": 0.36,
+"trades": 57,
+"win_rate_pct": 52.6,
+"profit_factor": 1.55,
+"return_pct": 9.26,
+"final_equity": 10926.07,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.26,
+"2023": 3.05,
+"2024": -0.01,
+"2025": 3.61,
+"2026": -6.33
+},
+"per_pair_net_usd": {
+"EURUSD": 198.58,
+"GBPUSD": -227.96,
+"USDJPY": 955.46
+},
+"swap_usd": -60.91,
+"exposure_pct": 74.6
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.48,
+"max_dd_pct": 6.37,
+"calmar": 0.233,
+"sharpe": 0.34,
+"trades": 53,
+"win_rate_pct": 47.2,
+"profit_factor": 1.53,
+"return_pct": 7.62,
+"final_equity": 10762.36,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.34,
+"2023": 3.08,
+"2024": 0.35,
+"2025": 2.78,
+"2026": -4.81
+},
+"per_pair_net_usd": {
+"EURUSD": 191.66,
+"GBPUSD": -133.31,
+"USDJPY": 704.02
+},
+"swap_usd": -55.03,
+"exposure_pct": 68.0
+},
+{
+"config": "D1|standard|N20|ATR2|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.1,
+"max_dd_pct": 9.22,
+"calmar": 0.228,
+"sharpe": 0.32,
+"trades": 63,
+"win_rate_pct": 42.9,
+"profit_factor": 1.44,
+"return_pct": 10.93,
+"final_equity": 11093.06,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.0,
+"2023": 4.43,
+"2024": 0.99,
+"2025": 2.39,
+"2026": -6.6
+},
+"per_pair_net_usd": {
+"EURUSD": 334.54,
+"GBPUSD": -444.42,
+"USDJPY": 1202.94
+},
+"swap_usd": -87.29,
+"exposure_pct": 66.8
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.5,
+"max_dd_pct": 15.47,
+"calmar": 0.226,
+"sharpe": 0.33,
+"trades": 105,
+"win_rate_pct": 38.1,
+"profit_factor": 1.32,
+"return_pct": 18.7,
+"final_equity": 11869.79,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.82,
+"2023": 10.49,
+"2024": 1.6,
+"2025": 0.0,
+"2026": -6.27
+},
+"per_pair_net_usd": {
+"EURUSD": 22.42,
+"GBPUSD": -399.45,
+"USDJPY": 2246.82
+},
+"swap_usd": -305.18,
+"exposure_pct": 74.7
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.24,
+"max_dd_pct": 9.93,
+"calmar": 0.225,
+"sharpe": 0.38,
+"trades": 102,
+"win_rate_pct": 49.0,
+"profit_factor": 1.4,
+"return_pct": 11.66,
+"final_equity": 11165.55,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.8,
+"2023": 2.42,
+"2024": 1.78,
+"2025": 0.72,
+"2026": -5.71
+},
+"per_pair_net_usd": {
+"EURUSD": 419.28,
+"GBPUSD": -470.81,
+"USDJPY": 1217.08
+},
+"swap_usd": 44.29,
+"exposure_pct": 85.5
+},
+{
+"config": "D1|standard|N10|ATR2|DON10_KIJUN|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.56,
+"max_dd_pct": 6.98,
+"calmar": 0.224,
+"sharpe": 0.28,
+"trades": 77,
+"win_rate_pct": 50.6,
+"profit_factor": 1.33,
+"return_pct": 8.04,
+"final_equity": 10803.73,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.96,
+"2023": 0.21,
+"2024": -0.82,
+"2025": 1.35,
+"2026": -4.21
+},
+"per_pair_net_usd": {
+"EURUSD": 168.71,
+"GBPUSD": -750.47,
+"USDJPY": 1385.48
+},
+"swap_usd": -115.45,
+"exposure_pct": 50.2
+},
+{
+"config": "D1|standard|N20|ATR2|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.39,
+"max_dd_pct": 10.66,
+"calmar": 0.224,
+"sharpe": 0.35,
+"trades": 49,
+"win_rate_pct": 49.0,
+"profit_factor": 1.58,
+"return_pct": 12.48,
+"final_equity": 11247.56,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.58,
+"2023": 4.88,
+"2024": 1.8,
+"2025": 5.65,
+"2026": -9.0
+},
+"per_pair_net_usd": {
+"EURUSD": 90.48,
+"GBPUSD": -49.75,
+"USDJPY": 1206.83
+},
+"swap_usd": -130.79,
+"exposure_pct": 69.1
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.32,
+"max_dd_pct": 15.03,
+"calmar": 0.221,
+"sharpe": 0.33,
+"trades": 90,
+"win_rate_pct": 36.7,
+"profit_factor": 1.31,
+"return_pct": 17.68,
+"final_equity": 11767.8,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.67,
+"2023": 10.72,
+"2024": 1.75,
+"2025": -0.2,
+"2026": -6.26
+},
+"per_pair_net_usd": {
+"EURUSD": 14.66,
+"GBPUSD": -330.06,
+"USDJPY": 2083.2
+},
+"swap_usd": -274.15,
+"exposure_pct": 74.7
+},
+{
+"config": "D1|standard|N20|ATR2|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.04,
+"max_dd_pct": 9.25,
+"calmar": 0.22,
+"sharpe": 0.32,
+"trades": 54,
+"win_rate_pct": 42.6,
+"profit_factor": 1.45,
+"return_pct": 10.57,
+"final_equity": 11056.76,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 8.86,
+"2023": 5.07,
+"2024": 1.0,
+"2025": 2.5,
+"2026": -6.62
+},
+"per_pair_net_usd": {
+"EURUSD": 322.8,
+"GBPUSD": -374.6,
+"USDJPY": 1108.57
+},
+"swap_usd": -83.02,
+"exposure_pct": 66.8
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.55,
+"max_dd_pct": 16.25,
+"calmar": 0.218,
+"sharpe": 0.34,
+"trades": 82,
+"win_rate_pct": 37.8,
+"profit_factor": 1.37,
+"return_pct": 18.99,
+"final_equity": 11898.99,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.67,
+"2023": 8.68,
+"2024": 4.34,
+"2025": 1.21,
+"2026": -7.97
+},
+"per_pair_net_usd": {
+"EURUSD": -133.05,
+"GBPUSD": -60.8,
+"USDJPY": 2092.83
+},
+"swap_usd": -310.45,
+"exposure_pct": 74.1
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.81,
+"max_dd_pct": 8.33,
+"calmar": 0.217,
+"sharpe": 0.37,
+"trades": 50,
+"win_rate_pct": 54.0,
+"profit_factor": 1.58,
+"return_pct": 9.35,
+"final_equity": 10935.12,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.09,
+"2023": 3.05,
+"2024": 0.94,
+"2025": 3.83,
+"2026": -7.18
+},
+"per_pair_net_usd": {
+"EURUSD": 71.42,
+"GBPUSD": -97.61,
+"USDJPY": 961.31
+},
+"swap_usd": -73.81,
+"exposure_pct": 75.1
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.58,
+"max_dd_pct": 11.95,
+"calmar": 0.216,
+"sharpe": 0.32,
+"trades": 104,
+"win_rate_pct": 49.0,
+"profit_factor": 1.32,
+"return_pct": 13.55,
+"final_equity": 11354.64,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 8.98,
+"2023": 6.96,
+"2024": 1.36,
+"2025": 0.57,
+"2026": -4.44
+},
+"per_pair_net_usd": {
+"EURUSD": -82.33,
+"GBPUSD": -453.42,
+"USDJPY": 1890.39
+},
+"swap_usd": -162.92,
+"exposure_pct": 73.5
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.19,
+"max_dd_pct": 10.16,
+"calmar": 0.215,
+"sharpe": 0.39,
+"trades": 90,
+"win_rate_pct": 48.9,
+"profit_factor": 1.41,
+"return_pct": 11.4,
+"final_equity": 11139.83,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.63,
+"2023": 3.28,
+"2024": 1.27,
+"2025": 0.83,
+"2026": -6.21
+},
+"per_pair_net_usd": {
+"EURUSD": 359.17,
+"GBPUSD": -377.0,
+"USDJPY": 1157.65
+},
+"swap_usd": 26.46,
+"exposure_pct": 85.5
+},
+{
+"config": "D1|standard|N10|ATR2|DON10_KIJUN|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.45,
+"max_dd_pct": 6.94,
+"calmar": 0.209,
+"sharpe": 0.27,
+"trades": 70,
+"win_rate_pct": 52.9,
+"profit_factor": 1.32,
+"return_pct": 7.45,
+"final_equity": 10745.3,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.91,
+"2023": 0.22,
+"2024": -0.6,
+"2025": 1.56,
+"2026": -4.23
+},
+"per_pair_net_usd": {
+"EURUSD": 200.85,
+"GBPUSD": -710.8,
+"USDJPY": 1255.25
+},
+"swap_usd": -112.58,
+"exposure_pct": 50.2
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.41,
+"max_dd_pct": 6.77,
+"calmar": 0.208,
+"sharpe": 0.31,
+"trades": 58,
+"win_rate_pct": 43.1,
+"profit_factor": 1.47,
+"return_pct": 7.23,
+"final_equity": 10723.24,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.55,
+"2023": 3.08,
+"2024": 0.51,
+"2025": 2.49,
+"2026": -5.21
+},
+"per_pair_net_usd": {
+"EURUSD": 156.87,
+"GBPUSD": -145.38,
+"USDJPY": 711.76
+},
+"swap_usd": -64.22,
+"exposure_pct": 68.0
+},
+{
+"config": "D1|standard|N20|ATR2|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.21,
+"max_dd_pct": 10.93,
+"calmar": 0.202,
+"sharpe": 0.31,
+"trades": 57,
+"win_rate_pct": 43.9,
+"profit_factor": 1.51,
+"return_pct": 11.5,
+"final_equity": 11150.02,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.27,
+"2023": 4.74,
+"2024": 1.31,
+"2025": 5.45,
+"2026": -8.8
+},
+"per_pair_net_usd": {
+"EURUSD": 64.92,
+"GBPUSD": -97.23,
+"USDJPY": 1182.33
+},
+"swap_usd": -139.27,
+"exposure_pct": 69.1
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.22,
+"max_dd_pct": 10.98,
+"calmar": 0.202,
+"sharpe": 0.3,
+"trades": 91,
+"win_rate_pct": 49.5,
+"profit_factor": 1.28,
+"return_pct": 11.57,
+"final_equity": 11157.24,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.93,
+"2023": 7.35,
+"2024": 0.07,
+"2025": 0.68,
+"2026": -4.43
+},
+"per_pair_net_usd": {
+"EURUSD": -114.86,
+"GBPUSD": -458.93,
+"USDJPY": 1731.03
+},
+"swap_usd": -159.22,
+"exposure_pct": 73.5
+},
+{
+"config": "D1|none|N10|ATR3|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.18,
+"max_dd_pct": 5.87,
+"calmar": 0.201,
+"sharpe": 0.25,
+"trades": 100,
+"win_rate_pct": 44.0,
+"profit_factor": 1.25,
+"return_pct": 6.01,
+"final_equity": 10601.33,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.21,
+"2023": 0.36,
+"2024": -0.81,
+"2025": 1.86,
+"2026": -2.48
+},
+"per_pair_net_usd": {
+"EURUSD": -108.8,
+"GBPUSD": -418.28,
+"USDJPY": 1128.41
+},
+"swap_usd": -117.62,
+"exposure_pct": 66.7
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.36,
+"max_dd_pct": 6.79,
+"calmar": 0.2,
+"sharpe": 0.31,
+"trades": 53,
+"win_rate_pct": 43.4,
+"profit_factor": 1.46,
+"return_pct": 6.95,
+"final_equity": 10694.98,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.18,
+"2023": 3.09,
+"2024": 0.35,
+"2025": 2.74,
+"2026": -5.22
+},
+"per_pair_net_usd": {
+"EURUSD": 145.75,
+"GBPUSD": -133.31,
+"USDJPY": 682.54
+},
+"swap_usd": -57.13,
+"exposure_pct": 68.0
+},
+{
+"config": "D1|none|N20|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.91,
+"max_dd_pct": 9.58,
+"calmar": 0.199,
+"sharpe": 0.26,
+"trades": 84,
+"win_rate_pct": 56.0,
+"profit_factor": 1.35,
+"return_pct": 9.88,
+"final_equity": 10987.51,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.0,
+"2023": 4.88,
+"2024": -1.08,
+"2025": 3.86,
+"2026": -3.8
+},
+"per_pair_net_usd": {
+"EURUSD": -140.4,
+"GBPUSD": -309.99,
+"USDJPY": 1437.9
+},
+"swap_usd": -198.25,
+"exposure_pct": 69.8
+},
+{
+"config": "D1|none|N20|ATR2|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.88,
+"max_dd_pct": 9.55,
+"calmar": 0.197,
+"sharpe": 0.26,
+"trades": 74,
+"win_rate_pct": 56.8,
+"profit_factor": 1.36,
+"return_pct": 9.75,
+"final_equity": 10974.54,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.02,
+"2023": 5.52,
+"2024": -1.22,
+"2025": 4.22,
+"2026": -3.8
+},
+"per_pair_net_usd": {
+"EURUSD": -86.73,
+"GBPUSD": -261.82,
+"USDJPY": 1323.09
+},
+"swap_usd": -182.62,
+"exposure_pct": 69.8
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.24,
+"max_dd_pct": 11.58,
+"calmar": 0.193,
+"sharpe": 0.28,
+"trades": 77,
+"win_rate_pct": 41.6,
+"profit_factor": 1.31,
+"return_pct": 11.67,
+"final_equity": 11167.42,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.48,
+"2023": 7.02,
+"2024": 1.9,
+"2025": 2.78,
+"2026": -7.3
+},
+"per_pair_net_usd": {
+"EURUSD": -336.09,
+"GBPUSD": -67.07,
+"USDJPY": 1570.58
+},
+"swap_usd": -183.95,
+"exposure_pct": 76.6
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.63,
+"max_dd_pct": 8.55,
+"calmar": 0.191,
+"sharpe": 0.33,
+"trades": 55,
+"win_rate_pct": 49.1,
+"profit_factor": 1.49,
+"return_pct": 8.41,
+"final_equity": 10840.87,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 8.78,
+"2023": 3.06,
+"2024": 0.72,
+"2025": 3.51,
+"2026": -7.24
+},
+"per_pair_net_usd": {
+"EURUSD": 48.23,
+"GBPUSD": -113.25,
+"USDJPY": 905.89
+},
+"swap_usd": -78.34,
+"exposure_pct": 75.1
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 4.94,
+"max_dd_pct": 26.12,
+"calmar": 0.189,
+"sharpe": 0.32,
+"trades": 713,
+"win_rate_pct": 41.1,
+"profit_factor": 1.07,
+"return_pct": 27.16,
+"final_equity": 12716.2,
+"yearly_pct": {
+"2021": 1.48,
+"2022": 22.21,
+"2023": -6.68,
+"2024": 12.75,
+"2025": -0.2,
+"2026": -2.36
+},
+"per_pair_net_usd": {
+"EURUSD": 1863.84,
+"GBPUSD": -1678.85,
+"USDJPY": 2531.22
+},
+"swap_usd": 159.32,
+"exposure_pct": 63.3
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.28,
+"max_dd_pct": 17.36,
+"calmar": 0.189,
+"sharpe": 0.31,
+"trades": 92,
+"win_rate_pct": 37.0,
+"profit_factor": 1.33,
+"return_pct": 17.48,
+"final_equity": 11747.65,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.56,
+"2023": 8.68,
+"2024": 3.48,
+"2025": 1.24,
+"2026": -8.34
+},
+"per_pair_net_usd": {
+"EURUSD": -182.23,
+"GBPUSD": -126.36,
+"USDJPY": 2056.23
+},
+"swap_usd": -325.9,
+"exposure_pct": 74.1
+},
+{
+"config": "D1|standard|N10|ATR3|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.94,
+"max_dd_pct": 10.56,
+"calmar": 0.184,
+"sharpe": 0.33,
+"trades": 102,
+"win_rate_pct": 47.1,
+"profit_factor": 1.34,
+"return_pct": 10.06,
+"final_equity": 11006.15,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.8,
+"2023": 2.42,
+"2024": 0.91,
+"2025": 0.58,
+"2026": -6.13
+},
+"per_pair_net_usd": {
+"EURUSD": 299.2,
+"GBPUSD": -496.96,
+"USDJPY": 1203.91
+},
+"swap_usd": 44.05,
+"exposure_pct": 85.5
+},
+{
+"config": "D1|none|N10|ATR3|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.08,
+"max_dd_pct": 6.0,
+"calmar": 0.18,
+"sharpe": 0.24,
+"trades": 97,
+"win_rate_pct": 44.3,
+"profit_factor": 1.23,
+"return_pct": 5.52,
+"final_equity": 10551.86,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.45,
+"2023": 0.37,
+"2024": -0.58,
+"2025": 1.87,
+"2026": -2.49
+},
+"per_pair_net_usd": {
+"EURUSD": -96.06,
+"GBPUSD": -418.28,
+"USDJPY": 1066.21
+},
+"swap_usd": -116.57,
+"exposure_pct": 66.7
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.01,
+"max_dd_pct": 16.83,
+"calmar": 0.179,
+"sharpe": 0.31,
+"trades": 115,
+"win_rate_pct": 55.7,
+"profit_factor": 1.32,
+"return_pct": 15.93,
+"final_equity": 11593.06,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 14.8,
+"2023": -1.64,
+"2024": 7.43,
+"2025": -0.48,
+"2026": -3.98
+},
+"per_pair_net_usd": {
+"EURUSD": 141.66,
+"GBPUSD": -1117.73,
+"USDJPY": 2569.14
+},
+"swap_usd": -124.56,
+"exposure_pct": 68.9
+},
+{
+"config": "D1|none|N20|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.56,
+"max_dd_pct": 8.71,
+"calmar": 0.179,
+"sharpe": 0.23,
+"trades": 77,
+"win_rate_pct": 55.8,
+"profit_factor": 1.27,
+"return_pct": 8.02,
+"final_equity": 10802.05,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.59,
+"2023": 5.71,
+"2024": -0.57,
+"2025": 1.02,
+"2026": -3.66
+},
+"per_pair_net_usd": {
+"EURUSD": -115.67,
+"GBPUSD": -540.92,
+"USDJPY": 1458.64
+},
+"swap_usd": -164.53,
+"exposure_pct": 69.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 4.64,
+"max_dd_pct": 26.23,
+"calmar": 0.177,
+"sharpe": 0.3,
+"trades": 718,
+"win_rate_pct": 40.9,
+"profit_factor": 1.07,
+"return_pct": 25.35,
+"final_equity": 12534.76,
+"yearly_pct": {
+"2021": 1.48,
+"2022": 22.21,
+"2023": -6.85,
+"2024": 12.81,
+"2025": -0.33,
+"2026": -3.49
+},
+"per_pair_net_usd": {
+"EURUSD": 1661.23,
+"GBPUSD": -1627.61,
+"USDJPY": 2501.13
+},
+"swap_usd": 161.11,
+"exposure_pct": 63.3
+},
+{
+"config": "D1|none|N20|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.61,
+"max_dd_pct": 9.18,
+"calmar": 0.175,
+"sharpe": 0.23,
+"trades": 87,
+"win_rate_pct": 54.0,
+"profit_factor": 1.26,
+"return_pct": 8.28,
+"final_equity": 10828.42,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.76,
+"2023": 5.11,
+"2024": -0.58,
+"2025": 0.75,
+"2026": -3.65
+},
+"per_pair_net_usd": {
+"EURUSD": -159.46,
+"GBPUSD": -589.55,
+"USDJPY": 1577.43
+},
+"swap_usd": -176.1,
+"exposure_pct": 69.3
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.11,
+"max_dd_pct": 12.13,
+"calmar": 0.174,
+"sharpe": 0.26,
+"trades": 86,
+"win_rate_pct": 40.7,
+"profit_factor": 1.28,
+"return_pct": 10.97,
+"final_equity": 11096.72,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.38,
+"2023": 6.9,
+"2024": 1.65,
+"2025": 2.63,
+"2026": -7.34
+},
+"per_pair_net_usd": {
+"EURUSD": -341.81,
+"GBPUSD": -82.92,
+"USDJPY": 1521.46
+},
+"swap_usd": -191.46,
+"exposure_pct": 76.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 3.92,
+"max_dd_pct": 23.13,
+"calmar": 0.169,
+"sharpe": 0.29,
+"trades": 516,
+"win_rate_pct": 38.4,
+"profit_factor": 1.1,
+"return_pct": 21.12,
+"final_equity": 12111.66,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 22.31,
+"2023": -8.91,
+"2024": 9.17,
+"2025": -8.24,
+"2026": 9.3
+},
+"per_pair_net_usd": {
+"EURUSD": 1138.81,
+"GBPUSD": -129.36,
+"USDJPY": 1102.21
+},
+"swap_usd": -62.09,
+"exposure_pct": 90.4
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 3.89,
+"max_dd_pct": 22.96,
+"calmar": 0.169,
+"sharpe": 0.29,
+"trades": 462,
+"win_rate_pct": 38.3,
+"profit_factor": 1.1,
+"return_pct": 20.95,
+"final_equity": 12095.14,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 21.55,
+"2023": -9.55,
+"2024": 10.58,
+"2025": -6.63,
+"2026": 7.32
+},
+"per_pair_net_usd": {
+"EURUSD": 996.48,
+"GBPUSD": 3.01,
+"USDJPY": 1095.65
+},
+"swap_usd": -92.44,
+"exposure_pct": 90.4
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.77,
+"max_dd_pct": 16.71,
+"calmar": 0.166,
+"sharpe": 0.25,
+"trades": 148,
+"win_rate_pct": 36.5,
+"profit_factor": 1.17,
+"return_pct": 14.6,
+"final_equity": 11460.0,
+"yearly_pct": {
+"2021": 0.78,
+"2022": 8.76,
+"2023": 7.54,
+"2024": 2.55,
+"2025": -0.52,
+"2026": -4.69
+},
+"per_pair_net_usd": {
+"EURUSD": 21.56,
+"GBPUSD": -465.68,
+"USDJPY": 1904.11
+},
+"swap_usd": -283.4,
+"exposure_pct": 94.8
+},
+{
+"config": "D1|none|N10|ATR2|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.49,
+"max_dd_pct": 9.0,
+"calmar": 0.166,
+"sharpe": 0.22,
+"trades": 100,
+"win_rate_pct": 40.0,
+"profit_factor": 1.19,
+"return_pct": 7.66,
+"final_equity": 10765.76,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.45,
+"2023": 1.59,
+"2024": -0.32,
+"2025": 2.1,
+"2026": -4.86
+},
+"per_pair_net_usd": {
+"EURUSD": -171.06,
+"GBPUSD": -847.73,
+"USDJPY": 1784.55
+},
+"swap_usd": -196.52,
+"exposure_pct": 66.3
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.36,
+"max_dd_pct": 8.27,
+"calmar": 0.164,
+"sharpe": 0.26,
+"trades": 91,
+"win_rate_pct": 45.1,
+"profit_factor": 1.25,
+"return_pct": 6.97,
+"final_equity": 10696.69,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.75,
+"2023": 6.15,
+"2024": -1.52,
+"2025": 0.82,
+"2026": -3.11
+},
+"per_pair_net_usd": {
+"EURUSD": -136.23,
+"GBPUSD": -86.13,
+"USDJPY": 919.05
+},
+"swap_usd": -113.85,
+"exposure_pct": 76.0
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.37,
+"max_dd_pct": 8.35,
+"calmar": 0.164,
+"sharpe": 0.26,
+"trades": 89,
+"win_rate_pct": 41.6,
+"profit_factor": 1.26,
+"return_pct": 7.0,
+"final_equity": 10700.16,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.67,
+"2023": 6.16,
+"2024": -1.52,
+"2025": 1.39,
+"2026": -3.55
+},
+"per_pair_net_usd": {
+"EURUSD": -182.13,
+"GBPUSD": -92.67,
+"USDJPY": 974.97
+},
+"swap_usd": -129.44,
+"exposure_pct": 77.0
+},
+{
+"config": "D1|standard|N10|ATR3|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.96,
+"max_dd_pct": 5.97,
+"calmar": 0.161,
+"sharpe": 0.25,
+"trades": 68,
+"win_rate_pct": 44.1,
+"profit_factor": 1.32,
+"return_pct": 4.89,
+"final_equity": 10488.82,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.91,
+"2023": -0.09,
+"2024": -1.15,
+"2025": 3.04,
+"2026": -4.48
+},
+"per_pair_net_usd": {
+"EURUSD": 19.95,
+"GBPUSD": -326.81,
+"USDJPY": 795.68
+},
+"swap_usd": -76.88,
+"exposure_pct": 54.9
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.19,
+"max_dd_pct": 13.62,
+"calmar": 0.161,
+"sharpe": 0.28,
+"trades": 99,
+"win_rate_pct": 39.4,
+"profit_factor": 1.26,
+"return_pct": 11.43,
+"final_equity": 11142.81,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.65,
+"2023": 6.81,
+"2024": 0.62,
+"2025": 1.7,
+"2026": -5.29
+},
+"per_pair_net_usd": {
+"EURUSD": -249.26,
+"GBPUSD": -245.61,
+"USDJPY": 1637.67
+},
+"swap_usd": -217.77,
+"exposure_pct": 75.5
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.38,
+"max_dd_pct": 8.68,
+"calmar": 0.159,
+"sharpe": 0.23,
+"trades": 134,
+"win_rate_pct": 45.5,
+"profit_factor": 1.18,
+"return_pct": 7.08,
+"final_equity": 10708.3,
+"yearly_pct": {
+"2021": 0.31,
+"2022": 3.38,
+"2023": 6.05,
+"2024": 0.2,
+"2025": -0.02,
+"2026": -2.79
+},
+"per_pair_net_usd": {
+"EURUSD": 0.51,
+"GBPUSD": -278.89,
+"USDJPY": 986.67
+},
+"swap_usd": -92.72,
+"exposure_pct": 95.8
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.18,
+"max_dd_pct": 13.94,
+"calmar": 0.157,
+"sharpe": 0.27,
+"trades": 65,
+"win_rate_pct": 36.9,
+"profit_factor": 1.29,
+"return_pct": 11.37,
+"final_equity": 11137.44,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 14.97,
+"2023": 2.38,
+"2024": 0.65,
+"2025": 1.27,
+"2026": -7.16
+},
+"per_pair_net_usd": {
+"EURUSD": 536.46,
+"GBPUSD": -1136.8,
+"USDJPY": 1737.79
+},
+"swap_usd": -78.22,
+"exposure_pct": 65.6
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.24,
+"max_dd_pct": 14.4,
+"calmar": 0.156,
+"sharpe": 0.26,
+"trades": 77,
+"win_rate_pct": 36.4,
+"profit_factor": 1.28,
+"return_pct": 11.7,
+"final_equity": 11169.65,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 15.84,
+"2023": 2.01,
+"2024": 0.33,
+"2025": 1.47,
+"2026": -7.14
+},
+"per_pair_net_usd": {
+"EURUSD": 518.91,
+"GBPUSD": -1268.15,
+"USDJPY": 1918.89
+},
+"swap_usd": -79.9,
+"exposure_pct": 65.6
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.66,
+"max_dd_pct": 17.24,
+"calmar": 0.154,
+"sharpe": 0.32,
+"trades": 97,
+"win_rate_pct": 45.4,
+"profit_factor": 1.28,
+"return_pct": 13.98,
+"final_equity": 11397.64,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 19.41,
+"2023": 4.79,
+"2024": 0.97,
+"2025": -1.84,
+"2026": -8.08
+},
+"per_pair_net_usd": {
+"EURUSD": 515.82,
+"GBPUSD": -755.09,
+"USDJPY": 1636.91
+},
+"swap_usd": 22.64,
+"exposure_pct": 85.1
+},
+{
+"config": "D1|standard|N10|ATR3|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.92,
+"max_dd_pct": 5.98,
+"calmar": 0.154,
+"sharpe": 0.25,
+"trades": 65,
+"win_rate_pct": 44.6,
+"profit_factor": 1.31,
+"return_pct": 4.68,
+"final_equity": 10467.99,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.57,
+"2023": -0.09,
+"2024": -1.04,
+"2025": 3.04,
+"2026": -4.49
+},
+"per_pair_net_usd": {
+"EURUSD": 19.95,
+"GBPUSD": -326.81,
+"USDJPY": 774.85
+},
+"swap_usd": -73.09,
+"exposure_pct": 54.9
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.42,
+"max_dd_pct": 15.77,
+"calmar": 0.154,
+"sharpe": 0.27,
+"trades": 104,
+"win_rate_pct": 52.9,
+"profit_factor": 1.26,
+"return_pct": 12.68,
+"final_equity": 11267.56,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 13.05,
+"2023": -1.63,
+"2024": 7.18,
+"2025": -1.31,
+"2026": -4.2
+},
+"per_pair_net_usd": {
+"EURUSD": 85.81,
+"GBPUSD": -1124.67,
+"USDJPY": 2306.42
+},
+"swap_usd": -78.23,
+"exposure_pct": 68.9
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.48,
+"max_dd_pct": 16.06,
+"calmar": 0.154,
+"sharpe": 0.27,
+"trades": 120,
+"win_rate_pct": 51.7,
+"profit_factor": 1.25,
+"return_pct": 12.99,
+"final_equity": 11299.29,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.55,
+"2023": -0.8,
+"2024": 9.4,
+"2025": -3.66,
+"2026": -3.97
+},
+"per_pair_net_usd": {
+"EURUSD": 152.84,
+"GBPUSD": -1131.14,
+"USDJPY": 2277.6
+},
+"swap_usd": -103.57,
+"exposure_pct": 67.6
+},
+{
+"config": "D1|none|N10|ATR3|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.91,
+"max_dd_pct": 6.0,
+"calmar": 0.152,
+"sharpe": 0.2,
+"trades": 97,
+"win_rate_pct": 42.3,
+"profit_factor": 1.19,
+"return_pct": 4.62,
+"final_equity": 10462.15,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.45,
+"2023": 0.37,
+"2024": -0.58,
+"2025": 1.87,
+"2026": -3.32
+},
+"per_pair_net_usd": {
+"EURUSD": -171.43,
+"GBPUSD": -418.28,
+"USDJPY": 1051.87
+},
+"swap_usd": -128.08,
+"exposure_pct": 67.1
+},
+{
+"config": "D1|none|N10|ATR2|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.47,
+"max_dd_pct": 9.79,
+"calmar": 0.151,
+"sharpe": 0.21,
+"trades": 107,
+"win_rate_pct": 40.2,
+"profit_factor": 1.18,
+"return_pct": 7.57,
+"final_equity": 10757.17,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.31,
+"2023": 1.47,
+"2024": -0.15,
+"2025": 2.1,
+"2026": -4.86
+},
+"per_pair_net_usd": {
+"EURUSD": -195.6,
+"GBPUSD": -889.9,
+"USDJPY": 1842.67
+},
+"swap_usd": -204.31,
+"exposure_pct": 66.3
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.41,
+"max_dd_pct": 9.44,
+"calmar": 0.15,
+"sharpe": 0.23,
+"trades": 146,
+"win_rate_pct": 45.9,
+"profit_factor": 1.18,
+"return_pct": 7.24,
+"final_equity": 10723.93,
+"yearly_pct": {
+"2021": 0.31,
+"2022": 4.57,
+"2023": 4.76,
+"2024": 0.88,
+"2025": -0.26,
+"2026": -3.0
+},
+"per_pair_net_usd": {
+"EURUSD": 28.55,
+"GBPUSD": -366.57,
+"USDJPY": 1061.96
+},
+"swap_usd": -86.32,
+"exposure_pct": 95.8
+},
+{
+"config": "D1|standard|N20|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.21,
+"max_dd_pct": 8.41,
+"calmar": 0.144,
+"sharpe": 0.26,
+"trades": 49,
+"win_rate_pct": 49.0,
+"profit_factor": 1.4,
+"return_pct": 6.2,
+"final_equity": 10620.05,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.47,
+"2023": 2.64,
+"2024": 0.94,
+"2025": 3.78,
+"2026": -7.23
+},
+"per_pair_net_usd": {
+"EURUSD": -26.18,
+"GBPUSD": -60.89,
+"USDJPY": 707.12
+},
+"swap_usd": -109.94,
+"exposure_pct": 71.5
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.13,
+"max_dd_pct": 7.88,
+"calmar": 0.144,
+"sharpe": 0.23,
+"trades": 85,
+"win_rate_pct": 43.5,
+"profit_factor": 1.22,
+"return_pct": 5.78,
+"final_equity": 10578.47,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.7,
+"2023": 6.15,
+"2024": -1.82,
+"2025": 1.07,
+"2026": -3.15
+},
+"per_pair_net_usd": {
+"EURUSD": -114.92,
+"GBPUSD": -123.04,
+"USDJPY": 816.43
+},
+"swap_usd": -99.5,
+"exposure_pct": 76.0
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.84,
+"max_dd_pct": 12.92,
+"calmar": 0.142,
+"sharpe": 0.31,
+"trades": 85,
+"win_rate_pct": 51.8,
+"profit_factor": 1.33,
+"return_pct": 9.49,
+"final_equity": 10949.4,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.47,
+"2023": 3.01,
+"2024": 2.64,
+"2025": 0.53,
+"2026": -8.41
+},
+"per_pair_net_usd": {
+"EURUSD": 461.37,
+"GBPUSD": -735.1,
+"USDJPY": 1223.14
+},
+"swap_usd": 29.24,
+"exposure_pct": 88.7
+},
+{
+"config": "D1|none|N10|ATR3|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.16,
+"max_dd_pct": 8.26,
+"calmar": 0.141,
+"sharpe": 0.22,
+"trades": 74,
+"win_rate_pct": 48.6,
+"profit_factor": 1.23,
+"return_pct": 5.93,
+"final_equity": 10592.91,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.63,
+"2023": 5.1,
+"2024": -0.92,
+"2025": 2.18,
+"2026": -5.76
+},
+"per_pair_net_usd": {
+"EURUSD": 24.72,
+"GBPUSD": -177.31,
+"USDJPY": 745.49
+},
+"swap_usd": -125.71,
+"exposure_pct": 78.1
+},
+{
+"config": "D1|none|N10|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.33,
+"max_dd_pct": 9.45,
+"calmar": 0.141,
+"sharpe": 0.25,
+"trades": 69,
+"win_rate_pct": 46.4,
+"profit_factor": 1.28,
+"return_pct": 6.82,
+"final_equity": 10682.31,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.48,
+"2023": 5.49,
+"2024": 0.17,
+"2025": 2.13,
+"2026": -7.04
+},
+"per_pair_net_usd": {
+"EURUSD": -117.65,
+"GBPUSD": -64.04,
+"USDJPY": 864.0
+},
+"swap_usd": -171.37,
+"exposure_pct": 78.4
+},
+{
+"config": "D1|standard|N20|ATR3|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.08,
+"max_dd_pct": 7.74,
+"calmar": 0.14,
+"sharpe": 0.24,
+"trades": 51,
+"win_rate_pct": 49.0,
+"profit_factor": 1.35,
+"return_pct": 5.51,
+"final_equity": 10551.15,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.62,
+"2023": 2.67,
+"2024": 0.26,
+"2025": 3.84,
+"2026": -6.53
+},
+"per_pair_net_usd": {
+"EURUSD": 77.34,
+"GBPUSD": -148.32,
+"USDJPY": 622.13
+},
+"swap_usd": -95.41,
+"exposure_pct": 71.2
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.78,
+"max_dd_pct": 12.69,
+"calmar": 0.14,
+"sharpe": 0.24,
+"trades": 86,
+"win_rate_pct": 38.4,
+"profit_factor": 1.22,
+"return_pct": 9.2,
+"final_equity": 10919.86,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.61,
+"2023": 7.33,
+"2024": -0.8,
+"2025": 1.62,
+"2026": -5.33
+},
+"per_pair_net_usd": {
+"EURUSD": -241.55,
+"GBPUSD": -248.23,
+"USDJPY": 1409.64
+},
+"swap_usd": -193.37,
+"exposure_pct": 75.5
+},
+{
+"config": "D1|none|N10|ATR3|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.88,
+"max_dd_pct": 6.27,
+"calmar": 0.14,
+"sharpe": 0.19,
+"trades": 100,
+"win_rate_pct": 42.0,
+"profit_factor": 1.18,
+"return_pct": 4.47,
+"final_equity": 10446.59,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.56,
+"2023": 0.37,
+"2024": -0.82,
+"2025": 1.87,
+"2026": -3.33
+},
+"per_pair_net_usd": {
+"EURUSD": -184.17,
+"GBPUSD": -418.28,
+"USDJPY": 1049.04
+},
+"swap_usd": -130.98,
+"exposure_pct": 67.1
+},
+{
+"config": "D1|none|N10|ATR3|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.2,
+"max_dd_pct": 8.54,
+"calmar": 0.14,
+"sharpe": 0.22,
+"trades": 80,
+"win_rate_pct": 48.8,
+"profit_factor": 1.23,
+"return_pct": 6.1,
+"final_equity": 10610.46,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.08,
+"2023": 5.51,
+"2024": -1.3,
+"2025": 1.91,
+"2026": -5.75
+},
+"per_pair_net_usd": {
+"EURUSD": 30.32,
+"GBPUSD": -183.9,
+"USDJPY": 764.05
+},
+"swap_usd": -138.7,
+"exposure_pct": 78.1
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.15,
+"max_dd_pct": 15.48,
+"calmar": 0.139,
+"sharpe": 0.25,
+"trades": 107,
+"win_rate_pct": 51.4,
+"profit_factor": 1.22,
+"return_pct": 11.19,
+"final_equity": 11118.98,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.22,
+"2023": -0.92,
+"2024": 8.84,
+"2025": -3.47,
+"2026": -3.97
+},
+"per_pair_net_usd": {
+"EURUSD": 67.29,
+"GBPUSD": -1149.88,
+"USDJPY": 2201.57
+},
+"swap_usd": -72.04,
+"exposure_pct": 67.6
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.07,
+"max_dd_pct": 7.89,
+"calmar": 0.136,
+"sharpe": 0.22,
+"trades": 83,
+"win_rate_pct": 39.8,
+"profit_factor": 1.2,
+"return_pct": 5.46,
+"final_equity": 10546.39,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.54,
+"2023": 6.16,
+"2024": -1.82,
+"2025": 1.39,
+"2026": -3.6
+},
+"per_pair_net_usd": {
+"EURUSD": -160.82,
+"GBPUSD": -137.19,
+"USDJPY": 844.4
+},
+"swap_usd": -112.53,
+"exposure_pct": 77.0
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 3.02,
+"max_dd_pct": 22.49,
+"calmar": 0.134,
+"sharpe": 0.24,
+"trades": 504,
+"win_rate_pct": 38.7,
+"profit_factor": 1.07,
+"return_pct": 16.01,
+"final_equity": 11600.81,
+"yearly_pct": {
+"2021": -0.72,
+"2022": 24.66,
+"2023": -9.4,
+"2024": 9.58,
+"2025": -5.4,
+"2026": -0.2
+},
+"per_pair_net_usd": {
+"EURUSD": 809.8,
+"GBPUSD": -369.35,
+"USDJPY": 1160.36
+},
+"swap_usd": -125.34,
+"exposure_pct": 92.0
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.19,
+"max_dd_pct": 8.95,
+"calmar": 0.133,
+"sharpe": 0.2,
+"trades": 132,
+"win_rate_pct": 40.9,
+"profit_factor": 1.16,
+"return_pct": 6.06,
+"final_equity": 10605.76,
+"yearly_pct": {
+"2021": 0.31,
+"2022": 3.07,
+"2023": 5.9,
+"2024": 0.09,
+"2025": 0.21,
+"2026": -3.41
+},
+"per_pair_net_usd": {
+"EURUSD": -67.03,
+"GBPUSD": -332.32,
+"USDJPY": 1005.1
+},
+"swap_usd": -105.92,
+"exposure_pct": 95.9
+},
+{
+"config": "D1|standard|N20|ATR3|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.06,
+"max_dd_pct": 8.05,
+"calmar": 0.132,
+"sharpe": 0.22,
+"trades": 56,
+"win_rate_pct": 48.2,
+"profit_factor": 1.34,
+"return_pct": 5.41,
+"final_equity": 10540.83,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.87,
+"2023": 2.66,
+"2024": 0.2,
+"2025": 3.57,
+"2026": -6.54
+},
+"per_pair_net_usd": {
+"EURUSD": 82.94,
+"GBPUSD": -163.97,
+"USDJPY": 621.86
+},
+"swap_usd": -100.2,
+"exposure_pct": 71.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 3.11,
+"max_dd_pct": 23.78,
+"calmar": 0.131,
+"sharpe": 0.25,
+"trades": 549,
+"win_rate_pct": 44.8,
+"profit_factor": 1.08,
+"return_pct": 16.51,
+"final_equity": 11650.87,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 22.56,
+"2023": -9.95,
+"2024": 6.14,
+"2025": -5.57,
+"2026": 6.08
+},
+"per_pair_net_usd": {
+"EURUSD": 1323.18,
+"GBPUSD": -504.59,
+"USDJPY": 832.28
+},
+"swap_usd": -27.8,
+"exposure_pct": 89.4
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 2.9,
+"max_dd_pct": 22.49,
+"calmar": 0.129,
+"sharpe": 0.24,
+"trades": 481,
+"win_rate_pct": 45.5,
+"profit_factor": 1.08,
+"return_pct": 15.3,
+"final_equity": 11530.22,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 22.0,
+"2023": -9.61,
+"2024": 7.1,
+"2025": -4.65,
+"2026": 3.12
+},
+"per_pair_net_usd": {
+"EURUSD": 1126.98,
+"GBPUSD": -317.1,
+"USDJPY": 720.35
+},
+"swap_usd": -47.12,
+"exposure_pct": 89.4
+},
+{
+"config": "D1|standard|N10|ATR2|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.17,
+"max_dd_pct": 9.06,
+"calmar": 0.129,
+"sharpe": 0.21,
+"trades": 67,
+"win_rate_pct": 40.3,
+"profit_factor": 1.23,
+"return_pct": 5.97,
+"final_equity": 10596.98,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.27,
+"2023": 0.25,
+"2024": -1.53,
+"2025": 3.6,
+"2026": -6.87
+},
+"per_pair_net_usd": {
+"EURUSD": -16.91,
+"GBPUSD": -681.77,
+"USDJPY": 1295.65
+},
+"swap_usd": -138.71,
+"exposure_pct": 54.7
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.89,
+"max_dd_pct": 14.76,
+"calmar": 0.128,
+"sharpe": 0.24,
+"trades": 83,
+"win_rate_pct": 57.8,
+"profit_factor": 1.31,
+"return_pct": 9.78,
+"final_equity": 10977.59,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 17.21,
+"2023": -0.47,
+"2024": -1.05,
+"2025": 0.96,
+"2026": -5.81
+},
+"per_pair_net_usd": {
+"EURUSD": 404.34,
+"GBPUSD": -1518.33,
+"USDJPY": 2091.59
+},
+"swap_usd": -37.06,
+"exposure_pct": 58.7
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.05,
+"max_dd_pct": 16.02,
+"calmar": 0.128,
+"sharpe": 0.25,
+"trades": 61,
+"win_rate_pct": 37.7,
+"profit_factor": 1.28,
+"return_pct": 10.62,
+"final_equity": 11062.21,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 15.87,
+"2023": 0.17,
+"2024": 2.6,
+"2025": 2.42,
+"2026": -9.31
+},
+"per_pair_net_usd": {
+"EURUSD": 214.67,
+"GBPUSD": -1107.39,
+"USDJPY": 1954.94
+},
+"swap_usd": -95.17,
+"exposure_pct": 66.8
+},
+{
+"config": "D1|none|N10|ATR3|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.25,
+"max_dd_pct": 9.77,
+"calmar": 0.128,
+"sharpe": 0.23,
+"trades": 74,
+"win_rate_pct": 44.6,
+"profit_factor": 1.25,
+"return_pct": 6.38,
+"final_equity": 10637.92,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.57,
+"2023": 5.48,
+"2024": -0.05,
+"2025": 1.88,
+"2026": -7.07
+},
+"per_pair_net_usd": {
+"EURUSD": -130.86,
+"GBPUSD": -70.63,
+"USDJPY": 839.4
+},
+"swap_usd": -178.03,
+"exposure_pct": 78.4
+},
+{
+"config": "D1|none|N10|ATR3|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.24,
+"max_dd_pct": 9.7,
+"calmar": 0.128,
+"sharpe": 0.2,
+"trades": 144,
+"win_rate_pct": 41.7,
+"profit_factor": 1.16,
+"return_pct": 6.36,
+"final_equity": 10635.64,
+"yearly_pct": {
+"2021": 0.31,
+"2022": 4.26,
+"2023": 4.74,
+"2024": 0.77,
+"2025": -0.03,
+"2026": -3.61
+},
+"per_pair_net_usd": {
+"EURUSD": -38.99,
+"GBPUSD": -405.76,
+"USDJPY": 1080.39
+},
+"swap_usd": -99.5,
+"exposure_pct": 95.9
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.63,
+"max_dd_pct": 20.81,
+"calmar": 0.126,
+"sharpe": 0.24,
+"trades": 369,
+"win_rate_pct": 42.0,
+"profit_factor": 1.09,
+"return_pct": 13.82,
+"final_equity": 11381.78,
+"yearly_pct": {
+"2021": -0.48,
+"2022": 13.78,
+"2023": -5.68,
+"2024": 1.7,
+"2025": -8.95,
+"2026": 15.09
+},
+"per_pair_net_usd": {
+"EURUSD": -4.81,
+"GBPUSD": 579.61,
+"USDJPY": 806.99
+},
+"swap_usd": -159.91,
+"exposure_pct": 80.9
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.32,
+"max_dd_pct": 18.47,
+"calmar": 0.126,
+"sharpe": 0.27,
+"trades": 123,
+"win_rate_pct": 43.1,
+"profit_factor": 1.22,
+"return_pct": 12.13,
+"final_equity": 11212.6,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 19.94,
+"2023": 3.88,
+"2024": 0.64,
+"2025": -2.82,
+"2026": -7.97
+},
+"per_pair_net_usd": {
+"EURUSD": 409.51,
+"GBPUSD": -1019.5,
+"USDJPY": 1822.59
+},
+"swap_usd": 44.07,
+"exposure_pct": 85.1
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.92,
+"max_dd_pct": 23.35,
+"calmar": 0.125,
+"sharpe": 0.25,
+"trades": 716,
+"win_rate_pct": 38.5,
+"profit_factor": 1.06,
+"return_pct": 15.46,
+"final_equity": 11545.8,
+"yearly_pct": {
+"2021": -0.51,
+"2022": 28.46,
+"2023": -0.81,
+"2024": 4.02,
+"2025": -1.82,
+"2026": -10.81
+},
+"per_pair_net_usd": {
+"EURUSD": 292.48,
+"GBPUSD": -1310.65,
+"USDJPY": 2563.98
+},
+"swap_usd": 4.42,
+"exposure_pct": 80.9
+},
+{
+"config": "D1|standard|N20|ATR3|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.09,
+"max_dd_pct": 8.76,
+"calmar": 0.125,
+"sharpe": 0.23,
+"trades": 53,
+"win_rate_pct": 45.3,
+"profit_factor": 1.35,
+"return_pct": 5.58,
+"final_equity": 10557.57,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.47,
+"2023": 2.64,
+"2024": 0.71,
+"2025": 3.45,
+"2026": -7.27
+},
+"per_pair_net_usd": {
+"EURUSD": -48.43,
+"GBPUSD": -76.54,
+"USDJPY": 682.53
+},
+"swap_usd": -116.18,
+"exposure_pct": 71.5
+},
+{
+"config": "D1|standard|N10|ATR3|DON10_KIJUN|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.69,
+"max_dd_pct": 5.74,
+"calmar": 0.121,
+"sharpe": 0.19,
+"trades": 70,
+"win_rate_pct": 41.4,
+"profit_factor": 1.21,
+"return_pct": 3.51,
+"final_equity": 10350.82,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.06,
+"2023": 0.02,
+"2024": -1.23,
+"2025": 2.2,
+"2026": -4.23
+},
+"per_pair_net_usd": {
+"EURUSD": 9.97,
+"GBPUSD": -385.88,
+"USDJPY": 726.73
+},
+"swap_usd": -72.85,
+"exposure_pct": 53.0
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.42,
+"max_dd_pct": 11.69,
+"calmar": 0.121,
+"sharpe": 0.18,
+"trades": 139,
+"win_rate_pct": 53.2,
+"profit_factor": 1.13,
+"return_pct": 7.28,
+"final_equity": 10727.58,
+"yearly_pct": {
+"2021": 1.27,
+"2022": 9.86,
+"2023": 2.8,
+"2024": -1.52,
+"2025": -0.42,
+"2026": -4.35
+},
+"per_pair_net_usd": {
+"EURUSD": -258.05,
+"GBPUSD": -584.11,
+"USDJPY": 1569.73
+},
+"swap_usd": -82.43,
+"exposure_pct": 97.2
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.42,
+"max_dd_pct": 11.79,
+"calmar": 0.121,
+"sharpe": 0.18,
+"trades": 152,
+"win_rate_pct": 46.7,
+"profit_factor": 1.11,
+"return_pct": 7.31,
+"final_equity": 10730.6,
+"yearly_pct": {
+"2021": 0.51,
+"2022": 4.49,
+"2023": 6.79,
+"2024": 1.24,
+"2025": -2.55,
+"2026": -3.0
+},
+"per_pair_net_usd": {
+"EURUSD": -0.96,
+"GBPUSD": -728.68,
+"USDJPY": 1460.25
+},
+"swap_usd": -129.26,
+"exposure_pct": 95.2
+},
+{
+"config": "D1|standard|N10|ATR2|DON10_KIJUN|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.01,
+"max_dd_pct": 8.54,
+"calmar": 0.119,
+"sharpe": 0.19,
+"trades": 68,
+"win_rate_pct": 39.7,
+"profit_factor": 1.19,
+"return_pct": 5.16,
+"final_equity": 10515.81,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.03,
+"2023": 0.42,
+"2024": -1.53,
+"2025": 2.27,
+"2026": -6.34
+},
+"per_pair_net_usd": {
+"EURUSD": 9.24,
+"GBPUSD": -674.62,
+"USDJPY": 1181.19
+},
+"swap_usd": -124.03,
+"exposure_pct": 52.7
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.16,
+"max_dd_pct": 9.79,
+"calmar": 0.119,
+"sharpe": 0.22,
+"trades": 84,
+"win_rate_pct": 45.2,
+"profit_factor": 1.23,
+"return_pct": 5.94,
+"final_equity": 10594.31,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.41,
+"2023": 2.53,
+"2024": -0.6,
+"2025": 1.04,
+"2026": -5.95
+},
+"per_pair_net_usd": {
+"EURUSD": 225.82,
+"GBPUSD": -484.09,
+"USDJPY": 852.58
+},
+"swap_usd": 14.52,
+"exposure_pct": 83.2
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.64,
+"max_dd_pct": 14.01,
+"calmar": 0.117,
+"sharpe": 0.22,
+"trades": 73,
+"win_rate_pct": 57.5,
+"profit_factor": 1.28,
+"return_pct": 8.44,
+"final_equity": 10844.24,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 15.93,
+"2023": -0.87,
+"2024": -0.53,
+"2025": 0.69,
+"2026": -5.78
+},
+"per_pair_net_usd": {
+"EURUSD": 366.04,
+"GBPUSD": -1430.37,
+"USDJPY": 1908.57
+},
+"swap_usd": -32.92,
+"exposure_pct": 58.7
+},
+{
+"config": "D1|standard|N10|ATR2|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.06,
+"max_dd_pct": 9.1,
+"calmar": 0.117,
+"sharpe": 0.19,
+"trades": 73,
+"win_rate_pct": 38.4,
+"profit_factor": 1.2,
+"return_pct": 5.42,
+"final_equity": 10542.11,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.67,
+"2023": 0.25,
+"2024": -1.49,
+"2025": 3.62,
+"2026": -6.91
+},
+"per_pair_net_usd": {
+"EURUSD": -62.47,
+"GBPUSD": -691.28,
+"USDJPY": 1295.86
+},
+"swap_usd": -140.54,
+"exposure_pct": 54.7
+},
+{
+"config": "D1|standard|N10|ATR3|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.78,
+"max_dd_pct": 6.66,
+"calmar": 0.117,
+"sharpe": 0.21,
+"trades": 65,
+"win_rate_pct": 43.1,
+"profit_factor": 1.25,
+"return_pct": 3.93,
+"final_equity": 10392.62,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.57,
+"2023": -0.09,
+"2024": -1.04,
+"2025": 3.04,
+"2026": -5.17
+},
+"per_pair_net_usd": {
+"EURUSD": -55.42,
+"GBPUSD": -326.81,
+"USDJPY": 774.85
+},
+"swap_usd": -81.37,
+"exposure_pct": 55.1
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.54,
+"max_dd_pct": 13.16,
+"calmar": 0.117,
+"sharpe": 0.26,
+"trades": 97,
+"win_rate_pct": 48.5,
+"profit_factor": 1.26,
+"return_pct": 7.94,
+"final_equity": 10793.84,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.63,
+"2023": 2.32,
+"2024": 2.47,
+"2025": 0.12,
+"2026": -8.7
+},
+"per_pair_net_usd": {
+"EURUSD": 453.73,
+"GBPUSD": -795.88,
+"USDJPY": 1135.99
+},
+"swap_usd": 51.01,
+"exposure_pct": 88.7
+},
+{
+"config": "D1|standard|N10|ATR3|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.77,
+"max_dd_pct": 6.66,
+"calmar": 0.116,
+"sharpe": 0.2,
+"trades": 68,
+"win_rate_pct": 42.6,
+"profit_factor": 1.24,
+"return_pct": 3.9,
+"final_equity": 10389.8,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.68,
+"2023": -0.09,
+"2024": -1.16,
+"2025": 3.04,
+"2026": -5.18
+},
+"per_pair_net_usd": {
+"EURUSD": -55.42,
+"GBPUSD": -326.81,
+"USDJPY": 772.02
+},
+"swap_usd": -85.16,
+"exposure_pct": 55.1
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.22,
+"max_dd_pct": 19.13,
+"calmar": 0.116,
+"sharpe": 0.21,
+"trades": 189,
+"win_rate_pct": 37.0,
+"profit_factor": 1.12,
+"return_pct": 11.59,
+"final_equity": 11159.01,
+"yearly_pct": {
+"2021": 0.78,
+"2022": 9.46,
+"2023": 7.07,
+"2024": 2.08,
+"2025": -2.43,
+"2026": -5.13
+},
+"per_pair_net_usd": {
+"EURUSD": -105.89,
+"GBPUSD": -735.95,
+"USDJPY": 2000.85
+},
+"swap_usd": -284.53,
+"exposure_pct": 94.8
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.75,
+"max_dd_pct": 6.5,
+"calmar": 0.115,
+"sharpe": 0.16,
+"trades": 71,
+"win_rate_pct": 45.1,
+"profit_factor": 1.17,
+"return_pct": 3.78,
+"final_equity": 10377.86,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.18,
+"2023": 5.02,
+"2024": -0.57,
+"2025": 0.84,
+"2026": -3.55
+},
+"per_pair_net_usd": {
+"EURUSD": -38.06,
+"GBPUSD": -317.13,
+"USDJPY": 733.05
+},
+"swap_usd": -101.79,
+"exposure_pct": 72.2
+},
+{
+"config": "D1|standard|N55|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.86,
+"max_dd_pct": 7.56,
+"calmar": 0.114,
+"sharpe": 0.16,
+"trades": 52,
+"win_rate_pct": 55.8,
+"profit_factor": 1.23,
+"return_pct": 4.36,
+"final_equity": 10436.2,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.81,
+"2023": 1.63,
+"2024": 0.28,
+"2025": 0.32,
+"2026": -4.43
+},
+"per_pair_net_usd": {
+"EURUSD": 383.63,
+"GBPUSD": -488.1,
+"USDJPY": 540.68
+},
+"swap_usd": -66.25,
+"exposure_pct": 49.2
+},
+{
+"config": "D1|none|N55|ATR2|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.86,
+"max_dd_pct": 7.56,
+"calmar": 0.114,
+"sharpe": 0.16,
+"trades": 52,
+"win_rate_pct": 55.8,
+"profit_factor": 1.23,
+"return_pct": 4.36,
+"final_equity": 10436.2,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.81,
+"2023": 1.63,
+"2024": 0.28,
+"2025": 0.32,
+"2026": -4.43
+},
+"per_pair_net_usd": {
+"EURUSD": 383.63,
+"GBPUSD": -488.1,
+"USDJPY": 540.68
+},
+"swap_usd": -66.25,
+"exposure_pct": 49.2
+},
+{
+"config": "D1|standard|N10|ATR2|DON10_KIJUN|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.94,
+"max_dd_pct": 8.49,
+"calmar": 0.111,
+"sharpe": 0.17,
+"trades": 74,
+"win_rate_pct": 39.2,
+"profit_factor": 1.17,
+"return_pct": 4.78,
+"final_equity": 10478.28,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.51,
+"2023": 0.42,
+"2024": -1.49,
+"2025": 2.28,
+"2026": -6.28
+},
+"per_pair_net_usd": {
+"EURUSD": -36.32,
+"GBPUSD": -674.31,
+"USDJPY": 1188.91
+},
+"swap_usd": -125.68,
+"exposure_pct": 52.7
+},
+{
+"config": "D1|standard|N10|ATR3|DON10_KIJUN|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.64,
+"max_dd_pct": 5.76,
+"calmar": 0.111,
+"sharpe": 0.18,
+"trades": 67,
+"win_rate_pct": 41.8,
+"profit_factor": 1.2,
+"return_pct": 3.22,
+"final_equity": 10322.35,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.64,
+"2023": 0.02,
+"2024": -1.11,
+"2025": 2.21,
+"2026": -4.24
+},
+"per_pair_net_usd": {
+"EURUSD": 9.97,
+"GBPUSD": -385.88,
+"USDJPY": 698.26
+},
+"swap_usd": -68.92,
+"exposure_pct": 53.0
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.42,
+"max_dd_pct": 12.78,
+"calmar": 0.111,
+"sharpe": 0.17,
+"trades": 163,
+"win_rate_pct": 50.9,
+"profit_factor": 1.12,
+"return_pct": 7.26,
+"final_equity": 10726.05,
+"yearly_pct": {
+"2021": 1.27,
+"2022": 11.8,
+"2023": 2.27,
+"2024": -1.21,
+"2025": -0.98,
+"2026": -5.29
+},
+"per_pair_net_usd": {
+"EURUSD": -336.24,
+"GBPUSD": -617.25,
+"USDJPY": 1679.54
+},
+"swap_usd": -49.48,
+"exposure_pct": 97.2
+},
+{
+"config": "D1|none|N20|ATR2|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.11,
+"max_dd_pct": 10.02,
+"calmar": 0.111,
+"sharpe": 0.17,
+"trades": 84,
+"win_rate_pct": 39.3,
+"profit_factor": 1.16,
+"return_pct": 5.68,
+"final_equity": 10567.94,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.03,
+"2023": 5.42,
+"2024": 0.77,
+"2025": 0.79,
+"2026": -6.01
+},
+"per_pair_net_usd": {
+"EURUSD": -105.06,
+"GBPUSD": -621.05,
+"USDJPY": 1294.05
+},
+"swap_usd": -184.3,
+"exposure_pct": 72.0
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.8,
+"max_dd_pct": 7.31,
+"calmar": 0.11,
+"sharpe": 0.17,
+"trades": 76,
+"win_rate_pct": 44.7,
+"profit_factor": 1.18,
+"return_pct": 4.06,
+"final_equity": 10406.13,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.56,
+"2023": 5.0,
+"2024": -0.41,
+"2025": 0.59,
+"2026": -3.54
+},
+"per_pair_net_usd": {
+"EURUSD": -26.94,
+"GBPUSD": -329.2,
+"USDJPY": 762.27
+},
+"swap_usd": -108.88,
+"exposure_pct": 72.2
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.1,
+"max_dd_pct": 10.12,
+"calmar": 0.108,
+"sharpe": 0.2,
+"trades": 93,
+"win_rate_pct": 44.1,
+"profit_factor": 1.2,
+"return_pct": 5.59,
+"final_equity": 10559.49,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.12,
+"2023": 2.54,
+"2024": -0.45,
+"2025": 0.8,
+"2026": -5.94
+},
+"per_pair_net_usd": {
+"EURUSD": 241.43,
+"GBPUSD": -550.42,
+"USDJPY": 868.48
+},
+"swap_usd": 20.77,
+"exposure_pct": 83.2
+},
+{
+"config": "D1|standard|N20|ATR1.5|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.6,
+"max_dd_pct": 15.17,
+"calmar": 0.106,
+"sharpe": 0.21,
+"trades": 56,
+"win_rate_pct": 39.3,
+"profit_factor": 1.25,
+"return_pct": 8.26,
+"final_equity": 10826.14,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.5,
+"2023": -0.54,
+"2024": 4.41,
+"2025": 3.31,
+"2026": -9.49
+},
+"per_pair_net_usd": {
+"EURUSD": 123.17,
+"GBPUSD": -839.66,
+"USDJPY": 1542.63
+},
+"swap_usd": -76.62,
+"exposure_pct": 65.4
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 3.0,
+"max_dd_pct": 28.65,
+"calmar": 0.105,
+"sharpe": 0.23,
+"trades": 727,
+"win_rate_pct": 40.4,
+"profit_factor": 1.05,
+"return_pct": 15.88,
+"final_equity": 11588.21,
+"yearly_pct": {
+"2021": 1.48,
+"2022": 24.69,
+"2023": -10.6,
+"2024": 5.26,
+"2025": 1.69,
+"2026": -4.3
+},
+"per_pair_net_usd": {
+"EURUSD": 1476.61,
+"GBPUSD": -1610.04,
+"USDJPY": 1721.64
+},
+"swap_usd": 128.65,
+"exposure_pct": 60.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.55,
+"max_dd_pct": 24.48,
+"calmar": 0.104,
+"sharpe": 0.21,
+"trades": 573,
+"win_rate_pct": 38.4,
+"profit_factor": 1.05,
+"return_pct": 13.35,
+"final_equity": 11335.05,
+"yearly_pct": {
+"2021": -0.72,
+"2022": 25.65,
+"2023": -8.12,
+"2024": 9.26,
+"2025": -9.07,
+"2026": -0.45
+},
+"per_pair_net_usd": {
+"EURUSD": 632.22,
+"GBPUSD": -523.16,
+"USDJPY": 1226.0
+},
+"swap_usd": -119.17,
+"exposure_pct": 92.2
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.71,
+"max_dd_pct": 16.37,
+"calmar": 0.104,
+"sharpe": 0.21,
+"trades": 68,
+"win_rate_pct": 35.3,
+"profit_factor": 1.23,
+"return_pct": 8.81,
+"final_equity": 10880.63,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 15.68,
+"2023": 0.02,
+"2024": 1.61,
+"2025": 2.21,
+"2026": -9.45
+},
+"per_pair_net_usd": {
+"EURUSD": 87.03,
+"GBPUSD": -1112.21,
+"USDJPY": 1905.81
+},
+"swap_usd": -100.74,
+"exposure_pct": 66.8
+},
+{
+"config": "D1|standard|N20|ATR2|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.74,
+"max_dd_pct": 7.18,
+"calmar": 0.104,
+"sharpe": 0.15,
+"trades": 64,
+"win_rate_pct": 54.7,
+"profit_factor": 1.19,
+"return_pct": 3.76,
+"final_equity": 10376.28,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.55,
+"2023": -0.93,
+"2024": 0.46,
+"2025": 2.15,
+"2026": -4.2
+},
+"per_pair_net_usd": {
+"EURUSD": 100.68,
+"GBPUSD": -613.35,
+"USDJPY": 888.96
+},
+"swap_usd": -124.9,
+"exposure_pct": 46.9
+},
+{
+"config": "D1|standard|N20|ATR2|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.81,
+"max_dd_pct": 7.86,
+"calmar": 0.103,
+"sharpe": 0.16,
+"trades": 69,
+"win_rate_pct": 52.2,
+"profit_factor": 1.2,
+"return_pct": 4.11,
+"final_equity": 10410.81,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.24,
+"2023": -0.92,
+"2024": 0.33,
+"2025": 1.93,
+"2026": -4.19
+},
+"per_pair_net_usd": {
+"EURUSD": 79.09,
+"GBPUSD": -641.15,
+"USDJPY": 972.88
+},
+"swap_usd": -129.38,
+"exposure_pct": 46.9
+},
+{
+"config": "D1|none|N20|ATR2|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.22,
+"max_dd_pct": 11.85,
+"calmar": 0.103,
+"sharpe": 0.18,
+"trades": 69,
+"win_rate_pct": 40.6,
+"profit_factor": 1.18,
+"return_pct": 6.24,
+"final_equity": 10623.62,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.25,
+"2023": 5.85,
+"2024": 1.16,
+"2025": 3.85,
+"2026": -8.35
+},
+"per_pair_net_usd": {
+"EURUSD": -329.7,
+"GBPUSD": -230.58,
+"USDJPY": 1183.89
+},
+"swap_usd": -222.52,
+"exposure_pct": 73.6
+},
+{
+"config": "D1|standard|N55|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.73,
+"max_dd_pct": 7.15,
+"calmar": 0.102,
+"sharpe": 0.15,
+"trades": 48,
+"win_rate_pct": 56.2,
+"profit_factor": 1.2,
+"return_pct": 3.7,
+"final_equity": 10369.95,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.89,
+"2023": 1.59,
+"2024": 0.28,
+"2025": 0.62,
+"2026": -4.46
+},
+"per_pair_net_usd": {
+"EURUSD": 408.04,
+"GBPUSD": -487.47,
+"USDJPY": 449.38
+},
+"swap_usd": -62.19,
+"exposure_pct": 49.2
+},
+{
+"config": "D1|none|N55|ATR2|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.73,
+"max_dd_pct": 7.15,
+"calmar": 0.102,
+"sharpe": 0.15,
+"trades": 48,
+"win_rate_pct": 56.2,
+"profit_factor": 1.2,
+"return_pct": 3.7,
+"final_equity": 10369.95,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.89,
+"2023": 1.59,
+"2024": 0.28,
+"2025": 0.62,
+"2026": -4.46
+},
+"per_pair_net_usd": {
+"EURUSD": 408.04,
+"GBPUSD": -487.47,
+"USDJPY": 449.38
+},
+"swap_usd": -62.19,
+"exposure_pct": 49.2
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.99,
+"max_dd_pct": 20.42,
+"calmar": 0.098,
+"sharpe": 0.24,
+"trades": 92,
+"win_rate_pct": 42.4,
+"profit_factor": 1.21,
+"return_pct": 10.34,
+"final_equity": 11034.26,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 19.1,
+"2023": 2.56,
+"2024": 3.72,
+"2025": -0.81,
+"2026": -12.18
+},
+"per_pair_net_usd": {
+"EURUSD": 305.11,
+"GBPUSD": -1179.41,
+"USDJPY": 1908.56
+},
+"swap_usd": 29.76,
+"exposure_pct": 90.0
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.35,
+"max_dd_pct": 13.94,
+"calmar": 0.097,
+"sharpe": 0.23,
+"trades": 84,
+"win_rate_pct": 45.2,
+"profit_factor": 1.23,
+"return_pct": 6.92,
+"final_equity": 10691.88,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.47,
+"2023": 2.41,
+"2024": 2.54,
+"2025": 0.36,
+"2026": -9.8
+},
+"per_pair_net_usd": {
+"EURUSD": 247.78,
+"GBPUSD": -736.94,
+"USDJPY": 1181.04
+},
+"swap_usd": 6.0,
+"exposure_pct": 90.4
+},
+{
+"config": "D1|standard|N20|ATR1.5|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.27,
+"max_dd_pct": 13.09,
+"calmar": 0.097,
+"sharpe": 0.18,
+"trades": 61,
+"win_rate_pct": 34.4,
+"profit_factor": 1.18,
+"return_pct": 6.49,
+"final_equity": 10649.33,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.28,
+"2023": 2.09,
+"2024": 2.06,
+"2025": -0.15,
+"2026": -7.17
+},
+"per_pair_net_usd": {
+"EURUSD": 450.95,
+"GBPUSD": -1153.35,
+"USDJPY": 1351.72
+},
+"swap_usd": -58.49,
+"exposure_pct": 64.0
+},
+{
+"config": "D1|none|N20|ATR2|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.93,
+"max_dd_pct": 9.53,
+"calmar": 0.097,
+"sharpe": 0.15,
+"trades": 74,
+"win_rate_pct": 37.8,
+"profit_factor": 1.13,
+"return_pct": 4.71,
+"final_equity": 10471.16,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.86,
+"2023": 6.28,
+"2024": 0.19,
+"2025": 0.9,
+"2026": -6.15
+},
+"per_pair_net_usd": {
+"EURUSD": -131.67,
+"GBPUSD": -572.43,
+"USDJPY": 1175.26
+},
+"swap_usd": -172.41,
+"exposure_pct": 72.0
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 2.65,
+"max_dd_pct": 27.97,
+"calmar": 0.095,
+"sharpe": 0.21,
+"trades": 797,
+"win_rate_pct": 40.3,
+"profit_factor": 1.04,
+"return_pct": 13.92,
+"final_equity": 11392.06,
+"yearly_pct": {
+"2021": 1.48,
+"2022": 22.96,
+"2023": -10.35,
+"2024": 5.93,
+"2025": 0.83,
+"2026": -4.65
+},
+"per_pair_net_usd": {
+"EURUSD": 1303.9,
+"GBPUSD": -1467.08,
+"USDJPY": 1555.24
+},
+"swap_usd": 122.9,
+"exposure_pct": 60.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.37,
+"max_dd_pct": 25.14,
+"calmar": 0.094,
+"sharpe": 0.22,
+"trades": 764,
+"win_rate_pct": 36.9,
+"profit_factor": 1.05,
+"return_pct": 12.4,
+"final_equity": 11240.47,
+"yearly_pct": {
+"2021": -1.11,
+"2022": 28.78,
+"2023": -2.59,
+"2024": 7.63,
+"2025": -6.2,
+"2026": -10.24
+},
+"per_pair_net_usd": {
+"EURUSD": -322.31,
+"GBPUSD": -1518.71,
+"USDJPY": 3081.49
+},
+"swap_usd": 57.39,
+"exposure_pct": 78.2
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.5,
+"max_dd_pct": 16.08,
+"calmar": 0.093,
+"sharpe": 0.21,
+"trades": 104,
+"win_rate_pct": 51.0,
+"profit_factor": 1.16,
+"return_pct": 7.69,
+"final_equity": 10769.41,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 16.41,
+"2023": 2.72,
+"2024": 0.37,
+"2025": -3.95,
+"2026": -6.56
+},
+"per_pair_net_usd": {
+"EURUSD": 127.14,
+"GBPUSD": -1023.57,
+"USDJPY": 1665.84
+},
+"swap_usd": 43.62,
+"exposure_pct": 84.0
+},
+{
+"config": "D1|standard|N20|ATR1.5|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.45,
+"max_dd_pct": 15.59,
+"calmar": 0.093,
+"sharpe": 0.19,
+"trades": 63,
+"win_rate_pct": 36.5,
+"profit_factor": 1.22,
+"return_pct": 7.45,
+"final_equity": 10745.04,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.19,
+"2023": -0.7,
+"2024": 3.92,
+"2025": 3.22,
+"2026": -9.27
+},
+"per_pair_net_usd": {
+"EURUSD": 97.61,
+"GBPUSD": -861.22,
+"USDJPY": 1508.64
+},
+"swap_usd": -84.69,
+"exposure_pct": 65.4
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.83,
+"max_dd_pct": 19.65,
+"calmar": 0.093,
+"sharpe": 0.18,
+"trades": 137,
+"win_rate_pct": 35.0,
+"profit_factor": 1.12,
+"return_pct": 9.45,
+"final_equity": 10944.68,
+"yearly_pct": {
+"2021": 1.67,
+"2022": 9.84,
+"2023": 2.09,
+"2024": 3.58,
+"2025": 0.67,
+"2026": -7.93
+},
+"per_pair_net_usd": {
+"EURUSD": -565.42,
+"GBPUSD": -896.69,
+"USDJPY": 2406.78
+},
+"swap_usd": -200.2,
+"exposure_pct": 97.6
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.27,
+"max_dd_pct": 13.7,
+"calmar": 0.093,
+"sharpe": 0.16,
+"trades": 180,
+"win_rate_pct": 45.6,
+"profit_factor": 1.09,
+"return_pct": 6.5,
+"final_equity": 10649.56,
+"yearly_pct": {
+"2021": 0.51,
+"2022": 5.43,
+"2023": 6.15,
+"2024": 2.14,
+"2025": -4.21,
+"2026": -3.22
+},
+"per_pair_net_usd": {
+"EURUSD": 33.0,
+"GBPUSD": -911.45,
+"USDJPY": 1528.01
+},
+"swap_usd": -121.25,
+"exposure_pct": 95.2
+},
+{
+"config": "D1|standard|N20|ATR1.5|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.26,
+"max_dd_pct": 13.62,
+"calmar": 0.092,
+"sharpe": 0.17,
+"trades": 71,
+"win_rate_pct": 35.2,
+"profit_factor": 1.17,
+"return_pct": 6.43,
+"final_equity": 10643.17,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.15,
+"2023": 1.39,
+"2024": 1.69,
+"2025": 0.05,
+"2026": -7.17
+},
+"per_pair_net_usd": {
+"EURUSD": 450.16,
+"GBPUSD": -1257.88,
+"USDJPY": 1450.89
+},
+"swap_usd": -73.43,
+"exposure_pct": 64.0
+},
+{
+"config": "D1|none|N10|ATR2|DON10_KIJUN|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.15,
+"max_dd_pct": 12.49,
+"calmar": 0.092,
+"sharpe": 0.18,
+"trades": 124,
+"win_rate_pct": 45.2,
+"profit_factor": 1.15,
+"return_pct": 5.85,
+"final_equity": 10584.66,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.28,
+"2023": 0.16,
+"2024": 1.59,
+"2025": -0.54,
+"2026": -2.51
+},
+"per_pair_net_usd": {
+"EURUSD": 26.91,
+"GBPUSD": -874.38,
+"USDJPY": 1432.13
+},
+"swap_usd": -145.3,
+"exposure_pct": 60.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.66,
+"max_dd_pct": 18.36,
+"calmar": 0.09,
+"sharpe": 0.18,
+"trades": 755,
+"win_rate_pct": 39.6,
+"profit_factor": 1.04,
+"return_pct": 8.54,
+"final_equity": 10854.3,
+"yearly_pct": {
+"2021": -1.01,
+"2022": 17.27,
+"2023": -4.72,
+"2024": 4.26,
+"2025": -3.82,
+"2026": -2.14
+},
+"per_pair_net_usd": {
+"EURUSD": 454.71,
+"GBPUSD": -993.68,
+"USDJPY": 1393.27
+},
+"swap_usd": 88.8,
+"exposure_pct": 60.3
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.93,
+"max_dd_pct": 21.9,
+"calmar": 0.088,
+"sharpe": 0.19,
+"trades": 408,
+"win_rate_pct": 41.4,
+"profit_factor": 1.06,
+"return_pct": 10.02,
+"final_equity": 11002.18,
+"yearly_pct": {
+"2021": -0.48,
+"2022": 13.01,
+"2023": -5.32,
+"2024": -0.01,
+"2025": -9.82,
+"2026": 14.59
+},
+"per_pair_net_usd": {
+"EURUSD": -249.82,
+"GBPUSD": 434.39,
+"USDJPY": 817.62
+},
+"swap_usd": -156.39,
+"exposure_pct": 80.9
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 2.34,
+"max_dd_pct": 26.99,
+"calmar": 0.087,
+"sharpe": 0.2,
+"trades": 732,
+"win_rate_pct": 49.5,
+"profit_factor": 1.04,
+"return_pct": 12.24,
+"final_equity": 11224.49,
+"yearly_pct": {
+"2021": 0.19,
+"2022": 15.64,
+"2023": -6.8,
+"2024": 8.42,
+"2025": -0.35,
+"2026": -3.78
+},
+"per_pair_net_usd": {
+"EURUSD": 1172.63,
+"GBPUSD": -2410.57,
+"USDJPY": 2462.43
+},
+"swap_usd": 134.9,
+"exposure_pct": 60.0
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.66,
+"max_dd_pct": 19.08,
+"calmar": 0.087,
+"sharpe": 0.17,
+"trades": 606,
+"win_rate_pct": 36.8,
+"profit_factor": 1.04,
+"return_pct": 8.56,
+"final_equity": 10856.12,
+"yearly_pct": {
+"2021": -0.17,
+"2022": 20.3,
+"2023": -3.57,
+"2024": -0.28,
+"2025": -2.71,
+"2026": -3.37
+},
+"per_pair_net_usd": {
+"EURUSD": -235.01,
+"GBPUSD": -294.07,
+"USDJPY": 1385.2
+},
+"swap_usd": -49.64,
+"exposure_pct": 87.0
+},
+{
+"config": "D1|none|N10|ATR2|DON10_KIJUN|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.01,
+"max_dd_pct": 11.71,
+"calmar": 0.087,
+"sharpe": 0.17,
+"trades": 115,
+"win_rate_pct": 46.1,
+"profit_factor": 1.14,
+"return_pct": 5.16,
+"final_equity": 10516.14,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.83,
+"2023": 0.16,
+"2024": 1.12,
+"2025": -0.37,
+"2026": -2.45
+},
+"per_pair_net_usd": {
+"EURUSD": 105.06,
+"GBPUSD": -818.55,
+"USDJPY": 1229.63
+},
+"swap_usd": -137.2,
+"exposure_pct": 60.6
+},
+{
+"config": "4h|crypto|N10|ATR1.5|CHAND3|F1|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 2.69,
+"max_dd_pct": 31.24,
+"calmar": 0.086,
+"sharpe": 0.21,
+"trades": 673,
+"win_rate_pct": 48.1,
+"profit_factor": 1.04,
+"return_pct": 14.13,
+"final_equity": 11412.59,
+"yearly_pct": {
+"2021": -0.76,
+"2022": 37.39,
+"2023": -11.56,
+"2024": 3.45,
+"2025": -8.67,
+"2026": 0.17
+},
+"per_pair_net_usd": {
+"EURUSD": -1422.56,
+"GBPUSD": -872.95,
+"USDJPY": 3708.1
+},
+"swap_usd": 212.03,
+"exposure_pct": 72.2
+},
+{
+"config": "D1|standard|N10|ATR3|DON10_KIJUN|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.54,
+"max_dd_pct": 6.27,
+"calmar": 0.086,
+"sharpe": 0.15,
+"trades": 70,
+"win_rate_pct": 40.0,
+"profit_factor": 1.16,
+"return_pct": 2.7,
+"final_equity": 10270.44,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.82,
+"2023": 0.02,
+"2024": -1.23,
+"2025": 2.21,
+"2026": -4.77
+},
+"per_pair_net_usd": {
+"EURUSD": -46.75,
+"GBPUSD": -385.88,
+"USDJPY": 703.07
+},
+"swap_usd": -74.93,
+"exposure_pct": 53.0
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.27,
+"max_dd_pct": 26.58,
+"calmar": 0.085,
+"sharpe": 0.2,
+"trades": 814,
+"win_rate_pct": 36.5,
+"profit_factor": 1.04,
+"return_pct": 11.83,
+"final_equity": 11182.79,
+"yearly_pct": {
+"2021": -1.11,
+"2022": 33.15,
+"2023": -2.89,
+"2024": 6.32,
+"2025": -6.75,
+"2026": -11.78
+},
+"per_pair_net_usd": {
+"EURUSD": -482.47,
+"GBPUSD": -1495.21,
+"USDJPY": 3160.47
+},
+"swap_usd": 62.0,
+"exposure_pct": 78.2
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.14,
+"max_dd_pct": 13.43,
+"calmar": 0.085,
+"sharpe": 0.17,
+"trades": 76,
+"win_rate_pct": 56.6,
+"profit_factor": 1.18,
+"return_pct": 5.81,
+"final_equity": 10580.97,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 15.05,
+"2023": -0.39,
+"2024": -1.38,
+"2025": -1.19,
+"2026": -5.25
+},
+"per_pair_net_usd": {
+"EURUSD": 317.64,
+"GBPUSD": -1465.41,
+"USDJPY": 1728.74
+},
+"swap_usd": -32.78,
+"exposure_pct": 56.7
+},
+{
+"config": "D1|none|N20|ATR1.5|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.39,
+"max_dd_pct": 16.34,
+"calmar": 0.085,
+"sharpe": 0.17,
+"trades": 73,
+"win_rate_pct": 37.0,
+"profit_factor": 1.17,
+"return_pct": 7.13,
+"final_equity": 10712.86,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.43,
+"2023": 4.76,
+"2024": 4.55,
+"2025": 1.91,
+"2026": -8.97
+},
+"per_pair_net_usd": {
+"EURUSD": -188.87,
+"GBPUSD": -677.64,
+"USDJPY": 1579.37
+},
+"swap_usd": -263.12,
+"exposure_pct": 70.0
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.23,
+"max_dd_pct": 26.59,
+"calmar": 0.084,
+"sharpe": 0.2,
+"trades": 774,
+"win_rate_pct": 37.9,
+"profit_factor": 1.04,
+"return_pct": 11.61,
+"final_equity": 11161.07,
+"yearly_pct": {
+"2021": -0.51,
+"2022": 33.14,
+"2023": -0.71,
+"2024": 2.03,
+"2025": -4.92,
+"2026": -12.5
+},
+"per_pair_net_usd": {
+"EURUSD": 93.13,
+"GBPUSD": -1419.59,
+"USDJPY": 2487.53
+},
+"swap_usd": 2.72,
+"exposure_pct": 81.1
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.86,
+"max_dd_pct": 21.99,
+"calmar": 0.084,
+"sharpe": 0.21,
+"trades": 108,
+"win_rate_pct": 38.0,
+"profit_factor": 1.13,
+"return_pct": 9.6,
+"final_equity": 10959.72,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 25.31,
+"2023": 1.08,
+"2024": -0.43,
+"2025": -3.24,
+"2026": -10.18
+},
+"per_pair_net_usd": {
+"EURUSD": 272.35,
+"GBPUSD": -1549.82,
+"USDJPY": 2237.2
+},
+"swap_usd": 55.83,
+"exposure_pct": 83.3
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.58,
+"max_dd_pct": 18.73,
+"calmar": 0.084,
+"sharpe": 0.21,
+"trades": 99,
+"win_rate_pct": 51.5,
+"profit_factor": 1.18,
+"return_pct": 8.12,
+"final_equity": 10812.17,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 16.18,
+"2023": 1.57,
+"2024": 2.47,
+"2025": -1.11,
+"2026": -9.57
+},
+"per_pair_net_usd": {
+"EURUSD": 127.9,
+"GBPUSD": -1280.12,
+"USDJPY": 1964.38
+},
+"swap_usd": 50.41,
+"exposure_pct": 87.1
+},
+{
+"config": "D1|standard|N10|ATR3|DON10_KIJUN|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.53,
+"max_dd_pct": 6.27,
+"calmar": 0.084,
+"sharpe": 0.15,
+"trades": 67,
+"win_rate_pct": 40.3,
+"profit_factor": 1.16,
+"return_pct": 2.66,
+"final_equity": 10265.63,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.64,
+"2023": 0.02,
+"2024": -1.11,
+"2025": 2.21,
+"2026": -4.77
+},
+"per_pair_net_usd": {
+"EURUSD": -46.75,
+"GBPUSD": -385.88,
+"USDJPY": 698.26
+},
+"swap_usd": -71.01,
+"exposure_pct": 53.0
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.52,
+"max_dd_pct": 18.42,
+"calmar": 0.083,
+"sharpe": 0.17,
+"trades": 745,
+"win_rate_pct": 39.3,
+"profit_factor": 1.04,
+"return_pct": 7.81,
+"final_equity": 10781.27,
+"yearly_pct": {
+"2021": -1.01,
+"2022": 17.7,
+"2023": -5.19,
+"2024": 3.75,
+"2025": -3.75,
+"2026": -2.26
+},
+"per_pair_net_usd": {
+"EURUSD": 442.85,
+"GBPUSD": -1008.57,
+"USDJPY": 1346.99
+},
+"swap_usd": 90.88,
+"exposure_pct": 60.3
+},
+{
+"config": "D1|none|N20|ATR2|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.03,
+"max_dd_pct": 12.4,
+"calmar": 0.083,
+"sharpe": 0.15,
+"trades": 77,
+"win_rate_pct": 37.7,
+"profit_factor": 1.15,
+"return_pct": 5.23,
+"final_equity": 10522.61,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.95,
+"2023": 5.7,
+"2024": 0.74,
+"2025": 3.62,
+"2026": -8.24
+},
+"per_pair_net_usd": {
+"EURUSD": -342.63,
+"GBPUSD": -258.12,
+"USDJPY": 1123.36
+},
+"swap_usd": -229.56,
+"exposure_pct": 73.6
+},
+{
+"config": "D1|standard|N20|ATR2|DON10_KIJUN|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.62,
+"max_dd_pct": 7.59,
+"calmar": 0.081,
+"sharpe": 0.13,
+"trades": 70,
+"win_rate_pct": 51.4,
+"profit_factor": 1.15,
+"return_pct": 3.12,
+"final_equity": 10311.69,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.54,
+"2023": -0.92,
+"2024": 0.4,
+"2025": 0.65,
+"2026": -4.23
+},
+"per_pair_net_usd": {
+"EURUSD": 86.3,
+"GBPUSD": -641.15,
+"USDJPY": 866.54
+},
+"swap_usd": -126.69,
+"exposure_pct": 46.7
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.74,
+"max_dd_pct": 21.5,
+"calmar": 0.081,
+"sharpe": 0.19,
+"trades": 182,
+"win_rate_pct": 50.5,
+"profit_factor": 1.11,
+"return_pct": 8.99,
+"final_equity": 10898.8,
+"yearly_pct": {
+"2021": 0.78,
+"2022": 9.71,
+"2023": -1.68,
+"2024": 12.34,
+"2025": -8.05,
+"2026": -2.94
+},
+"per_pair_net_usd": {
+"EURUSD": -271.97,
+"GBPUSD": -870.89,
+"USDJPY": 2041.66
+},
+"swap_usd": -5.35,
+"exposure_pct": 92.8
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.6,
+"max_dd_pct": 7.46,
+"calmar": 0.081,
+"sharpe": 0.13,
+"trades": 76,
+"win_rate_pct": 40.8,
+"profit_factor": 1.13,
+"return_pct": 3.03,
+"final_equity": 10303.15,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.39,
+"2023": 5.01,
+"2024": -0.41,
+"2025": 0.55,
+"2026": -4.3
+},
+"per_pair_net_usd": {
+"EURUSD": -72.85,
+"GBPUSD": -329.2,
+"USDJPY": 705.2
+},
+"swap_usd": -120.22,
+"exposure_pct": 73.3
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.56,
+"max_dd_pct": 19.57,
+"calmar": 0.08,
+"sharpe": 0.16,
+"trades": 614,
+"win_rate_pct": 40.7,
+"profit_factor": 1.03,
+"return_pct": 8.05,
+"final_equity": 10804.84,
+"yearly_pct": {
+"2021": -0.17,
+"2022": 19.89,
+"2023": -2.48,
+"2024": 0.28,
+"2025": -2.2,
+"2026": -5.59
+},
+"per_pair_net_usd": {
+"EURUSD": -199.38,
+"GBPUSD": -284.46,
+"USDJPY": 1288.68
+},
+"swap_usd": -19.51,
+"exposure_pct": 86.4
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 2.23,
+"max_dd_pct": 28.16,
+"calmar": 0.079,
+"sharpe": 0.19,
+"trades": 750,
+"win_rate_pct": 38.4,
+"profit_factor": 1.03,
+"return_pct": 11.61,
+"final_equity": 11160.52,
+"yearly_pct": {
+"2021": -1.03,
+"2022": 26.89,
+"2023": -13.9,
+"2024": 10.13,
+"2025": -3.82,
+"2026": -2.57
+},
+"per_pair_net_usd": {
+"EURUSD": 1121.52,
+"GBPUSD": -1828.4,
+"USDJPY": 1867.4
+},
+"swap_usd": 134.23,
+"exposure_pct": 58.2
+},
+{
+"config": "4h|crypto|N20|ATR2|DON20|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 2.33,
+"max_dd_pct": 29.89,
+"calmar": 0.078,
+"sharpe": 0.2,
+"trades": 580,
+"win_rate_pct": 41.6,
+"profit_factor": 1.04,
+"return_pct": 12.16,
+"final_equity": 11215.51,
+"yearly_pct": {
+"2021": 1.34,
+"2022": 13.72,
+"2023": -11.81,
+"2024": 11.33,
+"2025": 1.49,
+"2026": -2.33
+},
+"per_pair_net_usd": {
+"EURUSD": 1204.89,
+"GBPUSD": -1058.22,
+"USDJPY": 1068.84
+},
+"swap_usd": 53.36,
+"exposure_pct": 54.1
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.12,
+"max_dd_pct": 14.26,
+"calmar": 0.078,
+"sharpe": 0.16,
+"trades": 87,
+"win_rate_pct": 54.0,
+"profit_factor": 1.17,
+"return_pct": 5.71,
+"final_equity": 10570.62,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 16.24,
+"2023": -0.84,
+"2024": -1.72,
+"2025": -1.5,
+"2026": -5.25
+},
+"per_pair_net_usd": {
+"EURUSD": 314.01,
+"GBPUSD": -1532.59,
+"USDJPY": 1789.2
+},
+"swap_usd": -47.8,
+"exposure_pct": 56.7
+},
+{
+"config": "D1|standard|N20|ATR2|DON10_KIJUN|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.54,
+"max_dd_pct": 6.91,
+"calmar": 0.078,
+"sharpe": 0.12,
+"trades": 65,
+"win_rate_pct": 53.8,
+"profit_factor": 1.13,
+"return_pct": 2.7,
+"final_equity": 10269.95,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.85,
+"2023": -0.93,
+"2024": 0.46,
+"2025": 0.86,
+"2026": -4.25
+},
+"per_pair_net_usd": {
+"EURUSD": 100.68,
+"GBPUSD": -613.35,
+"USDJPY": 782.62
+},
+"swap_usd": -120.4,
+"exposure_pct": 46.7
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.0,
+"max_dd_pct": 12.85,
+"calmar": 0.078,
+"sharpe": 0.14,
+"trades": 141,
+"win_rate_pct": 36.9,
+"profit_factor": 1.08,
+"return_pct": 5.11,
+"final_equity": 10510.62,
+"yearly_pct": {
+"2021": 0.51,
+"2022": 1.75,
+"2023": 5.56,
+"2024": 1.66,
+"2025": 0.43,
+"2026": -4.63
+},
+"per_pair_net_usd": {
+"EURUSD": -405.24,
+"GBPUSD": -397.48,
+"USDJPY": 1313.34
+},
+"swap_usd": -183.44,
+"exposure_pct": 95.5
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.55,
+"max_dd_pct": 7.03,
+"calmar": 0.078,
+"sharpe": 0.13,
+"trades": 71,
+"win_rate_pct": 40.8,
+"profit_factor": 1.12,
+"return_pct": 2.75,
+"final_equity": 10274.89,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.02,
+"2023": 5.03,
+"2024": -0.57,
+"2025": 0.8,
+"2026": -4.31
+},
+"per_pair_net_usd": {
+"EURUSD": -83.96,
+"GBPUSD": -317.13,
+"USDJPY": 675.98
+},
+"swap_usd": -113.13,
+"exposure_pct": 73.3
+},
+{
+"config": "D1|none|N10|ATR1.5|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.77,
+"max_dd_pct": 23.02,
+"calmar": 0.077,
+"sharpe": 0.18,
+"trades": 214,
+"win_rate_pct": 49.5,
+"profit_factor": 1.11,
+"return_pct": 9.13,
+"final_equity": 10913.28,
+"yearly_pct": {
+"2021": 0.78,
+"2022": 10.37,
+"2023": -1.75,
+"2024": 13.25,
+"2025": -8.84,
+"2026": -3.26
+},
+"per_pair_net_usd": {
+"EURUSD": -147.78,
+"GBPUSD": -1111.03,
+"USDJPY": 2172.09
+},
+"swap_usd": 31.67,
+"exposure_pct": 92.8
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.65,
+"max_dd_pct": 21.63,
+"calmar": 0.076,
+"sharpe": 0.17,
+"trades": 549,
+"win_rate_pct": 36.1,
+"profit_factor": 1.04,
+"return_pct": 8.5,
+"final_equity": 10849.64,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 18.9,
+"2023": -7.03,
+"2024": 1.62,
+"2025": -2.86,
+"2026": 0.15
+},
+"per_pair_net_usd": {
+"EURUSD": -117.4,
+"GBPUSD": -258.3,
+"USDJPY": 1225.34
+},
+"swap_usd": -2.3,
+"exposure_pct": 83.6
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F1|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 2.36,
+"max_dd_pct": 31.52,
+"calmar": 0.075,
+"sharpe": 0.19,
+"trades": 704,
+"win_rate_pct": 46.3,
+"profit_factor": 1.04,
+"return_pct": 12.32,
+"final_equity": 11232.19,
+"yearly_pct": {
+"2021": 0.07,
+"2022": 39.43,
+"2023": -12.39,
+"2024": 5.95,
+"2025": -5.5,
+"2026": -8.21
+},
+"per_pair_net_usd": {
+"EURUSD": -1164.82,
+"GBPUSD": -698.83,
+"USDJPY": 3095.83
+},
+"swap_usd": 47.69,
+"exposure_pct": 79.0
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.58,
+"max_dd_pct": 21.36,
+"calmar": 0.074,
+"sharpe": 0.19,
+"trades": 109,
+"win_rate_pct": 39.4,
+"profit_factor": 1.16,
+"return_pct": 8.14,
+"final_equity": 10814.01,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 18.89,
+"2023": 1.78,
+"2024": 3.44,
+"2025": -0.83,
+"2026": -12.88
+},
+"per_pair_net_usd": {
+"EURUSD": 246.83,
+"GBPUSD": -1268.05,
+"USDJPY": 1835.23
+},
+"swap_usd": 47.53,
+"exposure_pct": 90.0
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.73,
+"max_dd_pct": 23.83,
+"calmar": 0.073,
+"sharpe": 0.19,
+"trades": 363,
+"win_rate_pct": 39.1,
+"profit_factor": 1.06,
+"return_pct": 8.93,
+"final_equity": 10893.22,
+"yearly_pct": {
+"2021": 2.01,
+"2022": 25.29,
+"2023": -3.36,
+"2024": -1.14,
+"2025": -12.87,
+"2026": 2.38
+},
+"per_pair_net_usd": {
+"EURUSD": -441.2,
+"GBPUSD": 343.43,
+"USDJPY": 991.0
+},
+"swap_usd": 20.59,
+"exposure_pct": 63.8
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.19,
+"max_dd_pct": 16.28,
+"calmar": 0.073,
+"sharpe": 0.15,
+"trades": 123,
+"win_rate_pct": 39.0,
+"profit_factor": 1.1,
+"return_pct": 6.1,
+"final_equity": 10610.12,
+"yearly_pct": {
+"2021": 1.27,
+"2022": 7.45,
+"2023": 3.96,
+"2024": 1.56,
+"2025": 0.81,
+"2026": -8.39
+},
+"per_pair_net_usd": {
+"EURUSD": -375.59,
+"GBPUSD": -828.71,
+"USDJPY": 1814.43
+},
+"swap_usd": -154.54,
+"exposure_pct": 98.1
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.98,
+"max_dd_pct": 27.78,
+"calmar": 0.071,
+"sharpe": 0.18,
+"trades": 799,
+"win_rate_pct": 48.9,
+"profit_factor": 1.03,
+"return_pct": 10.28,
+"final_equity": 11028.14,
+"yearly_pct": {
+"2021": 0.19,
+"2022": 14.81,
+"2023": -6.2,
+"2024": 9.25,
+"2025": -1.93,
+"2026": -4.61
+},
+"per_pair_net_usd": {
+"EURUSD": 1083.65,
+"GBPUSD": -2337.42,
+"USDJPY": 2281.91
+},
+"swap_usd": 131.53,
+"exposure_pct": 60.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.63,
+"max_dd_pct": 23.36,
+"calmar": 0.07,
+"sharpe": 0.17,
+"trades": 724,
+"win_rate_pct": 47.5,
+"profit_factor": 1.04,
+"return_pct": 8.39,
+"final_equity": 10838.8,
+"yearly_pct": {
+"2021": 0.34,
+"2022": 18.18,
+"2023": -10.48,
+"2024": 6.97,
+"2025": -3.27,
+"2026": -1.32
+},
+"per_pair_net_usd": {
+"EURUSD": 905.41,
+"GBPUSD": -618.43,
+"USDJPY": 551.82
+},
+"swap_usd": 96.91,
+"exposure_pct": 65.8
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.64,
+"max_dd_pct": 23.91,
+"calmar": 0.069,
+"sharpe": 0.16,
+"trades": 528,
+"win_rate_pct": 45.5,
+"profit_factor": 1.04,
+"return_pct": 8.47,
+"final_equity": 10846.64,
+"yearly_pct": {
+"2021": -0.72,
+"2022": 26.94,
+"2023": -11.21,
+"2024": 6.46,
+"2025": -6.16,
+"2026": -2.96
+},
+"per_pair_net_usd": {
+"EURUSD": 666.21,
+"GBPUSD": -558.03,
+"USDJPY": 738.45
+},
+"swap_usd": -72.75,
+"exposure_pct": 91.3
+},
+{
+"config": "D1|none|N20|ATR1.5|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.17,
+"max_dd_pct": 16.99,
+"calmar": 0.069,
+"sharpe": 0.15,
+"trades": 81,
+"win_rate_pct": 34.6,
+"profit_factor": 1.14,
+"return_pct": 5.95,
+"final_equity": 10594.56,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.12,
+"2023": 4.61,
+"2024": 4.13,
+"2025": 1.67,
+"2026": -9.0
+},
+"per_pair_net_usd": {
+"EURUSD": -199.15,
+"GBPUSD": -725.12,
+"USDJPY": 1518.84
+},
+"swap_usd": -270.83,
+"exposure_pct": 70.0
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.44,
+"max_dd_pct": 21.12,
+"calmar": 0.068,
+"sharpe": 0.15,
+"trades": 684,
+"win_rate_pct": 37.0,
+"profit_factor": 1.03,
+"return_pct": 7.37,
+"final_equity": 10737.32,
+"yearly_pct": {
+"2021": -1.0,
+"2022": 27.48,
+"2023": -3.0,
+"2024": -1.24,
+"2025": -4.98,
+"2026": -6.53
+},
+"per_pair_net_usd": {
+"EURUSD": 200.41,
+"GBPUSD": -1491.44,
+"USDJPY": 2028.35
+},
+"swap_usd": 36.91,
+"exposure_pct": 77.2
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.58,
+"max_dd_pct": 23.21,
+"calmar": 0.068,
+"sharpe": 0.18,
+"trades": 330,
+"win_rate_pct": 38.2,
+"profit_factor": 1.06,
+"return_pct": 8.11,
+"final_equity": 10811.28,
+"yearly_pct": {
+"2021": 2.01,
+"2022": 24.26,
+"2023": -4.12,
+"2024": -0.33,
+"2025": -13.1,
+"2026": 2.71
+},
+"per_pair_net_usd": {
+"EURUSD": -397.27,
+"GBPUSD": 167.89,
+"USDJPY": 1040.66
+},
+"swap_usd": 15.26,
+"exposure_pct": 63.8
+},
+{
+"config": "D1|none|N20|ATR1.5|CHAND3|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.02,
+"max_dd_pct": 14.9,
+"calmar": 0.068,
+"sharpe": 0.14,
+"trades": 78,
+"win_rate_pct": 34.6,
+"profit_factor": 1.11,
+"return_pct": 5.18,
+"final_equity": 10518.1,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.38,
+"2023": 7.84,
+"2024": 2.55,
+"2025": -1.43,
+"2026": -7.55
+},
+"per_pair_net_usd": {
+"EURUSD": 99.94,
+"GBPUSD": -1120.89,
+"USDJPY": 1539.06
+},
+"swap_usd": -221.69,
+"exposure_pct": 70.2
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.78,
+"max_dd_pct": 11.61,
+"calmar": 0.067,
+"sharpe": 0.16,
+"trades": 86,
+"win_rate_pct": 48.8,
+"profit_factor": 1.15,
+"return_pct": 3.93,
+"final_equity": 10393.07,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.49,
+"2023": 2.53,
+"2024": -0.32,
+"2025": -0.43,
+"2026": -6.71
+},
+"per_pair_net_usd": {
+"EURUSD": 242.85,
+"GBPUSD": -445.82,
+"USDJPY": 596.04
+},
+"swap_usd": 1.9,
+"exposure_pct": 82.8
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.67,
+"max_dd_pct": 25.14,
+"calmar": 0.066,
+"sharpe": 0.17,
+"trades": 727,
+"win_rate_pct": 40.7,
+"profit_factor": 1.03,
+"return_pct": 8.61,
+"final_equity": 10861.19,
+"yearly_pct": {
+"2021": -0.51,
+"2022": 27.68,
+"2023": -3.04,
+"2024": 3.12,
+"2025": -3.1,
+"2026": -11.74
+},
+"per_pair_net_usd": {
+"EURUSD": 314.7,
+"GBPUSD": -1798.24,
+"USDJPY": 2344.72
+},
+"swap_usd": 28.6,
+"exposure_pct": 80.4
+},
+{
+"config": "D1|standard|N10|ATR2|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.14,
+"max_dd_pct": 17.37,
+"calmar": 0.066,
+"sharpe": 0.16,
+"trades": 127,
+"win_rate_pct": 47.2,
+"profit_factor": 1.11,
+"return_pct": 5.82,
+"final_equity": 10581.54,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 17.4,
+"2023": 2.34,
+"2024": -0.44,
+"2025": -5.18,
+"2026": -6.7
+},
+"per_pair_net_usd": {
+"EURUSD": 41.67,
+"GBPUSD": -1188.68,
+"USDJPY": 1728.56
+},
+"swap_usd": 65.89,
+"exposure_pct": 84.0
+},
+{
+"config": "D1|standard|N10|ATR3|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.94,
+"max_dd_pct": 14.38,
+"calmar": 0.066,
+"sharpe": 0.17,
+"trades": 94,
+"win_rate_pct": 41.5,
+"profit_factor": 1.15,
+"return_pct": 4.8,
+"final_equity": 10479.53,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.15,
+"2023": 1.73,
+"2024": 1.85,
+"2025": 0.27,
+"2026": -10.05
+},
+"per_pair_net_usd": {
+"EURUSD": 165.34,
+"GBPUSD": -767.99,
+"USDJPY": 1082.18
+},
+"swap_usd": 21.42,
+"exposure_pct": 90.4
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.32,
+"max_dd_pct": 20.24,
+"calmar": 0.065,
+"sharpe": 0.15,
+"trades": 648,
+"win_rate_pct": 36.9,
+"profit_factor": 1.03,
+"return_pct": 6.76,
+"final_equity": 10676.15,
+"yearly_pct": {
+"2021": -1.0,
+"2022": 24.22,
+"2023": -3.73,
+"2024": -0.02,
+"2025": -4.24,
+"2026": -5.82
+},
+"per_pair_net_usd": {
+"EURUSD": 288.94,
+"GBPUSD": -1425.23,
+"USDJPY": 1812.43
+},
+"swap_usd": 48.59,
+"exposure_pct": 77.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.51,
+"max_dd_pct": 23.41,
+"calmar": 0.065,
+"sharpe": 0.16,
+"trades": 696,
+"win_rate_pct": 47.3,
+"profit_factor": 1.03,
+"return_pct": 7.77,
+"final_equity": 10777.08,
+"yearly_pct": {
+"2021": 0.34,
+"2022": 17.45,
+"2023": -10.64,
+"2024": 6.89,
+"2025": -3.04,
+"2026": -1.25
+},
+"per_pair_net_usd": {
+"EURUSD": 921.45,
+"GBPUSD": -635.07,
+"USDJPY": 490.7
+},
+"swap_usd": 84.48,
+"exposure_pct": 65.6
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.51,
+"max_dd_pct": 23.33,
+"calmar": 0.065,
+"sharpe": 0.16,
+"trades": 608,
+"win_rate_pct": 37.2,
+"profit_factor": 1.04,
+"return_pct": 7.78,
+"final_equity": 10777.7,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 23.33,
+"2023": -7.47,
+"2024": 0.24,
+"2025": -5.54,
+"2026": 0.47
+},
+"per_pair_net_usd": {
+"EURUSD": -414.93,
+"GBPUSD": -367.78,
+"USDJPY": 1560.41
+},
+"swap_usd": -8.31,
+"exposure_pct": 83.6
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.66,
+"max_dd_pct": 25.58,
+"calmar": 0.065,
+"sharpe": 0.17,
+"trades": 395,
+"win_rate_pct": 37.0,
+"profit_factor": 1.05,
+"return_pct": 8.57,
+"final_equity": 10856.97,
+"yearly_pct": {
+"2021": 0.39,
+"2022": 15.02,
+"2023": -9.72,
+"2024": 6.64,
+"2025": -9.14,
+"2026": 7.5
+},
+"per_pair_net_usd": {
+"EURUSD": 332.06,
+"GBPUSD": -513.78,
+"USDJPY": 1038.69
+},
+"swap_usd": -90.36,
+"exposure_pct": 84.7
+},
+{
+"config": "D1|none|N10|ATR3|DON10_KIJUN|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.57,
+"max_dd_pct": 8.81,
+"calmar": 0.064,
+"sharpe": 0.14,
+"trades": 114,
+"win_rate_pct": 36.8,
+"profit_factor": 1.12,
+"return_pct": 2.85,
+"final_equity": 10285.32,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.34,
+"2023": 0.26,
+"2024": -0.1,
+"2025": 0.69,
+"2026": -2.26
+},
+"per_pair_net_usd": {
+"EURUSD": -38.65,
+"GBPUSD": -423.2,
+"USDJPY": 747.16
+},
+"swap_usd": -92.82,
+"exposure_pct": 61.8
+},
+{
+"config": "D1|none|N10|ATR3|DON10_KIJUN|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.55,
+"max_dd_pct": 8.52,
+"calmar": 0.064,
+"sharpe": 0.13,
+"trades": 111,
+"win_rate_pct": 36.9,
+"profit_factor": 1.11,
+"return_pct": 2.76,
+"final_equity": 10275.68,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.93,
+"2023": 0.26,
+"2024": -0.03,
+"2025": 0.94,
+"2026": -2.26
+},
+"per_pair_net_usd": {
+"EURUSD": -38.65,
+"GBPUSD": -397.83,
+"USDJPY": 712.15
+},
+"swap_usd": -90.93,
+"exposure_pct": 61.8
+},
+{
+"config": "4h|crypto|N20|ATR2|DON20|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.9,
+"max_dd_pct": 30.18,
+"calmar": 0.063,
+"sharpe": 0.18,
+"trades": 587,
+"win_rate_pct": 41.4,
+"profit_factor": 1.03,
+"return_pct": 9.81,
+"final_equity": 10981.48,
+"yearly_pct": {
+"2021": 1.34,
+"2022": 13.72,
+"2023": -12.25,
+"2024": 11.63,
+"2025": -0.53,
+"2026": -2.2
+},
+"per_pair_net_usd": {
+"EURUSD": 1136.41,
+"GBPUSD": -1124.98,
+"USDJPY": 970.04
+},
+"swap_usd": 54.4,
+"exposure_pct": 54.2
+},
+{
+"config": "D1|standard|N10|ATR2|DON20|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.29,
+"max_dd_pct": 20.29,
+"calmar": 0.063,
+"sharpe": 0.17,
+"trades": 122,
+"win_rate_pct": 46.7,
+"profit_factor": 1.14,
+"return_pct": 6.58,
+"final_equity": 10658.5,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 17.32,
+"2023": 0.9,
+"2024": 2.58,
+"2025": -1.84,
+"2026": -10.57
+},
+"per_pair_net_usd": {
+"EURUSD": 51.31,
+"GBPUSD": -1476.47,
+"USDJPY": 2083.66
+},
+"swap_usd": 72.5,
+"exposure_pct": 87.1
+},
+{
+"config": "D1|none|N20|ATR1.5|CHAND3|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.97,
+"max_dd_pct": 15.44,
+"calmar": 0.063,
+"sharpe": 0.13,
+"trades": 90,
+"win_rate_pct": 35.6,
+"profit_factor": 1.1,
+"return_pct": 4.94,
+"final_equity": 10494.34,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.28,
+"2023": 7.17,
+"2024": 1.79,
+"2025": -1.14,
+"2026": -7.57
+},
+"per_pair_net_usd": {
+"EURUSD": 93.93,
+"GBPUSD": -1262.24,
+"USDJPY": 1662.65
+},
+"swap_usd": -246.25,
+"exposure_pct": 70.2
+},
+{
+"config": "D1|standard|N20|ATR3|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.74,
+"max_dd_pct": 11.91,
+"calmar": 0.062,
+"sharpe": 0.15,
+"trades": 94,
+"win_rate_pct": 47.9,
+"profit_factor": 1.14,
+"return_pct": 3.75,
+"final_equity": 10375.31,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 9.29,
+"2023": 2.54,
+"2024": -0.1,
+"2025": -0.67,
+"2026": -6.69
+},
+"per_pair_net_usd": {
+"EURUSD": 265.82,
+"GBPUSD": -512.15,
+"USDJPY": 621.64
+},
+"swap_usd": -1.2,
+"exposure_pct": 82.8
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10_KIJUN|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 2.04,
+"max_dd_pct": 33.63,
+"calmar": 0.061,
+"sharpe": 0.18,
+"trades": 867,
+"win_rate_pct": 34.6,
+"profit_factor": 1.03,
+"return_pct": 10.6,
+"final_equity": 11060.04,
+"yearly_pct": {
+"2021": -1.63,
+"2022": 48.63,
+"2023": -9.22,
+"2024": 5.6,
+"2025": -7.77,
+"2026": -14.43
+},
+"per_pair_net_usd": {
+"EURUSD": -1055.78,
+"GBPUSD": -3334.97,
+"USDJPY": 5450.79
+},
+"swap_usd": 102.35,
+"exposure_pct": 76.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.21,
+"max_dd_pct": 20.35,
+"calmar": 0.06,
+"sharpe": 0.14,
+"trades": 677,
+"win_rate_pct": 36.0,
+"profit_factor": 1.03,
+"return_pct": 6.2,
+"final_equity": 10619.84,
+"yearly_pct": {
+"2021": -1.6,
+"2022": 25.04,
+"2023": -5.58,
+"2024": 3.82,
+"2025": -6.6,
+"2026": -5.72
+},
+"per_pair_net_usd": {
+"EURUSD": 4.09,
+"GBPUSD": -1600.64,
+"USDJPY": 2216.39
+},
+"swap_usd": 77.49,
+"exposure_pct": 74.4
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 1.12,
+"max_dd_pct": 18.63,
+"calmar": 0.06,
+"sharpe": 0.13,
+"trades": 823,
+"win_rate_pct": 41.4,
+"profit_factor": 1.02,
+"return_pct": 5.73,
+"final_equity": 10572.56,
+"yearly_pct": {
+"2021": 0.85,
+"2022": 17.61,
+"2023": -2.81,
+"2024": 1.33,
+"2025": -2.14,
+"2026": -7.51
+},
+"per_pair_net_usd": {
+"EURUSD": -108.68,
+"GBPUSD": -1036.86,
+"USDJPY": 1718.09
+},
+"swap_usd": 77.56,
+"exposure_pct": 71.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.22,
+"max_dd_pct": 21.44,
+"calmar": 0.057,
+"sharpe": 0.14,
+"trades": 711,
+"win_rate_pct": 36.3,
+"profit_factor": 1.03,
+"return_pct": 6.25,
+"final_equity": 10625.3,
+"yearly_pct": {
+"2021": -1.6,
+"2022": 27.9,
+"2023": -4.94,
+"2024": 2.56,
+"2025": -7.56,
+"2026": -6.31
+},
+"per_pair_net_usd": {
+"EURUSD": -98.66,
+"GBPUSD": -1666.64,
+"USDJPY": 2390.6
+},
+"swap_usd": 72.68,
+"exposure_pct": 74.4
+},
+{
+"config": "D1|none|N10|ATR2|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.81,
+"max_dd_pct": 14.31,
+"calmar": 0.057,
+"sharpe": 0.12,
+"trades": 171,
+"win_rate_pct": 36.8,
+"profit_factor": 1.06,
+"return_pct": 4.12,
+"final_equity": 10411.66,
+"yearly_pct": {
+"2021": 0.51,
+"2022": 2.57,
+"2023": 4.88,
+"2024": 2.25,
+"2025": -1.27,
+"2026": -4.6
+},
+"per_pair_net_usd": {
+"EURUSD": -341.42,
+"GBPUSD": -699.15,
+"USDJPY": 1452.22
+},
+"swap_usd": -166.33,
+"exposure_pct": 95.5
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.56,
+"max_dd_pct": 9.9,
+"calmar": 0.057,
+"sharpe": 0.11,
+"trades": 121,
+"win_rate_pct": 39.7,
+"profit_factor": 1.08,
+"return_pct": 2.83,
+"final_equity": 10282.65,
+"yearly_pct": {
+"2021": 0.44,
+"2022": 3.03,
+"2023": 3.47,
+"2024": 0.32,
+"2025": -0.21,
+"2026": -4.06
+},
+"per_pair_net_usd": {
+"EURUSD": -75.04,
+"GBPUSD": -631.28,
+"USDJPY": 988.97
+},
+"swap_usd": -80.4,
+"exposure_pct": 92.3
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.95,
+"max_dd_pct": 17.2,
+"calmar": 0.055,
+"sharpe": 0.12,
+"trades": 760,
+"win_rate_pct": 38.6,
+"profit_factor": 1.02,
+"return_pct": 4.81,
+"final_equity": 10481.49,
+"yearly_pct": {
+"2021": -1.75,
+"2022": 18.1,
+"2023": -6.2,
+"2024": 4.04,
+"2025": -5.92,
+"2026": -1.61
+},
+"per_pair_net_usd": {
+"EURUSD": 58.01,
+"GBPUSD": -1042.15,
+"USDJPY": 1465.63
+},
+"swap_usd": 109.64,
+"exposure_pct": 58.2
+},
+{
+"config": "4h|crypto|N10|ATR1.5|CHAND3|F1|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.82,
+"max_dd_pct": 34.1,
+"calmar": 0.053,
+"sharpe": 0.18,
+"trades": 804,
+"win_rate_pct": 45.6,
+"profit_factor": 1.02,
+"return_pct": 9.43,
+"final_equity": 10942.6,
+"yearly_pct": {
+"2021": -0.51,
+"2022": 43.9,
+"2023": -14.25,
+"2024": 4.65,
+"2025": -13.69,
+"2026": -1.3
+},
+"per_pair_net_usd": {
+"EURUSD": -2038.05,
+"GBPUSD": -918.54,
+"USDJPY": 3899.18
+},
+"swap_usd": 248.52,
+"exposure_pct": 72.2
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.24,
+"max_dd_pct": 23.56,
+"calmar": 0.053,
+"sharpe": 0.14,
+"trades": 825,
+"win_rate_pct": 45.3,
+"profit_factor": 1.02,
+"return_pct": 6.34,
+"final_equity": 10633.57,
+"yearly_pct": {
+"2021": -1.01,
+"2022": 18.04,
+"2023": -7.46,
+"2024": 5.78,
+"2025": -3.23,
+"2026": -3.93
+},
+"per_pair_net_usd": {
+"EURUSD": 1023.63,
+"GBPUSD": -2242.35,
+"USDJPY": 1852.29
+},
+"swap_usd": 128.68,
+"exposure_pct": 56.2
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F1|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.64,
+"max_dd_pct": 30.91,
+"calmar": 0.053,
+"sharpe": 0.16,
+"trades": 605,
+"win_rate_pct": 47.6,
+"profit_factor": 1.03,
+"return_pct": 8.46,
+"final_equity": 10845.59,
+"yearly_pct": {
+"2021": 0.22,
+"2022": 29.58,
+"2023": -12.45,
+"2024": 3.78,
+"2025": -1.02,
+"2026": -7.13
+},
+"per_pair_net_usd": {
+"EURUSD": -919.02,
+"GBPUSD": -720.98,
+"USDJPY": 2485.59
+},
+"swap_usd": 30.73,
+"exposure_pct": 79.0
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.72,
+"max_dd_pct": 32.33,
+"calmar": 0.053,
+"sharpe": 0.17,
+"trades": 576,
+"win_rate_pct": 33.7,
+"profit_factor": 1.03,
+"return_pct": 8.86,
+"final_equity": 10886.1,
+"yearly_pct": {
+"2021": 0.22,
+"2022": 34.74,
+"2023": -14.26,
+"2024": 3.99,
+"2025": -2.44,
+"2026": -7.32
+},
+"per_pair_net_usd": {
+"EURUSD": -329.19,
+"GBPUSD": -1198.0,
+"USDJPY": 2413.29
+},
+"swap_usd": -24.61,
+"exposure_pct": 81.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.91,
+"max_dd_pct": 17.2,
+"calmar": 0.053,
+"sharpe": 0.12,
+"trades": 770,
+"win_rate_pct": 38.8,
+"profit_factor": 1.02,
+"return_pct": 4.64,
+"final_equity": 10463.56,
+"yearly_pct": {
+"2021": -1.75,
+"2022": 16.82,
+"2023": -5.68,
+"2024": 4.38,
+"2025": -5.89,
+"2026": -1.61
+},
+"per_pair_net_usd": {
+"EURUSD": 69.7,
+"GBPUSD": -1033.72,
+"USDJPY": 1427.58
+},
+"swap_usd": 107.75,
+"exposure_pct": 58.2
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.2,
+"max_dd_pct": 22.66,
+"calmar": 0.053,
+"sharpe": 0.14,
+"trades": 614,
+"win_rate_pct": 41.0,
+"profit_factor": 1.03,
+"return_pct": 6.12,
+"final_equity": 10611.59,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 21.67,
+"2023": -7.13,
+"2024": 0.73,
+"2025": -4.89,
+"2026": -1.26
+},
+"per_pair_net_usd": {
+"EURUSD": -191.82,
+"GBPUSD": -461.24,
+"USDJPY": 1264.65
+},
+"swap_usd": 6.81,
+"exposure_pct": 82.5
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10_KIJUN|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.72,
+"max_dd_pct": 33.28,
+"calmar": 0.052,
+"sharpe": 0.17,
+"trades": 785,
+"win_rate_pct": 35.3,
+"profit_factor": 1.02,
+"return_pct": 8.89,
+"final_equity": 10889.12,
+"yearly_pct": {
+"2021": -1.63,
+"2022": 42.95,
+"2023": -8.59,
+"2024": 6.57,
+"2025": -8.7,
+"2026": -12.93
+},
+"per_pair_net_usd": {
+"EURUSD": -805.01,
+"GBPUSD": -3250.19,
+"USDJPY": 4944.32
+},
+"swap_usd": 74.79,
+"exposure_pct": 76.3
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.08,
+"max_dd_pct": 20.76,
+"calmar": 0.052,
+"sharpe": 0.13,
+"trades": 557,
+"win_rate_pct": 40.4,
+"profit_factor": 1.03,
+"return_pct": 5.53,
+"final_equity": 10552.52,
+"yearly_pct": {
+"2021": -0.71,
+"2022": 16.71,
+"2023": -6.41,
+"2024": 1.81,
+"2025": -2.1,
+"2026": -2.38
+},
+"per_pair_net_usd": {
+"EURUSD": 107.69,
+"GBPUSD": -459.99,
+"USDJPY": 904.81
+},
+"swap_usd": 14.49,
+"exposure_pct": 82.5
+},
+{
+"config": "D1|none|N10|ATR1.5|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.11,
+"max_dd_pct": 21.09,
+"calmar": 0.052,
+"sharpe": 0.13,
+"trades": 159,
+"win_rate_pct": 34.0,
+"profit_factor": 1.07,
+"return_pct": 5.64,
+"final_equity": 10564.16,
+"yearly_pct": {
+"2021": 1.67,
+"2022": 9.78,
+"2023": 1.3,
+"2024": 2.37,
+"2025": 0.28,
+"2026": -8.98
+},
+"per_pair_net_usd": {
+"EURUSD": -741.36,
+"GBPUSD": -980.12,
+"USDJPY": 2285.63
+},
+"swap_usd": -195.48,
+"exposure_pct": 97.6
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 1.03,
+"max_dd_pct": 20.13,
+"calmar": 0.051,
+"sharpe": 0.13,
+"trades": 826,
+"win_rate_pct": 44.6,
+"profit_factor": 1.02,
+"return_pct": 5.26,
+"final_equity": 10525.92,
+"yearly_pct": {
+"2021": 0.85,
+"2022": 17.45,
+"2023": -1.78,
+"2024": 2.28,
+"2025": -1.58,
+"2026": -10.13
+},
+"per_pair_net_usd": {
+"EURUSD": -3.51,
+"GBPUSD": -1063.78,
+"USDJPY": 1593.21
+},
+"swap_usd": 90.49,
+"exposure_pct": 71.0
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.26,
+"max_dd_pct": 24.46,
+"calmar": 0.051,
+"sharpe": 0.14,
+"trades": 679,
+"win_rate_pct": 37.7,
+"profit_factor": 1.03,
+"return_pct": 6.43,
+"final_equity": 10642.65,
+"yearly_pct": {
+"2021": -0.17,
+"2022": 27.41,
+"2023": -5.57,
+"2024": -2.25,
+"2025": -5.85,
+"2026": -3.72
+},
+"per_pair_net_usd": {
+"EURUSD": -617.93,
+"GBPUSD": -205.59,
+"USDJPY": 1466.17
+},
+"swap_usd": -65.13,
+"exposure_pct": 87.0
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.31,
+"max_dd_pct": 25.97,
+"calmar": 0.05,
+"sharpe": 0.15,
+"trades": 439,
+"win_rate_pct": 37.1,
+"profit_factor": 1.04,
+"return_pct": 6.68,
+"final_equity": 10667.95,
+"yearly_pct": {
+"2021": 0.39,
+"2022": 15.94,
+"2023": -10.11,
+"2024": 4.92,
+"2025": -9.88,
+"2026": 7.85
+},
+"per_pair_net_usd": {
+"EURUSD": 375.71,
+"GBPUSD": -679.49,
+"USDJPY": 971.72
+},
+"swap_usd": -65.6,
+"exposure_pct": 84.7
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.21,
+"max_dd_pct": 24.17,
+"calmar": 0.05,
+"sharpe": 0.15,
+"trades": 141,
+"win_rate_pct": 37.6,
+"profit_factor": 1.08,
+"return_pct": 6.16,
+"final_equity": 10615.75,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 25.88,
+"2023": 0.72,
+"2024": -1.52,
+"2025": -4.16,
+"2026": -11.28
+},
+"per_pair_net_usd": {
+"EURUSD": 123.24,
+"GBPUSD": -1784.03,
+"USDJPY": 2276.54
+},
+"swap_usd": 84.13,
+"exposure_pct": 83.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.18,
+"max_dd_pct": 23.99,
+"calmar": 0.049,
+"sharpe": 0.14,
+"trades": 762,
+"win_rate_pct": 45.5,
+"profit_factor": 1.02,
+"return_pct": 6.01,
+"final_equity": 10601.0,
+"yearly_pct": {
+"2021": -1.01,
+"2022": 19.63,
+"2023": -7.95,
+"2024": 5.13,
+"2025": -4.32,
+"2026": -3.32
+},
+"per_pair_net_usd": {
+"EURUSD": 1121.39,
+"GBPUSD": -2349.67,
+"USDJPY": 1829.27
+},
+"swap_usd": 126.09,
+"exposure_pct": 56.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.75,
+"max_dd_pct": 35.45,
+"calmar": 0.049,
+"sharpe": 0.17,
+"trades": 745,
+"win_rate_pct": 36.2,
+"profit_factor": 1.02,
+"return_pct": 9.05,
+"final_equity": 10905.25,
+"yearly_pct": {
+"2021": -0.39,
+"2022": 42.23,
+"2023": -7.23,
+"2024": 3.46,
+"2025": -7.5,
+"2026": -13.28
+},
+"per_pair_net_usd": {
+"EURUSD": 18.05,
+"GBPUSD": -3212.43,
+"USDJPY": 4099.62
+},
+"swap_usd": 5.99,
+"exposure_pct": 78.2
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.35,
+"max_dd_pct": 27.63,
+"calmar": 0.049,
+"sharpe": 0.15,
+"trades": 790,
+"win_rate_pct": 40.0,
+"profit_factor": 1.03,
+"return_pct": 6.91,
+"final_equity": 10690.76,
+"yearly_pct": {
+"2021": -0.51,
+"2022": 33.41,
+"2023": -4.39,
+"2024": 1.13,
+"2025": -4.51,
+"2026": -12.75
+},
+"per_pair_net_usd": {
+"EURUSD": 136.98,
+"GBPUSD": -1890.98,
+"USDJPY": 2444.76
+},
+"swap_usd": 18.0,
+"exposure_pct": 80.4
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.15,
+"max_dd_pct": 23.68,
+"calmar": 0.049,
+"sharpe": 0.14,
+"trades": 103,
+"win_rate_pct": 35.9,
+"profit_factor": 1.09,
+"return_pct": 5.89,
+"final_equity": 10589.0,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 24.4,
+"2023": -3.44,
+"2024": 2.66,
+"2025": -1.39,
+"2026": -12.93
+},
+"per_pair_net_usd": {
+"EURUSD": -123.06,
+"GBPUSD": -2067.38,
+"USDJPY": 2779.44
+},
+"swap_usd": 113.55,
+"exposure_pct": 88.9
+},
+{
+"config": "D1|none|N10|ATR3|DON10_KIJUN|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.41,
+"max_dd_pct": 8.52,
+"calmar": 0.048,
+"sharpe": 0.1,
+"trades": 111,
+"win_rate_pct": 35.1,
+"profit_factor": 1.08,
+"return_pct": 2.06,
+"final_equity": 10205.73,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.93,
+"2023": 0.26,
+"2024": -0.03,
+"2025": 0.94,
+"2026": -2.93
+},
+"per_pair_net_usd": {
+"EURUSD": -94.25,
+"GBPUSD": -397.83,
+"USDJPY": 697.81
+},
+"swap_usd": -97.31,
+"exposure_pct": 62.2
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.58,
+"max_dd_pct": 33.58,
+"calmar": 0.047,
+"sharpe": 0.16,
+"trades": 582,
+"win_rate_pct": 33.5,
+"profit_factor": 1.02,
+"return_pct": 8.15,
+"final_equity": 10815.27,
+"yearly_pct": {
+"2021": -0.3,
+"2022": 33.28,
+"2023": -11.2,
+"2024": 2.75,
+"2025": -14.54,
+"2026": 4.39
+},
+"per_pair_net_usd": {
+"EURUSD": 48.33,
+"GBPUSD": -1687.58,
+"USDJPY": 2454.52
+},
+"swap_usd": -44.0,
+"exposure_pct": 87.3
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.1,
+"max_dd_pct": 23.32,
+"calmar": 0.047,
+"sharpe": 0.13,
+"trades": 686,
+"win_rate_pct": 41.3,
+"profit_factor": 1.02,
+"return_pct": 5.62,
+"final_equity": 10562.32,
+"yearly_pct": {
+"2021": -0.17,
+"2022": 26.04,
+"2023": -4.57,
+"2024": -1.13,
+"2025": -5.7,
+"2026": -5.64
+},
+"per_pair_net_usd": {
+"EURUSD": -614.23,
+"GBPUSD": -227.22,
+"USDJPY": 1403.76
+},
+"swap_usd": -34.01,
+"exposure_pct": 86.4
+},
+{
+"config": "D1|none|N20|ATR3|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.39,
+"max_dd_pct": 8.42,
+"calmar": 0.047,
+"sharpe": 0.09,
+"trades": 68,
+"win_rate_pct": 45.6,
+"profit_factor": 1.08,
+"return_pct": 1.98,
+"final_equity": 10197.83,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.39,
+"2023": 4.42,
+"2024": -0.76,
+"2025": 1.92,
+"2026": -5.68
+},
+"per_pair_net_usd": {
+"EURUSD": -35.49,
+"GBPUSD": -284.97,
+"USDJPY": 518.29
+},
+"swap_usd": -159.4,
+"exposure_pct": 75.3
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 1.15,
+"max_dd_pct": 25.05,
+"calmar": 0.046,
+"sharpe": 0.14,
+"trades": 797,
+"win_rate_pct": 48.3,
+"profit_factor": 1.02,
+"return_pct": 5.84,
+"final_equity": 10584.23,
+"yearly_pct": {
+"2021": 0.33,
+"2022": 23.32,
+"2023": -5.33,
+"2024": 7.79,
+"2025": -5.49,
+"2026": -11.3
+},
+"per_pair_net_usd": {
+"EURUSD": -259.29,
+"GBPUSD": -1100.17,
+"USDJPY": 1943.69
+},
+"swap_usd": 105.13,
+"exposure_pct": 73.8
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.0,
+"max_dd_pct": 21.82,
+"calmar": 0.046,
+"sharpe": 0.13,
+"trades": 714,
+"win_rate_pct": 41.6,
+"profit_factor": 1.02,
+"return_pct": 5.08,
+"final_equity": 10508.14,
+"yearly_pct": {
+"2021": 0.47,
+"2022": 14.68,
+"2023": -7.19,
+"2024": 1.09,
+"2025": -2.32,
+"2026": -0.48
+},
+"per_pair_net_usd": {
+"EURUSD": 675.05,
+"GBPUSD": -910.77,
+"USDJPY": 743.86
+},
+"swap_usd": 90.38,
+"exposure_pct": 63.2
+},
+{
+"config": "D1|none|N20|ATR2|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.5,
+"max_dd_pct": 10.73,
+"calmar": 0.046,
+"sharpe": 0.1,
+"trades": 89,
+"win_rate_pct": 51.7,
+"profit_factor": 1.09,
+"return_pct": 2.5,
+"final_equity": 10250.47,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.15,
+"2023": 1.32,
+"2024": 0.16,
+"2025": 0.43,
+"2026": -2.49
+},
+"per_pair_net_usd": {
+"EURUSD": -234.2,
+"GBPUSD": -783.31,
+"USDJPY": 1267.98
+},
+"swap_usd": -197.81,
+"exposure_pct": 53.6
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 1.48,
+"max_dd_pct": 33.24,
+"calmar": 0.044,
+"sharpe": 0.15,
+"trades": 834,
+"win_rate_pct": 39.7,
+"profit_factor": 1.02,
+"return_pct": 7.58,
+"final_equity": 10758.04,
+"yearly_pct": {
+"2021": 1.47,
+"2022": 23.82,
+"2023": -0.65,
+"2024": 7.32,
+"2025": -6.08,
+"2026": -14.5
+},
+"per_pair_net_usd": {
+"EURUSD": -454.07,
+"GBPUSD": -2670.42,
+"USDJPY": 3882.54
+},
+"swap_usd": 94.04,
+"exposure_pct": 70.4
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.25,
+"max_dd_pct": 28.08,
+"calmar": 0.044,
+"sharpe": 0.14,
+"trades": 443,
+"win_rate_pct": 37.2,
+"profit_factor": 1.03,
+"return_pct": 6.38,
+"final_equity": 10637.81,
+"yearly_pct": {
+"2021": 0.39,
+"2022": 21.04,
+"2023": -11.97,
+"2024": 4.74,
+"2025": -12.63,
+"2026": 8.69
+},
+"per_pair_net_usd": {
+"EURUSD": 119.98,
+"GBPUSD": -588.4,
+"USDJPY": 1106.24
+},
+"swap_usd": -91.13,
+"exposure_pct": 87.5
+},
+{
+"config": "4h|crypto|N55|ATR3|DON20|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.88,
+"max_dd_pct": 20.18,
+"calmar": 0.044,
+"sharpe": 0.13,
+"trades": 428,
+"win_rate_pct": 45.6,
+"profit_factor": 1.03,
+"return_pct": 4.48,
+"final_equity": 10447.96,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 17.32,
+"2023": -5.21,
+"2024": 2.93,
+"2025": -11.4,
+"2026": 1.34
+},
+"per_pair_net_usd": {
+"EURUSD": 96.44,
+"GBPUSD": -335.28,
+"USDJPY": 686.79
+},
+"swap_usd": 80.13,
+"exposure_pct": 48.2
+},
+{
+"config": "D1|standard|N20|ATR1.5|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.63,
+"max_dd_pct": 14.24,
+"calmar": 0.044,
+"sharpe": 0.11,
+"trades": 76,
+"win_rate_pct": 57.9,
+"profit_factor": 1.12,
+"return_pct": 3.18,
+"final_equity": 10317.62,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.8,
+"2023": -3.85,
+"2024": -0.41,
+"2025": 1.41,
+"2026": -5.8
+},
+"per_pair_net_usd": {
+"EURUSD": 471.39,
+"GBPUSD": -1351.23,
+"USDJPY": 1197.47
+},
+"swap_usd": -110.36,
+"exposure_pct": 55.3
+},
+{
+"config": "D1|standard|N20|ATR1.5|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.6,
+"max_dd_pct": 13.65,
+"calmar": 0.044,
+"sharpe": 0.11,
+"trades": 67,
+"win_rate_pct": 58.2,
+"profit_factor": 1.12,
+"return_pct": 3.03,
+"final_equity": 10302.54,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.98,
+"2023": -3.72,
+"2024": 0.12,
+"2025": 1.33,
+"2026": -5.81
+},
+"per_pair_net_usd": {
+"EURUSD": 470.01,
+"GBPUSD": -1274.79,
+"USDJPY": 1107.32
+},
+"swap_usd": -96.19,
+"exposure_pct": 55.3
+},
+{
+"config": "D1|none|N10|ATR2|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.76,
+"max_dd_pct": 17.49,
+"calmar": 0.044,
+"sharpe": 0.11,
+"trades": 142,
+"win_rate_pct": 37.3,
+"profit_factor": 1.06,
+"return_pct": 3.86,
+"final_equity": 10385.84,
+"yearly_pct": {
+"2021": 1.27,
+"2022": 7.34,
+"2023": 3.38,
+"2024": 1.0,
+"2025": 0.72,
+"2026": -9.14
+},
+"per_pair_net_usd": {
+"EURUSD": -397.37,
+"GBPUSD": -907.18,
+"USDJPY": 1690.39
+},
+"swap_usd": -131.26,
+"exposure_pct": 98.1
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.93,
+"max_dd_pct": 21.77,
+"calmar": 0.043,
+"sharpe": 0.13,
+"trades": 447,
+"win_rate_pct": 45.4,
+"profit_factor": 1.03,
+"return_pct": 4.7,
+"final_equity": 10470.18,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 20.78,
+"2023": -3.21,
+"2024": -0.17,
+"2025": -11.95,
+"2026": 0.24
+},
+"per_pair_net_usd": {
+"EURUSD": 338.56,
+"GBPUSD": -234.94,
+"USDJPY": 366.56
+},
+"swap_usd": 73.91,
+"exposure_pct": 44.2
+},
+{
+"config": "D1|none|N10|ATR3|DON10_KIJUN|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.38,
+"max_dd_pct": 8.83,
+"calmar": 0.043,
+"sharpe": 0.1,
+"trades": 114,
+"win_rate_pct": 35.1,
+"profit_factor": 1.08,
+"return_pct": 1.92,
+"final_equity": 10191.71,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.11,
+"2023": 0.26,
+"2024": -0.1,
+"2025": 0.69,
+"2026": -2.93
+},
+"per_pair_net_usd": {
+"EURUSD": -94.25,
+"GBPUSD": -423.2,
+"USDJPY": 709.16
+},
+"swap_usd": -99.2,
+"exposure_pct": 62.2
+},
+{
+"config": "D1|none|N20|ATR3|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.37,
+"max_dd_pct": 8.74,
+"calmar": 0.043,
+"sharpe": 0.09,
+"trades": 73,
+"win_rate_pct": 45.2,
+"profit_factor": 1.08,
+"return_pct": 1.88,
+"final_equity": 10187.51,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.63,
+"2023": 4.41,
+"2024": -0.82,
+"2025": 1.64,
+"2026": -5.69
+},
+"per_pair_net_usd": {
+"EURUSD": -29.9,
+"GBPUSD": -300.61,
+"USDJPY": 518.02
+},
+"swap_usd": -164.19,
+"exposure_pct": 75.3
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.16,
+"max_dd_pct": 27.59,
+"calmar": 0.042,
+"sharpe": 0.14,
+"trades": 316,
+"win_rate_pct": 40.8,
+"profit_factor": 1.05,
+"return_pct": 5.9,
+"final_equity": 10589.83,
+"yearly_pct": {
+"2021": 1.25,
+"2022": 10.08,
+"2023": -9.05,
+"2024": 0.8,
+"2025": -12.02,
+"2026": 17.81
+},
+"per_pair_net_usd": {
+"EURUSD": -155.74,
+"GBPUSD": 166.7,
+"USDJPY": 578.88
+},
+"swap_usd": -197.81,
+"exposure_pct": 73.7
+},
+{
+"config": "4h|crypto|N55|ATR3|DON20|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.84,
+"max_dd_pct": 20.17,
+"calmar": 0.042,
+"sharpe": 0.12,
+"trades": 430,
+"win_rate_pct": 45.6,
+"profit_factor": 1.03,
+"return_pct": 4.25,
+"final_equity": 10424.96,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 17.32,
+"2023": -5.4,
+"2024": 2.93,
+"2025": -11.43,
+"2026": 1.35
+},
+"per_pair_net_usd": {
+"EURUSD": 48.07,
+"GBPUSD": -315.15,
+"USDJPY": 692.04
+},
+"swap_usd": 80.88,
+"exposure_pct": 48.2
+},
+{
+"config": "D1|none|N10|ATR2|DON10_KIJUN|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.55,
+"max_dd_pct": 12.94,
+"calmar": 0.042,
+"sharpe": 0.1,
+"trades": 112,
+"win_rate_pct": 34.8,
+"profit_factor": 1.07,
+"return_pct": 2.75,
+"final_equity": 10274.98,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.3,
+"2023": 0.5,
+"2024": -0.04,
+"2025": 0.34,
+"2026": -4.11
+},
+"per_pair_net_usd": {
+"EURUSD": -123.57,
+"GBPUSD": -696.77,
+"USDJPY": 1095.31
+},
+"swap_usd": -162.64,
+"exposure_pct": 61.7
+},
+{
+"config": "D1|standard|N20|ATR2|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.63,
+"max_dd_pct": 15.71,
+"calmar": 0.04,
+"sharpe": 0.11,
+"trades": 91,
+"win_rate_pct": 40.7,
+"profit_factor": 1.07,
+"return_pct": 3.2,
+"final_equity": 10320.49,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 14.79,
+"2023": 1.31,
+"2024": -1.44,
+"2025": -3.07,
+"2026": -7.09
+},
+"per_pair_net_usd": {
+"EURUSD": 143.51,
+"GBPUSD": -838.82,
+"USDJPY": 1015.79
+},
+"swap_usd": 28.87,
+"exposure_pct": 82.2
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.85,
+"max_dd_pct": 21.76,
+"calmar": 0.039,
+"sharpe": 0.12,
+"trades": 435,
+"win_rate_pct": 45.1,
+"profit_factor": 1.03,
+"return_pct": 4.3,
+"final_equity": 10430.38,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 21.14,
+"2023": -3.99,
+"2024": 0.1,
+"2025": -12.14,
+"2026": 0.31
+},
+"per_pair_net_usd": {
+"EURUSD": 247.39,
+"GBPUSD": -298.8,
+"USDJPY": 481.8
+},
+"swap_usd": 74.59,
+"exposure_pct": 44.2
+},
+{
+"config": "D1|none|N10|ATR1.5|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.57,
+"max_dd_pct": 14.59,
+"calmar": 0.039,
+"sharpe": 0.1,
+"trades": 108,
+"win_rate_pct": 35.2,
+"profit_factor": 1.05,
+"return_pct": 2.89,
+"final_equity": 10288.94,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 11.13,
+"2023": 2.38,
+"2024": -0.73,
+"2025": -3.58,
+"2026": -5.51
+},
+"per_pair_net_usd": {
+"EURUSD": -570.9,
+"GBPUSD": -1276.96,
+"USDJPY": 2136.8
+},
+"swap_usd": -274.48,
+"exposure_pct": 63.3
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.37,
+"max_dd_pct": 9.35,
+"calmar": 0.039,
+"sharpe": 0.08,
+"trades": 112,
+"win_rate_pct": 40.2,
+"profit_factor": 1.05,
+"return_pct": 1.84,
+"final_equity": 10183.81,
+"yearly_pct": {
+"2021": 0.44,
+"2022": 2.2,
+"2023": 3.5,
+"2024": 0.16,
+"2025": 0.04,
+"2026": -4.32
+},
+"per_pair_net_usd": {
+"EURUSD": -149.99,
+"GBPUSD": -591.85,
+"USDJPY": 925.64
+},
+"swap_usd": -87.71,
+"exposure_pct": 92.3
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.1,
+"max_dd_pct": 29.39,
+"calmar": 0.038,
+"sharpe": 0.13,
+"trades": 496,
+"win_rate_pct": 37.5,
+"profit_factor": 1.03,
+"return_pct": 5.62,
+"final_equity": 10562.33,
+"yearly_pct": {
+"2021": 0.39,
+"2022": 24.1,
+"2023": -11.73,
+"2024": 2.36,
+"2025": -13.54,
+"2026": 8.54
+},
+"per_pair_net_usd": {
+"EURUSD": -14.13,
+"GBPUSD": -737.19,
+"USDJPY": 1313.65
+},
+"swap_usd": -73.2,
+"exposure_pct": 87.5
+},
+{
+"config": "D1|crypto|N10|ATR1.5|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.6,
+"max_dd_pct": 15.74,
+"calmar": 0.038,
+"sharpe": 0.1,
+"trades": 89,
+"win_rate_pct": 38.2,
+"profit_factor": 1.06,
+"return_pct": 3.04,
+"final_equity": 10303.59,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.34,
+"2023": 5.35,
+"2024": -3.17,
+"2025": -2.58,
+"2026": -6.04
+},
+"per_pair_net_usd": {
+"EURUSD": 70.01,
+"GBPUSD": -547.6,
+"USDJPY": 781.19
+},
+"swap_usd": 32.03,
+"exposure_pct": 76.4
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.18,
+"max_dd_pct": 31.66,
+"calmar": 0.037,
+"sharpe": 0.15,
+"trades": 515,
+"win_rate_pct": 32.8,
+"profit_factor": 1.02,
+"return_pct": 6.02,
+"final_equity": 10601.55,
+"yearly_pct": {
+"2021": -0.21,
+"2022": 30.52,
+"2023": -11.5,
+"2024": 2.81,
+"2025": -12.72,
+"2026": 2.51
+},
+"per_pair_net_usd": {
+"EURUSD": -152.66,
+"GBPUSD": -1629.78,
+"USDJPY": 2383.99
+},
+"swap_usd": -119.57,
+"exposure_pct": 87.4
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.99,
+"max_dd_pct": 26.95,
+"calmar": 0.037,
+"sharpe": 0.13,
+"trades": 612,
+"win_rate_pct": 44.8,
+"profit_factor": 1.02,
+"return_pct": 5.05,
+"final_equity": 10505.17,
+"yearly_pct": {
+"2021": -0.72,
+"2022": 27.92,
+"2023": -11.25,
+"2024": 3.98,
+"2025": -7.59,
+"2026": -3.0
+},
+"per_pair_net_usd": {
+"EURUSD": 553.08,
+"GBPUSD": -819.72,
+"USDJPY": 771.82
+},
+"swap_usd": -63.31,
+"exposure_pct": 91.3
+},
+{
+"config": "4h|crypto|N55|ATR3|DON20|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.66,
+"max_dd_pct": 17.77,
+"calmar": 0.037,
+"sharpe": 0.1,
+"trades": 444,
+"win_rate_pct": 49.8,
+"profit_factor": 1.02,
+"return_pct": 3.32,
+"final_equity": 10332.41,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 18.05,
+"2023": -7.64,
+"2024": 4.1,
+"2025": -10.81,
+"2026": 0.41
+},
+"per_pair_net_usd": {
+"EURUSD": 286.06,
+"GBPUSD": -572.57,
+"USDJPY": 618.92
+},
+"swap_usd": 75.73,
+"exposure_pct": 47.4
+},
+{
+"config": "D1|standard|N55|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.36,
+"max_dd_pct": 9.74,
+"calmar": 0.037,
+"sharpe": 0.08,
+"trades": 52,
+"win_rate_pct": 53.8,
+"profit_factor": 1.1,
+"return_pct": 1.8,
+"final_equity": 10180.5,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.42,
+"2023": 0.22,
+"2024": 0.05,
+"2025": 0.54,
+"2026": -5.11
+},
+"per_pair_net_usd": {
+"EURUSD": 313.85,
+"GBPUSD": -565.23,
+"USDJPY": 431.88
+},
+"swap_usd": -67.91,
+"exposure_pct": 47.3
+},
+{
+"config": "D1|none|N10|ATR1.5|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.55,
+"max_dd_pct": 14.78,
+"calmar": 0.037,
+"sharpe": 0.09,
+"trades": 117,
+"win_rate_pct": 35.0,
+"profit_factor": 1.05,
+"return_pct": 2.79,
+"final_equity": 10278.83,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 10.65,
+"2023": 2.9,
+"2024": -0.38,
+"2025": -3.86,
+"2026": -5.74
+},
+"per_pair_net_usd": {
+"EURUSD": -584.9,
+"GBPUSD": -1298.42,
+"USDJPY": 2162.15
+},
+"swap_usd": -282.78,
+"exposure_pct": 63.3
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F1|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.41,
+"max_dd_pct": 11.16,
+"calmar": 0.037,
+"sharpe": 0.09,
+"trades": 122,
+"win_rate_pct": 44.3,
+"profit_factor": 1.06,
+"return_pct": 2.06,
+"final_equity": 10205.83,
+"yearly_pct": {
+"2021": 0.44,
+"2022": 3.28,
+"2023": 3.46,
+"2024": 0.97,
+"2025": -1.72,
+"2026": -4.16
+},
+"per_pair_net_usd": {
+"EURUSD": -37.25,
+"GBPUSD": -594.27,
+"USDJPY": 837.34
+},
+"swap_usd": -89.26,
+"exposure_pct": 92.3
+},
+{
+"config": "D1|none|N55|ATR2|DON20|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.36,
+"max_dd_pct": 9.74,
+"calmar": 0.037,
+"sharpe": 0.08,
+"trades": 52,
+"win_rate_pct": 53.8,
+"profit_factor": 1.1,
+"return_pct": 1.8,
+"final_equity": 10180.5,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 6.42,
+"2023": 0.22,
+"2024": 0.05,
+"2025": 0.54,
+"2026": -5.11
+},
+"per_pair_net_usd": {
+"EURUSD": 313.85,
+"GBPUSD": -565.23,
+"USDJPY": 431.88
+},
+"swap_usd": -67.91,
+"exposure_pct": 47.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 1.2,
+"max_dd_pct": 33.5,
+"calmar": 0.036,
+"sharpe": 0.14,
+"trades": 848,
+"win_rate_pct": 39.5,
+"profit_factor": 1.01,
+"return_pct": 6.12,
+"final_equity": 10611.51,
+"yearly_pct": {
+"2021": 1.47,
+"2022": 22.56,
+"2023": -0.5,
+"2024": 7.1,
+"2025": -7.79,
+"2026": -13.18
+},
+"per_pair_net_usd": {
+"EURUSD": -501.43,
+"GBPUSD": -2555.15,
+"USDJPY": 3668.08
+},
+"swap_usd": 102.82,
+"exposure_pct": 70.5
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.08,
+"max_dd_pct": 30.23,
+"calmar": 0.036,
+"sharpe": 0.13,
+"trades": 744,
+"win_rate_pct": 48.4,
+"profit_factor": 1.02,
+"return_pct": 5.51,
+"final_equity": 10550.69,
+"yearly_pct": {
+"2021": 0.19,
+"2022": 17.86,
+"2023": -12.44,
+"2024": 5.7,
+"2025": 2.21,
+"2026": -5.54
+},
+"per_pair_net_usd": {
+"EURUSD": 1141.61,
+"GBPUSD": -2201.76,
+"USDJPY": 1610.84
+},
+"swap_usd": 123.46,
+"exposure_pct": 58.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.92,
+"max_dd_pct": 25.74,
+"calmar": 0.036,
+"sharpe": 0.12,
+"trades": 891,
+"win_rate_pct": 39.5,
+"profit_factor": 1.02,
+"return_pct": 4.66,
+"final_equity": 10466.22,
+"yearly_pct": {
+"2021": -0.53,
+"2022": 17.91,
+"2023": -1.4,
+"2024": 8.45,
+"2025": -5.96,
+"2026": -11.26
+},
+"per_pair_net_usd": {
+"EURUSD": -484.04,
+"GBPUSD": -1313.89,
+"USDJPY": 2264.15
+},
+"swap_usd": 70.0,
+"exposure_pct": 68.3
+},
+{
+"config": "4h|crypto|N55|ATR3|DON20|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.64,
+"max_dd_pct": 17.95,
+"calmar": 0.036,
+"sharpe": 0.1,
+"trades": 431,
+"win_rate_pct": 49.7,
+"profit_factor": 1.02,
+"return_pct": 3.23,
+"final_equity": 10322.54,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 18.2,
+"2023": -7.75,
+"2024": 3.97,
+"2025": -10.9,
+"2026": 0.53
+},
+"per_pair_net_usd": {
+"EURUSD": 279.2,
+"GBPUSD": -599.35,
+"USDJPY": 642.69
+},
+"swap_usd": 76.08,
+"exposure_pct": 47.4
+},
+{
+"config": "D1|standard|N20|ATR3|DON10|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.22,
+"max_dd_pct": 6.06,
+"calmar": 0.036,
+"sharpe": 0.07,
+"trades": 64,
+"win_rate_pct": 42.2,
+"profit_factor": 1.08,
+"return_pct": 1.1,
+"final_equity": 10110.36,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.88,
+"2023": -0.51,
+"2024": -0.67,
+"2025": 2.17,
+"2026": -4.52
+},
+"per_pair_net_usd": {
+"EURUSD": -33.19,
+"GBPUSD": -394.12,
+"USDJPY": 537.67
+},
+"swap_usd": -80.06,
+"exposure_pct": 51.5
+},
+{
+"config": "D1|crypto|N10|ATR2|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.43,
+"max_dd_pct": 12.05,
+"calmar": 0.036,
+"sharpe": 0.09,
+"trades": 89,
+"win_rate_pct": 52.8,
+"profit_factor": 1.06,
+"return_pct": 2.17,
+"final_equity": 10216.5,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.77,
+"2023": 6.11,
+"2024": -0.43,
+"2025": -3.78,
+"2026": -4.06
+},
+"per_pair_net_usd": {
+"EURUSD": 207.75,
+"GBPUSD": -633.47,
+"USDJPY": 642.23
+},
+"swap_usd": 41.85,
+"exposure_pct": 73.6
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 1.29,
+"max_dd_pct": 36.82,
+"calmar": 0.035,
+"sharpe": 0.15,
+"trades": 835,
+"win_rate_pct": 35.3,
+"profit_factor": 1.02,
+"return_pct": 6.58,
+"final_equity": 10658.31,
+"yearly_pct": {
+"2021": -0.39,
+"2022": 49.15,
+"2023": -8.06,
+"2024": 0.43,
+"2025": -9.08,
+"2026": -14.54
+},
+"per_pair_net_usd": {
+"EURUSD": -327.47,
+"GBPUSD": -3445.59,
+"USDJPY": 4431.37
+},
+"swap_usd": 24.02,
+"exposure_pct": 78.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 1.01,
+"max_dd_pct": 28.52,
+"calmar": 0.035,
+"sharpe": 0.13,
+"trades": 779,
+"win_rate_pct": 38.8,
+"profit_factor": 1.02,
+"return_pct": 5.14,
+"final_equity": 10514.16,
+"yearly_pct": {
+"2021": -1.03,
+"2022": 25.37,
+"2023": -14.17,
+"2024": 10.92,
+"2025": -8.19,
+"2026": -3.06
+},
+"per_pair_net_usd": {
+"EURUSD": 872.3,
+"GBPUSD": -2077.61,
+"USDJPY": 1719.47
+},
+"swap_usd": 127.04,
+"exposure_pct": 58.1
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.82,
+"max_dd_pct": 23.86,
+"calmar": 0.034,
+"sharpe": 0.11,
+"trades": 385,
+"win_rate_pct": 48.1,
+"profit_factor": 1.03,
+"return_pct": 4.15,
+"final_equity": 10415.28,
+"yearly_pct": {
+"2021": -0.48,
+"2022": 9.77,
+"2023": -10.95,
+"2024": 1.09,
+"2025": -7.14,
+"2026": 14.06
+},
+"per_pair_net_usd": {
+"EURUSD": -201.34,
+"GBPUSD": 72.89,
+"USDJPY": 543.74
+},
+"swap_usd": -98.19,
+"exposure_pct": 80.1
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F1|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.87,
+"max_dd_pct": 25.85,
+"calmar": 0.034,
+"sharpe": 0.12,
+"trades": 835,
+"win_rate_pct": 48.1,
+"profit_factor": 1.01,
+"return_pct": 4.39,
+"final_equity": 10439.48,
+"yearly_pct": {
+"2021": 0.33,
+"2022": 22.71,
+"2023": -5.71,
+"2024": 8.06,
+"2025": -6.25,
+"2026": -11.23
+},
+"per_pair_net_usd": {
+"EURUSD": -351.35,
+"GBPUSD": -1078.01,
+"USDJPY": 1868.84
+},
+"swap_usd": 95.87,
+"exposure_pct": 73.8
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.74,
+"max_dd_pct": 21.55,
+"calmar": 0.034,
+"sharpe": 0.11,
+"trades": 716,
+"win_rate_pct": 44.3,
+"profit_factor": 1.02,
+"return_pct": 3.75,
+"final_equity": 10374.82,
+"yearly_pct": {
+"2021": 0.47,
+"2022": 14.02,
+"2023": -6.99,
+"2024": 1.9,
+"2025": -1.28,
+"2026": -3.19
+},
+"per_pair_net_usd": {
+"EURUSD": 866.92,
+"GBPUSD": -952.13,
+"USDJPY": 460.03
+},
+"swap_usd": 100.53,
+"exposure_pct": 62.8
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.74,
+"max_dd_pct": 21.61,
+"calmar": 0.034,
+"sharpe": 0.11,
+"trades": 736,
+"win_rate_pct": 41.8,
+"profit_factor": 1.02,
+"return_pct": 3.75,
+"final_equity": 10375.34,
+"yearly_pct": {
+"2021": 0.47,
+"2022": 13.99,
+"2023": -6.9,
+"2024": 0.76,
+"2025": -3.01,
+"2026": -0.44
+},
+"per_pair_net_usd": {
+"EURUSD": 653.1,
+"GBPUSD": -999.44,
+"USDJPY": 721.68
+},
+"swap_usd": 89.36,
+"exposure_pct": 63.2
+},
+{
+"config": "D1|none|N20|ATR2|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.32,
+"max_dd_pct": 9.98,
+"calmar": 0.032,
+"sharpe": 0.07,
+"trades": 84,
+"win_rate_pct": 52.4,
+"profit_factor": 1.06,
+"return_pct": 1.59,
+"final_equity": 10158.67,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 2.45,
+"2023": 1.45,
+"2024": -0.22,
+"2025": 0.49,
+"2026": -2.51
+},
+"per_pair_net_usd": {
+"EURUSD": -221.81,
+"GBPUSD": -757.33,
+"USDJPY": 1137.81
+},
+"swap_usd": -187.08,
+"exposure_pct": 53.6
+},
+{
+"config": "D1|none|N10|ATR2|DON10_KIJUN|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.43,
+"max_dd_pct": 13.82,
+"calmar": 0.031,
+"sharpe": 0.09,
+"trades": 118,
+"win_rate_pct": 34.7,
+"profit_factor": 1.05,
+"return_pct": 2.15,
+"final_equity": 10214.98,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.89,
+"2023": 0.5,
+"2024": -0.19,
+"2025": 0.31,
+"2026": -4.13
+},
+"per_pair_net_usd": {
+"EURUSD": -172.54,
+"GBPUSD": -733.71,
+"USDJPY": 1121.23
+},
+"swap_usd": -162.03,
+"exposure_pct": 61.7
+},
+{
+"config": "D1|standard|N20|ATR3|DON10|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.18,
+"max_dd_pct": 6.07,
+"calmar": 0.03,
+"sharpe": 0.06,
+"trades": 62,
+"win_rate_pct": 41.9,
+"profit_factor": 1.06,
+"return_pct": 0.91,
+"final_equity": 10090.84,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 4.53,
+"2023": -0.51,
+"2024": -0.52,
+"2025": 2.17,
+"2026": -4.53
+},
+"per_pair_net_usd": {
+"EURUSD": -24.46,
+"GBPUSD": -394.12,
+"USDJPY": 509.41
+},
+"swap_usd": -77.37,
+"exposure_pct": 51.5
+},
+{
+"config": "4h|crypto|N10|ATR2|CHAND3|F0|G0|P1|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 1.08,
+"max_dd_pct": 36.5,
+"calmar": 0.029,
+"sharpe": 0.14,
+"trades": 691,
+"win_rate_pct": 34.0,
+"profit_factor": 1.02,
+"return_pct": 5.48,
+"final_equity": 10547.79,
+"yearly_pct": {
+"2021": 0.07,
+"2022": 42.33,
+"2023": -16.04,
+"2024": 3.68,
+"2025": -7.43,
+"2026": -8.09
+},
+"per_pair_net_usd": {
+"EURUSD": -919.4,
+"GBPUSD": -1183.95,
+"USDJPY": 2651.15
+},
+"swap_usd": -23.8,
+"exposure_pct": 81.2
+},
+{
+"config": "4h|crypto|N10|ATR3|CHAND3|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.63,
+"max_dd_pct": 21.38,
+"calmar": 0.029,
+"sharpe": 0.1,
+"trades": 738,
+"win_rate_pct": 44.4,
+"profit_factor": 1.01,
+"return_pct": 3.16,
+"final_equity": 10315.57,
+"yearly_pct": {
+"2021": 0.47,
+"2022": 14.3,
+"2023": -6.82,
+"2024": 1.73,
+"2025": -2.32,
+"2026": -2.98
+},
+"per_pair_net_usd": {
+"EURUSD": 865.36,
+"GBPUSD": -997.9,
+"USDJPY": 448.11
+},
+"swap_usd": 99.02,
+"exposure_pct": 62.8
+},
+{
+"config": "D1|standard|N20|ATR1.5|CHAND3|F1|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.37,
+"max_dd_pct": 12.52,
+"calmar": 0.029,
+"sharpe": 0.08,
+"trades": 69,
+"win_rate_pct": 56.5,
+"profit_factor": 1.07,
+"return_pct": 1.84,
+"final_equity": 10184.0,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 12.71,
+"2023": -3.45,
+"2024": -0.44,
+"2025": -0.68,
+"2026": -5.36
+},
+"per_pair_net_usd": {
+"EURUSD": 427.61,
+"GBPUSD": -1312.57,
+"USDJPY": 1068.96
+},
+"swap_usd": -79.96,
+"exposure_pct": 52.9
+},
+{
+"config": "D1|none|N20|ATR3|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.29,
+"max_dd_pct": 10.27,
+"calmar": 0.029,
+"sharpe": 0.07,
+"trades": 66,
+"win_rate_pct": 42.4,
+"profit_factor": 1.06,
+"return_pct": 1.47,
+"final_equity": 10146.94,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 3.24,
+"2023": 4.38,
+"2024": 0.06,
+"2025": 1.92,
+"2026": -7.66
+},
+"per_pair_net_usd": {
+"EURUSD": -157.89,
+"GBPUSD": -257.74,
+"USDJPY": 562.57
+},
+"swap_usd": -182.19,
+"exposure_pct": 76.4
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.82,
+"max_dd_pct": 29.14,
+"calmar": 0.028,
+"sharpe": 0.11,
+"trades": 349,
+"win_rate_pct": 40.1,
+"profit_factor": 1.03,
+"return_pct": 4.17,
+"final_equity": 10416.79,
+"yearly_pct": {
+"2021": 1.25,
+"2022": 10.33,
+"2023": -9.21,
+"2024": -0.87,
+"2025": -11.96,
+"2026": 17.7
+},
+"per_pair_net_usd": {
+"EURUSD": -195.36,
+"GBPUSD": 97.04,
+"USDJPY": 515.1
+},
+"swap_usd": -192.85,
+"exposure_pct": 73.7
+},
+{
+"config": "D1|standard|N20|ATR2|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.26,
+"max_dd_pct": 9.25,
+"calmar": 0.028,
+"sharpe": 0.07,
+"trades": 62,
+"win_rate_pct": 38.7,
+"profit_factor": 1.06,
+"return_pct": 1.32,
+"final_equity": 10131.85,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 8.16,
+"2023": -0.76,
+"2024": -0.62,
+"2025": 2.13,
+"2026": -7.0
+},
+"per_pair_net_usd": {
+"EURUSD": -122.47,
+"GBPUSD": -720.87,
+"USDJPY": 975.18
+},
+"swap_usd": -140.98,
+"exposure_pct": 51.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.71,
+"max_dd_pct": 26.09,
+"calmar": 0.027,
+"sharpe": 0.11,
+"trades": 773,
+"win_rate_pct": 38.7,
+"profit_factor": 1.01,
+"return_pct": 3.58,
+"final_equity": 10358.07,
+"yearly_pct": {
+"2021": -1.11,
+"2022": 26.89,
+"2023": -4.87,
+"2024": 4.4,
+"2025": -5.3,
+"2026": -12.23
+},
+"per_pair_net_usd": {
+"EURUSD": -263.6,
+"GBPUSD": -2119.38,
+"USDJPY": 2741.04
+},
+"swap_usd": 82.99,
+"exposure_pct": 77.5
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.68,
+"max_dd_pct": 25.33,
+"calmar": 0.027,
+"sharpe": 0.1,
+"trades": 916,
+"win_rate_pct": 38.3,
+"profit_factor": 1.01,
+"return_pct": 3.43,
+"final_equity": 10343.13,
+"yearly_pct": {
+"2021": -1.26,
+"2022": 18.81,
+"2023": -1.99,
+"2024": 8.9,
+"2025": -7.58,
+"2026": -10.6
+},
+"per_pair_net_usd": {
+"EURUSD": -1017.64,
+"GBPUSD": -1174.67,
+"USDJPY": 2535.44
+},
+"swap_usd": 102.35,
+"exposure_pct": 66.3
+},
+{
+"config": "D1|standard|N20|ATR3|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.18,
+"max_dd_pct": 6.72,
+"calmar": 0.027,
+"sharpe": 0.06,
+"trades": 63,
+"win_rate_pct": 41.3,
+"profit_factor": 1.06,
+"return_pct": 0.9,
+"final_equity": 10090.22,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.69,
+"2023": -0.75,
+"2024": -0.66,
+"2025": 2.15,
+"2026": -5.2
+},
+"per_pair_net_usd": {
+"EURUSD": -108.55,
+"GBPUSD": -394.12,
+"USDJPY": 592.89
+},
+"swap_usd": -89.11,
+"exposure_pct": 51.7
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.82,
+"max_dd_pct": 31.57,
+"calmar": 0.026,
+"sharpe": 0.12,
+"trades": 890,
+"win_rate_pct": 38.0,
+"profit_factor": 1.01,
+"return_pct": 4.18,
+"final_equity": 10417.59,
+"yearly_pct": {
+"2021": -0.44,
+"2022": 23.35,
+"2023": -5.83,
+"2024": 9.89,
+"2025": -6.7,
+"2026": -12.13
+},
+"per_pair_net_usd": {
+"EURUSD": -722.85,
+"GBPUSD": -2496.4,
+"USDJPY": 3636.84
+},
+"swap_usd": 89.85,
+"exposure_pct": 65.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.63,
+"max_dd_pct": 24.42,
+"calmar": 0.026,
+"sharpe": 0.1,
+"trades": 694,
+"win_rate_pct": 43.2,
+"profit_factor": 1.01,
+"return_pct": 3.16,
+"final_equity": 10316.45,
+"yearly_pct": {
+"2021": 0.34,
+"2022": 14.41,
+"2023": -11.82,
+"2024": 7.07,
+"2025": -4.92,
+"2026": 0.11
+},
+"per_pair_net_usd": {
+"EURUSD": 540.5,
+"GBPUSD": -757.94,
+"USDJPY": 533.89
+},
+"swap_usd": 79.94,
+"exposure_pct": 66.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.64,
+"max_dd_pct": 25.2,
+"calmar": 0.025,
+"sharpe": 0.1,
+"trades": 795,
+"win_rate_pct": 44.0,
+"profit_factor": 1.01,
+"return_pct": 3.23,
+"final_equity": 10323.08,
+"yearly_pct": {
+"2021": 0.33,
+"2022": 20.41,
+"2023": -6.56,
+"2024": 9.12,
+"2025": -7.4,
+"2026": -9.49
+},
+"per_pair_net_usd": {
+"EURUSD": -438.02,
+"GBPUSD": -1089.68,
+"USDJPY": 1850.77
+},
+"swap_usd": 79.73,
+"exposure_pct": 74.5
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.61,
+"max_dd_pct": 24.71,
+"calmar": 0.025,
+"sharpe": 0.1,
+"trades": 696,
+"win_rate_pct": 43.2,
+"profit_factor": 1.01,
+"return_pct": 3.08,
+"final_equity": 10308.17,
+"yearly_pct": {
+"2021": 0.34,
+"2022": 14.41,
+"2023": -12.19,
+"2024": 7.32,
+"2025": -4.91,
+"2026": 0.21
+},
+"per_pair_net_usd": {
+"EURUSD": 508.38,
+"GBPUSD": -748.05,
+"USDJPY": 547.84
+},
+"swap_usd": 81.33,
+"exposure_pct": 66.6
+},
+{
+"config": "4h|crypto|N10|ATR3|DON20|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.63,
+"max_dd_pct": 25.25,
+"calmar": 0.025,
+"sharpe": 0.1,
+"trades": 791,
+"win_rate_pct": 44.0,
+"profit_factor": 1.01,
+"return_pct": 3.2,
+"final_equity": 10320.39,
+"yearly_pct": {
+"2021": 0.33,
+"2022": 20.66,
+"2023": -6.7,
+"2024": 9.12,
+"2025": -7.47,
+"2026": -9.49
+},
+"per_pair_net_usd": {
+"EURUSD": -412.52,
+"GBPUSD": -1111.49,
+"USDJPY": 1844.4
+},
+"swap_usd": 78.78,
+"exposure_pct": 74.5
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.48,
+"max_dd_pct": 20.41,
+"calmar": 0.024,
+"sharpe": 0.09,
+"trades": 436,
+"win_rate_pct": 47.5,
+"profit_factor": 1.02,
+"return_pct": 2.43,
+"final_equity": 10243.31,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 20.93,
+"2023": -6.66,
+"2024": 0.61,
+"2025": -11.13,
+"2026": -0.16
+},
+"per_pair_net_usd": {
+"EURUSD": 388.29,
+"GBPUSD": -594.4,
+"USDJPY": 449.42
+},
+"swap_usd": 74.38,
+"exposure_pct": 44.0
+},
+{
+"config": "D1|standard|N20|ATR1.5|CHAND3|F1|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.33,
+"max_dd_pct": 13.54,
+"calmar": 0.024,
+"sharpe": 0.07,
+"trades": 79,
+"win_rate_pct": 54.4,
+"profit_factor": 1.06,
+"return_pct": 1.65,
+"final_equity": 10164.74,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 13.97,
+"2023": -3.91,
+"2024": -0.81,
+"2025": -1.11,
+"2026": -5.37
+},
+"per_pair_net_usd": {
+"EURUSD": 437.15,
+"GBPUSD": -1378.11,
+"USDJPY": 1105.71
+},
+"swap_usd": -103.09,
+"exposure_pct": 52.9
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.61,
+"max_dd_pct": 25.9,
+"calmar": 0.023,
+"sharpe": 0.1,
+"trades": 875,
+"win_rate_pct": 39.2,
+"profit_factor": 1.01,
+"return_pct": 3.06,
+"final_equity": 10306.35,
+"yearly_pct": {
+"2021": -0.53,
+"2022": 17.46,
+"2023": -2.0,
+"2024": 8.35,
+"2025": -6.48,
+"2026": -11.17
+},
+"per_pair_net_usd": {
+"EURUSD": -463.29,
+"GBPUSD": -1416.49,
+"USDJPY": 2186.13
+},
+"swap_usd": 66.12,
+"exposure_pct": 68.3
+},
+{
+"config": "4h|crypto|N20|ATR3|DON10_KIJUN|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.57,
+"max_dd_pct": 25.6,
+"calmar": 0.022,
+"sharpe": 0.1,
+"trades": 610,
+"win_rate_pct": 36.1,
+"profit_factor": 1.01,
+"return_pct": 2.88,
+"final_equity": 10287.76,
+"yearly_pct": {
+"2021": 0.06,
+"2022": 25.44,
+"2023": -12.91,
+"2024": 1.81,
+"2025": -8.73,
+"2026": 1.29
+},
+"per_pair_net_usd": {
+"EURUSD": -617.63,
+"GBPUSD": -1204.58,
+"USDJPY": 2109.97
+},
+"swap_usd": 54.1,
+"exposure_pct": 69.9
+},
+{
+"config": "4h|crypto|N55|ATR3|CHAND3|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.45,
+"max_dd_pct": 20.49,
+"calmar": 0.022,
+"sharpe": 0.09,
+"trades": 447,
+"win_rate_pct": 47.7,
+"profit_factor": 1.02,
+"return_pct": 2.27,
+"final_equity": 10227.4,
+"yearly_pct": {
+"2021": 1.65,
+"2022": 20.59,
+"2023": -6.42,
+"2024": 0.35,
+"2025": -10.99,
+"2026": -0.19
+},
+"per_pair_net_usd": {
+"EURUSD": 458.37,
+"GBPUSD": -587.38,
+"USDJPY": 356.42
+},
+"swap_usd": 73.02,
+"exposure_pct": 44.0
+},
+{
+"config": "D1|standard|N20|ATR3|DON10|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.15,
+"max_dd_pct": 6.73,
+"calmar": 0.022,
+"sharpe": 0.05,
+"trades": 61,
+"win_rate_pct": 41.0,
+"profit_factor": 1.05,
+"return_pct": 0.74,
+"final_equity": 10073.56,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 5.46,
+"2023": -0.75,
+"2024": -0.6,
+"2025": 2.16,
+"2026": -5.21
+},
+"per_pair_net_usd": {
+"EURUSD": -108.55,
+"GBPUSD": -394.12,
+"USDJPY": 576.23
+},
+"swap_usd": -87.04,
+"exposure_pct": 51.7
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10|F0|G0|P1|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.67,
+"max_dd_pct": 32.12,
+"calmar": 0.021,
+"sharpe": 0.12,
+"trades": 937,
+"win_rate_pct": 38.3,
+"profit_factor": 1.01,
+"return_pct": 3.37,
+"final_equity": 10337.41,
+"yearly_pct": {
+"2021": -0.44,
+"2022": 23.22,
+"2023": -6.08,
+"2024": 10.17,
+"2025": -7.06,
+"2026": -12.37
+},
+"per_pair_net_usd": {
+"EURUSD": -798.13,
+"GBPUSD": -2432.12,
+"USDJPY": 3567.65
+},
+"swap_usd": 88.13,
+"exposure_pct": 65.6
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10_KIJUN|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.6,
+"max_dd_pct": 28.88,
+"calmar": 0.021,
+"sharpe": 0.11,
+"trades": 767,
+"win_rate_pct": 37.5,
+"profit_factor": 1.01,
+"return_pct": 3.03,
+"final_equity": 10302.73,
+"yearly_pct": {
+"2021": -2.18,
+"2022": 27.01,
+"2023": -15.7,
+"2024": 9.57,
+"2025": -8.3,
+"2026": -2.1
+},
+"per_pair_net_usd": {
+"EURUSD": 488.14,
+"GBPUSD": -2100.64,
+"USDJPY": 1915.22
+},
+"swap_usd": 162.16,
+"exposure_pct": 56.5
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F1|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.47,
+"max_dd_pct": 22.31,
+"calmar": 0.021,
+"sharpe": 0.09,
+"trades": 586,
+"win_rate_pct": 48.6,
+"profit_factor": 1.01,
+"return_pct": 2.38,
+"final_equity": 10238.44,
+"yearly_pct": {
+"2021": 0.6,
+"2022": 11.73,
+"2023": -10.74,
+"2024": 3.84,
+"2025": -3.39,
+"2026": 1.71
+},
+"per_pair_net_usd": {
+"EURUSD": 750.57,
+"GBPUSD": -783.65,
+"USDJPY": 271.52
+},
+"swap_usd": 32.1,
+"exposure_pct": 57.8
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F1|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.47,
+"max_dd_pct": 22.7,
+"calmar": 0.021,
+"sharpe": 0.09,
+"trades": 566,
+"win_rate_pct": 48.4,
+"profit_factor": 1.01,
+"return_pct": 2.37,
+"final_equity": 10236.5,
+"yearly_pct": {
+"2021": 0.6,
+"2022": 12.27,
+"2023": -11.31,
+"2024": 3.67,
+"2025": -3.12,
+"2026": 1.74
+},
+"per_pair_net_usd": {
+"EURUSD": 752.3,
+"GBPUSD": -810.58,
+"USDJPY": 294.79
+},
+"swap_usd": 33.65,
+"exposure_pct": 57.8
+},
+{
+"config": "D1|standard|N10|ATR1.5|DON20|F0|G0|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.53,
+"max_dd_pct": 25.43,
+"calmar": 0.021,
+"sharpe": 0.09,
+"trades": 122,
+"win_rate_pct": 33.6,
+"profit_factor": 1.04,
+"return_pct": 2.69,
+"final_equity": 10269.06,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 23.97,
+"2023": -4.05,
+"2024": 2.36,
+"2025": -1.85,
+"2026": -14.07
+},
+"per_pair_net_usd": {
+"EURUSD": -284.8,
+"GBPUSD": -2160.92,
+"USDJPY": 2714.78
+},
+"swap_usd": 132.51,
+"exposure_pct": 88.9
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10|F1|G0|P0|S1|W0|U3|MS10|R0.01",
+"cagr_pct": 0.43,
+"max_dd_pct": 21.5,
+"calmar": 0.02,
+"sharpe": 0.09,
+"trades": 655,
+"win_rate_pct": 39.7,
+"profit_factor": 1.01,
+"return_pct": 2.17,
+"final_equity": 10216.61,
+"yearly_pct": {
+"2021": -1.0,
+"2022": 23.22,
+"2023": -4.02,
+"2024": -2.4,
+"2025": -2.75,
+"2026": -8.06
+},
+"per_pair_net_usd": {
+"EURUSD": 447.06,
+"GBPUSD": -1861.38,
+"USDJPY": 1630.93
+},
+"swap_usd": 55.2,
+"exposure_pct": 76.0
+},
+{
+"config": "D1|none|N20|ATR1.5|CHAND3|F0|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.39,
+"max_dd_pct": 19.1,
+"calmar": 0.02,
+"sharpe": 0.08,
+"trades": 125,
+"win_rate_pct": 33.6,
+"profit_factor": 1.03,
+"return_pct": 1.94,
+"final_equity": 10193.94,
+"yearly_pct": {
+"2021": 0.99,
+"2022": 6.17,
+"2023": 6.31,
+"2024": -1.1,
+"2025": -2.18,
+"2026": -7.55
+},
+"per_pair_net_usd": {
+"EURUSD": 79.69,
+"GBPUSD": -1668.97,
+"USDJPY": 1783.22
+},
+"swap_usd": -202.45,
+"exposure_pct": 88.5
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G1|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.61,
+"max_dd_pct": 32.22,
+"calmar": 0.019,
+"sharpe": 0.11,
+"trades": 409,
+"win_rate_pct": 35.5,
+"profit_factor": 1.01,
+"return_pct": 3.09,
+"final_equity": 10309.27,
+"yearly_pct": {
+"2021": -0.84,
+"2022": 16.26,
+"2023": -3.98,
+"2024": -12.11,
+"2025": -7.68,
+"2026": 14.8
+},
+"per_pair_net_usd": {
+"EURUSD": -658.99,
+"GBPUSD": -394.93,
+"USDJPY": 1363.19
+},
+"swap_usd": -203.53,
+"exposure_pct": 75.9
+},
+{
+"config": "4h|crypto|N10|ATR3|DON10_KIJUN|F0|G0|P0|S0|W1|U3|MS10|R0.01",
+"cagr_pct": 0.47,
+"max_dd_pct": 25.17,
+"calmar": 0.019,
+"sharpe": 0.09,
+"trades": 900,
+"win_rate_pct": 38.0,
+"profit_factor": 1.01,
+"return_pct": 2.35,
+"final_equity": 10235.49,
+"yearly_pct": {
+"2021": -1.26,
+"2022": 18.62,
+"2023": -2.47,
+"2024": 8.74,
+"2025": -8.14,
+"2026": -10.29
+},
+"per_pair_net_usd": {
+"EURUSD": -1050.78,
+"GBPUSD": -1240.79,
+"USDJPY": 2527.07
+},
+"swap_usd": 99.28,
+"exposure_pct": 66.3
+},
+{
+"config": "D1|standard|N10|ATR1.5|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.45,
+"max_dd_pct": 23.46,
+"calmar": 0.019,
+"sharpe": 0.09,
+"trades": 129,
+"win_rate_pct": 51.9,
+"profit_factor": 1.04,
+"return_pct": 2.27,
+"final_equity": 10226.77,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 21.24,
+"2023": 1.04,
+"2024": -3.17,
+"2025": -6.43,
+"2026": -7.85
+},
+"per_pair_net_usd": {
+"EURUSD": -100.41,
+"GBPUSD": -1350.38,
+"USDJPY": 1677.56
+},
+"swap_usd": 73.71,
+"exposure_pct": 77.1
+},
+{
+"config": "D1|standard|N20|ATR2|DON10|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.18,
+"max_dd_pct": 9.29,
+"calmar": 0.019,
+"sharpe": 0.05,
+"trades": 66,
+"win_rate_pct": 37.9,
+"profit_factor": 1.04,
+"return_pct": 0.88,
+"final_equity": 10087.77,
+"yearly_pct": {
+"2021": 0.0,
+"2022": 7.85,
+"2023": -0.76,
+"2024": -0.75,
+"2025": 2.14,
+"2026": -7.03
+},
+"per_pair_net_usd": {
+"EURUSD": -122.47,
+"GBPUSD": -748.67,
+"USDJPY": 958.9
+},
+"swap_usd": -144.18,
+"exposure_pct": 51.6
+},
+{
+"config": "D1|none|N20|ATR3|CHAND3|F1|G0|P0|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.2,
+"max_dd_pct": 10.72,
+"calmar": 0.019,
+"sharpe": 0.06,
+"trades": 114,
+"win_rate_pct": 44.7,
+"profit_factor": 1.03,
+"return_pct": 1.01,
+"final_equity": 10101.24,
+"yearly_pct": {
+"2021": 0.44,
+"2022": 2.45,
+"2023": 3.49,
+"2024": 0.48,
+"2025": -1.49,
+"2026": -4.15
+},
+"per_pair_net_usd": {
+"EURUSD": -73.88,
+"GBPUSD": -554.84,
+"USDJPY": 729.96
+},
+"swap_usd": -87.68,
+"exposure_pct": 92.3
+},
+{
+"config": "4h|crypto|N10|ATR2|DON20|F0|G1|P1|S0|W0|U3|MS10|R0.01",
+"cagr_pct": 0.6,
+"max_dd_pct": 32.98,
+"calmar": 0.018,
+"sharpe": 0.11,
+"trades": 448,
+"win_rate_pct": 35.7,
+"profit_factor": 1.01,
+"return_pct": 3.01,
+"final_equity": 10301.03,
+"yearly_pct": {
+"2021": -0.89,
+"2022": 16.03,
+"2023": -3.92,
+"2024": -11.56,
+"2025": -9.25,
+"2026": 16.17
+},
+"per_pair_net_usd": {
+"EURUSD": -779.73,
+"GBPUSD": -295.2,
+"USDJPY": 1375.96
+},
+"swap_usd": -203.97,
+"exposure_pct": 75.1
+},
+{
+"config": "4h|crypto|N10|ATR2|DON10_KIJUN|F0|G0|P1|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.54,
+"max_dd_pct": 29.09,
+"calmar": 0.018,
+"sharpe": 0.1,
+"trades": 793,
+"win_rate_pct": 38.1,
+"profit_factor": 1.01,
+"return_pct": 2.7,
+"final_equity": 10270.25,
+"yearly_pct": {
+"2021": -2.18,
+"2022": 26.29,
+"2023": -15.9,
+"2024": 10.45,
+"2025": -8.54,
+"2026": -2.14
+},
+"per_pair_net_usd": {
+"EURUSD": 361.52,
+"GBPUSD": -2044.0,
+"USDJPY": 1952.74
+},
+"swap_usd": 156.35,
+"exposure_pct": 56.4
+},
+{
+"config": "4h|crypto|N20|ATR3|DON20|F0|G0|P0|S1|W1|U3|MS10|R0.01",
+"cagr_pct": 0.41,
+"max_dd_pct": 22.44,
+"calmar": 0.018,
+"sharpe": 0.08,
+"trades": 563,
+"win_rate_pct": 44.8,
+"profit_factor": 1.01,
+"return_pct": 2.07,
+"final_equity": 10206.56,
+"yearly_pct": {
+"2021": 0.6,
+"2022": 9.39,
+"2023": -10.83,
+"2024": 4.8,
+"2025": -3.98,
+"2026": 3.36
+},
+"per_pair_net_usd": {
+"EURUSD": 647.41,
+"GBPUSD": -786.49,
+"USDJPY": 345.63
+},
+"swap_usd": 35.46,
+"exposure_pct": 58.5
+}
+]

@@ -1,0 +1,290 @@
+{
+  "source": "HistData.com ASCII M1 (bid, EST fixed UTC-5 -> UTC)",
+  "start": "2021-11-12",
+  "end": "2026-11-12",
+  "side": "bid",
+  "symbols": {
+    "EURUSD": {
+      "file": "ohlcv/EUR_USD_bid_1m.csv",
+      "rows": 1807498,
+      "sha256": "5115c58d808dcce4c866da9048208e9ba6392a41f01db4d716da66547593a0e1",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 180,
+      "duplicate_minutes_conflicting_kept_first": 8,
+      "archives": [
+        {
+          "archive": "EURUSD_2021.zip",
+          "rows_in_range": 51399,
+          "sha256": "64af4aa52958685a6889cfa15df400c62dc6ad543cf6ea10a13a0d3a7e01a563"
+        },
+        {
+          "archive": "EURUSD_2022.zip",
+          "rows_in_range": 372865,
+          "sha256": "5ed361f3d93107f644834cac06870e830f9dc887d5aa5fde4b90c2accdf773f3"
+        },
+        {
+          "archive": "EURUSD_2023.zip",
+          "rows_in_range": 322638,
+          "sha256": "26e41c4bccfd70f2c76ef7f3ffcba0e3b7097231927a41640f4a7c442815f34a"
+        },
+        {
+          "archive": "EURUSD_2024.zip",
+          "rows_in_range": 372379,
+          "sha256": "58f074ba6b835eb2fbeaeb6678502a23b26768eefdfa509eb75ff5296bb2904d"
+        },
+        {
+          "archive": "EURUSD_2025.zip",
+          "rows_in_range": 372084,
+          "sha256": "b7c23d20b9577588a8b13508d58fedbe487e569b7b8b5dd368bd1d2b61115de0"
+        },
+        {
+          "archive": "EURUSD_2026_01.zip",
+          "rows_in_range": 30149,
+          "sha256": "7c3ad3ae3626d6ee9575c07679212424799f3b32aac056c42584db1b89298137"
+        },
+        {
+          "archive": "EURUSD_2026_02.zip",
+          "rows_in_range": 28703,
+          "sha256": "2e38a7ae97579b0ac0180878df23b2e43aa7ee5cd7ef377f06f0f845fa8bd9e7"
+        },
+        {
+          "archive": "EURUSD_2026_03.zip",
+          "rows_in_range": 31979,
+          "sha256": "f55203d8661af3e0ce04bee4fe2dd3d22dcf42aa93a50af9948cf939a7eeb313"
+        },
+        {
+          "archive": "EURUSD_2026_04.zip",
+          "rows_in_range": 31531,
+          "sha256": "4141266da0c7cd9aab2f608ccf7d79bffb3fe573a4ad8745ee2381c2e6deb758"
+        },
+        {
+          "archive": "EURUSD_2026_05.zip",
+          "rows_in_range": 29545,
+          "sha256": "200b70301142ed9ce112ba65896bddbe199592977b030342603d643f571f03fe"
+        },
+        {
+          "archive": "EURUSD_2026_06.zip",
+          "rows_in_range": 31520,
+          "sha256": "f339d646269816031689c2f84d69db58fdfbbac23bd23a4a0c1a2323430c7713"
+        },
+        {
+          "archive": "EURUSD_2026_07.zip",
+          "rows_in_range": 32537,
+          "sha256": "d5e51949169327a82a50c52182486397b206fd95d5a0c06b700b89b435eace26"
+        },
+        {
+          "archive": "EURUSD_2026_08.zip",
+          "rows_in_range": 30496,
+          "sha256": "65c7c5d0f170abf4a60b86908723ef5068ccec7aa3c76baefbe8542f87eed5b3"
+        },
+        {
+          "archive": "EURUSD_2026_09.zip",
+          "rows_in_range": 31506,
+          "sha256": "c6538f46e4897db060152b192b5a69cd711841d95c12b405f1557dbff562d597"
+        },
+        {
+          "archive": "EURUSD_2026_10.zip",
+          "rows_in_range": 31170,
+          "sha256": "eda8700ef26c8e1c57dd4fc5f0669e612cfca1fd602f9bb301b508a2a6fd1737"
+        },
+        {
+          "archive": "EURUSD_2026_11.zip",
+          "rows_in_range": 7185,
+          "sha256": "af78c2acbcb91cb75e6a228f0d3a6d4b69313039f7d1e28d9e33d3eb0197907f"
+        }
+      ]
+    },
+    "GBPUSD": {
+      "file": "ohlcv/GBP_USD_bid_1m.csv",
+      "rows": 1805322,
+      "sha256": "88f09597d7e271dea618d2a89387440bd3a9b1138805ebc722654e4316e6c126",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 20,
+      "archives": [
+        {
+          "archive": "GBPUSD_2021.zip",
+          "rows_in_range": 51371,
+          "sha256": "5ce226e9e1cabcb8d3cab7d5c64135da2c864b0d79a559c8a08c6e1e3d47866e"
+        },
+        {
+          "archive": "GBPUSD_2022.zip",
+          "rows_in_range": 372494,
+          "sha256": "6c3134133d24effe9ebae1ee02c7b0db3bff8f60f92bd9add846abc54d00a86e"
+        },
+        {
+          "archive": "GBPUSD_2023.zip",
+          "rows_in_range": 322467,
+          "sha256": "4e7031d841a953ae76d1ba056780838bddd08e0d5eac62dd21c64b28b7b1a68b"
+        },
+        {
+          "archive": "GBPUSD_2024.zip",
+          "rows_in_range": 372107,
+          "sha256": "030b05b4c670c7e152bf4aa4112488c96695d2dcc2b31ca13a3b4834b8431077"
+        },
+        {
+          "archive": "GBPUSD_2025.zip",
+          "rows_in_range": 371091,
+          "sha256": "7b69c334eadd10568168634cff3ca37b06e5fb9057db4da9b590e2ef2034854e"
+        },
+        {
+          "archive": "GBPUSD_2026_01.zip",
+          "rows_in_range": 30107,
+          "sha256": "870c6a632f168004e2af0bcc8d357cb07a533c68d123aec5fa48904bc3d2ce08"
+        },
+        {
+          "archive": "GBPUSD_2026_02.zip",
+          "rows_in_range": 28668,
+          "sha256": "16831fa0058c5385a3b0da8127804f944a423d78d1c35f0c8b09b01e2e4f6340"
+        },
+        {
+          "archive": "GBPUSD_2026_03.zip",
+          "rows_in_range": 31945,
+          "sha256": "55a7e44b8f74430122811bb869b52da174443721ae885fbe9e18836bcb1fcc7c"
+        },
+        {
+          "archive": "GBPUSD_2026_04.zip",
+          "rows_in_range": 31476,
+          "sha256": "65b5760fa4f06061ae7d8d549e55f29c6674162f76df8ea453dcbbe47d7ceebd"
+        },
+        {
+          "archive": "GBPUSD_2026_05.zip",
+          "rows_in_range": 29384,
+          "sha256": "8af401940ee755133fcd677b1ef4e7d07c4d45269370d4bfb4fcb9af98a79f1e"
+        },
+        {
+          "archive": "GBPUSD_2026_06.zip",
+          "rows_in_range": 31532,
+          "sha256": "b6534603559ce1d611849e99f129c224832431b0135f9cef4830c14152db2e32"
+        },
+        {
+          "archive": "GBPUSD_2026_07.zip",
+          "rows_in_range": 32540,
+          "sha256": "eed97b0e50df94532cd6bb5497210670fdbe27acf3e0f94238c7542402113dea"
+        },
+        {
+          "archive": "GBPUSD_2026_08.zip",
+          "rows_in_range": 30523,
+          "sha256": "41d82691331216fbca668d65f449cb3a0824b3bdfb7c2d94b8689dd95b52402a"
+        },
+        {
+          "archive": "GBPUSD_2026_09.zip",
+          "rows_in_range": 31527,
+          "sha256": "5b3b742ab50d2febe019d8e60b54663ad05402df903edf38fb7a82ec212d8679"
+        },
+        {
+          "archive": "GBPUSD_2026_10.zip",
+          "rows_in_range": 31168,
+          "sha256": "45d3cf1aedf496b32c3a6edeef32aa8c93745b53745fe2f3a09da9b746606c8e"
+        },
+        {
+          "archive": "GBPUSD_2026_11.zip",
+          "rows_in_range": 7182,
+          "sha256": "ff2d8cab33555d2bbfee95339563d41261dc50a5f9c1f48a1427124625e60da0"
+        }
+      ]
+    },
+    "USDJPY": {
+      "file": "ohlcv/USD_JPY_bid_1m.csv",
+      "rows": 1807177,
+      "sha256": "b4ca8cd97c50c53c02bd99f4ecdd3dd4f53a9e3ea4299673509dbb80e4f9c15a",
+      "first_ms": 1636675200000,
+      "last_ms": 1794002280000,
+      "first_utc": "2021-11-12T00:00:00+00:00",
+      "last_utc": "2026-11-06T21:58:00+00:00",
+      "gaps_over_3_days": 1,
+      "duplicate_minutes_identical": 240,
+      "duplicate_minutes_conflicting_kept_first": 115,
+      "archives": [
+        {
+          "archive": "USDJPY_2021.zip",
+          "rows_in_range": 51411,
+          "sha256": "604d3eab8975be93004cdb7161aaafb24dab320136b61c7f686ab9b059babc81"
+        },
+        {
+          "archive": "USDJPY_2022.zip",
+          "rows_in_range": 372596,
+          "sha256": "d290231856453b961d110430a98e2dd6074efea881ed6ebcf3211647d50e70c7"
+        },
+        {
+          "archive": "USDJPY_2023.zip",
+          "rows_in_range": 322956,
+          "sha256": "f6b03b2b9e3f7a64d64db68d73b97902e2fb6748bfcf52dfdff9730a09173cfa"
+        },
+        {
+          "archive": "USDJPY_2024.zip",
+          "rows_in_range": 372083,
+          "sha256": "dc99fe4b3e0ae1b457f6bfccc5d36cf6f628812f704f5556aa0a74ff3e7e8c81"
+        },
+        {
+          "archive": "USDJPY_2025.zip",
+          "rows_in_range": 371703,
+          "sha256": "7e4911e0971bf99e41327f37256154d351af5c8d883c4c5708a46d899b55cbaf"
+        },
+        {
+          "archive": "USDJPY_2026_01.zip",
+          "rows_in_range": 30128,
+          "sha256": "6d990f8df658fb9c16238bedce3ab07956603b3bc8fa01130e2c4a3f95127917"
+        },
+        {
+          "archive": "USDJPY_2026_02.zip",
+          "rows_in_range": 28731,
+          "sha256": "e10301240946bee28629f230aea998ea28810e0f80cf59941708dc7f7adeb8ed"
+        },
+        {
+          "archive": "USDJPY_2026_03.zip",
+          "rows_in_range": 31931,
+          "sha256": "1bbea2d7877f9004554f6208243a181106a0678a5fc9b28dfc6e2db5c26c29a5"
+        },
+        {
+          "archive": "USDJPY_2026_04.zip",
+          "rows_in_range": 31471,
+          "sha256": "4077adff4ffd476bafcc2a392481d88074ae11564e5930518212afa458ddf6b9"
+        },
+        {
+          "archive": "USDJPY_2026_05.zip",
+          "rows_in_range": 30054,
+          "sha256": "4a594f2146222f939411f2cf767d5f9ee33e9b9958222c47a21d7f95e829d1e9"
+        },
+        {
+          "archive": "USDJPY_2026_06.zip",
+          "rows_in_range": 31248,
+          "sha256": "a168aa072c616b6755cb592ce6ebe18e7fa91735c8e60b1703046cfd6a917c82"
+        },
+        {
+          "archive": "USDJPY_2026_07.zip",
+          "rows_in_range": 32641,
+          "sha256": "5c8e3d8f539b071e2e47bd84da2b6c9bd2e20df8144a6491094019973a9dc583"
+        },
+        {
+          "archive": "USDJPY_2026_08.zip",
+          "rows_in_range": 30585,
+          "sha256": "bb7e86f8c9744b9f39c4d962920e7d056b7593296b6256fd96bebda5253db36e"
+        },
+        {
+          "archive": "USDJPY_2026_09.zip",
+          "rows_in_range": 31611,
+          "sha256": "0599df250fdf2955deddb42b3b341f70416527969cd0721534972dad8a04bfdf"
+        },
+        {
+          "archive": "USDJPY_2026_10.zip",
+          "rows_in_range": 31199,
+          "sha256": "567d5e2f74b5fa2c838f299da24f081bc68701b13680794624ec111599e84c63"
+        },
+        {
+          "archive": "USDJPY_2026_11.zip",
+          "rows_in_range": 7184,
+          "sha256": "2b2e9da6fb6f48c2d879daf804f5f745cafeecc5e437796cc5f6bc4ce0186f9f"
+        }
+      ]
+    }
+  }
+}
