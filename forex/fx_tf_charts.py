@@ -49,9 +49,9 @@ def main():
     rep = json.loads((HERE / "reports" / "fx_tf.json").read_text())
     S_old = np.load(HERE / "data" / "fx_best_streams.npz")["S"]
     S_new = np.load(HERE / "data" / "fx_tf_streams.npz")["S"]
-    final = rep["finalists_distinct"]
+    final = rep["finalists_distinct"][:40]
     rows = []
-    for c in final:
+    for c in final[:40]:
         j = c["j"]
         rows.append(S_old[j] if j < len(S_old) else S_new[j - len(S_old)])
     day0 = fl.sfx.ms(fl.Lab.START) // fl.DAY_MS
@@ -152,25 +152,49 @@ def main():
         fig.tight_layout()
         save(fig, f"04_finalist_{k + 1}_detail.png")
 
-    # 5 equal-risk book of all distinct finalists
-    if rep.get("finalists_book"):
-        R = np.load(HERE / "data" / "fx_tf_book.npy").astype(np.float64)
-        e = eq_of(R)
-        fig, axs = plt.subplots(2, 1, figsize=(10, 6), sharex=True, gridspec_kw={"height_ratios": [2.2, 1]})
-        axs[0].plot(days, e, color=SER[0])
-        axs[0].axvline(split, color=NEUTRAL, lw=1, ls="--")
-        axs[0].set_yscale("log")
-        axs[0].yaxis.set_major_formatter(mt.FuncFormatter(lambda v, _: f"{v:g}x"))
-        bk = rep["finalists_book"]
-        axs[0].set_title(f"All {bk['members']} finalists together, 1% risk each: {bk['cagr']:+.0%}/yr, max DD {bk['max_dd']:.0%}"
-                         f" (test {bk['oos_cagr']:+.0%}/yr)")
-        d = e / np.maximum.accumulate(e) - 1
-        axs[1].fill_between(days, d, 0, color=SER[0], alpha=0.25, lw=0)
-        axs[1].plot(days, d, color=SER[0], lw=1.2)
-        axs[1].yaxis.set_major_formatter(mt.PercentFormatter(1.0, decimals=0))
-        axs[1].set_title("Drawdown", fontsize=11)
-        years_axis(axs[1])
-        save(fig, "05_finalists_book.png")
+    # 5 six-bot book, CLEAN: from the in-sample selection list (no knowledge of 2025-26), per symbol the
+    #   strategy with the best in-sample Sharpe, top 6 symbols, 1 % risk each
+    cands_is = rep["candidates_in_sample_ranked"]
+    rows_is = [S_old[c["j"]] if c["j"] < len(S_old) else S_new[c["j"] - len(S_old)] for c in cands_is]
+    seen, picks = set(), []
+    for c, r in zip(cands_is, rows_is):
+        if c["symbol"] not in seen:
+            seen.add(c["symbol"])
+            picks.append((c, r))
+        if len(picks) == 6:
+            break
+    R = np.sum([r.astype(np.float64) for _, r in picks], axis=0)
+    e = eq_of(R)
+    is_m, oos_m = days < split, days >= split
+    yrs_all, yrs_oos = len(R) / 365.25, oos_m.sum() / 365.25
+    e_oos = eq_of(R[oos_m])
+    book = dict(members=[name_of(c) for c, _ in picks], cagr=round(float(e[-1] ** (1 / yrs_all) - 1), 4),
+                max_dd=round(float(np.max(1 - e / np.maximum.accumulate(e))), 4),
+                test_cagr=round(float(e_oos[-1] ** (1 / yrs_oos) - 1), 4),
+                test_max_dd=round(float(np.max(1 - e_oos / np.maximum.accumulate(e_oos))), 4))
+    ser = pd.Series(e, index=days)
+    ye = ser.groupby(ser.index.year).last()
+    book["yearly"] = {int(k): round(float(v), 4) for k, v in (ye / ye.shift(1).fillna(1.0) - 1).items()}
+    (OUT / "six_bot_book.json").write_text(json.dumps(book, indent=1))
+    print(book)
+    fig, axs = plt.subplots(2, 1, figsize=(10, 6.4), sharex=True, gridspec_kw={"height_ratios": [2.2, 1]})
+    for k, (c, r) in enumerate(picks):
+        axs[0].plot(days, eq_of(r.astype(np.float64)), color=SER[k], lw=1.1, alpha=0.9, label=name_of(c))
+    axs[0].plot(days, e, color=fc.INK, lw=2.4, label="all six together")
+    axs[0].axvline(split, color=NEUTRAL, lw=1, ls="--")
+    axs[0].yaxis.set_major_formatter(mt.FuncFormatter(lambda v, _: f"{v:g}x"))
+    axs[0].legend(loc="upper left", fontsize=8, ncol=2)
+    axs[0].yaxis.set_minor_formatter(mt.NullFormatter())
+    axs[0].set_title(f"Six-bot book picked on 2021-24 only (1% risk each): {book['cagr']:+.0%}/yr, max DD {book['max_dd']:.0%}; "
+                     f"test 2025-26: {book['test_cagr']:+.0%}/yr, DD {book['test_max_dd']:.0%}")
+    d = e / np.maximum.accumulate(e) - 1
+    axs[1].fill_between(days, d, 0, color=SER[0], alpha=0.25, lw=0)
+    axs[1].plot(days, d, color=SER[0], lw=1.2)
+    axs[1].axvline(split, color=NEUTRAL, lw=1, ls="--")
+    axs[1].yaxis.set_major_formatter(mt.PercentFormatter(1.0, decimals=0))
+    axs[1].set_title("Drawdown of the six together", fontsize=11)
+    years_axis(axs[1])
+    save(fig, "05_six_bot_book.png")
 
     # 6 in-sample Sharpe vs test result for every selected strategy
     cand = rep["candidates_in_sample_ranked"]

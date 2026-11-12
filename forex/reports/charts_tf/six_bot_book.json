@@ -1,0 +1,22 @@
+{
+ "members": [
+  "USDJPY 2h macd",
+  "EURUSD 4h bbfade",
+  "EURJPY 4h bbfade",
+  "SPXUSD 4h stoch",
+  "AUDUSD 4h bbfade",
+  "USDCHF 4h ghoghnous"
+ ],
+ "cagr": 0.3935,
+ "max_dd": 0.2152,
+ "test_cagr": -0.028,
+ "test_max_dd": 0.2152,
+ "yearly": {
+  "2021": 0.027,
+  "2022": 0.9593,
+  "2023": 0.5568,
+  "2024": 0.7629,
+  "2025": 0.1117,
+  "2026": -0.1465
+ }
+}
