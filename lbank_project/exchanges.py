@@ -247,6 +247,17 @@ class TheTrueTrade(Adapter):
         if not all(isinstance(r, dict) for r in rows):raise ExchangeError("Invalid TheTrueTrade order record")
         return rows
 
+    def cancel_order(self, order_id: str) -> None:
+        self.request("DELETE", f"/futures/orders/{order_id}")
+
+    def stop_order_ids(self, symbol: str, pids: list) -> list[str]:
+        """Current stop order ids (slOrderId) of these positions."""
+        out = []
+        for r in self.stop_rows(symbol, "active"):
+            if str(r.get("id")) in {str(i) for i in pids} and _usable_id(r.get("slOrderId")):
+                out.append(_usable_id(r.get("slOrderId")))
+        return out
+
     def check_stop(self, symbol: str, pids: list, stop: float, readback: dict) -> list[str]:
         """Problems with the exchange-side stop of every position id (empty list = verified)."""
         want = dec(self.round_price(symbol, stop));tick = dec((self.markets().get(symbol) or {}).get("tick")) or Decimal(0)
