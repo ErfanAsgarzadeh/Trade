@@ -22,6 +22,8 @@ CERT_VERSION = 1
 CERT_MAX_AGE_DAYS = 30
 CERT_REQUIRED_CHECKS = ("entry_confirmed", "stop_readback", "stop_moved", "partial_close", "full_close", "stop_triggered")
 STOP_QUERIES = ("active", "page")
+# A position that is (still) open on TheTrueTrade; PARTIAL_CLOSED = open with part of it already closed (seen live).
+OPEN_STATUSES = ("OPEN", "OPENED", "PARTIAL_CLOSED", "PARTIALLY_CLOSED")
 
 
 def pause(seconds: float) -> None:
@@ -266,7 +268,7 @@ class TheTrueTrade(Adapter):
         for pid in pids:
             r = rows.get(str(pid))
             if r is None:problems.append("position not in stop readback");continue
-            if str(r.get("status", "OPEN")).upper() not in ("OPEN", "OPENED") or r.get("isActive") is False:
+            if str(r.get("status", "OPEN")).upper() not in OPEN_STATUSES or r.get("isActive") is False:
                 problems.append("position not open");continue
             got = dec(r.get("stopLoss"))
             if got is None or got <= 0:problems.append("no stopLoss on position");continue
@@ -405,7 +407,7 @@ class TheTrueTrade(Adapter):
             if not isinstance(status, str):
                 raise ExchangeError("Invalid TheTrueTrade position status")
             status = status.upper()
-            if status in ("OPEN", "OPENED"):
+            if status in OPEN_STATUSES:
                 if active is False:
                     raise ExchangeError("Inconsistent TheTrueTrade open position state")
                 positions.append(p)
