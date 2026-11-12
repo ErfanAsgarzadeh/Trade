@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import matplotlib.ticker as mt  # noqa: E402
+import matplotlib.dates  # noqa: E402,F401
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
@@ -68,7 +69,7 @@ def main():
     yr = days.year.values
     ports = rep["portfolios"]
     names = list(ports)
-    best = max(names, key=lambda n: ports[n]["cagr"])
+    best = max(names, key=lambda n: ports[n]["sharpe"])  # best risk-adjusted book for the detail charts
 
     # 1 portfolios equity (hindsight), log scale
     fig, ax = plt.subplots(figsize=(10, 5.2))
@@ -98,6 +99,9 @@ def main():
         ax.yaxis.set_major_formatter(mt.FuncFormatter(lambda v, _: f"{v:g}x"))
         ax.set_title(LABEL[n], fontsize=11)
     axs[0, 0].legend(loc="upper left", fontsize=9)
+    for ax in axs.flat:
+        ax.xaxis.set_major_locator(matplotlib.dates.YearLocator())
+        ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%Y"))
     fig.suptitle("Same rule, two ways: hindsight vs walk-forward, 2023-01 to 2026-11", x=0.06, ha="left",
                  fontweight="bold")
     fig.tight_layout()
@@ -134,8 +138,8 @@ def main():
     ax.axhline(0, color=INK2, lw=1)
     ax.set_xticks(xs, years)
     ax.yaxis.set_major_formatter(mt.PercentFormatter(1.0, decimals=0))
-    ax.set_title(f"Yearly return: {LABEL[best]}")
-    ax.legend(loc="upper left")
+    ax.set_title(f"Yearly return: {LABEL[best]}", pad=28)
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2)
     save(fig, "04_yearly_best.png")
 
     # 5 monthly heatmap of the best portfolio (hindsight), diverging
@@ -224,7 +228,7 @@ def main():
     ax.set_xlabel("Sharpe ratio over five years")
     ax.set_ylabel("Number of strategies")
     ax.set_title("Are the best strategies better than luck?")
-    ax.legend(loc="upper left")
+    ax.legend(loc="upper right", fontsize=9)
     save(fig, "10_sharpe_vs_luck.png")
 
     # 11 in-sample vs out-of-sample per strategy
@@ -232,7 +236,7 @@ def main():
     gi = np.log(np.clip(1 + RISK * X[:, is_m], 1e-9, None)).sum(1) / (is_m.sum() / 365.25)
     go = np.log(np.clip(1 + RISK * X[:, oos_m], 1e-9, None)).sum(1) / (oos_m.sum() / 365.25)
     ci, co = np.expm1(gi), np.expm1(go)
-    rho = pd.Series(ci).corr(pd.Series(co), method="spearman")
+    rho = pd.Series(ci).rank().corr(pd.Series(co).rank())
     fig, ax = plt.subplots(figsize=(7, 6))
     ax.scatter(ci, co, s=4, color=SER[0], alpha=0.15, lw=0)
     top_i = np.argsort(-ci)[:50]

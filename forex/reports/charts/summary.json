@@ -1,0 +1,7 @@
+{
+ "best_portfolio": "P2_greedy_max_sharpe",
+ "spearman_is_oos": 0.473,
+ "best_real_sharpe": 1.56,
+ "best_null_sharpe": 2.56,
+ "top50_is_mean_oos_cagr": -0.0723
+}
