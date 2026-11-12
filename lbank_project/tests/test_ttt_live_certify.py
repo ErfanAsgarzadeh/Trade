@@ -523,3 +523,48 @@ def test_failed_partial_close_reports_what_the_exchange_shows(rt):
     assert not report["passed"] and report["reason"].startswith("partial_close")
     d = report["partial_close_diagnostics"]
     assert d["positions"][0]["status"] == "PARTIAL_CLOSED" and d["requested_close_size"] > 0 and not api.pos
+
+
+def test_certifies_when_the_position_list_now_and_then_misses_a_position(rt):
+    """Like the live exchange: the position list lags behind for a moment. A close must still be sent (it was skipped
+    silently before) and every readback waits until the list catches up."""
+    api = FakeAPI();real = api.request;n = {"reads": 0}
+    def flapping(method, path, query=None, body=None, auth=True):
+        if method == "GET" and path == "/futures/positions":
+            n["reads"] += 1
+            if n["reads"] % 4 == 0:return {"items": [], "meta": {"total": 0}}
+        return real(method, path, query, body, auth)
+    api.request = flapping
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], (report, out)
+    assert not api.pos
+
+
+def test_close_never_skips_silently(rt):
+    api = FakeAPI();certify(rt, api);t = adapter(api)
+    t.open("BTCUSDT", "long", 0.004, 5, 78000.0);p = t.positions()["BTCUSDT"]
+    api.request("POST", "/futures/positions", body=dict(symbol="BTCUSDT", side="LONG", size="0.002", leverage=5, stopLoss="78000"))
+    two = t.positions()["BTCUSDT"];assert len(two.ids) == 2
+    gone = X.LivePosition("BTCUSDT", "long", 0.006, 80000.0, two.ids + [424242])
+    with pytest.raises(X.ExchangeError, match="not every position id"):t.close(gone)
+    t.close(p, 0.001)                                          # single id: sent from the known size, no list lookup
+    assert t.last_close["body"]["size"] == "0.001"
+
+
+def test_mirror_does_not_drop_a_position_the_list_misses_for_a_moment(rt):
+    api = FakeAPI();certify(rt, api);api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.05, stop=78000.0, key="main|BTC|1", opened=None)
+    step();assert "BTCUSDT" in m.state["managed"]
+    real = api.request;miss = {"n": 1}
+    def flapping(method, path, query=None, body=None, auth=True):
+        if method == "GET" and path == "/futures/positions" and miss["n"] > 0:
+            miss["n"] -= 1;return {"items": [], "meta": {"total": 0}}
+        return real(method, path, query, body, auth)
+    api.request = flapping;t.request = flapping
+    step()
+    assert "BTCUSDT" in m.state["managed"] and api.pos               # not given up as "closed on the exchange"
+    assert "exchange_closed" not in [k for k, _ in kinds_and_reasons(rt)]
+    del paper.book["BTC/USDT:USDT"];step()
+    assert not api.pos and not m.state["managed"] and not m.state["paused"]

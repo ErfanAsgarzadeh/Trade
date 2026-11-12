@@ -536,15 +536,26 @@ class TheTrueTrade(Adapter):
         return None
 
     def close(self, pos, qty=None):
+        """Close qty (None = all) of a position. TheTrueTrade's position list can lag behind for a moment, so the sizes come
+        from the position we were given (one id: its whole size); never skip silently: an unclosable part is an error."""
         left = pos.qty if qty is None else qty
+        if len(pos.ids) == 1:
+            sizes = {str(pos.ids[0]): pos.qty}
+        else:
+            sizes = {str(p["id"]): float(p["size"]) for p in self._raw_positions() if str(p.get("id")) in {str(i) for i in pos.ids}}
+            if len(sizes) != len(pos.ids):
+                raise ExchangeError(f"{pos.symbol}: not every position id is listed; close not sent")
+        self.last_close = None
         for pid in list(pos.ids):
-            if left <= 0:break
-            cur = next((float(p["size"]) for p in self._raw_positions() if p["id"] == pid), 0.)
+            if left <= 1e-12:break
+            cur = sizes.get(str(pid), 0.)
             if cur <= 0:continue
             part = min(cur, left);body = {"orderType": "MARKET"}
             if part < cur - 1e-12:body["size"] = self._fmt(part)
             reply = self.request("POST", f"/futures/positions/{pid}/close", body=body);left -= part
             self.last_close = {"body": dict(body), "reply_shape": shape(reply)}
+        if left > 1e-9 * max(1.0, pos.qty):
+            raise ExchangeError(f"{pos.symbol}: could not send a close for {left} of the requested quantity")
 
     def set_stop(self, pos, stop):
         for pid in pos.ids:
