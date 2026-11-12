@@ -78,6 +78,7 @@ class Certifier:
         self.sleep, self.now = sleep or (lambda s: time.sleep(s)), now or (lambda: time.time())
         self.report = dict(version=X.CERT_VERSION, symbol=symbol, leverage=leverage, read_only={}, checks={}, notes=[])
         self.opened: list[str] = []          # position ids this test opened (closed again on any failure)
+        self.stop_ids: set[str] = set()      # stop order ids of the test positions (cancelled if left behind)
 
     # ---------------- helpers
     def ok(self, name: str, passed: bool, note: str = "", section: str = "checks"):
@@ -196,6 +197,7 @@ class Certifier:
             except X.ExchangeError as exc:
                 self.report["notes"].append(f"active orders not readable: {str(exc)[:100]}")
         self.report["readback"] = readback
+        if has_oid:self.stop_ids.add(str(oid))
         self.say(f"  [INFO] stop read from positions?{readback['query']}; stop order id {'reported' if has_oid else 'NOT reported'}; "
                  f"stop order {'found' if readback['orders_check'] else 'not found'} among active orders")
         problems = self.stop_problems(p.ids, stop, readback)
@@ -205,16 +207,28 @@ class Certifier:
         self.ex.set_stop(p, new_stop)
         problems = self.stop_problems(p.ids, new_stop, readback)
         self.ok("stop_moved", not problems, "; ".join(problems))
-        # B6 full close
-        self.ex.close(self.mine())
+        # B6 full close; the position's stop order must disappear with it (the exchange may need some seconds)
+        cur = self.mine()
+        if readback["orders_check"]:
+            self.stop_ids.update(self.ex.stop_order_ids(self.symbol, cur.ids))
+        self.ex.close(cur)
         self.ok("full_close", self.wait_position(None) is None, "position gone")
         if readback["orders_check"]:
-            left = {str(o.get("id")) for o in self.ex.open_orders(self.symbol)}
-            self.ok("stop_order_removed_after_close", str(oid) not in left, "")
+            start = self.now();left = []
+            for _ in range(20):
+                rows = [o for o in self.ex.open_orders(self.symbol) if str(o.get("id")) in self.stop_ids]
+                left = [f"type={o.get('type')} status={o.get('status')}" for o in rows]
+                if not left:break
+                self.sleep(2.0)
+            self.report["stop_order_gone_after_s"] = None if left else round(self.now() - start, 1)
+            self.ok("stop_order_removed_after_close", not left,
+                    f"gone after {self.report['stop_order_gone_after_s']} s" if not left else f"still active after 40 s: {left}")
         # B5 partial close. The exchange ignores a close worth less than its minimum order value and closes everything
         # when the rest would fall below it, so: a position of about 2.6x the minimum, close a part worth 1.1x the minimum.
         minimum = self.report["min_notional_usd"]
         p, qty, stop2 = self.open_long(.03, notional=minimum * 2.6)
+        if readback["orders_check"]:
+            self.stop_ids.update(self.ex.stop_order_ids(self.symbol, p.ids))
         self.ok("second_entry_confirmed", p is not None and abs(p.qty - qty) <= m["step"] * .05 + 1e-12, f"{qty} contracts")
         part = ceil_step(minimum * 1.1 / self.ex.price(self.symbol), m["step"])
         self.ex.close(p, part)
@@ -237,6 +251,8 @@ class Certifier:
         else:
             raise Abort("exchange rejected every close stop")
         problems = self.stop_problems(p.ids, tight, readback)
+        if readback["orders_check"]:
+            self.stop_ids.update(self.ex.stop_order_ids(self.symbol, p.ids))
         self.ok("tight_stop_set", not problems, f"{tight_pct:.2%} below price; " + "; ".join(problems))
         self.say(f"  waiting up to {self.trigger_timeout / 60:.0f} min for the exchange to trigger the stop ...")
         start = self.now();triggered = False
@@ -256,6 +272,13 @@ class Certifier:
             self.report["trigger_closing_reason"] = reason if isinstance(reason, str) else None
         self.ok("stop_triggered", triggered, "closed by the exchange stop" if triggered else "price did not reach the stop in time; run again")
 
+    def cancel_leftover_stops(self):
+        """A stop order of a test position left active after its position is gone: cancel it."""
+        for o in self.ex.open_orders(self.symbol) if self.stop_ids else []:
+            if str(o.get("id")) in self.stop_ids and self.mine() is None:
+                self.ex.cancel_order(str(o.get("id")))
+                self.say(f"  leftover test stop order on {self.symbol} cancelled")
+
     def cleanup(self):
         """Close whatever this test opened; report anything that could not be confirmed flat."""
         try:
@@ -271,6 +294,7 @@ class Certifier:
                     self.say(f"  !! {self.symbol} test position could NOT be confirmed closed - close it by hand in TheTrueTrade")
                     return False
                 self.say(f"  test position on {self.symbol} closed")
+            self.cancel_leftover_stops()
         except Exception as exc:
             self.say(f"  !! cleanup failed ({type(exc).__name__}: {str(exc)[:120]}) - check {self.symbol} in TheTrueTrade by hand")
             return False
@@ -289,6 +313,10 @@ class Certifier:
         try:
             self.lifecycle()
             self.report["passed"] = True
+            try:
+                self.cancel_leftover_stops()
+            except X.ExchangeError as exc:
+                self.say(f"  !! could not check for leftover stop orders ({str(exc)[:100]}) - look at Open Orders by hand")
         except (Exception, Interrupted, KeyboardInterrupt) as exc:
             if not isinstance(exc, (Abort, X.ExchangeError)):
                 log_line("unexpected error:\n" + traceback.format_exc())

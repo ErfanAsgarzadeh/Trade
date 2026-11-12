@@ -20,6 +20,7 @@ class FakeAPI:
         self.min_notional, self.store_stop, self.order_ids, self.list_orders, self.trigger = min_notional, store_stop, order_ids, list_orders, trigger
         self.calls = [];self.equity = 100.0;self.reply = reply or (lambda pid: {"positionId": pid})
         self.fill_records = fill_records;self.fills = {};self.dust = False
+        self.linger = 0;self.lingering = {}     # reads for which a closed position's stop order stays listed (None = forever)
 
     def _id(self):
         self.next_id += 1;return str(self.next_id)
@@ -42,7 +43,9 @@ class FakeAPI:
         if self.dust and size is not None and float(size) * self.px[p["symbol"]] < self.min_notional:
             return                                             # like the real exchange: a too-small close is ignored
         if size is None or float(size) >= float(p["size"]) - 1e-12 or (self.dust and rest_value < self.min_notional):
-            del self.pos[pid];self.orders.pop(p.get("slOrderId"), None)
+            del self.pos[pid];oid = p.get("slOrderId")
+            if self.linger != 0 and oid in self.orders:self.lingering[oid] = self.linger
+            else:self.orders.pop(oid, None)
             self.history[pid] = dict(p, status="CLOSED", isActive=False, closingReason=reason)
         else:
             p["size"] = str(float(p["size"]) - float(size))
@@ -66,6 +69,10 @@ class FakeAPI:
             return {"items": rows, "meta": {"total": len(rows), "hasNextPage": False}}
         if method == "GET" and path == "/futures/orders":
             if not self.list_orders:return {"items": []}
+            for oid in list(self.lingering):
+                if self.lingering[oid] is not None:
+                    self.lingering[oid] -= 1
+                    if self.lingering[oid] < 0:self.orders.pop(oid, None);del self.lingering[oid]
             sym = (query or {}).get("symbol")
             rows = [o for o in self.orders.values() if sym in (None, o["symbol"])]
             if not (query or {}).get("active"):rows += [o for o in self.fills.values() if sym in (None, o["symbol"])]
@@ -88,6 +95,8 @@ class FakeAPI:
             if (p["side"] == "LONG" and sl >= px) or (p["side"] == "SHORT" and sl <= px):
                 raise X.ExchangeError("TheTrueTrade PATCH tpsl: HTTP 400 stop on the wrong side of the price")
             self.orders.pop(p.get("slOrderId"), None);self._set_sl(p, body);return {}
+        if method == "DELETE" and path.startswith("/futures/orders/"):
+            oid = path.split("/")[3];self.orders.pop(oid, None);self.lingering.pop(oid, None);return {}
         if method == "POST" and path == "/futures/positions/close-all":
             for pid in list(self.pos):self._close(pid, None)
             return {}
@@ -449,3 +458,21 @@ def test_small_paper_reductions_are_skipped_once_and_tiny_remainders_closed(rt):
     assert sum(r.startswith("reduction below") for _, r in kinds_and_reasons(rt)) == 1   # logged once
     paper.book["BTC/USDT:USDT"]["qty"] = 0.02;step()           # 0.002 BTC = 160 USDT left < 200: closed in full
     assert "BTCUSDT" not in t.positions() and not m.state["paused"] and not m.state["managed"]
+
+
+
+def test_stop_order_that_disappears_some_seconds_after_the_close_passes(rt):
+    api = FakeAPI();api.linger = 3
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], (report, out) 
+    assert report["stop_order_gone_after_s"] > 0 and not api.orders
+
+
+def test_stop_order_left_after_the_close_fails_and_is_cancelled(rt):
+    api = FakeAPI();api.linger = None
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and report["reason"].startswith("stop_order_removed_after_close")
+    assert "still active after 40 s" in report["reason"] and not api.orders and not api.pos
+    assert any("leftover test stop order" in line for line in out)
