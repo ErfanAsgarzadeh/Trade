@@ -428,7 +428,7 @@ def fam_london(b, p):
 
 def fam_tsmom(b, p):
     c, atr = b.close, b.atr
-    mom = np.sign(c - c.shift(p["n"]))
+    mom = np.sign(c - c.shift(p["n"])).fillna(0)
     flip = mom != mom.shift()
     side = np.where(flip, mom, 0).astype(int)
     return dict(side=side, stpL=A(c - p["stop"] * atr), stpS=A(c + p["stop"] * atr), oppo=mom.fillna(0).to_numpy())

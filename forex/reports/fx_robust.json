@@ -1,0 +1,454 @@
+{
+ "IS": {
+  "candidates": 131,
+  "bots": [
+   {
+    "family": "bbfade",
+    "tf": "4h",
+    "params": {
+     "n": 20,
+     "k": 3.0,
+     "stop": 1.5,
+     "trend": "flat"
+    },
+    "exits": {
+     "xdir": 1,
+     "time_stop": 30
+    },
+    "sh_is": 1.49,
+    "sh_oos": -0.94,
+    "r_is": 18.3,
+    "r_oos": -7.9
+   },
+   {
+    "family": "ghoghnous",
+    "tf": "D1",
+    "params": {
+     "lb": 10,
+     "cf": 0.75,
+     "minr": 1.1,
+     "vgate": 1.0,
+     "oppo": true,
+     "tf": "D1"
+    },
+    "exits": {
+     "time_stop": 30
+    },
+    "sh_is": 1.28,
+    "sh_oos": -0.52,
+    "r_is": 16.0,
+    "r_oos": -6.0
+   },
+   {
+    "family": "mojsavar",
+    "tf": "D1",
+    "params": {
+     "ef": 20,
+     "es": 100,
+     "rp": 14,
+     "rl": 40.0,
+     "confirm": 3,
+     "stop": 2.0
+    },
+    "exits": {
+     "trail_mode": 2,
+     "chand_k": 3.0
+    },
+    "sh_is": 1.32,
+    "sh_oos": -1.18,
+    "r_is": 23.8,
+    "r_oos": -8.6
+   },
+   {
+    "family": "bbfade",
+    "tf": "4h",
+    "params": {
+     "n": 20,
+     "k": 3.0,
+     "stop": 1.5,
+     "trend": "with"
+    },
+    "exits": {
+     "xdir": 1,
+     "time_stop": 30
+    },
+    "sh_is": 1.28,
+    "sh_oos": -0.85,
+    "r_is": 16.7,
+    "r_oos": -5.3
+   },
+   {
+    "family": "ghoghnous",
+    "tf": "D1",
+    "params": {
+     "lb": 20,
+     "cf": 0.5,
+     "minr": 1.1,
+     "vgate": 1.0,
+     "oppo": true,
+     "tf": "D1"
+    },
+    "exits": {
+     "time_stop": 30
+    },
+    "sh_is": 1.07,
+    "sh_oos": -0.45,
+    "r_is": 12.3,
+    "r_oos": -4.8
+   },
+   {
+    "family": "bbfade",
+    "tf": "4h",
+    "params": {
+     "n": 20,
+     "k": 3.0,
+     "stop": 1.5,
+     "trend": "flat"
+    },
+    "exits": {
+     "xdir": 1,
+     "tgt_r": 1.0,
+     "time_stop": 20
+    },
+    "sh_is": 1.45,
+    "sh_oos": 0.32,
+    "r_is": 13.4,
+    "r_oos": 2.1
+   },
+   {
+    "family": "mojsavar",
+    "tf": "D1",
+    "params": {
+     "ef": 50,
+     "es": 200,
+     "rp": 7,
+     "rl": 30.0,
+     "confirm": 3,
+     "stop": 3.0
+    },
+    "exits": {
+     "tgt_r": 2.0
+    },
+    "sh_is": 1.04,
+    "sh_oos": -0.31,
+    "r_is": 12.5,
+    "r_oos": -2.8
+   },
+   {
+    "family": "bbfade",
+    "tf": "1h",
+    "params": {
+     "n": 50,
+     "k": 2.5,
+     "stop": 2.5,
+     "trend": "with"
+    },
+    "exits": {
+     "xdir": 1,
+     "tgt_r": 1.0,
+     "time_stop": 20
+    },
+    "sh_is": 0.93,
+    "sh_oos": 0.14,
+    "r_is": 16.3,
+    "r_oos": 1.4
+   }
+  ],
+  "risk_for_100": 0.0177,
+  "reached": true,
+  "full": {
+   "target_risk": {
+    "cagr": 0.352,
+    "dd": 0.519,
+    "sharpe": 1.183,
+    "final": 4.507,
+    "max_lev": 40.894,
+    "p99_lev": 19.09
+   },
+   "risk_1pct": {
+    "cagr": 0.199,
+    "dd": 0.322,
+    "sharpe": 1.183,
+    "final": 2.47,
+    "max_lev": 23.153,
+    "p99_lev": 10.808
+   },
+   "risk_0.5pct": {
+    "cagr": 0.099,
+    "dd": 0.17,
+    "sharpe": 1.183,
+    "final": 1.598,
+    "max_lev": 11.576,
+    "p99_lev": 5.404
+   },
+   "yearly_R": {
+    "2021": 3.3,
+    "2022": 65.2,
+    "2023": 29.5,
+    "2024": 31.2,
+    "2025": -15.5,
+    "2026": -16.6
+   }
+  },
+  "in_sample": {
+   "target_risk": {
+    "cagr": 1.0,
+    "dd": 0.17,
+    "sharpe": 2.793,
+    "final": 8.8,
+    "max_lev": 26.445,
+    "p99_lev": 15.296
+   },
+   "risk_1pct": {
+    "cagr": 0.493,
+    "dd": 0.099,
+    "sharpe": 2.793,
+    "final": 3.517,
+    "max_lev": 14.972,
+    "p99_lev": 8.66
+   },
+   "risk_0.5pct": {
+    "cagr": 0.225,
+    "dd": 0.05,
+    "sharpe": 2.793,
+    "final": 1.892,
+    "max_lev": 7.486,
+    "p99_lev": 4.33
+   },
+   "yearly_R": {
+    "2021": 3.3,
+    "2022": 65.2,
+    "2023": 29.5,
+    "2024": 31.2
+   }
+  },
+  "out_of_sample": {
+   "target_risk": {
+    "cagr": -0.303,
+    "dd": 0.507,
+    "sharpe": -0.917,
+    "final": 0.512,
+    "max_lev": 40.894,
+    "p99_lev": 22.008
+   },
+   "risk_1pct": {
+    "cagr": -0.174,
+    "dd": 0.315,
+    "sharpe": -0.917,
+    "final": 0.702,
+    "max_lev": 23.153,
+    "p99_lev": 12.46
+   },
+   "risk_0.5pct": {
+    "cagr": -0.087,
+    "dd": 0.166,
+    "sharpe": -0.917,
+    "final": 0.845,
+    "max_lev": 11.576,
+    "p99_lev": 6.23
+   },
+   "yearly_R": {
+    "2025": -15.5,
+    "2026": -16.6
+   }
+  }
+ },
+ "FULL": {
+  "candidates": 7,
+  "bots": [
+   {
+    "family": "bbfade",
+    "tf": "4h",
+    "params": {
+     "n": 50,
+     "k": 2.0,
+     "stop": 2.5,
+     "trend": "with"
+    },
+    "exits": {
+     "xdir": 1,
+     "tgt_r": 1.0,
+     "time_stop": 20
+    },
+    "sh_is": 0.9,
+    "sh_oos": 0.98,
+    "r_is": 11.5,
+    "r_oos": 7.2
+   },
+   {
+    "family": "bbfade",
+    "tf": "D1",
+    "params": {
+     "n": 50,
+     "k": 3.0,
+     "stop": 1.5,
+     "trend": "none"
+    },
+    "exits": {
+     "xdir": 1,
+     "tgt_r": 1.0,
+     "time_stop": 20
+    },
+    "sh_is": 0.46,
+    "sh_oos": 1.45,
+    "r_is": 3.0,
+    "r_oos": 4.9
+   },
+   {
+    "family": "bbfade",
+    "tf": "1h",
+    "params": {
+     "n": 50,
+     "k": 2.5,
+     "stop": 2.5,
+     "trend": "with"
+    },
+    "exits": {
+     "xdir": 1,
+     "tgt_r": 1.0,
+     "time_stop": 20
+    },
+    "sh_is": 0.93,
+    "sh_oos": 0.14,
+    "r_is": 16.3,
+    "r_oos": 1.4
+   },
+   {
+    "family": "bbfade",
+    "tf": "4h",
+    "params": {
+     "n": 50,
+     "k": 2.0,
+     "stop": 2.5,
+     "trend": "flat"
+    },
+    "exits": {
+     "xdir": 1,
+     "time_stop": 10
+    },
+    "sh_is": 0.81,
+    "sh_oos": 1.04,
+    "r_is": 15.1,
+    "r_oos": 11.0
+   },
+   {
+    "family": "ghoghnous",
+    "tf": "4h",
+    "params": {
+     "lb": 20,
+     "cf": 0.75,
+     "minr": 1.1,
+     "vgate": 0.35,
+     "oppo": false,
+     "tf": "4h"
+    },
+    "exits": {
+     "tgt_r": 2.0,
+     "time_stop": 30
+    },
+    "sh_is": 0.49,
+    "sh_oos": 0.84,
+    "r_is": 9.1,
+    "r_oos": 8.4
+   }
+  ],
+  "risk_for_100": 0.0496,
+  "reached": true,
+  "full": {
+   "target_risk": {
+    "cagr": 1.0,
+    "dd": 0.492,
+    "sharpe": 1.438,
+    "final": 31.743,
+    "max_lev": 69.698,
+    "p99_lev": 39.452
+   },
+   "risk_1pct": {
+    "cagr": 0.184,
+    "dd": 0.11,
+    "sharpe": 1.438,
+    "final": 2.319,
+    "max_lev": 14.055,
+    "p99_lev": 7.955
+   },
+   "risk_0.5pct": {
+    "cagr": 0.09,
+    "dd": 0.056,
+    "sharpe": 1.438,
+    "final": 1.537,
+    "max_lev": 7.027,
+    "p99_lev": 3.978
+   },
+   "yearly_R": {
+    "2021": 1.7,
+    "2022": 19.5,
+    "2023": 17.9,
+    "2024": 15.9,
+    "2025": 18.5,
+    "2026": 14.4
+   }
+  },
+  "in_sample": {
+   "target_risk": {
+    "cagr": 0.971,
+    "dd": 0.492,
+    "sharpe": 1.389,
+    "final": 8.4,
+    "max_lev": 53.52,
+    "p99_lev": 35.719
+   },
+   "risk_1pct": {
+    "cagr": 0.182,
+    "dd": 0.11,
+    "sharpe": 1.389,
+    "final": 1.691,
+    "max_lev": 10.792,
+    "p99_lev": 7.203
+   },
+   "risk_0.5pct": {
+    "cagr": 0.089,
+    "dd": 0.056,
+    "sharpe": 1.389,
+    "final": 1.308,
+    "max_lev": 5.396,
+    "p99_lev": 3.601
+   },
+   "yearly_R": {
+    "2021": 1.7,
+    "2022": 19.5,
+    "2023": 17.9,
+    "2024": 15.9
+   }
+  },
+  "out_of_sample": {
+   "target_risk": {
+    "cagr": 1.051,
+    "dd": 0.29,
+    "sharpe": 1.533,
+    "final": 3.779,
+    "max_lev": 69.698,
+    "p99_lev": 40.838
+   },
+   "risk_1pct": {
+    "cagr": 0.186,
+    "dd": 0.058,
+    "sharpe": 1.533,
+    "final": 1.372,
+    "max_lev": 14.055,
+    "p99_lev": 8.235
+   },
+   "risk_0.5pct": {
+    "cagr": 0.091,
+    "dd": 0.029,
+    "sharpe": 1.533,
+    "final": 1.175,
+    "max_lev": 7.027,
+    "p99_lev": 4.117
+   },
+   "yearly_R": {
+    "2025": 18.5,
+    "2026": 14.4
+   }
+  }
+ }
+}
