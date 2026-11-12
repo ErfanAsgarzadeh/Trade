@@ -258,7 +258,7 @@ class Lab:
         nan = np.full(n, np.nan)
         side = sig["side"].astype(np.int8).copy()
         # no fresh entry when the bar close is stale (weekend / holiday gap) or on weekend closes
-        max_lag = 5 * MIN_MS if tf == "1h" else HOUR_MS
+        max_lag = {"15m": 2 * MIN_MS, "30m": 3 * MIN_MS, "1h": 5 * MIN_MS, "W1": 3 * DAY_MS}.get(tf, HOUR_MS)
         side[(b.lag.to_numpy() > max_lag)] = 0
         if ex.get("session"):
             hr = b.hour.to_numpy()

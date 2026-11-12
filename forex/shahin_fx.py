@@ -42,8 +42,9 @@ PAIRS = ("EURUSD", "GBPUSD", "USDJPY")
 PIP = {"EURUSD": 1e-4, "GBPUSD": 1e-4, "USDJPY": 1e-2}
 MINUTE_MS, HOUR_MS, DAY_MS = 60_000, 3_600_000, 86_400_000
 SESSION_OFFSET_MS = 22 * HOUR_MS  # FX day starts 17:00 New York = 22:00 UTC
-TF_MS = {"1h": HOUR_MS, "4h": 4 * HOUR_MS, "D1": DAY_MS}
-MIN_MINUTES = {"1h": 20, "4h": 60, "D1": 300}
+TF_MS = {"15m": 15 * MINUTE_MS, "30m": 30 * MINUTE_MS, "1h": HOUR_MS, "2h": 2 * HOUR_MS, "4h": 4 * HOUR_MS,
+         "8h": 8 * HOUR_MS, "12h": 12 * HOUR_MS, "D1": DAY_MS, "W1": 7 * DAY_MS}
+MIN_MINUTES = {"15m": 5, "30m": 10, "1h": 20, "2h": 40, "4h": 60, "8h": 120, "12h": 180, "D1": 300, "W1": 1500}
 ICHIMOKU = {"standard": (9, 26, 52, 26), "crypto": (20, 60, 120, 30), "none": None}
 SEED = 10_000.0
 
@@ -133,13 +134,15 @@ def load_minutes(data_dir: Path):
 
 def make_bars(frame: pd.DataFrame, tf: str) -> pd.DataFrame:
     span = TF_MS[tf]
+    # weekly bars open Sunday 22:00 UTC (1970-01-01 was a Thursday -> +3 days)
+    offset = SESSION_OFFSET_MS + (3 * DAY_MS if tf == "W1" else 0)
     t = frame.timestamp.to_numpy()
-    bucket = (t - SESSION_OFFSET_MS) // span
+    bucket = (t - offset) // span
     g = frame.assign(bucket=bucket).groupby("bucket", sort=True).agg(
         open=("open", "first"), high=("high", "max"), low=("low", "min"),
         close=("close", "last"), n=("close", "size"))
     g = g[g.n >= MIN_MINUTES[tf]].copy()
-    g["open_ms"] = g.index.to_numpy(dtype="int64") * span + SESSION_OFFSET_MS
+    g["open_ms"] = g.index.to_numpy(dtype="int64") * span + offset
     g["close_ms"] = g.open_ms + span
     return g.reset_index(drop=True)
 
