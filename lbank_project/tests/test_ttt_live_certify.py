@@ -496,3 +496,16 @@ def test_cleanup_catches_a_position_the_exchange_shows_late(rt):
         if calls["n"] == 12:api.pos.update(hidden)              # appears about 36 s later
     c.sleep = sleep
     assert c.cleanup() and not api.pos and any("closed" in line for line in out)
+
+
+def test_partially_closed_position_status_is_an_open_position(rt):
+    """TheTrueTrade reports PARTIAL_CLOSED for an open position after a partial close (seen on the live exchange)."""
+    api = FakeAPI();real = api._close
+    def close(pid, size, reason="USER"):
+        real(pid, size, reason)
+        if pid in api.pos:api.pos[pid]["status"] = "PARTIAL_CLOSED"
+    api._close = close
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], (report, out)
+    assert report["checks"]["partial_close"] and report["checks"]["stop_kept_after_partial"] and not api.pos
