@@ -544,8 +544,21 @@ class Mirror:
         target_q = self._qty(esym, m["live_qty0"] * t["ex_qty"] / m["paper_qty0"]) if m["paper_qty0"] > 0 else l.qty
         step = self.ex.markets().get(esym, {}).get("step", 0) or 0
         if l.qty - target_q > max(step, l.qty * .02):
-            if target_q <= 0:self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper reduced to zero");del managed[esym];return
-            self._close_verified(esym, l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part)")
+            # The exchange ignores a close worth less than its minimum order value and closes everything when the rest would
+            # fall below it: skip such small reductions (logged once per target), close in full when the rest is too small.
+            mn = self.ex.markets().get(esym, {}).get("min_notional")
+            px = self.ex.price(esym) if mn else 0.0
+            if mn and target_q > 0 and target_q * px < mn:
+                target_q = 0.0
+            elif mn and (l.qty - target_q) * px < mn:
+                if m.get("reduce_skipped") != target_q:
+                    m["reduce_skipped"] = target_q
+                    self.event("skip", symbol=esym, reason="reduction below the exchange minimum order value; position kept")
+                target_q = None
+            if target_q is None:
+                pass
+            elif target_q <= 0:self._close_verified(esym, l);self.event("close", symbol=esym, qty=l.qty, reason="paper reduced to zero or below the exchange minimum");del managed[esym];return
+            else:self._close_verified(esym, l, l.qty - target_q);self.event("reduce", symbol=esym, qty=l.qty - target_q, reason="paper reduced (take-profit part)")
         elif target_q - l.qty > max(step, l.qty * .02) and not self.state["paused"]:
             add = self._qty(esym, min(target_q - l.qty, max(0., self.cfg["max_position_usd"] / self.ex.price(esym) - l.qty)))
             if add > 0:
