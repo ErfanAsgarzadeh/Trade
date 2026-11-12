@@ -98,22 +98,36 @@ def main():
     items = [(i, *x) for i, x in enumerate(tf_items())]
     print(f"{len(items)} configs x {len(SYMBOLS)} symbols = {len(items) * len(SYMBOLS)} new strategies", flush=True)
     npz = HERE / "data" / "fx_tf_streams.npz"
-    if npz.is_file() and (HERE / "data" / "fx_tf_meta.json").is_file():
-        S_new = np.load(npz)["S"]
-        meta_new = json.loads((HERE / "data" / "fx_tf_meta.json").read_text())
-    else:
-        with Pool(os.cpu_count(), initializer=init) as pool:
-            res = [r for chunk in pool.imap(work, items, chunksize=1) for r in chunk]
-        print(f"simulated in {time.time() - t0:.0f}s", flush=True)
-        S_new = np.stack([r[2] for r in res])
-        meta_new = []
-        for r in res:
-            fam, tf, sp, ex = items[r[0]][1:]
-            meta_new.append(dict(idx=r[0], symbol=r[1], family=fam, tf=tf, trades=r[3],
-                                 params={k: (list(v) if isinstance(v, tuple) else v) for k, v in sp.items()}, exits=ex))
-        del res
-        np.savez_compressed(npz, S=S_new)
+    if not (npz.is_file() and (HERE / "data" / "fx_tf_meta.json").is_file()):
+        part_dir = HERE / "data" / "fx_tf_parts"
+        part_dir.mkdir(exist_ok=True)
+        for tf in NEW_TF:  # one timeframe at a time, saved to disk -> resumable
+            part = part_dir / f"{tf}.npz"
+            if part.is_file():
+                continue
+            sub = [it for it in items if it[2] == tf]
+            t1 = time.time()
+            with Pool(os.cpu_count(), initializer=init, maxtasksperchild=200) as pool:
+                res = [r for chunk in pool.imap(work, sub, chunksize=1) for r in chunk]
+            np.savez_compressed(part, S=np.stack([r[2] for r in res]),
+                                idx=np.array([r[0] for r in res]), trades=np.array([r[3] for r in res]),
+                                sym=np.array([r[1] for r in res]))
+            print(f"  {tf}: {len(res)} strategies in {time.time() - t1:.0f}s", flush=True)
+            del res
+        S_parts, meta_new = [], []
+        for tf in NEW_TF:
+            z = np.load(part_dir / f"{tf}.npz")
+            S_parts.append(z["S"])
+            for i, s, n in zip(z["idx"], z["sym"], z["trades"]):
+                fam, tf_, sp, ex = items[int(i)][1:]
+                meta_new.append(dict(idx=int(i), symbol=str(s), family=fam, tf=tf_, trades=int(n),
+                                     params={k: (list(v) if isinstance(v, tuple) else v) for k, v in sp.items()},
+                                     exits=ex))
+        np.savez_compressed(npz, S=np.concatenate(S_parts))
         (HERE / "data" / "fx_tf_meta.json").write_text(json.dumps(meta_new))
+        del S_parts
+    S_new = np.load(npz)["S"]
+    meta_new = json.loads((HERE / "data" / "fx_tf_meta.json").read_text())
     S_old = np.load(HERE / "data" / "fx_best_streams.npz")["S"]
     meta_old = json.loads((HERE / "data" / "fx_best_meta.json").read_text())
     S = np.concatenate([S_old, S_new]).astype(np.float32)

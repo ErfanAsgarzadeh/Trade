@@ -43,7 +43,7 @@ def sim(times, O, H, L, C, bar_min, bar_close, atr,
     """One pair, one strategy.  Returns daily R stream, daily max leverage-per-R, trades."""
     daily = np.zeros(ndays)
     levd = np.zeros(ndays)
-    trades = np.zeros((20000, 6))   # entry_ms, exit_ms, side, R, lev_per_R, reason
+    trades = np.zeros((len(bar_min) + 16, 6))   # <= one entry per bar; entry_ms, exit_ms, side, R, lev_per_R, reason
     nt = 0
     # position
     ps = 0; pe = 0.0; pstop = 0.0; pdist = 0.0; prem = 1.0; preal = 0.0; pmark = 0.0
