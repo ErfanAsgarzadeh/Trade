@@ -213,20 +213,24 @@ def sim(times, O, H, L, C, bar_min, bar_close, atr,
 
 # =================================================================== data
 class Lab:
-    def __init__(self, data_dir: Path, costs: sfx.Costs = sfx.Costs()):
-        self.costs = costs
+    """Minute data + costs for any set of symbols on one shared day axis."""
+    START, END = "2021-11-12", "2026-11-08"
+
+    def __init__(self, data_dir: Path, symbols=PAIRS):
+        import instruments as ins
+        self.symbols = tuple(symbols)
+        self.spec = {s: ins.SPEC[s] for s in self.symbols}
+        lo, hi = sfx.ms(self.START), sfx.ms(self.END)
         self.min = {}
-        for p in PAIRS:
+        for p in self.symbols:
             f = pd.read_csv(data_dir / "ohlcv" / f"{p[:3]}_{p[3:]}_bid_1m.csv")
+            f = f[(f.timestamp >= lo) & (f.timestamp < hi)]
             self.min[p] = {k: f[k].to_numpy(dtype=np.float64) for k in ("open", "high", "low", "close")}
             self.min[p]["t"] = f.timestamp.to_numpy(dtype=np.int64)
-        t_all = np.concatenate([self.min[p]["t"] for p in PAIRS])
-        self.day0 = int(t_all.min() // DAY_MS)
-        self.ndays = int(t_all.max() // DAY_MS) - self.day0 + 2
-        all_t = np.unique(t_all)
-        self.swap_d0, self.swapL, self.swapS = sfx.swap_tables(all_t, costs.swap_markup_pct)
+        self.day0 = lo // DAY_MS
+        self.ndays = (hi - lo) // DAY_MS + 1
+        self.swap_d0, self.swapL, self.swapS = ins.swap_tables(self.symbols, lo, hi)
         self.bars = {}
-        self.cache = {}
 
     def get_bars(self, pair, tf):
         k = (pair, tf)
@@ -250,8 +254,7 @@ class Lab:
         b = self.get_bars(pair, tf)
         m = self.min[pair]
         n = len(b)
-        pi = PAIRS.index(pair)
-        pip = sfx.PIP[pair]
+        pip, spread, slip, comm = self.spec[pair]
         nan = np.full(n, np.nan)
         side = sig["side"].astype(np.int8).copy()
         # no fresh entry when the bar close is stale (weekend / holiday gap) or on weekend closes
@@ -271,7 +274,6 @@ class Lab:
         bad = ((side == 1) & (close - stpL < ms)) | ((side == -1) & (stpS - close < ms)) | \
               ((side == 2) & ((lvlL - stpL < ms) | (stpS - lvlS < ms)))
         side[bad] = 0
-        c = self.costs
         daily, levd, tr = sim(
             m["t"], m["open"], m["high"], m["low"], m["close"],
             b.bar_min.to_numpy(np.int64), close, b.atr.to_numpy(),
@@ -281,8 +283,8 @@ class Lab:
             int(ex.get("trail_mode", 0)), float(ex.get("chand_k", 3.0)), int(ex.get("xdir", 0)),
             int(ex.get("time_stop", 0)), float(ex.get("arm_r", 0)), float(ex.get("lock_r", 0)),
             float(ex.get("part_r", 0)), float(ex.get("part_frac", 0.5)), float(ex.get("tgt_r", 0)),
-            c.spread_pips[pi] * pip, c.slippage_pips * pip, c.commission_rt_per_100k / 200_000,
-            self.swapL[pi], self.swapS[pi], self.swap_d0, self.day0, self.ndays,
+            spread, slip, comm,
+            self.swapL[pair], self.swapS[pair], self.swap_d0, self.day0, self.ndays,
             bool(ex.get("weekend_flat", False)))
         return daily, levd, tr
 

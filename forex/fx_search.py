@@ -205,7 +205,7 @@ def main():
     report = {
         "period": [str(days[0].date()), str(days[-1].date())], "split": IS_END,
         "streams": len(meta), "configs": len(items),
-        "costs": vars(LAB.costs) if hasattr(LAB.costs, "__dict__") else str(LAB.costs),
+        "costs": {k: list(v) for k, v in LAB.spec.items()},
         "families": fam_sum,
         "portfolio_A_full_period_pick": A, "portfolio_B_walk_forward": B,
         "top40_single_streams_full": [{k: meta[j][k] for k in ("family", "pair", "tf", "params", "exits", "trades",
