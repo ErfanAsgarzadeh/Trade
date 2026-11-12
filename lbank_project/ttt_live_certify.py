@@ -235,8 +235,10 @@ class Certifier:
         self.ex.close(p, part)
         rest = self.wait_position(qty - part)
         left = rest.qty if rest else 0
-        self.ok("partial_close", rest is not None and abs(left - (qty - part)) <= m["step"] * .05 + 1e-12,
-                f"{part} of {qty} closed, {left} left")
+        good = rest is not None and abs(left - (qty - part)) <= m["step"] * .05 + 1e-12
+        if not good:
+            self.partial_close_diagnostics(p.ids, part)
+        self.ok("partial_close", good, f"{part} of {qty} closed, {left} left")
         problems = self.stop_problems(rest.ids, stop2, readback)
         self.ok("stop_kept_after_partial", not problems, "; ".join(problems))
         p = rest
@@ -272,6 +274,29 @@ class Certifier:
                 pass
             self.report["trigger_closing_reason"] = reason if isinstance(reason, str) else None
         self.ok("stop_triggered", triggered, "closed by the exchange stop" if triggered else "price did not reach the stop in time; run again")
+
+    def partial_close_diagnostics(self, pids, part):
+        """What the exchange reports after a partial close (the test position's own figures and the latest orders on the
+        test coin; no account data), so the next fix can be based on facts."""
+        keep = ("status", "size", "notionalSize", "markPrice", "entryPrice", "isActive", "realizedPnL", "closeFees")
+        diag = {"requested_close_size": part, "close_request": getattr(self.ex, "last_close", None), "positions": [], "orders": []}
+        try:
+            for r in self.ex.stop_rows(self.symbol, "page"):
+                if str(r.get("id")) in {str(i) for i in pids}:
+                    diag["positions"].append({k: r.get(k) for k in keep if k in r})
+        except Exception as exc:
+            diag["positions_error"] = f"{type(exc).__name__}: {str(exc)[:100]}"
+        try:
+            rows = self.ex._list(self.ex.request("GET", "/futures/orders", {"symbol": self.symbol}))
+            for o in rows[:6]:
+                if isinstance(o, dict):
+                    diag["orders"].append({k: o.get(k) for k in ("type", "side", "direction", "status", "size", "filledSize",
+                                                                 "price", "createdAt") if k in o})
+                    diag.setdefault("order_fields", sorted(k for k in o if isinstance(k, str)))
+        except Exception as exc:
+            diag["orders_error"] = f"{type(exc).__name__}: {str(exc)[:100]}"
+        self.report["partial_close_diagnostics"] = diag
+        self.say(f"  [INFO] after the partial close: {json.dumps(diag, default=str)}")
 
     def cancel_leftover_stops(self):
         """A stop order of a test position left active after its position is gone: cancel it."""

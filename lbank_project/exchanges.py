@@ -543,7 +543,8 @@ class TheTrueTrade(Adapter):
             if cur <= 0:continue
             part = min(cur, left);body = {"orderType": "MARKET"}
             if part < cur - 1e-12:body["size"] = self._fmt(part)
-            self.request("POST", f"/futures/positions/{pid}/close", body=body);left -= part
+            reply = self.request("POST", f"/futures/positions/{pid}/close", body=body);left -= part
+            self.last_close = {"body": dict(body), "reply_shape": shape(reply)}
 
     def set_stop(self, pos, stop):
         for pid in pos.ids:

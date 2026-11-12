@@ -509,3 +509,17 @@ def test_partially_closed_position_status_is_an_open_position(rt):
     report = c.run(L.validate({"mode": "off"}))
     assert report["passed"], (report, out)
     assert report["checks"]["partial_close"] and report["checks"]["stop_kept_after_partial"] and not api.pos
+
+
+def test_failed_partial_close_reports_what_the_exchange_shows(rt):
+    api = FakeAPI();real = api._close
+    def ignore_partial(pid, size, reason="USER"):
+        if size is not None and float(size) < float(api.pos[pid]["size"]):
+            api.pos[pid]["status"] = "PARTIAL_CLOSED";return    # status changes, size does not
+        real(pid, size, reason)
+    api._close = ignore_partial
+    c, out = certifier(api, adapter(api))
+    report = c.run(L.validate({"mode": "off"}))
+    assert not report["passed"] and report["reason"].startswith("partial_close")
+    d = report["partial_close_diagnostics"]
+    assert d["positions"][0]["status"] == "PARTIAL_CLOSED" and d["requested_close_size"] > 0 and not api.pos
