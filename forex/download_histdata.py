@@ -132,10 +132,14 @@ def sha256(path: Path) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", type=Path, default=Path(__file__).resolve().parent / "data")
+    ap.add_argument("--start", type=date.fromisoformat, default=START,
+                    help="first day (warm-up history goes to a separate --out)")
+    ap.add_argument("--end", type=date.fromisoformat, default=END)
     ap.add_argument("--pairs", nargs="+", default=list(PAIRS), choices=PAIRS + EXTRA)
     args = ap.parse_args()
-    lo = int(datetime(START.year, START.month, START.day, tzinfo=timezone.utc).timestamp() * 1000)
-    hi = int(datetime(END.year, END.month, END.day, tzinfo=timezone.utc).timestamp() * 1000)
+    start, end = args.start, args.end
+    lo = int(datetime(start.year, start.month, start.day, tzinfo=timezone.utc).timestamp() * 1000)
+    hi = int(datetime(end.year, end.month, end.day, tzinfo=timezone.utc).timestamp() * 1000)
     today = datetime.now(timezone.utc).date()
     cache = args.out / "histdata_zip"
     cache.mkdir(parents=True, exist_ok=True)
@@ -144,11 +148,11 @@ def main() -> int:
     mpath = args.out / "manifest_histdata.json"
     old = json.loads(mpath.read_text()) if mpath.is_file() else {}
     manifest = {"source": "HistData.com ASCII M1 (bid, EST fixed UTC-5 -> UTC)",
-                "start": START.isoformat(), "end": END.isoformat(), "side": "bid", "symbols": old.get("symbols", {})}
+                "start": start.isoformat(), "end": end.isoformat(), "side": "bid", "symbols": old.get("symbols", {})}
     for pair in args.pairs:
         rows: list[tuple] = []
         archives = []
-        for year, month in chunks(START, END, today):
+        for year, month in chunks(start, end, today):
             tag = f"{pair}_{year}" + (f"_{month:02d}" if month else "")
             zpath = cache / f"{tag}.zip"
             if not zpath.is_file():
