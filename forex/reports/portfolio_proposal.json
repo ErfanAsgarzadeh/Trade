@@ -1,0 +1,147 @@
+{
+ "rules": "Proposed bot basket: 5 bots, each trade risks <= 1 % of equity, combined on one account.\n\n  1 Flow bot (Gotobi + month-end; published anomalies, pre-declared)     0.90 % / event\n  2 USDJPY 1h Supertrend(20, 3xATR), stop 3xATR, exit on flip            0.50 % / trade\n  3 S&P 500 4h Stochastic 20/80 + EMA200 filter, stop 3xATR, 2R/20 bars   0.35 % / trade\n  4 Nasdaq 100 4h Stochastic 10/90 + EMA200 filter, stop 1.5xATR, 2R/20   0.35 % / trade\n  5 Gold D1 inside-bar breakout with EMA200 filter, 2R / 20 bars          0.50 % / trade\nDaily R streams from the same engines/costs as the research; equity compounds daily.\nOutput: reports/portfolio_proposal.json, reports/charts_tf/07_proposed_basket.png\n",
+ "worst_trade_pct_equity": {
+  "USDJPY 1h Supertrend": -0.877,
+  "S&P 500 4h Stochastic": -0.406,
+  "Nasdaq 4h Stochastic": -0.383,
+  "Gold D1 inside bar": -0.677,
+  "Flow bot (Gotobi + month-end)": -0.945
+ },
+ "per_bot": {
+  "USDJPY 1h Supertrend": {
+   "cagr": 0.1181,
+   "max_dd": 0.0709,
+   "sharpe": 1.25,
+   "yearly": {
+    "2021": 0.0049,
+    "2022": 0.2551,
+    "2023": 0.089,
+    "2024": 0.1234,
+    "2025": 0.0706,
+    "2026": 0.0569
+   }
+  },
+  "S&P 500 4h Stochastic": {
+   "cagr": 0.0284,
+   "max_dd": 0.0236,
+   "sharpe": 1.43,
+   "yearly": {
+    "2021": 0.007,
+    "2022": 0.0295,
+    "2023": 0.0417,
+    "2024": 0.0315,
+    "2025": 0.0326,
+    "2026": -0.0002
+   }
+  },
+  "Nasdaq 4h Stochastic": {
+   "cagr": 0.0295,
+   "max_dd": 0.0194,
+   "sharpe": 1.22,
+   "yearly": {
+    "2021": -0.0078,
+    "2022": 0.0604,
+    "2023": 0.0534,
+    "2024": 0.0124,
+    "2025": 0.0091,
+    "2026": 0.0211
+   }
+  },
+  "Gold D1 inside bar": {
+   "cagr": 0.0402,
+   "max_dd": 0.0165,
+   "sharpe": 1.46,
+   "yearly": {
+    "2021": -0.0051,
+    "2022": 0.0406,
+    "2023": 0.0257,
+    "2024": 0.0577,
+    "2025": 0.0737,
+    "2026": 0.0093
+   }
+  },
+  "Flow bot (Gotobi + month-end)": {
+   "cagr": 0.0207,
+   "max_dd": 0.0468,
+   "sharpe": 0.64,
+   "yearly": {
+    "2021": -0.0,
+    "2022": 0.0238,
+    "2023": 0.023,
+    "2024": 0.0439,
+    "2025": -0.0327,
+    "2026": 0.0474
+   }
+  }
+ },
+ "basket": {
+  "cagr": 0.2566,
+  "max_dd": 0.0878,
+  "sharpe": 2.17,
+  "yearly": {
+   "2021": -0.0014,
+   "2022": 0.4593,
+   "2023": 0.2535,
+   "2024": 0.296,
+   "2025": 0.1588,
+   "2026": 0.14
+  }
+ },
+ "basket_2021_2024": {
+  "cagr": 0.3161,
+  "max_dd": 0.0495,
+  "sharpe": 2.66,
+  "yearly": {
+   "2021": -0.0014,
+   "2022": 0.4593,
+   "2023": 0.2535,
+   "2024": 0.296
+  }
+ },
+ "basket_2025_2026": {
+  "cagr": 0.1621,
+  "max_dd": 0.0878,
+  "sharpe": 1.4,
+  "yearly": {
+   "2025": 0.1588,
+   "2026": 0.14
+  }
+ },
+ "correlation": {
+  "USDJPY 1h Supertrend": {
+   "USDJPY 1h Supertrend": 1.0,
+   "S&P 500 4h Stochastic": -0.02,
+   "Nasdaq 4h Stochastic": -0.02,
+   "Gold D1 inside bar": -0.08,
+   "Flow bot (Gotobi + month-end)": 0.03
+  },
+  "S&P 500 4h Stochastic": {
+   "USDJPY 1h Supertrend": -0.02,
+   "S&P 500 4h Stochastic": 1.0,
+   "Nasdaq 4h Stochastic": 0.39,
+   "Gold D1 inside bar": 0.12,
+   "Flow bot (Gotobi + month-end)": -0.03
+  },
+  "Nasdaq 4h Stochastic": {
+   "USDJPY 1h Supertrend": -0.02,
+   "S&P 500 4h Stochastic": 0.39,
+   "Nasdaq 4h Stochastic": 1.0,
+   "Gold D1 inside bar": -0.06,
+   "Flow bot (Gotobi + month-end)": -0.08
+  },
+  "Gold D1 inside bar": {
+   "USDJPY 1h Supertrend": -0.08,
+   "S&P 500 4h Stochastic": 0.12,
+   "Nasdaq 4h Stochastic": -0.06,
+   "Gold D1 inside bar": 1.0,
+   "Flow bot (Gotobi + month-end)": -0.13
+  },
+  "Flow bot (Gotobi + month-end)": {
+   "USDJPY 1h Supertrend": 0.03,
+   "S&P 500 4h Stochastic": -0.03,
+   "Nasdaq 4h Stochastic": -0.08,
+   "Gold D1 inside bar": -0.13,
+   "Flow bot (Gotobi + month-end)": 1.0
+  }
+ }
+}
