@@ -280,20 +280,30 @@ class Certifier:
                 self.ex.cancel_order(str(o.get("id")))
                 self.say(f"  leftover test stop order on {self.symbol} cancelled")
 
-    def cleanup(self):
-        """Close whatever this test opened; report anything that could not be confirmed flat."""
+    def cleanup(self, quiet_s: float = 45.0, limit_s: float = 240.0) -> bool:
+        """Close whatever this test opened. TheTrueTrade can show a position, or a close, 30 s and more late, so keep
+        watching the test coin until it has stayed flat for quiet_s; report anything that could not be confirmed flat.
+        The coin was verified flat before the test and the mirror is not live: whatever is open on it is the test's."""
+        if not (self.opened or self.report["read_only"].get("test_coin_flat")):
+            return True
         try:
-            p = self.mine()
-            if p is None and self.opened:   # the exchange may show the position a moment late
-                for _ in range(5):
-                    self.sleep(1.5);p = self.mine()
-                    if p is not None:break
-            # The test coin was verified flat before the test and the mirror is not live: whatever is open on it now is ours.
-            if p is not None and (self.opened or self.report["read_only"].get("test_coin_flat")):
-                self.ex.close(p)
-                if self.wait_position(None) is not None:
-                    self.say(f"  !! {self.symbol} test position could NOT be confirmed closed - close it by hand in TheTrueTrade")
-                    return False
+            start = self.now();flat_since = self.now();closed = 0
+            while self.now() - start < limit_s:
+                p = self.mine()
+                if p is not None:
+                    self.ex.close(p);closed += 1;flat_since = None
+                elif flat_since is None:
+                    flat_since = self.now()
+                elif self.now() - flat_since >= quiet_s:
+                    break
+                try:
+                    self.sleep(3.0)
+                except (Interrupted, KeyboardInterrupt):
+                    pass                 # a second signal during cleanup does not stop the cleanup
+            else:
+                self.say(f"  !! {self.symbol} test position could NOT be confirmed closed - close it by hand in TheTrueTrade")
+                return False
+            if closed:
                 self.say(f"  test position on {self.symbol} closed")
             self.cancel_leftover_stops()
         except Exception as exc:

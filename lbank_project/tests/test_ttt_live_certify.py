@@ -360,8 +360,12 @@ def test_any_unexpected_error_or_signal_still_closes_the_test_position(rt):
     report = c.run(L.validate({"mode": "off"}))
     assert not report["passed"] and "ValueError" in report["reason"] and report["cleanup_confirmed"] and not api.pos
     ex.check_stop = real
-    def interrupted(*a, **k):raise T.Interrupted("signal 1")   # SSH window closed while waiting
     c, out = certifier(api, ex)
+    first = {"done": False};plain = c.sleep
+    def interrupted(s):                                        # SSH window closed while waiting
+        if not first["done"]:
+            first["done"] = True;raise T.Interrupted("signal 1")
+        plain(s)
     c.sleep = interrupted
     report = c.run(L.validate({"mode": "off"}))
     assert not report["passed"] and report["cleanup_confirmed"] and not api.pos
@@ -476,3 +480,19 @@ def test_stop_order_left_after_the_close_fails_and_is_cancelled(rt):
     assert not report["passed"] and report["reason"].startswith("stop_order_removed_after_close")
     assert "still active after 40 s" in report["reason"] and not api.orders and not api.pos
     assert any("leftover test stop order" in line for line in out)
+
+
+def test_cleanup_catches_a_position_the_exchange_shows_late(rt):
+    """Like the real exchange: a new position shows up 30 s and more after the order; cleanup still closes it."""
+    api = FakeAPI();ex = adapter(api)
+    c, out = certifier(api, ex)
+    c.read_only(L.validate({"mode": "off"}))
+    api.request("POST", "/futures/positions", body=dict(symbol="DOGEUSDT", side="LONG", size="100", leverage=5,
+                                                          stopLoss="0.19"))
+    hidden = dict(api.pos);api.pos.clear()                     # not shown yet
+    calls = {"n": 0};real_sleep = c.sleep
+    def sleep(s):
+        real_sleep(s);calls["n"] += 1
+        if calls["n"] == 12:api.pos.update(hidden)              # appears about 36 s later
+    c.sleep = sleep
+    assert c.cleanup() and not api.pos and any("closed" in line for line in out)
