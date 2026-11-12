@@ -1,0 +1,373 @@
+{
+ "rules": "Published FX / index flow anomalies, rules fixed from the papers BEFORE testing.\n\nE1 fix reversal   Krohn, Mueller & Whelan (Bank of Canada SWP 2021-48): USD appreciates into the\n                  Tokyo (09:55 JST), ECB (14:15 CET) and London (16:00 UK) fixes and reverts after.\n                  E1a pre-fix : long USD from fix-60 min to the fix\n                  E1b post-fix: short USD from the fix to fix+60 min\n                  (EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD, USDCHF, NZDUSD)\nE2 gotobi         Bessho, Sugimoto & Suzuki (arXiv 2301.13204): USDJPY rises into the 09:55 JST\n                  Tokyo fix on days 5/10/15/20/25/month-end (weekend -> previous Friday).\n                  long USDJPY 07:00 JST (22:00 UTC prior day) -> 09:55 JST (00:55 UTC)\nE3 local hours    Breedon & Ranaldo (JMCB 2013): currencies depreciate in their own trading hours.\n                  short EURUSD and GBPUSD 07:00-12:00 London, long EURUSD and GBPUSD 08:30-12:00 New York;\n                  long USDJPY 09:00-15:00 Tokyo (yen weak in Tokyo hours)\nE4 month-end      Melvin & Prins (ECB FX workshop 2013): on the last weekday of the month, if the\n                  S&P 500 is up month-to-date, sell USD from 10:00 London to the 16:00 London fix\n                  (buy USD if it is down).  EURUSD, GBPUSD, USDJPY, AUDUSD.\nE5 overnight      Boyarchenko, Larsen & Whelan (RFS 2023): long S&P 500 from the US close (16:00 NY)\n                  to the next US open (09:30 NY).  Control: NY Fed (2026) says it faded 2021-25.\n\nExecution: market entry at the open of the first minute at/after the time (buy at ask), exit\nlikewise; hard stop at 0.5 x D1 ATR20 (previous day) from the entry, min 5 pips, checked every\nminute.  Costs from instruments.py (spread, slippage, commission).  Results in R (1R = stop risk).\nPortfolio: 0.5 % of equity per trade (< 1 % cap), open risk <= 6 %.\n",
+ "per_strategy": {
+  "E1a_prefix_long_usd": {
+   "trades": 25682,
+   "mean_R_net": -0.0494,
+   "t_net": -26.88,
+   "mean_R_gross": 0.0052,
+   "t_gross": 2.82,
+   "cost_R_per_trade": 0.0546,
+   "stop_rate": 0.014,
+   "cagr_at_0_5pct": -0.7281,
+   "maxdd_at_0_5pct": 0.9985,
+   "yearly_R": {
+    "2021": -11.5,
+    "2022": -127.1,
+    "2023": -225.6,
+    "2024": -294.1,
+    "2025": -319.2,
+    "2026": -291.4
+   },
+   "yearly_R_gross": {
+    "2021": 13.9,
+    "2022": 105.0,
+    "2023": -25.9,
+    "2024": 44.0,
+    "2025": -13.8,
+    "2026": 10.0
+   }
+  },
+  "E1b_postfix_short_usd": {
+   "trades": 25715,
+   "mean_R_net": -0.0549,
+   "t_net": -26.76,
+   "mean_R_gross": -0.0003,
+   "t_gross": -0.16,
+   "cost_R_per_trade": 0.0546,
+   "stop_rate": 0.016,
+   "cagr_at_0_5pct": -0.7662,
+   "maxdd_at_0_5pct": 0.9993,
+   "yearly_R": {
+    "2021": -6.5,
+    "2022": -248.2,
+    "2023": -224.2,
+    "2024": -401.8,
+    "2025": -271.2,
+    "2026": -259.5
+   },
+   "yearly_R_gross": {
+    "2021": 18.9,
+    "2022": -16.3,
+    "2023": -22.6,
+    "2024": -64.7,
+    "2025": 33.8,
+    "2026": 42.5
+   }
+  },
+  "E2_gotobi_long_usdjpy": {
+   "trades": 332,
+   "mean_R_net": 0.0204,
+   "t_net": 1.08,
+   "mean_R_gross": 0.0583,
+   "t_gross": 3.07,
+   "cost_R_per_trade": 0.0379,
+   "stop_rate": 0.015,
+   "cagr_at_0_5pct": 0.0067,
+   "maxdd_at_0_5pct": 0.018,
+   "yearly_R": {
+    "2021": -0.0,
+    "2022": 6.0,
+    "2023": -1.0,
+    "2024": 0.8,
+    "2025": -1.3,
+    "2026": 2.3
+   },
+   "yearly_R_gross": {
+    "2021": 0.3,
+    "2022": 8.6,
+    "2023": 0.9,
+    "2024": 3.3,
+    "2025": 1.0,
+    "2026": 5.1
+   }
+  },
+  "E3_long_eur_gbp_ny_am": {
+   "trades": 2432,
+   "mean_R_net": -0.0508,
+   "t_net": -3.42,
+   "mean_R_gross": -0.005,
+   "t_gross": -0.34,
+   "cost_R_per_trade": 0.0457,
+   "stop_rate": 0.174,
+   "cagr_at_0_5pct": -0.1216,
+   "maxdd_at_0_5pct": 0.4974,
+   "yearly_R": {
+    "2021": -2.7,
+    "2022": -24.7,
+    "2023": -30.6,
+    "2024": -30.1,
+    "2025": -3.3,
+    "2026": -32.1
+   },
+   "yearly_R_gross": {
+    "2021": -0.6,
+    "2022": -7.2,
+    "2023": -15.2,
+    "2024": -1.8,
+    "2025": 20.1,
+    "2026": -7.5
+   }
+  },
+  "E3_long_usdjpy_tokyo": {
+   "trades": 1239,
+   "mean_R_net": -0.0285,
+   "t_net": -1.67,
+   "mean_R_gross": 0.0079,
+   "t_gross": 0.46,
+   "cost_R_per_trade": 0.0364,
+   "stop_rate": 0.114,
+   "cagr_at_0_5pct": -0.0359,
+   "maxdd_at_0_5pct": 0.1994,
+   "yearly_R": {
+    "2021": 1.4,
+    "2022": -4.5,
+    "2023": -1.9,
+    "2024": 4.6,
+    "2025": -23.2,
+    "2026": -11.7
+   },
+   "yearly_R_gross": {
+    "2021": 2.5,
+    "2022": 4.8,
+    "2023": 5.4,
+    "2024": 13.5,
+    "2025": -14.8,
+    "2026": -1.6
+   }
+  },
+  "E3_short_eur_gbp_london_am": {
+   "trades": 2490,
+   "mean_R_net": -0.0552,
+   "t_net": -4.33,
+   "mean_R_gross": -0.0086,
+   "t_gross": -0.67,
+   "cost_R_per_trade": 0.0466,
+   "stop_rate": 0.117,
+   "cagr_at_0_5pct": -0.1324,
+   "maxdd_at_0_5pct": 0.5218,
+   "yearly_R": {
+    "2021": -7.0,
+    "2022": -24.9,
+    "2023": -10.8,
+    "2024": -31.3,
+    "2025": -35.4,
+    "2026": -27.9
+   },
+   "yearly_R_gross": {
+    "2021": -5.0,
+    "2022": -7.1,
+    "2023": 7.6,
+    "2024": -2.1,
+    "2025": -11.8,
+    "2026": -3.1
+   }
+  },
+  "E4_month_end_rebalance": {
+   "trades": 223,
+   "mean_R_net": 0.0874,
+   "t_net": 1.4,
+   "mean_R_gross": 0.1325,
+   "t_gross": 2.1,
+   "cost_R_per_trade": 0.0451,
+   "stop_rate": 0.188,
+   "cagr_at_0_5pct": 0.0192,
+   "maxdd_at_0_5pct": 0.0863,
+   "yearly_R": {
+    "2021": 0.1,
+    "2022": -13.4,
+    "2023": 14.3,
+    "2024": 16.2,
+    "2025": -9.4,
+    "2026": 11.8
+   },
+   "yearly_R_gross": {
+    "2021": 0.3,
+    "2022": -11.9,
+    "2023": 15.8,
+    "2024": 18.6,
+    "2025": -7.3,
+    "2026": 14.0
+   }
+  },
+  "E5_spx_overnight": {
+   "trades": 914,
+   "mean_R_net": -0.0203,
+   "t_net": -0.81,
+   "mean_R_gross": 0.0077,
+   "t_gross": 0.3,
+   "cost_R_per_trade": 0.028,
+   "stop_rate": 0.213,
+   "cagr_at_0_5pct": -0.0198,
+   "maxdd_at_0_5pct": 0.1547,
+   "yearly_R": {
+    "2021": 1.5,
+    "2022": -10.1,
+    "2023": -13.8,
+    "2024": 4.4,
+    "2025": 4.8,
+    "2026": -5.2
+   },
+   "yearly_R_gross": {
+    "2021": 1.9,
+    "2022": -5.6,
+    "2023": -9.0,
+    "2024": 11.2,
+    "2025": 9.8,
+    "2026": -1.3
+   }
+  }
+ },
+ "per_strategy_symbol": {
+  "E1a_prefix_long_usd|AUDUSD": {
+   "trades": 3660,
+   "mean_R_net": -0.0476,
+   "mean_R_gross": 0.0059,
+   "t_gross": 1.22
+  },
+  "E1a_prefix_long_usd|EURUSD": {
+   "trades": 3672,
+   "mean_R_net": -0.0413,
+   "mean_R_gross": 0.007,
+   "t_gross": 1.42
+  },
+  "E1a_prefix_long_usd|GBPUSD": {
+   "trades": 3668,
+   "mean_R_net": -0.0431,
+   "mean_R_gross": 0.0047,
+   "t_gross": 0.94
+  },
+  "E1a_prefix_long_usd|NZDUSD": {
+   "trades": 3667,
+   "mean_R_net": -0.0612,
+   "mean_R_gross": 0.0081,
+   "t_gross": 1.77
+  },
+  "E1a_prefix_long_usd|USDCAD": {
+   "trades": 3668,
+   "mean_R_net": -0.0601,
+   "mean_R_gross": 0.0037,
+   "t_gross": 0.73
+  },
+  "E1a_prefix_long_usd|USDCHF": {
+   "trades": 3672,
+   "mean_R_net": -0.0576,
+   "mean_R_gross": 0.0043,
+   "t_gross": 0.9
+  },
+  "E1a_prefix_long_usd|USDJPY": {
+   "trades": 3675,
+   "mean_R_net": -0.035,
+   "mean_R_gross": 0.0025,
+   "t_gross": 0.53
+  },
+  "E1b_postfix_short_usd|AUDUSD": {
+   "trades": 3675,
+   "mean_R_net": -0.055,
+   "mean_R_gross": -0.0016,
+   "t_gross": -0.3
+  },
+  "E1b_postfix_short_usd|EURUSD": {
+   "trades": 3670,
+   "mean_R_net": -0.0463,
+   "mean_R_gross": 0.002,
+   "t_gross": 0.36
+  },
+  "E1b_postfix_short_usd|GBPUSD": {
+   "trades": 3671,
+   "mean_R_net": -0.0463,
+   "mean_R_gross": 0.0015,
+   "t_gross": 0.29
+  },
+  "E1b_postfix_short_usd|NZDUSD": {
+   "trades": 3674,
+   "mean_R_net": -0.0693,
+   "mean_R_gross": -0.0001,
+   "t_gross": -0.02
+  },
+  "E1b_postfix_short_usd|USDCAD": {
+   "trades": 3680,
+   "mean_R_net": -0.0678,
+   "mean_R_gross": -0.0041,
+   "t_gross": -0.72
+  },
+  "E1b_postfix_short_usd|USDCHF": {
+   "trades": 3672,
+   "mean_R_net": -0.0628,
+   "mean_R_gross": -0.0009,
+   "t_gross": -0.16
+  },
+  "E1b_postfix_short_usd|USDJPY": {
+   "trades": 3673,
+   "mean_R_net": -0.0367,
+   "mean_R_gross": 0.001,
+   "t_gross": 0.18
+  },
+  "E2_gotobi_long_usdjpy|USDJPY": {
+   "trades": 332,
+   "mean_R_net": 0.0204,
+   "mean_R_gross": 0.0583,
+   "t_gross": 3.07
+  },
+  "E3_long_eur_gbp_ny_am|EURUSD": {
+   "trades": 1223,
+   "mean_R_net": -0.061,
+   "mean_R_gross": -0.0152,
+   "t_gross": -0.7
+  },
+  "E3_long_eur_gbp_ny_am|GBPUSD": {
+   "trades": 1209,
+   "mean_R_net": -0.0404,
+   "mean_R_gross": 0.0053,
+   "t_gross": 0.26
+  },
+  "E3_long_usdjpy_tokyo|USDJPY": {
+   "trades": 1239,
+   "mean_R_net": -0.0285,
+   "mean_R_gross": 0.0079,
+   "t_gross": 0.46
+  },
+  "E3_short_eur_gbp_london_am|EURUSD": {
+   "trades": 1245,
+   "mean_R_net": -0.0614,
+   "mean_R_gross": -0.0146,
+   "t_gross": -0.83
+  },
+  "E3_short_eur_gbp_london_am|GBPUSD": {
+   "trades": 1245,
+   "mean_R_net": -0.0489,
+   "mean_R_gross": -0.0026,
+   "t_gross": -0.14
+  },
+  "E4_month_end_rebalance|AUDUSD": {
+   "trades": 55,
+   "mean_R_net": 0.1445,
+   "mean_R_gross": 0.1955,
+   "t_gross": 1.96
+  },
+  "E4_month_end_rebalance|EURUSD": {
+   "trades": 56,
+   "mean_R_net": 0.0578,
+   "mean_R_gross": 0.1047,
+   "t_gross": 0.89
+  },
+  "E4_month_end_rebalance|GBPUSD": {
+   "trades": 57,
+   "mean_R_net": -0.0284,
+   "mean_R_gross": 0.017,
+   "t_gross": 0.17
+  },
+  "E4_month_end_rebalance|USDJPY": {
+   "trades": 55,
+   "mean_R_net": 0.1806,
+   "mean_R_gross": 0.2177,
+   "t_gross": 1.24
+  },
+  "E5_spx_overnight|SPXUSD": {
+   "trades": 914,
+   "mean_R_net": -0.0203,
+   "mean_R_gross": 0.0077,
+   "t_gross": 0.3
+  }
+ }
+}

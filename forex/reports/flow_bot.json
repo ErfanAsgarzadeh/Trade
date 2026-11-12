@@ -1,0 +1,47 @@
+{
+ "rules": "Flow bot: the two published anomalies that survived costs in fx_anomalies.py.\n\n    E2 Gotobi  : long USDJPY 07:00 -> 09:55 JST on gotobi days, 0.90 % planned equity risk per trade\n    E4 Month-end: last weekday, 10:00 -> 16:00 London, sell USD if S&P 500 is up month-to-date\n                 (buy USD if down) on EURUSD, GBPUSD, USDJPY, AUDUSD at 0.225 % each\n                 = 0.90 % for the whole event (one USD bet)\nNo trade/event risks more than 1 % of equity.  Equity compounds per trade.\nAlso reports a cost sensitivity (half the spread/slippage/commission, e.g. a raw-spread ECN\naccount with limit-order entries).  Output: reports/flow_bot.json\n",
+ "base_costs": {
+  "cagr": 0.0207,
+  "total": 0.1076,
+  "max_dd": 0.0467,
+  "yearly": {
+   "2021": -0.0,
+   "2022": 0.0237,
+   "2023": 0.0231,
+   "2024": 0.0439,
+   "2025": -0.0327,
+   "2026": 0.0473
+  }
+ },
+ "half_costs": {
+  "cagr": 0.0347,
+  "total": 0.1854,
+  "max_dd": 0.0392,
+  "yearly": {
+   "2021": 0.0017,
+   "2022": 0.0376,
+   "2023": 0.0338,
+   "2024": 0.0587,
+   "2025": -0.0201,
+   "2026": 0.0635
+  }
+ },
+ "zero_costs": {
+  "cagr": 0.0489,
+  "total": 0.2686,
+  "max_dd": 0.0335,
+  "yearly": {
+   "2021": 0.0034,
+   "2022": 0.0518,
+   "2023": 0.0445,
+   "2024": 0.0737,
+   "2025": -0.0074,
+   "2026": 0.0799
+  }
+ },
+ "worst_trade_or_event_pct_equity": -0.945,
+ "trades": {
+  "E2_gotobi_long_usdjpy": 332,
+  "E4_month_end_rebalance": 223
+ }
+}
