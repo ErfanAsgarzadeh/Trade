@@ -518,3 +518,196 @@ def families():
 
 FAM = {"shahin": fam_shahin, "mojsavar": fam_mojsavar, "ghoghnous": fam_ghoghnous, "bbfade": fam_bbfade,
        "rsi2": fam_rsi2, "london": fam_london, "tsmom": fam_tsmom, "insidebar": fam_insidebar}
+
+
+# =================================================================== extra technical / price-action families
+@njit(cache=True)
+def _supertrend(h, l, c, atr, mult):
+    n = len(c)
+    d = np.zeros(n)
+    up = np.full(n, np.nan)
+    dn = np.full(n, np.nan)
+    for i in range(n):
+        if np.isnan(atr[i]):
+            continue
+        m = (h[i] + l[i]) / 2
+        u, w = m + mult * atr[i], m - mult * atr[i]
+        if i > 0 and not np.isnan(up[i - 1]):
+            u = min(u, up[i - 1]) if c[i - 1] <= up[i - 1] else u
+            w = max(w, dn[i - 1]) if c[i - 1] >= dn[i - 1] else w
+            if d[i - 1] >= 0:
+                d[i] = -1.0 if c[i] < w else 1.0
+            else:
+                d[i] = 1.0 if c[i] > u else -1.0
+        else:
+            d[i] = 1.0
+        up[i], dn[i] = u, w
+    return d
+
+
+def _flip(x):
+    x = pd.Series(x).fillna(0)
+    return np.where((x != x.shift()) & (x != 0), x, 0).astype(int)
+
+
+def _trend_ok(side, c, use):
+    if not use:
+        return side
+    e = ema(c, 200).to_numpy()
+    cc = c.to_numpy()
+    return np.where(((side == 1) & (cc > e)) | ((side == -1) & (cc < e)), side, 0)
+
+
+def _stops(c, atr, k):
+    return dict(stpL=A(c - k * atr), stpS=A(c + k * atr))
+
+
+def fam_macd(b, p):
+    c, atr = b.close, b.atr
+    m = ema(c, p["f"]) - ema(c, p["s"])
+    sg = ema(m, p["g"])
+    pos = np.sign(m - sg).fillna(0).to_numpy()
+    side = _flip(pos)
+    if p["zero"]:
+        mm = m.to_numpy()
+        side = np.where(((side == 1) & (mm < 0)) | ((side == -1) & (mm > 0)), side, 0)
+    side = _trend_ok(side, c, p["trend"])
+    return dict(side=side, oppo=pos.astype(int), **_stops(c, atr, p["stop"]))
+
+
+def fam_supertrend(b, p):
+    d = _supertrend(b.high.to_numpy(), b.low.to_numpy(), b.close.to_numpy(),
+                    b.atr.to_numpy() if p["n"] == 14 else
+                    b.high.sub(b.low).rolling(p["n"]).mean().to_numpy(), p["mult"])
+    side = _flip(d)
+    return dict(side=side, oppo=d.astype(int), **_stops(b.close, b.atr, p["stop"]))
+
+
+def fam_keltner(b, p):
+    c, atr = b.close, b.atr
+    mid = ema(c, p["n"])
+    side = np.where(c > mid + p["k"] * atr, 1, np.where(c < mid - p["k"] * atr, -1, 0))
+    side = _flip(side)
+    return dict(side=side, xline=A(mid), **_stops(c, atr, p["stop"]))
+
+
+def fam_stoch(b, p):
+    h, l, c, atr = b.high, b.low, b.close, b.atr
+    k = 100 * (c - l.rolling(14).min()) / (h.rolling(14).max() - l.rolling(14).min()).replace(0, np.nan)
+    k = k.rolling(3).mean()
+    lo = p["lvl"]
+    side = np.where((k.shift() < lo) & (k >= lo), 1, np.where((k.shift() > 100 - lo) & (k <= 100 - lo), -1, 0))
+    side = _trend_ok(side, c, p["trend"])
+    return dict(side=side, **_stops(c, atr, p["stop"]))
+
+
+def fam_macross(b, p):
+    c = b.close
+    f = ema(c, p["f"]) if p["type"] == "ema" else c.rolling(p["f"]).mean()
+    s = ema(c, p["s"]) if p["type"] == "ema" else c.rolling(p["s"]).mean()
+    pos = np.sign(f - s).fillna(0).to_numpy()
+    return dict(side=_flip(pos), oppo=pos.astype(int), **_stops(c, b.atr, p["stop"]))
+
+
+def fam_adx(b, p):
+    h, l, c, atr = b.high, b.low, b.close, b.atr
+    upm, dnm = h.diff(), -l.diff()
+    pdm = np.where((upm > dnm) & (upm > 0), upm, 0.0)
+    ndm = np.where((dnm > upm) & (dnm > 0), dnm, 0.0)
+    tr = pd.concat([h - l, (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
+    atr14 = tr.ewm(alpha=1 / 14, adjust=False).mean()
+    pdi = 100 * pd.Series(pdm, index=c.index).ewm(alpha=1 / 14, adjust=False).mean() / atr14
+    ndi = 100 * pd.Series(ndm, index=c.index).ewm(alpha=1 / 14, adjust=False).mean() / atr14
+    adx = (100 * (pdi - ndi).abs() / (pdi + ndi).replace(0, np.nan)).ewm(alpha=1 / 14, adjust=False).mean()
+    dh, dl = h.rolling(p["N"]).max().shift(), l.rolling(p["N"]).min().shift()
+    ok = adx > p["thr"]
+    side = np.where(ok & (c > dh), 1, np.where(ok & (c < dl), -1, 0))
+    return dict(side=side, trL=A(l.rolling(p["N"] // 2).min()), trS=A(h.rolling(p["N"] // 2).max()),
+                **_stops(c, atr, p["stop"]))
+
+
+def fam_heikin(b, p):
+    o, h, l, c = b.open, b.high, b.low, b.close
+    hc = (o + h + l + c) / 4
+    ho = hc.copy()
+    hov = ho.to_numpy().copy()
+    hcv = hc.to_numpy()
+    ov = o.to_numpy()
+    hov[0] = ov[0]
+    for i in range(1, len(hov)):
+        hov[i] = (hov[i - 1] + hcv[i - 1]) / 2
+    col = np.sign(hcv - hov)
+    run = pd.Series(col).rolling(p["run"]).sum().to_numpy()
+    side = np.where(run == p["run"], 1, np.where(run == -p["run"], -1, 0))
+    side = _trend_ok(_flip(side), c, p["trend"])
+    return dict(side=side, oppo=col.astype(int), **_stops(c, b.atr, p["stop"]))
+
+
+def fam_pinbar(b, p):
+    o, h, l, c, atr = b.open, b.high, b.low, b.close, b.atr
+    rng = (h - l).replace(0, np.nan)
+    low_wick = np.minimum(o, c) - l
+    up_wick = h - np.maximum(o, c)
+    bull = (low_wick / rng >= 0.6) & (l <= l.rolling(p["lb"]).min()) & (rng > 0.8 * atr)
+    bear = (up_wick / rng >= 0.6) & (h >= h.rolling(p["lb"]).max()) & (rng > 0.8 * atr)
+    side = np.where(bull, 1, np.where(bear, -1, 0))
+    buf = 0.1 * atr
+    if p["etype"] == "stop":
+        return dict(side=side, etype=np.ones(len(c)), lvlL=A(h), stpL=A(l - buf), lvlS=A(l), stpS=A(h + buf),
+                    valid_ms=sfx.TF_MS[p["tf"]])
+    return dict(side=side, stpL=A(l - buf), stpS=A(h + buf))
+
+
+def fam_engulf(b, p):
+    o, h, l, c, atr = b.open, b.high, b.low, b.close, b.atr
+    bull = (c > o) & (c.shift() < o.shift()) & (c >= o.shift()) & (o <= c.shift()) & (l <= l.rolling(p["lb"]).min())
+    bear = (c < o) & (c.shift() > o.shift()) & (c <= o.shift()) & (o >= c.shift()) & (h >= h.rolling(p["lb"]).max())
+    side = np.where(bull, 1, np.where(bear, -1, 0))
+    buf = 0.1 * atr
+    return dict(side=side, stpL=A(np.minimum(l, l.shift()) - buf), stpS=A(np.maximum(h, h.shift()) + buf))
+
+
+_base_families = families
+
+
+def families():
+    yield from _base_families()
+    TFS = ("1h", "4h", "D1")
+    for tf in TFS:
+        for sp in grid_dict(f=(12, 8, 19), s=(26,), g=(9,), zero=(True, False), trend=(True, False), stop=(2.0, 3.0)):
+            if sp["f"] == 8:
+                sp = dict(sp, s=21, g=5)
+            if sp["f"] == 19:
+                sp = dict(sp, s=39)
+            for ex in ({"trail_mode": 2, "chand_k": 3.0}, {"tgt_r": 2.0, "time_stop": 30}, {}):
+                yield "macd", tf, sp, ex
+        for sp in grid_dict(n=(14, 20), mult=(2.0, 3.0, 4.0), stop=(2.0, 3.0)):
+            for ex in ({}, {"arm_r": 1.0, "lock_r": 0.1}):
+                yield "supertrend", tf, sp, ex
+        for sp in grid_dict(n=(20, 50), k=(1.5, 2.5), stop=(2.0, 3.0)):
+            for ex in ({"xdir": -1}, {"xdir": -1, "trail_mode": 2, "chand_k": 3.0}):
+                yield "keltner", tf, sp, ex
+        for sp in grid_dict(lvl=(20.0, 10.0), trend=(True, False), stop=(1.5, 3.0)):
+            for ex in ({"tgt_r": 1.0, "time_stop": 10}, {"tgt_r": 2.0, "time_stop": 20}):
+                yield "stoch", tf, sp, ex
+        for sp in grid_dict(f=(10, 20, 50), s=(30,), type=("ema", "sma"), stop=(2.0, 3.0)):
+            sp = dict(sp, s={10: 30, 20: 50, 50: 200}[sp["f"]])
+            for ex in ({}, {"trail_mode": 2, "chand_k": 4.0}):
+                yield "macross", tf, sp, ex
+        for sp in grid_dict(N=(20, 55), thr=(20.0, 25.0), stop=(2.0, 3.0)):
+            for ex in ({"trail_mode": 1}, {"trail_mode": 1, "arm_r": 1.0, "lock_r": 0.5}):
+                yield "adx", tf, sp, ex
+        for sp in grid_dict(run=(2, 3), trend=(True, False), stop=(2.0, 3.0)):
+            for ex in ({}, {"trail_mode": 2, "chand_k": 3.0}):
+                yield "heikin", tf, sp, ex
+        for sp in grid_dict(lb=(10, 20), etype=("stop", "market")):
+            sp = dict(sp, tf=tf)
+            for ex in ({"tgt_r": 1.0, "time_stop": 10}, {"tgt_r": 2.0, "time_stop": 20}, {"trail_mode": 2, "chand_k": 3.0, "time_stop": 30}):
+                yield "pinbar", tf, sp, ex
+        for sp in grid_dict(lb=(10, 20)):
+            for ex in ({"tgt_r": 1.0, "time_stop": 10}, {"tgt_r": 2.0, "time_stop": 20}, {"trail_mode": 2, "chand_k": 3.0, "time_stop": 30}):
+                yield "engulf", tf, sp, ex
+
+
+FAM.update({"macd": fam_macd, "supertrend": fam_supertrend, "keltner": fam_keltner, "stoch": fam_stoch,
+            "macross": fam_macross, "adx": fam_adx, "heikin": fam_heikin, "pinbar": fam_pinbar, "engulf": fam_engulf})
