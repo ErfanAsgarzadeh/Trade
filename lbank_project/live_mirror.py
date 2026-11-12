@@ -382,6 +382,10 @@ class Mirror:
             expected = max(0.0, initial - closing)
             tol = max(1e-10, float((self.ex.markets().get(esym) or {}).get("step") or 0) * 0.05)
             after = self._readback(esym, lambda o: o is None or abs(o.qty - expected) <= tol)
+            if after is None:    # confirm "gone": the list can miss a position for a moment
+                after = self._readback(esym, lambda o: o is not None, tries=3)
+                if after is not None and abs(after.qty - expected) > tol:
+                    after = self._readback(esym, lambda o: o is None or abs(o.qty - expected) <= tol)
             actual = 0.0 if after is None else after.qty
             if after is None and expected > tol:
                 # The exchange closed the whole position on a partial close (TheTrueTrade does this when the remainder
@@ -503,6 +507,8 @@ class Mirror:
         if m and t is not None and m.get("key") == t.get("key") and t.get("side") != m.get("side"):
             self.state["paused"] = True
             raise X.ExchangeError(f"{esym}: PAPER side changed without new trade key; manual reconciliation required")
+        if m and l is None:   # the position list can miss a position for a moment: confirm before letting it go
+            l = self._readback(esym, lambda o: o is not None, tries=3)
         if m and l is None:                               # closed on the exchange (stop hit / liquidated / manual)
             self.event("exchange_closed", symbol=esym, note="position no longer on the exchange (stop hit / liquidation / manual); not re-entered")
             self.state.setdefault("skipped", {})[m["key"]] = True;del managed[esym];m = None

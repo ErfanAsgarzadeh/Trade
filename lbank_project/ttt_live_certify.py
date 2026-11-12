@@ -91,10 +91,11 @@ class Certifier:
 
     def wait_position(self, want_qty: float | None, tries: int = 30) -> X.LivePosition | None:
         """Read positions until the expected size shows (the exchange can need 30 s and more); None = flat."""
-        step = self.ex.markets()[self.symbol]["step"];p = None
+        step = self.ex.markets()[self.symbol]["step"];p = None;absent = 0
         for _ in range(tries):
             p = self.mine()
-            if want_qty is None and p is None:return None
+            absent = absent + 1 if p is None else 0
+            if want_qty is None and absent >= 3:return None     # the list can miss a position for a moment
             if want_qty is not None and p is not None and abs(p.qty - want_qty) <= step * .05 + 1e-12:return p
             self.sleep(1.5)
         return p
@@ -208,7 +209,8 @@ class Certifier:
         problems = self.stop_problems(p.ids, new_stop, readback)
         self.ok("stop_moved", not problems, "; ".join(problems))
         # B6 full close; the position's stop order must disappear with it (the exchange may need some seconds)
-        cur = self.mine()
+        cur = self.wait_position(qty)
+        if cur is None:raise Abort("test position not shown by the exchange before the full close")
         if readback["orders_check"]:
             self.stop_ids.update(self.ex.stop_order_ids(self.symbol, cur.ids))
         self.ex.close(cur)
@@ -258,10 +260,11 @@ class Certifier:
             self.stop_ids.update(self.ex.stop_order_ids(self.symbol, p.ids))
         self.ok("tight_stop_set", not problems, f"{tight_pct:.2%} below price; " + "; ".join(problems))
         self.say(f"  waiting up to {self.trigger_timeout / 60:.0f} min for the exchange to trigger the stop ...")
-        start = self.now();triggered = False
+        start = self.now();triggered = False;absent = 0
         while self.now() - start < self.trigger_timeout:
             self.sleep(5)
-            if self.mine() is None:
+            absent = absent + 1 if self.mine() is None else 0
+            if absent >= 3:              # gone on three reads in a row (the list can miss a position for a moment)
                 triggered = True;break
         self.report["trigger_wait_s"] = round(self.now() - start)
         if triggered:
