@@ -100,10 +100,10 @@ class Certifier:
 
     def stop_problems(self, pids, stop, readback) -> list[str]:
         problems = []
-        for _ in range(8):
+        for _ in range(20):        # up to about 40 s: the exchange can apply a moved stop with a delay
             problems = self.ex.check_stop(self.symbol, pids, stop, readback)
             if not problems:return []
-            self.sleep(1.5)
+            self.sleep(2.0)
         return problems
 
     # ---------------- part A: read-only

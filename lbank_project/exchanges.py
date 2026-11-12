@@ -259,7 +259,7 @@ class TheTrueTrade(Adapter):
                 problems.append("position not open");continue
             got = dec(r.get("stopLoss"))
             if got is None or got <= 0:problems.append("no stopLoss on position");continue
-            if abs(got - want) > tick / 2 + Decimal("1e-12"):problems.append("stopLoss differs from requested stop");continue
+            if abs(got - want) > tick / 2 + Decimal("1e-12"):problems.append(f"stopLoss differs from requested stop (exchange {got}, requested {want})");continue
             if r.get("stopLossOrderType") not in (None, "STOP_MARKET"):problems.append("stop order type is not STOP_MARKET")
             oid = r.get("slOrderId")
             has_oid = not isinstance(oid, bool) and isinstance(oid, (int, str)) and bool(str(oid).strip())
@@ -466,10 +466,10 @@ class TheTrueTrade(Adapter):
         try:cert = self.load_certification()
         except ExchangeError as exc:
             raise ExchangeError(f"Exchange stop-loss readback is not supported without a valid certification ({exc})") from None
-        for attempt in range(5):   # the exchange may attach the stop order a moment after the fill
+        for attempt in range(12):  # the exchange may attach or move the stop order some seconds after the request
             problems = self.check_stop(pos.symbol, list(pos.ids), stop, cert["readback"])
             if not problems:return
-            pause(1.0)
+            pause(2.0)
         if problems:raise ExchangeError(f"{pos.symbol}: stop not verified: {'; '.join(sorted(set(problems)))}")
 
     def open(self, symbol, side, qty, leverage, stop=None):
