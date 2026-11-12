@@ -39,6 +39,8 @@ class FakeAPI:
     def _close(self, pid, size, reason="USER"):
         p = self.pos[pid]
         rest_value = (float(p["size"]) - float(size or 0)) * self.px[p["symbol"]]
+        if self.dust and size is not None and float(size) * self.px[p["symbol"]] < self.min_notional:
+            return                                             # like the real exchange: a too-small close is ignored
         if size is None or float(size) >= float(p["size"]) - 1e-12 or (self.dust and rest_value < self.min_notional):
             del self.pos[pid];self.orders.pop(p.get("slOrderId"), None)
             self.history[pid] = dict(p, status="CLOSED", isActive=False, closingReason=reason)
@@ -433,3 +435,17 @@ def test_exchange_that_closes_a_too_small_remainder_still_certifies_and_the_mirr
     assert "BTCUSDT" not in t.positions() and not m.state["paused"] and not m.state["pending_orders"]
     kinds = [k for k, _ in kinds_and_reasons(rt)]
     assert "closed_in_full" in kinds and "order_uncertain" not in kinds
+
+
+
+def test_small_paper_reductions_are_skipped_once_and_tiny_remainders_closed(rt):
+    api = FakeAPI();api.dust = True;certify(rt, api);api.equity = 1000.0
+    m, t, paper, step = live_mirror(rt, api)
+    paper.book["BTC/USDT:USDT"] = dict(bot="main", side="long", qty=0.1, stop=78000.0, key="main|BTC|1", opened=None)
+    step();assert t.positions()["BTCUSDT"].qty == pytest.approx(0.01)       # 800 USDT live
+    api.min_notional = m.ex.markets()["BTCUSDT"]["min_notional"] = 200.0   # a reduction of 0.002 BTC = 160 USDT is too small
+    paper.book["BTC/USDT:USDT"]["qty"] = 0.08;step();step()
+    assert t.positions()["BTCUSDT"].qty == pytest.approx(0.01) and not m.state["paused"]
+    assert sum(r.startswith("reduction below") for _, r in kinds_and_reasons(rt)) == 1   # logged once
+    paper.book["BTC/USDT:USDT"]["qty"] = 0.02;step()           # 0.002 BTC = 160 USDT left < 200: closed in full
+    assert "BTCUSDT" not in t.positions() and not m.state["paused"] and not m.state["managed"]

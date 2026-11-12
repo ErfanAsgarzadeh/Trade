@@ -14,9 +14,10 @@ mirror) on one coin:
   B2 read the position back (id, side, size)
   B3 read the stop back: price, order type, stop order id, and the stop order among the active exchange orders
   B4 move the stop (PATCH tpsl) and read it back
-  B5 close one quantity step and read back the rest (the stop must still protect it)
-  B6 close the rest and read back that nothing is left
-  B7 open again and move the stop very close to the price, then wait until the EXCHANGE closes the position by itself
+  B6 close it and read back that nothing is left
+  B5 open about 2.6x the minimum order value, close a part worth 1.1x the minimum (the exchange ignores smaller closes and
+     closes everything when the rest would fall below it), read back the rest and that the stop still protects it
+  B7 move the stop of the rest very close to the price, then wait until the EXCHANGE closes the position by itself
      (proof that its stop really triggers); on timeout the position is closed and the check fails
 
 Only if every check passes is runtime/ttt_live_certification.json written. The exchange adapter requires it (same API key,
@@ -130,9 +131,10 @@ class Certifier:
         self.equity_before = eq
 
     # ---------------- part B: lifecycle
-    def open_long(self, stop_pct: float) -> tuple[X.LivePosition, float, float]:
-        m = self.ex.markets()[self.symbol];notional = self.notional;errors = []
-        while notional <= self.max_notional + 1e-9:
+    def open_long(self, stop_pct: float, notional: float | None = None) -> tuple[X.LivePosition, float, float]:
+        m = self.ex.markets()[self.symbol];notional = notional or self.notional;errors = []
+        limit = max(self.max_notional, notional)
+        while notional <= limit + 1e-9:
             px = self.ex.price(self.symbol)
             qty = ceil_step(notional / px, m["step"]);stop = self.ex.round_price(self.symbol, px * (1 - stop_pct))
             try:
@@ -153,7 +155,7 @@ class Certifier:
             self.opened.append(str(pid));self.last_notional = qty * px
             self.report["entry_resolution"] = getattr(self.ex, "entry_resolution", None) or "reply_position_id"
             p = self.wait_position(qty)
-            self.report["rejected_smaller_orders"] = errors
+            self.report.setdefault("rejected_smaller_orders", errors)
             return p, qty, stop
         raise Abort(f"no order up to {self.max_notional} USDT was accepted: {errors[-1] if errors else ''}")
 
@@ -203,28 +205,27 @@ class Certifier:
         self.ex.set_stop(p, new_stop)
         problems = self.stop_problems(p.ids, new_stop, readback)
         self.ok("stop_moved", not problems, "; ".join(problems))
-        # B5 partial close: the smallest possible part (one step), so the rest stays above any exchange minimum. A partial
-        # close whose remainder is too small can be turned into a full close by the exchange; the mirror accepts that.
-        part = m["step"]
-        if qty - part >= m["step"]:
-            self.ex.close(p, part)
-            rest = self.wait_position(qty - part)
-            left = rest.qty if rest else 0
-            good = rest is not None and abs(left - (qty - part)) <= m["step"] * .05 + 1e-12
-            self.ok("partial_close", good, f"{part} of {qty} closed, {left} left")
-            problems = self.stop_problems(rest.ids, new_stop, readback)
-            self.ok("stop_kept_after_partial", not problems, "; ".join(problems))
-        else:
-            self.ok("partial_close", False, "position too small to close one step; raise --notional")
         # B6 full close
         self.ex.close(self.mine())
         self.ok("full_close", self.wait_position(None) is None, "position gone")
         if readback["orders_check"]:
             left = {str(o.get("id")) for o in self.ex.open_orders(self.symbol)}
             self.ok("stop_order_removed_after_close", str(oid) not in left, "")
-        # B7 the exchange itself triggers the stop
-        p, qty, _ = self.open_long(.03)
-        self.ok("second_entry_confirmed", p is not None and abs(p.qty - qty) <= m["step"] * .05 + 1e-12, "")
+        # B5 partial close. The exchange ignores a close worth less than its minimum order value and closes everything
+        # when the rest would fall below it, so: a position of about 2.6x the minimum, close a part worth 1.1x the minimum.
+        minimum = self.report["min_notional_usd"]
+        p, qty, stop2 = self.open_long(.03, notional=minimum * 2.6)
+        self.ok("second_entry_confirmed", p is not None and abs(p.qty - qty) <= m["step"] * .05 + 1e-12, f"{qty} contracts")
+        part = ceil_step(minimum * 1.1 / self.ex.price(self.symbol), m["step"])
+        self.ex.close(p, part)
+        rest = self.wait_position(qty - part)
+        left = rest.qty if rest else 0
+        self.ok("partial_close", rest is not None and abs(left - (qty - part)) <= m["step"] * .05 + 1e-12,
+                f"{part} of {qty} closed, {left} left")
+        problems = self.stop_problems(rest.ids, stop2, readback)
+        self.ok("stop_kept_after_partial", not problems, "; ".join(problems))
+        p = rest
+        # B7 the exchange itself triggers the stop (on the rest of the B5 position)
         tight_pct = .0015
         for attempt in range(3):
             tight = self.ex.round_price(self.symbol, self.ex.price(self.symbol) * (1 - tight_pct))
