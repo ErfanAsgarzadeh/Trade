@@ -234,3 +234,22 @@ def test_portal_process_starts_with_file_key_and_owns_persistent_sessions(tmp_pa
             process.terminate()
             try:process.wait(timeout=10)
             except subprocess.TimeoutExpired:process.kill();process.wait()
+
+
+def test_operator_runtime_manifest_points_the_panel_at_renamed_databases(tmp_path):
+    """The owner's server runtime keeps the paper databases under paper-live-lbank/<bot>.db; a manifest maps them."""
+    import json, sqlite3
+    from portal_runtime import robots, db_paths
+    root = tmp_path / 'runtime';(root / 'paper-live-lbank').mkdir(parents=True)
+    (root / 'customer_identity.json').write_text(json.dumps({'customer_id': 'owner'}))
+    (root / 'config.json').write_text(json.dumps({'bot_control': {'dry_run_mode': True, 'auto_trade_enabled': True}}))
+    for name in ('c3_config.json', 'pa_config.json'):
+        (root / name).write_text(json.dumps({'dry_run_mode': True, 'enabled': True}))
+    db = sqlite3.connect(root / 'paper-live-lbank' / 'mojsavar.db')
+    db.execute('CREATE TABLE positions(symbol,side,entry,qty,stop)');db.execute("INSERT INTO positions VALUES('ETH/USDT:USDT','long',2000,1,1900)")
+    db.execute('CREATE TABLE trades(id INTEGER PRIMARY KEY,symbol,side,entry,exit,pnl,reason)');db.commit();db.close()
+    assert [r['state'] for r in robots(str(root), 'owner')][1] == 'not_started'          # default names: not found
+    (root / 'portal_runtime.json').write_text(json.dumps({'c3': 'paper-live-lbank/mojsavar.db', 'pa': '../../etc/passwd'}))
+    assert db_paths(str(root)) == {'c3': 'paper-live-lbank/mojsavar.db'}               # escapes are ignored
+    c3 = robots(str(root), 'owner')[1]
+    assert c3['state'] == 'health_unknown' and c3['positions'][0]['symbol'] == 'ETH/USDT:USDT'
