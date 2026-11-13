@@ -1,9 +1,10 @@
-import ThemeSwitcher from "./theme-switcher";
 import snapshot from "@/public/backtest/five-year-summary.json";
 import { faNumber, usd } from "@/lib/format";
 import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
-import { Arrow, BrandLogo } from "./shared";
+import { Arrow } from "./shared";
+import { SiteFooter, SiteHeader } from "./site-chrome";
+import { allPosts, persianDate, type Post } from "@/lib/blog";
 
 const steps = [
   {
@@ -56,31 +57,29 @@ const faqSchema = JSON.stringify({
   })),
 }).replace(/</g, "\\u003c");
 
+export function PostCard({ post }: { post: Post }) {
+  return (
+    <article className="blog-card">
+      <small>
+        <time dateTime={post.date}>{persianDate(post.date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{faNumber(post.minutes)} دقیقه مطالعه</span>
+      </small>
+      <h3>
+        <a href={`/blog/${post.slug}/`}>{post.title}</a>
+      </h3>
+      <p>{post.description}</p>
+    </article>
+  );
+}
+
 export default function Landing() {
   return (
     <div className="landing" id="landing-page">
       <a className="skip-link" href="#landing-main">
         رفتن به محتوا
       </a>
-      <header className="landing-header">
-        <BrandLogo />
-        <nav aria-label="ناوبری اصلی">
-          <a href="#why">چرا آوینا</a>
-          <a href="#backtest">کارنامهٔ پنج‌ساله</a>
-          <a href="#strategies">استراتژی‌ها</a>
-          <a href="#products">پلن‌ها</a>
-          <a href="#faq">پرسش‌ها</a>
-        </nav>
-        <div className="landing-header-actions">
-          <ThemeSwitcher />
-          <a href="/dashboard/" className="landing-login">
-            ورود به پنل
-          </a>
-          <a href="/register/" className="landing-signup">
-            ساخت حساب <span aria-hidden="true">←</span>
-          </a>
-        </div>
-      </header>
+      <SiteHeader home />
       <main id="landing-main">
         <section className="landing-hero" aria-labelledby="hero-title">
           <div className="hero-orbit-background" aria-hidden="true" />
@@ -401,6 +400,25 @@ export default function Landing() {
           </div>
           <PublicProducts />
         </section>
+        <section id="blog" className="landing-section">
+          <div className="landing-section-heading">
+            <div>
+              <span className="eyebrow">AVINA JOURNAL</span>
+              <h2>یاد بگیرید، بعد معامله کنید.</h2>
+            </div>
+            <p>
+              راهنماهای کوتاه دربارهٔ ربات ترید، حد ضرر و مدیریت ریسک در بازار
+              فیوچرز. <a href="/blog/">همهٔ مقاله‌ها ←</a>
+            </p>
+          </div>
+          <div className="blog-cards">
+            {allPosts()
+              .slice(0, 3)
+              .map((post) => (
+                <PostCard key={post.slug} post={post} />
+              ))}
+          </div>
+        </section>
         <section id="faq" className="landing-section">
           <div className="landing-section-heading">
             <div>
@@ -445,20 +463,7 @@ export default function Landing() {
           </div>
         </section>
       </main>
-      <footer className="landing-footer">
-        <BrandLogo />
-        <p>
-          آوینا، ربات معامله‌گر هوشمند از خانوادهٔ ARTAX. معامله در بازارهای
-          مالی ریسک از دست دادن سرمایه دارد و نتایج بک‌تست تضمین‌کنندهٔ بازده
-          آینده نیستند.
-        </p>
-        <nav aria-label="پیوندهای پایانی">
-          <a href="#faq">پرسش‌های پرتکرار</a>
-          <a href="/dashboard/">ورود</a>
-          <a href="/register/">ثبت‌نام</a>
-          <a href="/backtest/methodology-fa.md">روش بک‌تست</a>
-        </nav>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
