@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MODULES=('portal_server.py','portal_store.py','portal_database.py','portal_jobs.py','portal_worker.py',
          'portal_exchanges.py','portal_thetruetrade.py','portal_execution.py','exchanges.py',
          'portal_migrate.py','portal_runtime.py','portal_lbank.py','portal_admin.py','portal_billing.py',
-         'portal_frontend.py','portal_admin_store.py','portal_audit.py','product_pricing.py',
+         'portal_frontend.py','portal_admin_store.py','portal_audit.py','portal_blog.py','product_pricing.py',
          'signal_feed.py','capital_plans.py','customer_manager.py','license_access.py',
          'requirements.txt','requirements-portal.txt')
 DOCKERFILE='''FROM python:3.11-slim
@@ -23,6 +23,7 @@ RUN pip install --no-cache-dir --only-binary=:all: -r requirements-portal.txt
 COPY *.py ./
 COPY frontend/out ./frontend/out
 COPY frontend/public ./frontend/public
+COPY frontend/content/blog ./frontend/content/blog
 CMD ["python", "-u", "portal_server.py"]
 '''
 COMPOSE='''name: trade-portal-preview
@@ -118,7 +119,7 @@ def build(destination,root=ROOT):
     for page in ('index.html','dashboard.html','admin.html','register.html'):
         if not (root/'frontend/out'/page).is_file():raise ValueError('Build Next.js before preparing release')
     files={name:(root/name).read_bytes() for name in MODULES}
-    for folder in ('frontend/out','frontend/public'):
+    for folder in ('frontend/out','frontend/public','frontend/content/blog'):
         if (root/folder).is_symlink():raise ValueError('Symlink asset directory is not allowed')
         for file in sorted((root/folder).rglob('*')):
             if file.is_symlink():raise ValueError('Symlinks are not allowed in frontend assets')

@@ -4,6 +4,7 @@ import { ApiClient, errorText } from "@/lib/api";
 import type { Plans, ProductPlan, Product } from "@/lib/types";
 import { faDate, faNumber, usd } from "@/lib/format";
 import { Heading } from "./shared";
+import AdminBlog from "./admin-blog";
 
 type Report = (error: unknown) => void;
 interface PageData<T> {
@@ -53,6 +54,7 @@ const tabs = [
   ["orders", "کارتابل درخواست‌ها"],
   ["users", "کاربران"],
   ["pricing", "قیمت و فروش"],
+  ["blog", "بلاگ"],
   ["audit", "سوابق عملیات"],
 ] as const;
 const labels: Record<string, string> = {
@@ -75,6 +77,9 @@ const eventLabels: Record<string, string> = {
   issuance_failed: "خطای صدور",
   pricing_saved: "ذخیرهٔ تعرفه",
   sales_closed: "بستن فروش",
+  blog_created: "ساخت مقاله",
+  blog_updated: "ویرایش مقاله",
+  blog_deleted: "حذف مقاله",
 };
 function Pager({
   offset,
@@ -258,6 +263,7 @@ export default function AdminWorkbench({
           {tab === "pricing" && (
             <Pricing api={api} report={report} changed={changed} />
           )}
+          {tab === "blog" && <AdminBlog api={api} report={report} />}
           {tab === "audit" && <Events api={api} report={report} />}
         </div>
       </div>

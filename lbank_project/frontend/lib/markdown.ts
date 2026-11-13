@@ -90,22 +90,6 @@ export function parseMarkdown(source: string): Block[] {
   return blocks;
 }
 
-export type FrontMatter = Record<string, string>;
-
-export function splitFrontMatter(source: string): {
-  data: FrontMatter;
-  body: string;
-} {
-  const match = /^---\n([\s\S]*?)\n---\n?/.exec(source.replace(/\r\n/g, "\n"));
-  if (!match) throw Error("Blog post is missing its front matter");
-  const data: FrontMatter = {};
-  for (const line of match[1].split("\n")) {
-    const pair = /^([a-z_]+):\s*(.*)$/.exec(line.trim());
-    if (pair) data[pair[1]] = pair[2].replace(/^"(.*)"$/, "$1");
-  }
-  return { data, body: source.replace(/\r\n/g, "\n").slice(match[0].length) };
-}
-
 export function readingMinutes(body: string) {
   return Math.max(
     1,

@@ -22,6 +22,7 @@ TABLES={
  'admin_events':('id','actor_id','action','target','details','at'),
  'license_approvals':('id','order_id','requested_by','payload','payment_ref','state','lease_token','lease_until','attempts','created','updated','error_code'),
  'license_cashflows':('user_id','event_id','amount_usd','at'),
+ 'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated'),
 }
 
 

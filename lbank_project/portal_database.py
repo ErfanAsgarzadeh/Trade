@@ -68,6 +68,14 @@ CREATE TABLE IF NOT EXISTS license_approvals(id TEXT PRIMARY KEY,order_id TEXT U
 CREATE INDEX IF NOT EXISTS license_approvals_due ON license_approvals(state,lease_until);
 '''
 
+SCHEMA_V7='''
+CREATE TABLE IF NOT EXISTS blog_posts(id TEXT PRIMARY KEY,slug TEXT UNIQUE NOT NULL,title TEXT NOT NULL,
+ description TEXT NOT NULL,keywords TEXT NOT NULL,body TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('draft','published')),published_on TEXT,
+ created REAL NOT NULL,updated REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS blog_posts_public ON blog_posts(status,published_on);
+'''
+
 
 class PostgresConnection:
     def __init__(self,connection):self.connection=connection
@@ -135,8 +143,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6)):
+            if versions-{1,2,3,4,5,6,7}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

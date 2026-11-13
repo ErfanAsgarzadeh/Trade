@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { inline, parseMarkdown, splitFrontMatter } from "./markdown";
-import { loadPost } from "./blog";
+import { inline, parseMarkdown } from "./markdown";
 
 test("blog markdown keeps unsafe links as text and never yields HTML", () => {
   assert.deepEqual(inline("[x](javascript:alert) <b>y</b>"), [
@@ -27,15 +26,4 @@ test("headings get unique ids and lists group by type", () => {
   );
   assert.equal(blocks[0].kind === "h2" && blocks[0].id, "حد-ضرر");
   assert.equal(blocks[2].kind === "h2" && blocks[2].id, "حد-ضرر-2");
-});
-
-test("posts need a latin slug, title, description and ISO dates", () => {
-  const source =
-    "---\ntitle: T\ndescription: D\ndate: 2026-11-13\nkeywords: a, b،c\n---\nbody";
-  const post = loadPost("good-slug", source);
-  assert.deepEqual(post.keywords, ["a", "b", "c"]);
-  assert.equal(post.updated, "2026-11-13");
-  assert.throws(() => loadPost("Bad_Slug", source));
-  assert.throws(() => loadPost("ok", source.replace("2026-11-13", "13/11")));
-  assert.throws(() => splitFrontMatter("no front matter"));
 });
