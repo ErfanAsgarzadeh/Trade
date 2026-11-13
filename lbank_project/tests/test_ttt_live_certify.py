@@ -568,3 +568,17 @@ def test_mirror_does_not_drop_a_position_the_list_misses_for_a_moment(rt):
     assert "exchange_closed" not in [k for k, _ in kinds_and_reasons(rt)]
     del paper.book["BTC/USDT:USDT"];step()
     assert not api.pos and not m.state["managed"] and not m.state["paused"]
+
+
+def test_tight_stop_is_trailed_so_a_rising_market_still_triggers_it(rt):
+    """The last real run: DOGE did not fall 0.15% in 20 minutes. Now the stop follows the price up, so the first pullback
+    triggers it."""
+    api = FakeAPI();clock = [0.0];ticks = {"n": 0}
+    def sleep(s):
+        clock[0] += s;ticks["n"] += 1
+        api.move("DOGEUSDT", 1.0004 if ticks["n"] < 150 else 0.9990 if ticks["n"] < 155 else 1.0)  # up 12 min, then -0.5%
+    c = T.Certifier(adapter(api), "DOGEUSDT", 6.0, 25.0, 5, 1200, say=lambda s: None, ask=lambda _: "TEST",
+                    sleep=sleep, now=lambda: clock[0])
+    report = c.run(L.validate({"mode": "off"}))
+    assert report["passed"], report
+    assert report["trigger_trails"] > 0 and not api.pos

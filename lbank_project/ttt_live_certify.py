@@ -260,12 +260,23 @@ class Certifier:
             self.stop_ids.update(self.ex.stop_order_ids(self.symbol, p.ids))
         self.ok("tight_stop_set", not problems, f"{tight_pct:.2%} below price; " + "; ".join(problems))
         self.say(f"  waiting up to {self.trigger_timeout / 60:.0f} min for the exchange to trigger the stop ...")
-        start = self.now();triggered = False;absent = 0
+        start = self.now();triggered = False;absent = 0;last_trail = self.now();trails = 0
         while self.now() - start < self.trigger_timeout:
             self.sleep(5)
             absent = absent + 1 if self.mine() is None else 0
             if absent >= 3:              # gone on three reads in a row (the list can miss a position for a moment)
                 triggered = True;break
+            # Trail the stop up behind a rising price (like the bots' trailing stops), so the first pullback of tight_pct
+            # from the high triggers it, instead of waiting for the price to fall below the starting level.
+            if absent == 0 and self.now() - last_trail >= 60:
+                last_trail = self.now()
+                higher = self.ex.round_price(self.symbol, self.ex.price(self.symbol) * (1 - tight_pct))
+                if higher > tight:
+                    try:
+                        self.ex.set_stop(p, higher);tight = higher;trails += 1
+                    except X.ExchangeError as exc:  # e.g. the position just closed on the stop
+                        self.say(f"  [INFO] trailing the stop failed ({str(exc)[:100]})")
+        self.report["trigger_trails"] = trails
         self.report["trigger_wait_s"] = round(self.now() - start)
         if triggered:
             self.opened.pop()          # the exchange closed it; nothing left to clean up
