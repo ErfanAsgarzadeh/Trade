@@ -21,7 +21,7 @@ from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index
+from portal_frontend import frontend_index, public_page, robots_txt, sitemap_xml
 from portal_admin_store import AdminStore
 
 COOKIE='trade_session'
@@ -183,7 +183,17 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         if request.url.path in page_files:
             try:script_hashes=frontend_index(frontend,page_files[request.url.path])[1]
             except OSError:pass
-        response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
+        path=request.url.path
+        # Hashed build files never change; brand assets may. Public pages revalidate; everything else is private.
+        if path.startswith('/_next/static/'):cache='public, max-age=31536000, immutable'
+        elif path.startswith('/portal-assets/'):cache='public, max-age=86400'
+        elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml'):cache='public, max-age=3600'
+        elif path in ('/','/register','/register/'):cache='no-cache'
+        else:
+            cache='no-store'
+            response.headers['X-Robots-Tag']='noindex, nofollow'
+        if response.status_code>=400:cache='no-store'
+        response.headers.update({'Cache-Control':cache,'X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
                                  'Content-Security-Policy':f"default-src 'self'; script-src 'self' {script_hashes}; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
         if secure:response.headers['Strict-Transport-Security']='max-age=31536000'
@@ -205,7 +215,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/',response_class=HTMLResponse)
     def home():
-        try:return HTMLResponse(frontend_index(frontend)[0])
+        try:return HTMLResponse(public_page(frontend,'index.html',origin))
         except OSError:
             return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
 
@@ -218,7 +228,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/register',response_class=HTMLResponse)
     @app.get('/register/',response_class=HTMLResponse)
     def registration_page():
-        try:return HTMLResponse(frontend_index(frontend,'register.html')[0])
+        try:return HTMLResponse(public_page(frontend,'register.html',origin))
         except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
 
     @app.get('/admin',response_class=HTMLResponse)
@@ -272,6 +282,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/api/admin/audit')
     def admin_events(request:Request,user=Depends(administrator),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
         return AdminStore(repository(request)).events(offset,limit)
+
+    @app.get('/robots.txt')
+    def robots_file():return Response(robots_txt(origin),media_type='text/plain; charset=utf-8')
+
+    @app.get('/sitemap.xml')
+    def sitemap():return Response(sitemap_xml(origin,frontend),media_type='application/xml')
 
     @app.get('/manifest.webmanifest')
     def manifest():

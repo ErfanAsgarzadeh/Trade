@@ -34,3 +34,33 @@ def test_exported_next_chunks_are_served_with_their_html_csp():
         chunk=re.search(r'src="(/_next/[^\"]+\.js)"',response.text).group(1)
         assert client.get(chunk).status_code==200
         assert client.get('/manifest.webmanifest').json()['display']=='standalone'
+
+
+def test_public_pages_carry_search_metadata_for_the_configured_origin():
+    origin='https://avina.example'
+    with TestClient(create_app(store=object(),origin=origin,secure=True),base_url=origin) as client:
+        home=client.get('/')
+        assert home.text.count('<link rel="canonical" href="https://avina.example/"/>')==1
+        assert '<meta property="og:image" content="https://avina.example/portal-assets/og-image.png"/>' in home.text
+        assert home.text.count('<h1')==1 and 'FAQPage' in home.text and '"SoftwareApplication"' in home.text
+        # Added JSON-LD is data: the CSP still lists only the executable inline scripts.
+        assert home.headers['content-security-policy'].count("'sha256-")==frontend_index(Path('frontend/out'))[1].count("'sha256-")
+        assert home.headers['cache-control']=='no-cache' and 'x-robots-tag' not in home.headers
+        assert '<link rel="canonical" href="https://avina.example/register/"/>' in client.get('/register/').text
+        assert client.get('/portal-assets/og-image.png').headers['cache-control']=='public, max-age=86400'
+        chunk=re.search(r'src="(/_next/static/[^\"]+\.js)"',home.text).group(1)
+        assert client.get(chunk).headers['cache-control']=='public, max-age=31536000, immutable'
+        robots=client.get('/robots.txt')
+        assert 'Disallow: /api/' in robots.text and 'Sitemap: https://avina.example/sitemap.xml' in robots.text
+        sitemap=client.get('/sitemap.xml').text
+        assert '<loc>https://avina.example/</loc>' in sitemap and '<loc>https://avina.example/register/</loc>' in sitemap
+        assert 'dashboard' not in sitemap
+
+
+def test_private_pages_and_errors_stay_out_of_search_and_caches():
+    with TestClient(create_app(store=object(),origin='http://127.0.0.1:8080',secure=False),base_url='http://127.0.0.1:8080') as client:
+        for path in ('/dashboard/','/admin/'):
+            page=client.get(path)
+            assert page.headers['cache-control']=='no-store' and page.headers['x-robots-tag']=='noindex, nofollow'
+            assert 'rel="canonical"' not in page.text
+        assert client.get('/portal-assets/missing.png').headers['cache-control']=='no-store'

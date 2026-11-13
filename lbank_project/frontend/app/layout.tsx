@@ -7,15 +7,27 @@ const appearanceBootstrap = readFileSync(
   path.join(process.cwd(), "public/portal-assets/appearance.js"),
   "utf8",
 );
+const title = "آوینا | ربات معامله‌گر هوشمند ارز دیجیتال و فیوچرز";
+const description =
+  "آوینا (Avina) ربات ترید هوشمند فیوچرز از خانوادهٔ ARTAX است: سه استراتژی، حد ضرر واقعی روی صرافی، مدیریت ریسک خودکار و سرمایه در حساب خودتان.";
+// Canonical, og:url and og:image need the site's origin, so portal_frontend.py adds them when it serves the page.
 export const metadata: Metadata = {
-  title: "Avina — ربات معامله‌گر هوشمند | by ARTAX",
-  description:
-    "آوینا، ربات معامله‌گر هوشمند فیوچرز از خانوادهٔ ARTAX: سه استراتژی شاهین، موج‌سوار و ققنوس با حد ضرر روی خود صرافی و مدیریت ریسک خودکار.",
+  title,
+  description,
+  applicationName: "Avina",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/portal-assets/favicon.png",
     apple: "/portal-assets/apple-touch-icon.png",
   },
+  openGraph: {
+    type: "website",
+    siteName: "Avina",
+    locale: "fa_IR",
+    title,
+    description,
+  },
+  twitter: { card: "summary_large_image", title, description },
   appleWebApp: {
     capable: true,
     title: "Avina",
@@ -34,6 +46,13 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" data-theme="dark" suppressHydrationWarning>
       <head>
+        <link
+          rel="preload"
+          href="/portal-assets/arabic.woff"
+          as="font"
+          type="font/woff"
+          crossOrigin="anonymous"
+        />
         <script
           id="trade-appearance-init"
           dangerouslySetInnerHTML={{ __html: appearanceBootstrap }}

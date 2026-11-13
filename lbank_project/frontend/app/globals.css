@@ -1716,26 +1716,116 @@ dialog::backdrop {
   min-height: 720px;
   padding: 62px 0 58px;
 }
-.landing-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--text-secondary);
-  font-size: 11px;
-  margin-bottom: 22px;
-}
-.landing-eyebrow span {
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
-  box-shadow: 0 0 16px var(--glow-subtle);
-}
 .landing-hero h1 {
   font-size: 54px;
   line-height: 1.65;
   letter-spacing: -1.5px;
   font-weight: 700;
+}
+/* The search phrase sits inside the h1, styled as the small line above the slogan. */
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.hero-kicker::before {
+  width: 6px;
+  height: 6px;
+  content: "";
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 16px var(--glow-subtle);
+}
+.landing-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.landing-steps li {
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--primary-soft);
+}
+.landing-steps li > span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 22px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--accent);
+  font-weight: 700;
+}
+.landing-steps h3 {
+  font-size: 17px;
+  line-height: 1.9;
+  margin-bottom: 10px;
+}
+.landing-steps p {
+  font-size: 12px;
+  line-height: 2.3;
+  margin: 0;
+}
+.landing-faq {
+  display: grid;
+  gap: 12px;
+  max-width: 900px;
+}
+.landing-faq details {
+  padding: 6px 24px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--primary-soft);
+}
+.landing-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  cursor: pointer;
+  list-style: none;
+}
+.landing-faq summary::-webkit-details-marker {
+  display: none;
+}
+.landing-faq summary h3 {
+  font-size: 14px;
+  line-height: 2;
+  margin: 0;
+}
+.landing-faq summary span {
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+.landing-faq details[open] summary span {
+  transform: rotate(45deg);
+}
+.landing-faq p {
+  font-size: 13px;
+  line-height: 2.3;
+  margin: 0 0 16px;
+}
+@media (max-width: 900px) {
+  .landing-steps {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-faq summary span {
+    transition: none;
+  }
 }
 .landing-hero h1 em,
 .landing-closing em {
@@ -2482,10 +2572,6 @@ dialog::backdrop {
     gap: 26px;
     padding: 35px 0 35px;
     min-height: 0;
-  }
-  .landing-eyebrow {
-    font-size: 10px;
-    margin-bottom: 15px;
   }
   .landing-hero h1 {
     font-size: 36px;

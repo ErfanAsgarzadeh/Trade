@@ -5,6 +5,57 @@ import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
 import { Arrow, BrandLogo } from "./shared";
 
+const steps = [
+  {
+    name: "حساب بسازید و پلن را انتخاب کنید",
+    text: "ثبت‌نام کمتر از یک دقیقه طول می‌کشد. پلن سیگنال یا معاملهٔ خودکار را متناسب با سرمایه‌تان انتخاب کنید.",
+  },
+  {
+    name: "حساب صرافی خودتان را وصل کنید",
+    text: "کلید API را بدون دسترسی برداشت بسازید و در پنل ثبت کنید. پول از حساب صرافی شما خارج نمی‌شود.",
+  },
+  {
+    name: "معاملات را در پنل دنبال کنید",
+    text: "سیگنال‌ها، پوزیشن‌های باز، حد ضررها و نتیجهٔ هر معامله را لحظه‌به‌لحظه در پنل اختصاصی ببینید.",
+  },
+];
+// The same questions feed the visible FAQ and its structured data, so the two can never disagree.
+const faqs = [
+  {
+    q: "آوینا چیست و چه کاری انجام می‌دهد؟",
+    a: "آوینا یک ربات معامله‌گر هوشمند ارز دیجیتال از خانوادهٔ ARTAX است. سه استراتژی شاهین، موج‌سوار و ققنوس را شبانه‌روز روی بازار فیوچرز اجرا می‌کند و برای هر معامله حد ضرر و اندازهٔ پوزیشن مشخص دارد.",
+  },
+  {
+    q: "آیا باید پولم را به آوینا واریز کنم؟",
+    a: "نه. سرمایه در حساب صرافی خودتان می‌ماند. آوینا فقط با کلید API معامله می‌کند و این کلید باید بدون دسترسی برداشت ساخته شود.",
+  },
+  {
+    q: "آیا ربات معامله‌گر آوینا سود را تضمین می‌کند؟",
+    a: "نه. هیچ ربات تریدری نمی‌تواند سود را تضمین کند. کارنامهٔ پنج‌ساله یک شبیه‌سازی تاریخی است، نه نتیجهٔ حساب زنده. معامله در بازار فیوچرز ریسک از دست دادن سرمایه دارد.",
+  },
+  {
+    q: "تفاوت پلن سیگنال با معاملهٔ خودکار چیست؟",
+    a: "در پلن سیگنال، نقطهٔ ورود، حد ضرر و هدف را دریافت می‌کنید و خودتان معامله را اجرا می‌کنید؛ کلید صرافی لازم نیست. در پلن معاملهٔ خودکار، ربات ورود و مدیریت معامله را انجام می‌دهد.",
+  },
+  {
+    q: "حد ضرر در آوینا چطور کار می‌کند؟",
+    a: "هر پوزیشن از لحظهٔ ورود حد ضرر ثبت‌شده روی خود صرافی دارد. ربات بعد از هر تغییر، حد ضرر را دوباره از صرافی می‌خواند تا مطمئن شود درست ثبت شده است.",
+  },
+  {
+    q: "نتایج بک‌تست آوینا را چطور بررسی کنم؟",
+    a: "دادهٔ روزانهٔ پنج سال، خلاصهٔ نتایج و روش محاسبه در همین صفحه قابل دانلود است. کارمزد، لغزش قیمت و فاندینگ در مدل لحاظ شده‌اند و محدودیت‌های شبیه‌سازی هم نوشته شده است.",
+  },
+];
+const faqSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+}).replace(/</g, "\\u003c");
+
 export default function Landing() {
   return (
     <div className="landing" id="landing-page">
@@ -18,6 +69,7 @@ export default function Landing() {
           <a href="#backtest">کارنامهٔ پنج‌ساله</a>
           <a href="#strategies">استراتژی‌ها</a>
           <a href="#products">پلن‌ها</a>
+          <a href="#faq">پرسش‌ها</a>
         </nav>
         <div className="landing-header-actions">
           <ThemeSwitcher />
@@ -33,18 +85,17 @@ export default function Landing() {
         <section className="landing-hero" aria-labelledby="hero-title">
           <div className="hero-orbit-background" aria-hidden="true" />
           <div className="landing-hero-copy">
-            <div className="landing-eyebrow">
-              <span />
-              SMART TRADING BOT · by ARTAX
-            </div>
             <h1 id="hero-title">
+              <span className="hero-kicker">
+                ربات معامله‌گر هوشمند ارز دیجیتال
+              </span>
               بازار هیچ‌وقت نمی‌خوابد.
               <br />
               <em>آوینا هم.</em>
             </h1>
             <p className="landing-intro">
-              آوینا سه استراتژی معاملاتی را شبانه‌روز روی بازار فیوچرز اجرا
-              می‌کند؛ بدون ترس، بدون طمع، با حد ضرر ثبت‌شده روی خود صرافی و
+              آوینا ربات ترید فیوچرز است که سه استراتژی معاملاتی را شبانه‌روز
+              اجرا می‌کند؛ بدون ترس، بدون طمع، با حد ضرر ثبت‌شده روی خود صرافی و
               اندازهٔ پوزیشن متناسب با سرمایهٔ شما. سرمایه همیشه در حساب صرافی
               خودتان می‌ماند.
             </p>
@@ -162,8 +213,8 @@ export default function Landing() {
             </div>
             <p>
               پنج سال اجرای شبیه‌سازی‌شدهٔ هر سه استراتژی روی یک حساب، با
-              سرمایه‌گذاری مجدد سود. دادهٔ روزانه و روش محاسبه را خودتان دانلود و
-              بررسی کنید.
+              سرمایه‌گذاری مجدد سود. دادهٔ روزانه و روش محاسبه را خودتان دانلود
+              و بررسی کنید.
             </p>
           </div>
           <div className="results-layout">
@@ -236,8 +287,8 @@ export default function Landing() {
                 <h3>داده و سناریو</h3>
                 <p>
                   قیمت‌های Binance USDⓈ-M futures، سه ربات روی یک حساب، سرمایهٔ
-                  اولیهٔ ۱۰٬۰۰۰ دلار، بدون واریز یا برداشت و با
-                  سرمایه‌گذاری مجدد سود. هر USDT برابر یک دلار فرض شده است.
+                  اولیهٔ ۱۰٬۰۰۰ دلار، بدون واریز یا برداشت و با سرمایه‌گذاری
+                  مجدد سود. هر USDT برابر یک دلار فرض شده است.
                 </p>
               </div>
               <div>
@@ -310,6 +361,27 @@ export default function Landing() {
             ))}
           </div>
         </section>
+        <section id="how" className="landing-section">
+          <div className="landing-section-heading">
+            <div>
+              <span className="eyebrow">HOW IT WORKS</span>
+              <h2>شروع کار با آوینا در سه قدم.</h2>
+            </div>
+            <p>
+              راه‌اندازی ربات معامله‌گر نباید پیچیده باشد. از ثبت‌نام تا دیدن
+              اولین سیگنال، همه‌چیز در پنل خودتان انجام می‌شود.
+            </p>
+          </div>
+          <ol className="landing-steps">
+            {steps.map((step, index) => (
+              <li key={step.name}>
+                <span aria-hidden="true">{faNumber(index + 1)}</span>
+                <h3>{step.name}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
         <section id="products" className="landing-section landing-products">
           <div>
             <span className="eyebrow">CHOOSE YOUR PLAN</span>
@@ -328,6 +400,33 @@ export default function Landing() {
             </a>
           </div>
           <PublicProducts />
+        </section>
+        <section id="faq" className="landing-section">
+          <div className="landing-section-heading">
+            <div>
+              <span className="eyebrow">FAQ</span>
+              <h2>پرسش‌های پرتکرار دربارهٔ ربات آوینا.</h2>
+            </div>
+            <p>
+              پاسخ کوتاه و روشن به سؤال‌هایی که پیش از شروع برای بیشتر
+              معامله‌گرها پیش می‌آید.
+            </p>
+          </div>
+          <div className="landing-faq">
+            {faqs.map((item) => (
+              <details key={item.q}>
+                <summary>
+                  <h3>{item.q}</h3>
+                  <span aria-hidden="true">＋</span>
+                </summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
+          </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: faqSchema }}
+          />
         </section>
         <section className="landing-closing">
           <span className="eyebrow">AVINA by ARTAX</span>
@@ -353,7 +452,8 @@ export default function Landing() {
           مالی ریسک از دست دادن سرمایه دارد و نتایج بک‌تست تضمین‌کنندهٔ بازده
           آینده نیستند.
         </p>
-        <nav>
+        <nav aria-label="پیوندهای پایانی">
+          <a href="#faq">پرسش‌های پرتکرار</a>
           <a href="/dashboard/">ورود</a>
           <a href="/register/">ثبت‌نام</a>
           <a href="/backtest/methodology-fa.md">روش بک‌تست</a>
