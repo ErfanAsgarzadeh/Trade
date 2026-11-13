@@ -5,6 +5,22 @@ import sqlite3
 import time
 
 
+def db_paths(runtime):
+    """Optional runtime/portal_runtime.json maps bot -> database path inside the runtime, for an operator runtime whose
+    databases are not at the default names (e.g. {"main": "paper-live-lbank/shahin.db"}). Paths outside it are ignored."""
+    try:
+        data=json.loads((Path(runtime)/'portal_runtime.json').read_text())
+    except (OSError,ValueError):
+        return {}
+    root=Path(runtime).resolve();out={}
+    for code in ('main','c3','pa'):
+        rel=data.get(code) if isinstance(data,dict) else None
+        if isinstance(rel,str) and rel and not Path(rel).is_absolute():
+            path=(root/rel).resolve()
+            if root in path.parents:out[code]=str(path.relative_to(root))
+    return out
+
+
 def robots(runtime,expected_customer=None):
     identity_ok=True
     if runtime and expected_customer:
@@ -13,6 +29,7 @@ def robots(runtime,expected_customer=None):
         except (OSError,ValueError):identity_ok=False
     names=[('main','شاهین','config.json','lbank_ichimoku_bot.db'),
            ('c3','موج‌سوار','c3_config.json','c3_sleeve.db'),('pa','ققنوس','pa_config.json','pa_sleeve.db')]
+    names=[(c,n,cfg,db_paths(runtime).get(c,db)) for c,n,cfg,db in names] if runtime else names
     result=[]
     for code,name,config_name,db_name in names:
         item=dict(bot=code,name=name,state='not_provisioned',execution='paper',positions=[],trades=[])
