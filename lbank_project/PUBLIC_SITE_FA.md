@@ -11,8 +11,9 @@
 ## یک‌بار: کلید رمزگذاری و دیتابیس پنل
 ```bash
 cd /opt/Trade/lbank_project
+mkdir -p issuer-keys runtime/portal && chmod 700 issuer-keys
 docker compose -f portal-compose.yml build portal
-docker compose -f portal-compose.yml run --rm --no-deps -v "$PWD/issuer-keys:/app/issuer-keys" -e PORTAL_KEY_FILE=/app/issuer-keys/portal.key portal python portal_admin.py init
+docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" -v "$PWD/runtime/portal:/app/runtime/portal" -e PORTAL_DB=/app/runtime/portal/portal.db -e PORTAL_KEY_FILE=/app/issuer-keys/portal.key trade-portal-portal python portal_admin.py init
 ```
 از `issuer-keys/portal.key` جداگانه و امن نسخهٔ پشتیبان بگیرید؛ بدون آن کلیدهای API ذخیره‌شدهٔ مشتریان قابل خواندن نیست.
 
