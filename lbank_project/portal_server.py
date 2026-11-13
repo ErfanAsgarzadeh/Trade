@@ -21,7 +21,9 @@ from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index, public_file, public_page, robots_txt, rss_xml, sitemap_xml
+from portal_frontend import frontend_index, public_file, public_page, robots_txt, sitemap_xml
+import portal_blog
+from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
 
 COOKIE='trade_session'
@@ -93,6 +95,18 @@ class AdminRejection(BaseModel):
     reason:str=Field(min_length=3,max_length=500)
 
 
+class BlogArticle(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    slug:str=Field(min_length=1,max_length=80,pattern=r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
+    title:str=Field(min_length=1,max_length=120)
+    description:str=Field(min_length=1,max_length=300)
+    keywords:list[str]=Field(default_factory=list,max_length=20)
+    body:str=Field(min_length=1,max_length=60000)
+    status:str=Field(pattern=r'^(draft|published)$')
+    published_on:str|None=Field(default=None,pattern=r'^\d{4}-\d{2}-\d{2}$')
+    expected_updated:float|None=None
+
+
 class AdminApproval(BaseModel):
     model_config=ConfigDict(extra='forbid')
     payment_ref:str=Field(pattern=r'^[A-Za-z0-9:._-]{4,120}$')
@@ -122,6 +136,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             key=Path(os.environ['PORTAL_KEY_FILE']).read_bytes().strip()
             app.state.store=PortalStore(configured_target(),key)
         else:app.state.store=supplied_store
+        if hasattr(app.state.store,'database'):BlogStore(app.state.store).seed()
         try:yield
         finally:
             if supplied_store is None:app.state.store.close()
@@ -168,20 +183,30 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except ValueError as exc:
             raise HTTPException(409 if 'version changed' in str(exc).lower() else 422,'Check fields and latest version')
 
+    def blog_posts(request):
+        store=repository(request)
+        return BlogStore(store).published() if hasattr(store,'database') else []
+
+    def site_css():
+        try:return portal_blog.stylesheets(frontend_index(frontend)[0])
+        except OSError:return []
+
     @app.middleware('http')
     async def headers(request,call_next):
         # Protect key/password uploads before JSON validation. Reject ambiguous streaming bodies.
         if request.method in ('POST','PUT','PATCH'):
             try:length=int(request.headers.get('Content-Length','0'))
             except ValueError:return JSONResponse({'detail':'Invalid request'},status_code=400)
-            if request.headers.get('Transfer-Encoding') or not 0<=length<=16384:
+            # Article bodies are the one larger payload; credentials and everything else stay at 16 KiB.
+            limit=262144 if request.url.path.startswith('/api/admin/blog') else 16384
+            if request.headers.get('Transfer-Encoding') or not 0<=length<=limit:
                 return JSONResponse({'detail':'Request too large'},status_code=413)
             body=await request.body()
-            if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
+            if len(body)>limit:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
         path=request.url.path
-        public=public_file(frontend,path)
-        page=page_files.get(path) or (public[1] if public else None)
+        public=public_file(path) or (path=='/blog' or path.startswith('/blog/')) and response.status_code==200
+        page=page_files.get(path) or (public[1] if isinstance(public,tuple) else None)
         if response.status_code==404 and path.startswith('/blog/'):page='404.html'
         script_hashes=''
         if page:
@@ -235,18 +260,29 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
 
     @app.get('/blog/rss.xml')
-    def blog_feed():return Response(rss_xml(origin,frontend),media_type='application/rss+xml; charset=utf-8')
+    def blog_feed(request:Request):
+        return Response(portal_blog.rss_xml(origin,blog_posts(request)),media_type='application/rss+xml; charset=utf-8')
 
     @app.get('/blog',response_class=HTMLResponse)
     @app.get('/blog/',response_class=HTMLResponse)
+    def blog_index(request:Request):
+        return HTMLResponse(portal_blog.index_page(origin,site_css(),blog_posts(request)))
+
     @app.get('/blog/{slug}',response_class=HTMLResponse)
     @app.get('/blog/{slug}/',response_class=HTMLResponse)
-    def blog_page(request:Request):
-        try:return HTMLResponse(public_page(frontend,request.url.path,origin))
-        except LookupError:
+    def blog_article(slug:str,request:Request):
+        store=repository(request)
+        post=BlogStore(store).article(slug) if hasattr(store,'database') else None
+        if not post:
             try:return HTMLResponse(frontend_index(frontend,'404.html')[0],status_code=404)
             except OSError:return HTMLResponse('Not found',status_code=404)
-        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+        related=[item for item in blog_posts(request) if item['slug']!=post['slug']][:2]
+        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related))
+
+    @app.get('/api/blog/latest')
+    def blog_latest(request:Request,limit:int=Query(default=3,ge=1,le=12)):
+        return {'items':[dict(slug=p['slug'],title=p['title'],description=p['description'],published_on=p['published_on'],
+                              date_label=portal_blog.persian_date(p['published_on']),minutes=p['minutes']) for p in blog_posts(request)[:limit]]}
 
     @app.get('/admin',response_class=HTMLResponse)
     @app.get('/admin/',response_class=HTMLResponse)
@@ -296,6 +332,31 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         admin_call(lambda:product_pricing.close_sales(repository(request),product,payload.expected_version,user['id']))
         return {'status':'closed'}
 
+    def blog_call(function):
+        try:return admin_call(function)
+        except BlogConflict as exc:raise HTTPException(409,str(exc))
+
+    @app.get('/api/admin/blog')
+    def admin_blog(request:Request,user=Depends(administrator)):
+        return {'items':BlogStore(repository(request)).all()}
+
+    @app.get('/api/admin/blog/{post_id}')
+    def admin_blog_post(post_id:str,request:Request,user=Depends(administrator)):
+        return admin_call(lambda:BlogStore(repository(request)).get(post_id))
+
+    @app.post('/api/admin/blog',status_code=201)
+    def admin_blog_create(payload:BlogArticle,request:Request,user=Depends(admin_mutation)):
+        return blog_call(lambda:BlogStore(repository(request)).save(user['id'],payload.model_dump()))
+
+    @app.put('/api/admin/blog/{post_id}')
+    def admin_blog_update(post_id:str,payload:BlogArticle,request:Request,user=Depends(admin_mutation)):
+        if payload.expected_updated is None:raise HTTPException(422,'expected_updated required')
+        return blog_call(lambda:BlogStore(repository(request)).save(user['id'],payload.model_dump(),post_id,payload.expected_updated))
+
+    @app.delete('/api/admin/blog/{post_id}')
+    def admin_blog_delete(post_id:str,request:Request,user=Depends(admin_mutation),expected_updated:float=Query()):
+        return blog_call(lambda:BlogStore(repository(request)).delete(user['id'],post_id,expected_updated))
+
     @app.get('/api/admin/audit')
     def admin_events(request:Request,user=Depends(administrator),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
         return AdminStore(repository(request)).events(offset,limit)
@@ -304,7 +365,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def robots_file():return Response(robots_txt(origin),media_type='text/plain; charset=utf-8')
 
     @app.get('/sitemap.xml')
-    def sitemap():return Response(sitemap_xml(origin,frontend),media_type='application/xml')
+    def sitemap(request:Request):return Response(sitemap_xml(origin,frontend,blog_posts(request)),media_type='application/xml')
 
     @app.get('/manifest.webmanifest')
     def manifest():

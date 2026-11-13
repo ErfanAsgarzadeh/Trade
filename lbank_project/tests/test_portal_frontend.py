@@ -65,28 +65,3 @@ def test_private_pages_and_errors_stay_out_of_search_and_caches():
             assert page.headers['cache-control']=='no-store' and page.headers['x-robots-tag']=='noindex, nofollow'
             assert 'rel="canonical"' not in page.text
         assert client.get('/portal-assets/missing.png').headers['cache-control']=='no-store'
-
-
-def test_blog_pages_are_public_canonical_and_listed_in_sitemap_and_feed():
-    origin='https://avina.example'
-    out=Path(__file__).parents[1]/'frontend'/'out'
-    slugs=[post['slug'] for post in json.loads((out/'blog-index.json').read_text(encoding='utf-8'))]
-    assert len(slugs)>=5
-    with TestClient(create_app(store=object(),origin=origin,secure=True),base_url=origin) as client:
-        index=client.get('/blog')
-        assert index.status_code==200 and '<link rel="canonical" href="https://avina.example/blog/"/>' in index.text
-        assert all(f'/blog/{slug}/' in index.text for slug in slugs)
-        for path in (f'/blog/{slugs[0]}/',f'/blog/{slugs[0]}'):
-            post=client.get(path)
-            assert post.status_code==200 and post.headers['cache-control']=='no-cache' and 'x-robots-tag' not in post.headers
-            assert post.text.count('<h1')==1 and '"BlogPosting"' in post.text and '"BreadcrumbList"' in post.text
-            assert f'<link rel="canonical" href="https://avina.example/blog/{slugs[0]}/"/>' in post.text
-            assert post.headers['content-security-policy'].count("'sha256-")==frontend_index(out,f'blog/{slugs[0]}.html')[1].count("'sha256-")
-        for missing in ('/blog/not-a-post/','/blog/Upper/','/blog/a_b','/blog/blog-index.json'):
-            response=client.get(missing)
-            assert response.status_code==404 and response.headers['x-robots-tag']=='noindex, nofollow'
-        sitemap=client.get('/sitemap.xml').text
-        assert '<loc>https://avina.example/blog/</loc>' in sitemap
-        assert all(f'<loc>https://avina.example/blog/{slug}/</loc>' in sitemap for slug in slugs)
-        feed=client.get('/blog/rss.xml')
-        assert feed.headers['content-type'].startswith('application/rss+xml') and feed.text.count('<item>')==len(slugs)

@@ -4,7 +4,7 @@ import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
 import { Arrow } from "./shared";
 import { SiteFooter, SiteHeader } from "./site-chrome";
-import { allPosts, persianDate, type Post } from "@/lib/blog";
+import LatestPosts from "./latest-posts";
 
 const steps = [
   {
@@ -56,22 +56,6 @@ const faqSchema = JSON.stringify({
     acceptedAnswer: { "@type": "Answer", text: item.a },
   })),
 }).replace(/</g, "\\u003c");
-
-export function PostCard({ post }: { post: Post }) {
-  return (
-    <article className="blog-card">
-      <small>
-        <time dateTime={post.date}>{persianDate(post.date)}</time>
-        <span aria-hidden="true">·</span>
-        <span>{faNumber(post.minutes)} دقیقه مطالعه</span>
-      </small>
-      <h3>
-        <a href={`/blog/${post.slug}/`}>{post.title}</a>
-      </h3>
-      <p>{post.description}</p>
-    </article>
-  );
-}
 
 export default function Landing() {
   return (
@@ -411,13 +395,7 @@ export default function Landing() {
               فیوچرز. <a href="/blog/">همهٔ مقاله‌ها ←</a>
             </p>
           </div>
-          <div className="blog-cards">
-            {allPosts()
-              .slice(0, 3)
-              .map((post) => (
-                <PostCard key={post.slug} post={post} />
-              ))}
-          </div>
+          <LatestPosts />
         </section>
         <section id="faq" className="landing-section">
           <div className="landing-section-heading">
