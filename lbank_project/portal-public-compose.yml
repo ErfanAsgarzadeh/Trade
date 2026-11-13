@@ -1,7 +1,7 @@
-# Public HTTPS site: use together with portal-compose.yml
-#   PORTAL_DOMAIN=example.com docker compose -f portal-compose.yml -f portal-public-compose.yml up -d --build
+# Public HTTPS site, on top of portal-postgres-compose.yml (or portal-compose.yml):
+#   PORTAL_DOMAIN=example.com docker compose -f portal-postgres-compose.yml -f portal-owner-compose.yml \
+#       -f portal-public-compose.yml up -d --build
 # Caddy obtains and renews the TLS certificate automatically (ports 80 and 443 must reach this server).
-# The owner's paper runtime is mounted read-only so the owner's portal account can show the three bots.
 services:
   caddy:
     image: caddy:2.8.4
@@ -26,13 +26,12 @@ services:
       PORTAL_ORIGIN: https://${PORTAL_DOMAIN:?Set PORTAL_DOMAIN}
       PORTAL_ALLOW_LOCAL_HTTP: "0"
       PORTAL_TRUSTED_PROXY_IPS: 172.30.50.10
-    volumes:
-      - ./runtime:/app/owner-runtime:ro
     networks:
+      default:
       edge:
         ipv4_address: 172.30.50.20
   account-worker:
-    networks: [edge]
+    networks: [default, edge]
 networks:
   edge:
     ipam:

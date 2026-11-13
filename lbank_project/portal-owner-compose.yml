@@ -1,0 +1,6 @@
+# The owner's paper runtime, read-only, so the owner's own portal account can show the three bots
+# (python portal_admin.py bind-runtime USERNAME /app/owner-runtime). Add with -f after the base portal compose file.
+services:
+  portal:
+    volumes:
+      - ./runtime:/app/owner-runtime:ro

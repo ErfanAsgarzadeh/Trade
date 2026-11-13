@@ -1,40 +1,44 @@
-# راه‌اندازی عمومی سایت فروش، پنل مشتری و کارتابل مدیر
+# راه‌اندازی سایت فروش، پنل مشتری و کارتابل مدیر (PostgreSQL)
 
-سایت (`/`)، پنل مشتری (`/dashboard/`) و کارتابل مدیر (`/admin/`) از `portal-compose.yml` اجرا می‌شوند.
-`portal-public-compose.yml` جلوی آن‌ها Caddy می‌گذارد که گواهی HTTPS را خودکار می‌گیرد و تمدید می‌کند.
+سایت (`/`)، پنل مشتری (`/dashboard/`) و کارتابل مدیر (`/admin/`) با `portal-postgres-compose.yml` اجرا می‌شوند:
+پایگاه دادهٔ PostgreSQL 17 (بدون پورت عمومی)، وب و worker خواندن حساب‌ها. این یک پروژهٔ Docker جداست و به ربات‌ها
+دست نمی‌زند. `portal-owner-compose.yml` runtime ربات‌های مالک را فقط‌خواندنی به وب می‌دهد.
+`portal-public-compose.yml` (وقتی دامنه داشتید) Caddy را جلوی سایت می‌گذارد و HTTPS را خودکار می‌گیرد.
 
-## پیش‌نیاز
-- یک دامنه که رکورد A آن (و در صورت تمایل `www`) به IP سرور اشاره کند.
-- پورت‌های ۸۰ و ۴۴۳ سرور باز باشند.
-- حدود ۲ گیگ RAM برای ساخت image (فرانت Next.js داخل Docker ساخته می‌شود).
-
-## یک‌بار: کلید رمزگذاری و دیتابیس پنل
+## یک‌بار: رازها
 ```bash
 cd /opt/Trade/lbank_project
-mkdir -p issuer-keys runtime/portal && chmod 700 issuer-keys
-docker compose -f portal-compose.yml build portal
-docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" -v "$PWD/runtime/portal:/app/runtime/portal" -e PORTAL_DB=/app/runtime/portal/portal.db -e PORTAL_KEY_FILE=/app/issuer-keys/portal.key trade-portal-portal python portal_admin.py init
+mkdir -p issuer-keys && chmod 700 issuer-keys
+docker compose -f portal-postgres-compose.yml build portal
+docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal python portal_setup.py
 ```
-از `issuer-keys/portal.key` جداگانه و امن نسخهٔ پشتیبان بگیرید؛ بدون آن کلیدهای API ذخیره‌شدهٔ مشتریان قابل خواندن نیست.
+`portal_setup.py` رمز پایگاه داده، آدرس اتصال و کلید رمزگذاری (`portal.key`) را در `issuer-keys/` می‌سازد و چاپ نمی‌کند.
+از کل پوشهٔ `issuer-keys/` و از دادهٔ پایگاه داده جداگانه پشتیبان بگیرید.
 
-## بالا آوردن سایت
+## بدون دامنه (فقط برای مالک، از طریق تونل SSH)
 ```bash
-PORTAL_DOMAIN=example.com docker compose -f portal-compose.yml -f portal-public-compose.yml up -d --build
+PORTAL_ALLOW_LOCAL_HTTP=1 docker compose -f portal-postgres-compose.yml -f portal-owner-compose.yml up -d
+```
+روی کامپیوتر خودتان: `ssh -L 8080:127.0.0.1:8080 root@IP_SERVER` و بعد `http://127.0.0.1:8080`.
+
+## با دامنه (عمومی، HTTPS)
+```bash
+PORTAL_DOMAIN=example.com docker compose -f portal-postgres-compose.yml -f portal-owner-compose.yml -f portal-public-compose.yml up -d
 ```
 
-## حساب مالک و نقش مدیر
-در سایت ثبت‌نام کنید، بعد روی سرور:
+## حساب مالک، نقش مدیر و ربات‌های مالک
+در سایت ثبت‌نام کنید، بعد:
 ```bash
-docker compose -f portal-compose.yml -f portal-public-compose.yml exec portal python portal_admin.py set-admin USERNAME
-```
-
-## نمایش ربات‌های مالک در پنل خودش
-runtime سرور فقط‌خواندنی در `/app/owner-runtime` مانت می‌شود. یک بار:
-```bash
+C="docker compose -f portal-postgres-compose.yml -f portal-owner-compose.yml"
+$C exec portal python portal_admin.py set-admin USERNAME
 echo '{"customer_id": "USERNAME"}' > runtime/customer_identity.json
 echo '{"main": "paper-live-lbank/shahin.db", "c3": "paper-live-lbank/mojsavar.db", "pa": "paper-live-lbank/ghoghnous.db"}' > runtime/portal_runtime.json
-docker compose -f portal-compose.yml -f portal-public-compose.yml exec portal python portal_admin.py bind-runtime USERNAME /app/owner-runtime
+$C exec portal python portal_admin.py bind-runtime USERNAME /app/owner-runtime
 ```
-`portal_runtime.json` به پنل می‌گوید دیتابیس‌های paper روی این سرور کجا هستند؛ مسیر بیرون از runtime نادیده گرفته می‌شود.
+
+## پشتیبان پایگاه داده
+```bash
+docker compose -f portal-postgres-compose.yml exec -T db pg_dump -U trade_portal trade_portal | gzip > /root/portal-$(date +%Y%m%d).sql.gz
+```
 
 فروش هر دو محصول تا ثبت قیمت و بازکردن صریح در کارتابل بسته می‌ماند.
