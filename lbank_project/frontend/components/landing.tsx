@@ -3,7 +3,7 @@ import snapshot from "@/public/backtest/five-year-summary.json";
 import { faNumber, usd } from "@/lib/format";
 import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
-import { Arrow } from "./shared";
+import { Arrow, BrandLogo } from "./shared";
 
 export default function Landing() {
   return (
@@ -12,16 +12,12 @@ export default function Landing() {
         رفتن به محتوا
       </a>
       <header className="landing-header">
-        <a className="logo" href="/" aria-label="Trade، صفحه اصلی">
-          <span className="logo-mark">T</span>
-          <span className="brand">
-            TRADE<span className="brand-dot">/</span>
-          </span>
-        </a>
+        <BrandLogo />
         <nav aria-label="ناوبری اصلی">
-          <a href="#backtest">نتایج بک‌تست</a>
-          <a href="#strategies">سه استراتژی</a>
-          <a href="#products">سرویس‌ها</a>
+          <a href="#why">چرا آوینا</a>
+          <a href="#backtest">کارنامهٔ پنج‌ساله</a>
+          <a href="#strategies">استراتژی‌ها</a>
+          <a href="#products">پلن‌ها</a>
         </nav>
         <div className="landing-header-actions">
           <ThemeSwitcher />
@@ -29,7 +25,7 @@ export default function Landing() {
             ورود به پنل
           </a>
           <a href="/register/" className="landing-signup">
-            شروع رایگان <span aria-hidden="true">←</span>
+            ساخت حساب <span aria-hidden="true">←</span>
           </a>
         </div>
       </header>
@@ -39,31 +35,31 @@ export default function Landing() {
           <div className="landing-hero-copy">
             <div className="landing-eyebrow">
               <span />
-              پنج سال بک‌تست روی داده‌های بازار
+              SMART TRADING BOT · by ARTAX
             </div>
             <h1 id="hero-title">
-              سه ربات.
+              بازار هیچ‌وقت نمی‌خوابد.
               <br />
-              پنج سال داده.
-              <br />
-              <em>یک مسیر قابل بررسی.</em>
+              <em>آوینا هم.</em>
             </h1>
             <p className="landing-intro">
-              شاهین، موج‌سوار و ققنوس؛ سه استراتژی در یک حساب مشترک. قبل از
-              انتخاب، مسیر سرمایه و ریسک را با چشم خودتان ببینید.
+              آوینا سه استراتژی معاملاتی را شبانه‌روز روی بازار فیوچرز اجرا
+              می‌کند؛ بدون ترس، بدون طمع، با حد ضرر ثبت‌شده روی خود صرافی و
+              اندازهٔ پوزیشن متناسب با سرمایهٔ شما. سرمایه همیشه در حساب صرافی
+              خودتان می‌ماند.
             </p>
             <div className="landing-hero-actions">
               <a className="landing-primary" href="#backtest">
-                نتیجهٔ پنج‌ساله را ببینید <span aria-hidden="true">←</span>
+                کارنامهٔ پنج‌ساله را ببینید <span aria-hidden="true">←</span>
               </a>
               <a className="landing-secondary" href="/register/">
-                ساخت حساب رایگان ←
+                شروع با آوینا ←
               </a>
             </div>
             <div className="hero-context">
-              <span>۲۰۲۱ تا پایان ۲۰۲۵</span>
-              <span>بدون F</span>
-              <span>بدون برداشت</span>
+              <span>اجرای ۲۴/۷</span>
+              <span>حد ضرر روی صرافی</span>
+              <span>سرمایه در حساب خودتان</span>
             </div>
             <p className="hero-disclosure">
               شبیه‌سازی تاریخی با هزینه‌های مدل‌شده؛ نتیجهٔ حساب زنده نیست و
@@ -109,15 +105,65 @@ export default function Landing() {
             </strong>
           </div>
         </div>
+        <section id="why" className="landing-section">
+          <div className="landing-section-heading">
+            <div>
+              <span className="eyebrow">WHY AVINA</span>
+              <h2>انضباطی که انسان‌ها کم می‌آورند.</h2>
+            </div>
+            <p>
+              بیشتر ضررها از تصمیم‌های احساسی و ریسک کنترل‌نشده می‌آیند. آوینا
+              برای همین ساخته شده که قوانین را هر بار، بدون استثنا، اجرا کند.
+            </p>
+          </div>
+          <div className="strategy-cards">
+            {[
+              {
+                code: "01",
+                label: "NON-CUSTODIAL",
+                name: "سرمایه در حساب خودتان",
+                text: "آوینا به حساب صرافی شما وصل می‌شود و فقط معامله می‌کند. هیچ واریزی به ما لازم نیست و کلید API شما بدون دسترسی برداشت ثبت می‌شود.",
+              },
+              {
+                code: "02",
+                label: "REAL STOP-LOSS",
+                name: "حد ضرر واقعی روی صرافی",
+                text: "هر پوزیشن از لحظهٔ ورود حد ضرر ثبت‌شده روی خود صرافی دارد و ربات بعد از هر تغییر، آن را دوباره از صرافی می‌خواند و تأیید می‌کند.",
+              },
+              {
+                code: "03",
+                label: "RISK ENGINE",
+                name: "مدیریت ریسک چندلایه",
+                text: "سقف ریسک هر معامله، سقف ریسک کل، توقف ورود در ضرر روزانه و افت سرمایه، و اندازهٔ پوزیشن متناسب با موجودی لحظه‌ای حساب.",
+              },
+              {
+                code: "04",
+                label: "TRANSPARENT",
+                name: "شفاف و قابل بررسی",
+                text: "کارنامهٔ پنج‌ساله با دادهٔ روزانه و روش محاسبه منتشر شده و همهٔ معاملات و وضعیت ربات‌ها در پنل اختصاصی شما دیده می‌شود.",
+              },
+            ].map((item) => (
+              <article key={item.code}>
+                <div className="strategy-card-head">
+                  <span>{item.code}</span>
+                  <small>{item.label}</small>
+                </div>
+                <h3>{item.name}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
         <section id="backtest" className="landing-section results-section">
           <div className="landing-section-heading">
             <div>
               <span className="eyebrow">EVIDENCE BEFORE DECISION</span>
-              <h2>عدد نهایی، فقط بخشی از داستان است.</h2>
+              <h2>کارنامه، پیش از تصمیم.</h2>
             </div>
             <p>
-              این نتیجه برای هر سه ربات با سرمایه‌گذاری مجدد سود و تنظیمات پژوهش
-              است؛ نه سناریوی برداشت سود و خرید طلا.
+              پنج سال اجرای شبیه‌سازی‌شدهٔ هر سه استراتژی روی یک حساب، با
+              سرمایه‌گذاری مجدد سود. دادهٔ روزانه و روش محاسبه را خودتان دانلود و
+              بررسی کنید.
             </p>
           </div>
           <div className="results-layout">
@@ -190,7 +236,7 @@ export default function Landing() {
                 <h3>داده و سناریو</h3>
                 <p>
                   قیمت‌های Binance USDⓈ-M futures، سه ربات روی یک حساب، سرمایهٔ
-                  اولیهٔ ۱۰٬۰۰۰ دلار، بدون F، بدون واریز یا برداشت و با
+                  اولیهٔ ۱۰٬۰۰۰ دلار، بدون واریز یا برداشت و با
                   سرمایه‌گذاری مجدد سود. هر USDT برابر یک دلار فرض شده است.
                 </p>
               </div>
@@ -224,12 +270,12 @@ export default function Landing() {
         <section id="strategies" className="landing-section">
           <div className="landing-section-heading">
             <div>
-              <span className="eyebrow">THREE WAYS TO READ THE MARKET</span>
-              <h2>یک بازار. سه نگاه متفاوت.</h2>
+              <span className="eyebrow">THREE ENGINES, ONE ACCOUNT</span>
+              <h2>سه موتور. یک حساب. ریسک پخش‌شده.</h2>
             </div>
             <p>
-              استراتژی‌ها رفتار یکسانی ندارند؛ هر کدام با منطق ورود و مدیریت
-              ریسک خودش کار می‌کند.
+              هر استراتژی بازار را از زاویهٔ خودش می‌خواند؛ وقتی یکی ساکت است،
+              دیگری فرصت را می‌بیند. ریسک هر سه از یک بودجهٔ مشترک کنترل می‌شود.
             </p>
           </div>
           <div className="strategy-cards">
@@ -238,19 +284,19 @@ export default function Landing() {
                 code: "S",
                 name: "شاهین",
                 label: "BREAKOUT",
-                text: "دنبال‌کردن شکست‌های روند با Donchian و Kumo؛ همراه با مدیریت استاپ و قواعد حفظ سود.",
+                text: "شکار شکست‌های قدرتمند روند با Donchian و ابر ایچیموکو؛ با حد ضرر متحرک و قفل سود وقتی معامله به سود می‌رسد.",
               },
               {
                 code: "M",
                 name: "موج‌سوار",
                 label: "TREND PULLBACK",
-                text: "جست‌وجوی پولبک در روند با EMA و RSI؛ تأیید ورود و دنبال‌کردن مسیر با استاپ متحرک.",
+                text: "ورود در پولبک‌های روند با EMA و RSI؛ صبر برای تأیید، سوار شدن بر موج و همراهی با حد ضرر دنباله‌دار.",
               },
               {
                 code: "G",
                 name: "ققنوس",
                 label: "PRICE ACTION",
-                text: "بررسی رفتار قیمت و Key Reversal، با فیلتر رژیم بازار و مدیریت زمان و ریسک معامله.",
+                text: "خواندن رفتار قیمت و الگوهای برگشتی کلیدی، با فیلتر رژیم بازار؛ برای لحظه‌هایی که روند نفسش می‌بُرد.",
               },
             ].map((bot) => (
               <article key={bot.code}>
@@ -266,28 +312,29 @@ export default function Landing() {
         </section>
         <section id="products" className="landing-section landing-products">
           <div>
-            <span className="eyebrow">CHOOSE YOUR WORKFLOW</span>
+            <span className="eyebrow">CHOOSE YOUR PLAN</span>
             <h2>
-              سیگنال برای تصمیم شما.
+              سیگنال برای تصمیم خودتان.
               <br />
-              یا اجرای مدیریت‌شدهٔ ربات.
+              یا معاملهٔ خودکار با آوینا.
             </h2>
             <p>
-              حساب بسازید و نوع سرویس را انتخاب کنید. قیمت و وضعیت فروش هر محصول
-              مستقل است و در پنل به‌روز نمایش داده می‌شود.
+              حساب بسازید، پلن را بر اساس سرمایه‌تان انتخاب کنید و با USDT یا
+              USDC پرداخت کنید. فعال‌سازی پس از تأیید خودکار پرداخت انجام
+              می‌شود.
             </p>
             <a className="landing-primary" href="/register/">
-              ساخت حساب رایگان ←
+              شروع با آوینا ←
             </a>
           </div>
           <PublicProducts />
         </section>
         <section className="landing-closing">
-          <span className="eyebrow">START WITH THE EVIDENCE</span>
+          <span className="eyebrow">AVINA by ARTAX</span>
           <h2>
-            اول بررسی کنید.
+            آوینا را با شواهد بسنجید،
             <br />
-            <em>بعد انتخاب کنید.</em>
+            <em>نه با وعده.</em>
           </h2>
           <div>
             <a className="landing-primary" href="#backtest">
@@ -300,10 +347,12 @@ export default function Landing() {
         </section>
       </main>
       <footer className="landing-footer">
-        <a className="brand" href="/">
-          TRADE /
-        </a>
-        <p>نتایج بک‌تست تضمین‌کنندهٔ بازده آینده نیستند.</p>
+        <BrandLogo />
+        <p>
+          آوینا، ربات معامله‌گر هوشمند از خانوادهٔ ARTAX. معامله در بازارهای
+          مالی ریسک از دست دادن سرمایه دارد و نتایج بک‌تست تضمین‌کنندهٔ بازده
+          آینده نیستند.
+        </p>
         <nav>
           <a href="/dashboard/">ورود</a>
           <a href="/register/">ثبت‌نام</a>

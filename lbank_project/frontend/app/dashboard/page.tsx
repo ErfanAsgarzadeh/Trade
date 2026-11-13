@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Portal from "@/components/portal";
 export const metadata: Metadata = {
-  title: "پنل اختصاصی | Trade",
+  title: "پنل اختصاصی | Avina",
   robots: { index: false, follow: false },
 };
 export default function Dashboard() {

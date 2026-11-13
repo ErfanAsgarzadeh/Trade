@@ -135,7 +135,7 @@ export default function AdminWorkbench({
     <div id="admin-workbench">
       <section className="dashboard-hero">
         <div>
-          <span className="eyebrow">TRADE / CONTROL ROOM</span>
+          <span className="eyebrow">AVINA / CONTROL ROOM</span>
           <h1>کارتابل مدیریت سامانه</h1>
           <p>کاربران، درخواست‌ها و فروش؛ با دسترسی اختصاصی مدیر.</p>
           <span className="pill admin-role">مدیر سامانه</span>

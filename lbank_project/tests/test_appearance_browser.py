@@ -59,7 +59,7 @@ def test_appearance_lifecycle_contrast_and_prepaint(tmp_path):
                   results.push(['input-border','input',ratio('input-border','input'),3]);return results;
                 }''')
                 assert all(r[2]>=r[3] for r in pairs),[r for r in pairs if r[2]<r[3]]
-                assert page.locator('#equity-stroke stop').last.evaluate("e=>getComputedStyle(e).stopColor") in ('rgb(145, 221, 235)','rgb(40, 101, 122)')
+                assert page.locator('#equity-stroke stop').last.evaluate("e=>getComputedStyle(e).stopColor") in ('rgb(201, 178, 255)','rgb(90, 58, 168)')
                 switch.focus();assert switch.evaluate("e=>getComputedStyle(e).outlineStyle")!='none'
                 screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path)))
                 screenshots.mkdir(parents=True,exist_ok=True)
@@ -101,7 +101,7 @@ def test_standalone_terminal_and_real_chart_redraw(tmp_path):
         for theme in ('dark','light'):
             page.locator('#terminal-appearance').select_option(theme)
             colors=page.evaluate("['eq_chart','dd_chart'].map(id=>Chart.getChart(document.getElementById(id)).data.datasets[0].borderColor)")
-            assert [x.lower() for x in colors]==(['#91ddeb','#ff879b'] if theme=='dark' else ['#28657a','#b93856'])
+            assert [x.lower() for x in colors]==(['#c9b2ff','#ff7d9c'] if theme=='dark' else ['#5a3aa8','#b4234f'])
             assert page.evaluate("Chart.getChart(document.getElementById('eq_chart')).data.datasets[0].data")==before
             for tab in ('overview','positions','performance','settings'):
                 page.locator('[data-tab="'+tab+'"]').click()

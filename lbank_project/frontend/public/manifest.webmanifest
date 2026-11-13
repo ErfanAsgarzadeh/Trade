@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "Trade | پنل ربات‌های معاملاتی",
-  "short_name": "Trade",
+  "name": "Avina | ربات معامله‌گر هوشمند",
+  "short_name": "Avina",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "/dashboard/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0C101B",
-  "theme_color": "#0C101B",
+  "background_color": "#100424",
+  "theme_color": "#100424",
   "description": "مدیریت لایسنس و حساب ربات‌های شاهین، موج‌سوار و ققنوس",
   "icons": [
     {
