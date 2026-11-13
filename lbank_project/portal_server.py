@@ -21,7 +21,7 @@ from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index, public_page, robots_txt, sitemap_xml
+from portal_frontend import frontend_index, public_file, public_page, robots_txt, rss_xml, sitemap_xml
 from portal_admin_store import AdminStore
 
 COOKIE='trade_session'
@@ -179,16 +179,19 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             body=await request.body()
             if len(body)>16384:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
-        script_hashes=''
-        if request.url.path in page_files:
-            try:script_hashes=frontend_index(frontend,page_files[request.url.path])[1]
-            except OSError:pass
         path=request.url.path
+        public=public_file(frontend,path)
+        page=page_files.get(path) or (public[1] if public else None)
+        if response.status_code==404 and path.startswith('/blog/'):page='404.html'
+        script_hashes=''
+        if page:
+            try:script_hashes=frontend_index(frontend,page)[1]
+            except OSError:pass
         # Hashed build files never change; brand assets may. Public pages revalidate; everything else is private.
         if path.startswith('/_next/static/'):cache='public, max-age=31536000, immutable'
         elif path.startswith('/portal-assets/'):cache='public, max-age=86400'
-        elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml'):cache='public, max-age=3600'
-        elif path in ('/','/register','/register/'):cache='no-cache'
+        elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml','/blog/rss.xml'):cache='public, max-age=3600'
+        elif public:cache='no-cache'
         else:
             cache='no-store'
             response.headers['X-Robots-Tag']='noindex, nofollow'
@@ -215,7 +218,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/',response_class=HTMLResponse)
     def home():
-        try:return HTMLResponse(public_page(frontend,'index.html',origin))
+        try:return HTMLResponse(public_page(frontend,'/',origin))
         except OSError:
             return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
 
@@ -228,7 +231,21 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/register',response_class=HTMLResponse)
     @app.get('/register/',response_class=HTMLResponse)
     def registration_page():
-        try:return HTMLResponse(public_page(frontend,'register.html',origin))
+        try:return HTMLResponse(public_page(frontend,'/register/',origin))
+        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+
+    @app.get('/blog/rss.xml')
+    def blog_feed():return Response(rss_xml(origin,frontend),media_type='application/rss+xml; charset=utf-8')
+
+    @app.get('/blog',response_class=HTMLResponse)
+    @app.get('/blog/',response_class=HTMLResponse)
+    @app.get('/blog/{slug}',response_class=HTMLResponse)
+    @app.get('/blog/{slug}/',response_class=HTMLResponse)
+    def blog_page(request:Request):
+        try:return HTMLResponse(public_page(frontend,request.url.path,origin))
+        except LookupError:
+            try:return HTMLResponse(frontend_index(frontend,'404.html')[0],status_code=404)
+            except OSError:return HTMLResponse('Not found',status_code=404)
         except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
 
     @app.get('/admin',response_class=HTMLResponse)

@@ -33,15 +33,15 @@ def test_appearance_lifecycle_contrast_and_prepaint(tmp_path):
             page.on('console',lambda m:errors.append(m.text) if m.type=='error' and ('Hydration' in m.text or 'Content Security Policy' in m.text) else None)
             page.goto(origin);switch=page.get_by_label('انتخاب ظاهر')
             assert page.locator('html').get_attribute('data-theme')=='dark'
-            switch.select_option('light');assert page.locator('html').get_attribute('data-theme')=='light'
-            page.reload();assert switch.input_value()=='light'
+            switch.select_option('light');page.wait_for_function("()=>document.documentElement.dataset.theme==='light'")
+            page.reload();pw.expect(switch).to_have_value('light')
             cold=context.new_page();cold.route('**/_next/**/*.js',lambda route:route.abort())
             cold.goto(origin,wait_until='domcontentloaded')
             assert cold.locator('html').get_attribute('data-theme')=='light';cold.close()
             other=context.new_page();other.goto(origin)
-            switch.select_option('dark');other.wait_for_function("document.documentElement.dataset.theme==='dark'")
-            switch.select_option('system');assert page.locator('html').get_attribute('data-theme')=='light'
-            page.emulate_media(color_scheme='dark');page.wait_for_function("document.documentElement.dataset.theme==='dark'")
+            switch.select_option('dark');other.wait_for_function("()=>document.documentElement.dataset.theme==='dark'")
+            switch.select_option('system');page.wait_for_function("()=>document.documentElement.dataset.theme==='light'")
+            page.emulate_media(color_scheme='dark');page.wait_for_function("()=>document.documentElement.dataset.theme==='dark'")
             for theme in ('dark','light'):
                 switch.select_option(theme)
                 for width in (320,390,768,1440):

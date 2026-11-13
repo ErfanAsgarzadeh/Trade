@@ -49,7 +49,8 @@ docker compose -f portal-postgres-compose.yml exec -T db pg_dump -U trade_portal
 
 سایت این موارد را خودش می‌سازد و همه از `PORTAL_ORIGIN` خوانده می‌شوند، پس بعد از تنظیم دامنه کار دیگری لازم نیست:
 
-- `/robots.txt` و `/sitemap.xml`
+- `/robots.txt` و `/sitemap.xml` (شامل همهٔ مقاله‌های بلاگ)
+- خبرخوان بلاگ در `/blog/rss.xml`
 - تگ canonical، تصویر اشتراک‌گذاری (`og-image.png`) و دادهٔ ساختاریافته (Organization، WebSite، SoftwareApplication، FAQPage)
 - پنل کاربر، پنل مدیریت و API با `X-Robots-Tag: noindex` از نتایج جست‌وجو بیرون می‌مانند.
 
@@ -58,5 +59,7 @@ docker compose -f portal-postgres-compose.yml exec -T db pg_dump -U trade_portal
 1. دامنه را در [Google Search Console](https://search.google.com/search-console) ثبت و با رکورد DNS تأیید کنید.
 2. آدرس `https://دامنه/sitemap.xml` را در بخش Sitemaps بفرستید.
 3. همین کار را در [Bing Webmaster Tools](https://www.bing.com/webmasters) انجام دهید.
+
+برای نوشتن مقالهٔ تازه، راهنمای `frontend/content/blog/_HOW-TO-WRITE.md` را ببینید.
 
 رتبهٔ اول را هیچ تنظیم فنی‌ای تضمین نمی‌کند. بعد از این مرحله، رتبه به محتوای تازه (مقاله و راهنما)، لینک از سایت‌های معتبر و سابقهٔ دامنه بستگی دارد.
