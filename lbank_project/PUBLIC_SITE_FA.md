@@ -11,7 +11,9 @@ cd /opt/Trade/lbank_project
 mkdir -p issuer-keys && chmod 700 issuer-keys
 docker compose -f portal-postgres-compose.yml build portal
 docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal python portal_setup.py
+chmod 644 issuer-keys/postgres_password
 ```
+PostgreSQL فایل رمز را با کاربر خودش (نه root) می‌خواند، پس آن فایل باید قابل‌خواندن باشد؛ پوشهٔ `issuer-keys` با ۷۰۰ برای بقیهٔ کاربران سرور بسته می‌ماند.
 `portal_setup.py` رمز پایگاه داده، آدرس اتصال و کلید رمزگذاری (`portal.key`) را در `issuer-keys/` می‌سازد و چاپ نمی‌کند.
 از کل پوشهٔ `issuer-keys/` و از دادهٔ پایگاه داده جداگانه پشتیبان بگیرید.
 
