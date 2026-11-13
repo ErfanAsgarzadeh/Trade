@@ -44,7 +44,7 @@ def test_public_pages_carry_search_metadata_for_the_configured_origin():
         assert '<meta property="og:image" content="https://avina.example/portal-assets/og-image.png"/>' in home.text
         assert home.text.count('<h1')==1 and 'FAQPage' in home.text and '"SoftwareApplication"' in home.text
         # Added JSON-LD is data: the CSP still lists only the executable inline scripts.
-        assert home.headers['content-security-policy'].count("'sha256-")==frontend_index(Path('frontend/out'))[1].count("'sha256-")
+        assert home.headers['content-security-policy'].count("'sha256-")==frontend_index(Path(__file__).parents[1]/'frontend'/'out')[1].count("'sha256-")
         assert home.headers['cache-control']=='no-cache' and 'x-robots-tag' not in home.headers
         assert '<link rel="canonical" href="https://avina.example/register/"/>' in client.get('/register/').text
         assert client.get('/portal-assets/og-image.png').headers['cache-control']=='public, max-age=86400'
