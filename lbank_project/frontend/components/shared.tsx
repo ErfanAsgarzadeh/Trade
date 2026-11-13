@@ -7,7 +7,7 @@ export function BrandLogo({ compact = false }: { compact?: boolean }) {
         src="/portal-assets/avina-mark.png"
         alt=""
         width={44}
-        height={33}
+        height={24}
       />
       <span className="brand-lockup">
         <span className="brand">AVINA</span>
