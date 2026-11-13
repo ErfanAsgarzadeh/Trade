@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiClient, ApiError, SessionChanged, errorText } from "@/lib/api";
 import type { BillingSnapshot, Me } from "@/lib/types";
 import { licenseLabels, usd, faDate } from "@/lib/format";
-import { Arrow } from "./shared";
+import { Arrow, BrandLogo } from "./shared";
 import LicensePanel from "./license-panel";
 import AccountPanel from "./account-panel";
 import Robots from "./robots";
@@ -114,14 +114,7 @@ export default function Portal({
         رفتن به محتوا
       </a>
       <header className="topbar">
-        <a className="logo" href="/" aria-label="Trade، صفحه اصلی">
-          <span className="logo-mark" aria-hidden="true">
-            T
-          </span>
-          <span className="brand">
-            TRADE<span className="brand-dot">/</span>
-          </span>
-        </a>
+        <BrandLogo compact />
         <div className="topbar-meta">
           <span className="system-dot" aria-hidden="true" />
           <span>فضای اختصاصی معامله‌گر</span>
@@ -385,14 +378,14 @@ export default function Portal({
             )}
             {p?.product !== "signals" && <Robots api={api} report={report} />}
             <div className="bottom-note">
-              <span className="brand">TRADE /</span>
+              <span className="brand">AVINA</span>
               <p>معامله‌گری با ریسک همراه است. هیچ بازدهی تضمین نمی‌شود.</p>
             </div>
           </div>
         )}
       </main>
       <footer>
-        <span>TRADE ©</span>
+        <span>AVINA by ARTAX ©</span>
         <span>شاهین · موج‌سوار · ققنوس</span>
         <span>طراحی‌شده برای وب و موبایل</span>
       </footer>

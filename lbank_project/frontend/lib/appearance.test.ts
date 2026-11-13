@@ -96,7 +96,7 @@ test("storage denied does not prevent appearance changes", () => {
   assert.equal(c.attrs.get("data-theme"), "light");
 });
 
-test("both base palettes remain exactly the approved TITANIUM IRIS values", () => {
+test("both base palettes remain exactly the approved AVINA brand values", () => {
   const css = readFileSync(
     new URL("../public/portal-assets/titanium.css", import.meta.url),
     "utf8",
@@ -117,32 +117,32 @@ test("both base palettes remain exactly the approved TITANIUM IRIS values", () =
   ];
   const expected = {
     dark: [
-      "0c101b",
-      "171b2b",
-      "24293d",
-      "f3f1f8",
-      "a9acc0",
-      "b5a4ff",
-      "111322",
-      "91ddeb",
-      "dfa18e",
-      "65d6c2",
-      "ff879b",
-      "323648",
+      "100424",
+      "1a063a",
+      "2a0f55",
+      "f8f6ff",
+      "bcb2db",
+      "a767ff",
+      "100424",
+      "c9b2ff",
+      "ffd36b",
+      "5be3b5",
+      "ff7d9c",
+      "3c2670",
     ],
     light: [
-      "f7f6fa",
+      "f8f6ff",
       "ffffff",
-      "efedf5",
-      "1b1d2c",
-      "666b80",
-      "5746a0",
+      "efe9ff",
+      "1a063a",
+      "5a5079",
+      "5b16c7",
       "ffffff",
-      "28657a",
-      "a75d49",
-      "087d70",
-      "b93856",
-      "e1deeb",
+      "5a3aa8",
+      "8a5a00",
+      "05785c",
+      "b4234f",
+      "e2daf5",
     ],
   };
   for (const theme of ["dark", "light"] as const) {

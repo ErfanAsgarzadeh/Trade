@@ -1,4 +1,21 @@
 import type { Cell } from "@/lib/types";
+export function BrandLogo({ compact = false }: { compact?: boolean }) {
+  return (
+    <a className="logo" href="/" aria-label="Avina، صفحهٔ اصلی">
+      <img
+        className="logo-mark"
+        src="/portal-assets/avina-mark.png"
+        alt=""
+        width={44}
+        height={33}
+      />
+      <span className="brand-lockup">
+        <span className="brand">AVINA</span>
+        {!compact && <span className="brand-parent">by ARTAX</span>}
+      </span>
+    </a>
+  );
+}
 export function Arrow() {
   return (
     <svg

@@ -1,38 +1,39 @@
-/* TITANIUM IRIS — canonical palette and semantic tokens for every UI renderer. */
+/* AVINA by ARTAX — canonical palette and semantic tokens for every UI renderer (brand kit: Midnight #100424,
+   Deep Purple #1A063A, Royal Violet #5B16C7, Lavender #A767FF, Champagne Gold #FFD36B, Cream #F8F6FF). */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --background: #0c101b;
-  --surface: #171b2b;
-  --surface-elevated: #24293d;
-  --text-primary: #f3f1f8;
-  --text-secondary: #a9acc0;
-  --primary: #b5a4ff;
-  --primary-foreground: #111322;
-  --ai-accent: #91ddeb;
-  --premium-accent: #dfa18e;
-  --profit: #65d6c2;
-  --loss: #ff879b;
-  --border: #323648;
+  --background: #100424;
+  --surface: #1a063a;
+  --surface-elevated: #2a0f55;
+  --text-primary: #f8f6ff;
+  --text-secondary: #bcb2db;
+  --primary: #a767ff;
+  --primary-foreground: #100424;
+  --ai-accent: #c9b2ff;
+  --premium-accent: #ffd36b;
+  --profit: #5be3b5;
+  --loss: #ff7d9c;
+  --border: #3c2670;
   --profit-text: var(--profit);
   --premium-text: var(--premium-accent);
   --shadow-color: #000000;
-  --overlay: #050710b8;
+  --overlay: #08021ab8;
 }
 [data-theme="light"] {
   color-scheme: light;
-  --background: #f7f6fa;
+  --background: #f8f6ff;
   --surface: #ffffff;
-  --surface-elevated: #efedf5;
-  --text-primary: #1b1d2c;
-  --text-secondary: #666b80;
-  --primary: #5746a0;
+  --surface-elevated: #efe9ff;
+  --text-primary: #1a063a;
+  --text-secondary: #5a5079;
+  --primary: #5b16c7;
   --primary-foreground: #ffffff;
-  --ai-accent: #28657a;
-  --premium-accent: #a75d49;
-  --profit: #087d70;
-  --loss: #b93856;
-  --border: #e1deeb;
+  --ai-accent: #5a3aa8;
+  --premium-accent: #8a5a00;
+  --profit: #05785c;
+  --loss: #b4234f;
+  --border: #e2daf5;
   --profit-text: color-mix(in srgb, var(--profit) 90%, var(--text-primary));
   --premium-text: color-mix(
     in srgb,
@@ -123,7 +124,7 @@
     var(--surface-elevated),
     var(--surface) 70%
   );
-  --brand-gradient: linear-gradient(135deg, var(--primary), var(--ai-accent));
+  --brand-gradient: linear-gradient(135deg, var(--primary), var(--premium-accent));
   --page-tint: color-mix(in srgb, var(--primary) 5%, transparent);
   --decorative-line: color-mix(in srgb, var(--primary) 7%, transparent);
   --chart-background: var(--surface);

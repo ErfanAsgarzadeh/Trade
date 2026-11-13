@@ -5,8 +5,21 @@
   font-display: swap;
   font-weight: 400;
 }
+/* Avina brand kit: Persian in Noto Sans Arabic, Latin in Lato. */
+@font-face {
+  font-family: Lato;
+  src: url("/portal-assets/lato-400.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+}
+@font-face {
+  font-family: Lato;
+  src: url("/portal-assets/lato-700.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700 900;
+}
 :root {
-  font-family: TradeArabic, Tahoma, Arial, sans-serif;
+  font-family: Lato, TradeArabic, Tahoma, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.9;
@@ -125,20 +138,35 @@ button.secondary {
   direction: ltr;
 }
 .logo-mark {
-  display: grid;
-  place-items: center;
-  width: 35px;
-  height: 35px;
-  color: var(--ink);
-  background: var(--accent);
-  border-radius: 10px;
-  font: 900 italic 24px Arial;
+  display: block;
+  width: 44px;
+  height: auto;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, #a767ff 45%, transparent));
+}
+.brand-lockup {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
 }
 .brand {
   font:
-    800 23px Arial,
+    700 22px Lato,
+    Arial,
     sans-serif;
-  letter-spacing: 2px;
+  letter-spacing: 5px;
+  background: linear-gradient(100deg, var(--text-primary) 55%, var(--premium-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-parent {
+  font:
+    400 10px Lato,
+    Arial,
+    sans-serif;
+  letter-spacing: 2.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
 }
 .brand-dot {
   color: var(--accent);
@@ -1073,9 +1101,7 @@ dialog::backdrop {
     font-size: 19px;
   }
   .logo-mark {
-    width: 29px;
-    height: 29px;
-    font-size: 21px;
+    width: 34px;
   }
   .small {
     padding: 7px 9px;
@@ -1715,6 +1741,20 @@ dialog::backdrop {
 .landing-closing em {
   font-style: normal;
   color: var(--accent);
+  background: linear-gradient(100deg, var(--primary), var(--premium-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* Avina glow behind the hero, like the brand mark's violet and gold light. */
+.landing-hero::before {
+  position: absolute;
+  inset: -40px -10% 0;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(42% 55% at 72% 38%, color-mix(in srgb, #a767ff 22%, transparent), transparent 70%),
+    radial-gradient(30% 40% at 20% 70%, color-mix(in srgb, #ffd36b 10%, transparent), transparent 70%);
 }
 .landing-intro {
   font-size: 14px;
@@ -2436,9 +2476,7 @@ dialog::backdrop {
     font-size: 18px;
   }
   .landing-header .logo-mark {
-    height: 28px;
-    width: 28px;
-    font-size: 20px;
+    width: 34px;
   }
   .landing-hero {
     gap: 26px;

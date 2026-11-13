@@ -8,21 +8,22 @@ const appearanceBootstrap = readFileSync(
   "utf8",
 );
 export const metadata: Metadata = {
-  title: "Trade — پنل اختصاصی حساب شما",
-  description: "مدیریت لایسنس سرمایه‌ای و ربات‌های شاهین، موج‌سوار و ققنوس",
+  title: "Avina — ربات معامله‌گر هوشمند | by ARTAX",
+  description:
+    "آوینا، ربات معامله‌گر هوشمند فیوچرز از خانوادهٔ ARTAX: سه استراتژی شاهین، موج‌سوار و ققنوس با حد ضرر روی خود صرافی و مدیریت ریسک خودکار.",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/portal-assets/icon-192.png",
-    apple: "/portal-assets/icon-192.png",
+    icon: "/portal-assets/favicon.png",
+    apple: "/portal-assets/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,
-    title: "Trade",
+    title: "Avina",
     statusBarStyle: "black-translucent",
   },
 };
 export const viewport: Viewport = {
-  themeColor: "#0C101B",
+  themeColor: "#100424",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
