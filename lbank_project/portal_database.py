@@ -92,6 +92,18 @@ SCHEMA_V9='''
 CREATE TABLE IF NOT EXISTS blog_images(id TEXT PRIMARY KEY,name TEXT NOT NULL,width INTEGER NOT NULL,
  height INTEGER NOT NULL,size INTEGER NOT NULL,data BLOB NOT NULL,created REAL NOT NULL);
 '''
+SCHEMA_V10='''
+CREATE TABLE IF NOT EXISTS site_settings(name TEXT PRIMARY KEY,value TEXT NOT NULL,updated REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS payment_invoices(id TEXT PRIMARY KEY,order_id TEXT NOT NULL REFERENCES license_orders(id),
+ user_id TEXT NOT NULL REFERENCES users(id),network TEXT NOT NULL,token TEXT NOT NULL,address TEXT NOT NULL,
+ amount_micro BIGINT NOT NULL,status TEXT NOT NULL CHECK(status IN ('open','expired','replaced','paid','cancelled')),
+ created REAL NOT NULL,expires REAL NOT NULL,paid_at REAL,tx_ref TEXT UNIQUE);
+CREATE INDEX IF NOT EXISTS payment_invoices_match ON payment_invoices(network,token,amount_micro,status);
+CREATE INDEX IF NOT EXISTS payment_invoices_order ON payment_invoices(order_id);
+CREATE TABLE IF NOT EXISTS payment_transfers(tx_ref TEXT PRIMARY KEY,network TEXT NOT NULL,token TEXT NOT NULL,
+ from_address TEXT NOT NULL,to_address TEXT NOT NULL,amount_micro BIGINT NOT NULL,block_time REAL NOT NULL,
+ seen REAL NOT NULL,invoice_id TEXT,status TEXT NOT NULL CHECK(status IN ('matched','unmatched')));
+'''
 
 
 class PostgresConnection:
@@ -160,8 +172,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7,8,9}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9)):
+            if versions-{1,2,3,4,5,6,7,8,9,10}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

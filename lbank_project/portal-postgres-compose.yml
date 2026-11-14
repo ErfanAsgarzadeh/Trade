@@ -60,6 +60,13 @@ services:
       <<: *environment
       PORTAL_EXCHANGE_READ_INTERVAL: ${PORTAL_EXCHANGE_READ_INTERVAL:-0.25}
       PORTAL_EXCHANGE_READ_INTERVALS: ${PORTAL_EXCHANGE_READ_INTERVALS:-}
+  # Reads confirmed USDT/USDC transfers to the receiving addresses set in the admin panel; holds no keys.
+  payment-worker:
+    <<: *runtime
+    command: [python, -u, portal_payments.py]
+    environment:
+      <<: *environment
+      PAYMENT_CHECK_SECONDS: ${PAYMENT_CHECK_SECONDS:-20}
 volumes:
   portal_pgdata:
 secrets:

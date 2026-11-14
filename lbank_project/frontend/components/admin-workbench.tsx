@@ -7,6 +7,8 @@ import { useLang } from "@/lib/lang";
 import type { Lang } from "@/lib/i18n";
 import { Heading } from "./shared";
 import AdminBlog from "./admin-blog";
+import AdminPayments from "./admin-payments";
+import type { Invoice } from "./payment-panel";
 
 type Report = (error: unknown) => void;
 interface PageData<T> {
@@ -37,6 +39,7 @@ interface AdminOrder {
   created: number;
   approval_state: string | null;
   error_code: string | null;
+  payment: Invoice | null;
 }
 interface EventRow {
   id: string;
@@ -57,6 +60,7 @@ const tabs = [
   ["orders", "کارتابل درخواست‌ها", "Requests"],
   ["users", "کاربران", "Users"],
   ["pricing", "قیمت و فروش", "Pricing and sales"],
+  ["payments", "پرداخت", "Payments"],
   ["blog", "بلاگ", "Blog"],
   ["audit", "سوابق عملیات", "Audit log"],
 ] as const;
@@ -84,6 +88,8 @@ const EVENTS: Record<string, Pair> = {
   blog_created: ["ساخت مقاله", "Article created"],
   blog_updated: ["ویرایش مقاله", "Article updated"],
   blog_deleted: ["حذف مقاله", "Article deleted"],
+  payment_received: ["دریافت پرداخت روی شبکه", "On-chain payment received"],
+  payment_settings_saved: ["تغییر تنظیمات پرداخت", "Payment settings changed"],
 };
 const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
   table[key]?.[lang === "en" ? 1 : 0];
@@ -169,14 +175,22 @@ export default function AdminWorkbench({
               "Users, requests and sales; for the administrator only.",
             )}
           </p>
-          <span className="pill admin-role">{t("مدیر سامانه", "Administrator")}</span>
+          <span className="pill admin-role">
+            {t("مدیر سامانه", "Administrator")}
+          </span>
         </div>
-        <a className="button secondary" href={lang === "en" ? "/en/dashboard/" : "/dashboard/"}>
+        <a
+          className="button secondary"
+          href={lang === "en" ? "/en/dashboard/" : "/dashboard/"}
+        >
           {t("بازگشت به پنل مشتری", "Back to customer panel")}
         </a>
       </section>
       <div className="admin-layout">
-        <nav className="admin-nav" aria-label={t("بخش‌های مدیریت", "Admin sections")}>
+        <nav
+          className="admin-nav"
+          aria-label={t("بخش‌های مدیریت", "Admin sections")}
+        >
           {tabs.map(([key, fa, en]) => (
             <button
               key={key}
@@ -195,7 +209,10 @@ export default function AdminWorkbench({
               <div className="stat-grid">
                 {[
                   ["users", t("کل کاربران", "Total users")],
-                  ["pending_orders", t("درخواست در انتظار", "Pending requests")],
+                  [
+                    "pending_orders",
+                    t("درخواست در انتظار", "Pending requests"),
+                  ],
                   ["issued_licenses", t("لایسنس صادرشده", "Licenses issued")],
                 ].map(([key, label], i) => (
                   <article className="stat-card" key={key}>
@@ -208,14 +225,23 @@ export default function AdminWorkbench({
                     </strong>
                     <p>
                       {key === "issued_licenses"
-                        ? t("تعداد کل صدور؛ شامل دوره‌های منقضی", "All issued, including expired terms")
-                        : t("اطلاعات پایگاه دادهٔ سامانه", "From the site database")}
+                        ? t(
+                            "تعداد کل صدور؛ شامل دوره‌های منقضی",
+                            "All issued, including expired terms",
+                          )
+                        : t(
+                            "اطلاعات پایگاه دادهٔ سامانه",
+                            "From the site database",
+                          )}
                     </p>
                   </article>
                 ))}
               </div>
               <section className="panel">
-                <Heading eyebrow="OPERATIONS" title={t("وضعیت سرویس‌ها", "Service status")} />
+                <Heading
+                  eyebrow="OPERATIONS"
+                  title={t("وضعیت سرویس‌ها", "Service status")}
+                />
                 <div className="admin-overview-services">
                   <article>
                     <h3>{t("صف صدور لایسنس", "License issuing queue")}</h3>
@@ -238,7 +264,9 @@ export default function AdminWorkbench({
                     <strong>
                       {data ? faNumber(data.counts.failed_approvals) : "—"}
                     </strong>
-                    <p>{t("درخواست‌های صدور ناموفق", "Failed issuing requests")}</p>
+                    <p>
+                      {t("درخواست‌های صدور ناموفق", "Failed issuing requests")}
+                    </p>
                     <button
                       className="text-button"
                       onClick={() => setTab("orders")}
@@ -255,7 +283,10 @@ export default function AdminWorkbench({
                 </p>
               </section>
               <section className="panel">
-                <Heading eyebrow="SALES STATUS" title={t("وضعیت فروش محصولات", "Product sales status")} />
+                <Heading
+                  eyebrow="SALES STATUS"
+                  title={t("وضعیت فروش محصولات", "Product sales status")}
+                />
                 {data?.pricing.products.map((p) => (
                   <div key={p.product} className="admin-status-row">
                     <strong>{p.label}</strong>
@@ -265,7 +296,9 @@ export default function AdminWorkbench({
                         (p.sales_enabled ? "approved" : "cancelled")
                       }
                     >
-                      {p.sales_enabled ? t("فروش باز", "Sales open") : t("فروش بسته", "Sales closed")}
+                      {p.sales_enabled
+                        ? t("فروش باز", "Sales open")
+                        : t("فروش بسته", "Sales closed")}
                     </span>
                     <button
                       className="text-button"
@@ -290,6 +323,7 @@ export default function AdminWorkbench({
           {tab === "pricing" && (
             <Pricing api={api} report={report} changed={changed} />
           )}
+          {tab === "payments" && <AdminPayments api={api} report={report} />}
           {tab === "blog" && <AdminBlog api={api} report={report} />}
           {tab === "audit" && <Events api={api} report={report} />}
         </div>
@@ -417,20 +451,40 @@ function Users({
                 <td>
                   <bdi dir="ltr">{u.email || "—"}</bdi>
                 </td>
-                <td>{u.role === "admin" ? t("مدیر", "Admin") : t("مشتری", "Customer")}</td>
-                <td>{u.disabled ? t("تعلیق‌شده", "Suspended") : t("فعال", "Active")}</td>
-                <td>{u.has_connection ? t("ثبت‌شده", "Saved") : t("ندارد", "None")}</td>
-                <td>{u.has_runtime ? t("متصل", "Connected") : t("متصل نیست", "Not connected")}</td>
+                <td>
+                  {u.role === "admin"
+                    ? t("مدیر", "Admin")
+                    : t("مشتری", "Customer")}
+                </td>
+                <td>
+                  {u.disabled
+                    ? t("تعلیق‌شده", "Suspended")
+                    : t("فعال", "Active")}
+                </td>
+                <td>
+                  {u.has_connection
+                    ? t("ثبت‌شده", "Saved")
+                    : t("ندارد", "None")}
+                </td>
+                <td>
+                  {u.has_runtime
+                    ? t("متصل", "Connected")
+                    : t("متصل نیست", "Not connected")}
+                </td>
                 <td>
                   {u.role === "admin" ? (
-                    <span className="note">{t("مدیریت از مسیر سرور", "Managed on the server")}</span>
+                    <span className="note">
+                      {t("مدیریت از مسیر سرور", "Managed on the server")}
+                    </span>
                   ) : (
                     <button
                       className="text-button"
                       disabled={busy}
                       onClick={() => toggle(u)}
                     >
-                      {u.disabled ? t("فعال‌سازی", "Enable") : t("تعلیق دسترسی", "Suspend access")}
+                      {u.disabled
+                        ? t("فعال‌سازی", "Enable")
+                        : t("تعلیق دسترسی", "Suspend access")}
                     </button>
                   )}
                 </td>
@@ -549,7 +603,9 @@ function Orders({
         )}
       />
       <div className="admin-filters">
-        <label htmlFor="admin-order-filter">{t("وضعیت درخواست", "Request status")}</label>
+        <label htmlFor="admin-order-filter">
+          {t("وضعیت درخواست", "Request status")}
+        </label>
         <select
           id="admin-order-filter"
           value={status}
@@ -581,6 +637,7 @@ function Orders({
                 t("محصول / دوره", "Product / term"),
                 t("سرمایه", "Capital"),
                 t("مبلغ", "Amount"),
+                t("پرداخت", "Payment"),
                 t("وضعیت", "Status"),
                 t("عملیات", "Actions"),
               ].map((h) => (
@@ -602,12 +659,52 @@ function Orders({
                     ? t("فقط سیگنال", "Signals only")
                     : t("معاملهٔ خودکار", "Automated trading")}
                   <small className="admin-row-note">
-                    {faNumber(o.months)} {t("ماه", o.months === 1 ? "month" : "months")} ·{" "}
-                    {o.kind === "upgrade" ? t("ارتقا", "Upgrade") : t("اشتراک", "Subscription")}
+                    {faNumber(o.months)}{" "}
+                    {t("ماه", o.months === 1 ? "month" : "months")} ·{" "}
+                    {o.kind === "upgrade"
+                      ? t("ارتقا", "Upgrade")
+                      : t("اشتراک", "Subscription")}
                   </small>
                 </td>
                 <td>{usd(o.cap_usd)}</td>
                 <td>{usd(o.price_cents / 100)}</td>
+                <td>
+                  {!o.payment ? (
+                    <span className="note">
+                      {t("هنوز پرداختی شروع نشده", "Not started")}
+                    </span>
+                  ) : o.payment.status === "paid" ? (
+                    <>
+                      <span className="pill success">
+                        {t("پرداخت‌شده", "Paid")}
+                      </span>
+                      <small className="admin-row-note">
+                        <bdi dir="ltr">
+                          {o.payment.amount} {o.payment.token}
+                        </bdi>{" "}
+                        {o.payment.explorer_url && (
+                          <a
+                            href={o.payment.explorer_url}
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {t("تراکنش", "Transaction")}
+                          </a>
+                        )}
+                      </small>
+                    </>
+                  ) : (
+                    <small className="admin-row-note">
+                      {t("فاکتور ", "Invoice ")}
+                      <bdi dir="ltr">
+                        {o.payment.amount} {o.payment.token}
+                      </bdi>
+                      {o.payment.status === "open"
+                        ? t(" · در انتظار پرداخت", " · awaiting payment")
+                        : t(" · منقضی", " · expired")}
+                    </small>
+                  )}
+                </td>
                 <td>
                   <span
                     className={
@@ -662,7 +759,10 @@ function Orders({
       </div>
       {data && !data.items.length && (
         <p className="empty-state">
-          {t("درخواستی با این وضعیت وجود ندارد.", "No requests with this status.")}
+          {t(
+            "درخواستی با این وضعیت وجود ندارد.",
+            "No requests with this status.",
+          )}
         </p>
       )}
       {data && (
@@ -681,7 +781,10 @@ function Orders({
           <h2>
             {selection?.action === "reject"
               ? t("رد درخواست", "Reject request")
-              : t("تأیید بررسی و ارسال برای صدور", "Approve and send for issuing")}
+              : t(
+                  "تأیید بررسی و ارسال برای صدور",
+                  "Approve and send for issuing",
+                )}
           </h2>
           <p>
             {selection?.order.username} ·{" "}
@@ -689,7 +792,9 @@ function Orders({
           </p>
           {selection?.action === "reject" ? (
             <>
-              <label htmlFor="admin-reject-reason">{t("دلیل رد درخواست", "Reason for rejection")}</label>
+              <label htmlFor="admin-reject-reason">
+                {t("دلیل رد درخواست", "Reason for rejection")}
+              </label>
               <textarea
                 id="admin-reject-reason"
                 name="reason"
@@ -707,6 +812,7 @@ function Orders({
                 id="admin-payment-ref"
                 name="payment_ref"
                 dir="ltr"
+                defaultValue={selection?.order.payment?.tx_ref ?? ""}
                 minLength={4}
                 maxLength={120}
                 required
@@ -714,7 +820,10 @@ function Orders({
               {selection?.order.product === "autotrade" && (
                 <>
                   <label htmlFor="admin-account-id">
-                    {t("شناسهٔ تأییدشدهٔ حساب، مانند exchange:uid", "Verified account ID, e.g. exchange:uid")}
+                    {t(
+                      "شناسهٔ تأییدشدهٔ حساب، مانند exchange:uid",
+                      "Verified account ID, e.g. exchange:uid",
+                    )}
                   </label>
                   <input
                     id="admin-account-id"
@@ -723,7 +832,9 @@ function Orders({
                     maxLength={120}
                     required
                   />
-                  <label htmlFor="admin-equity">{t("اکوییتی تأییدشده، دلار", "Verified equity, USD")}</label>
+                  <label htmlFor="admin-equity">
+                    {t("اکوییتی تأییدشده، دلار", "Verified equity, USD")}
+                  </label>
                   <input
                     id="admin-equity"
                     name="equity_usd"
@@ -910,7 +1021,9 @@ function PricingEditor({
       <div className="section-heading">
         <h2>{product.label}</h2>
         <span className="order-status">
-          {product.sales_enabled ? t("فروش باز", "Sales open") : t("فروش بسته", "Sales closed")}
+          {product.sales_enabled
+            ? t("فروش باز", "Sales open")
+            : t("فروش بسته", "Sales closed")}
         </span>
       </div>
       <form onSubmit={save}>
@@ -924,13 +1037,15 @@ function PricingEditor({
             <thead>
               <tr>
                 <th>{t("سقف سرمایه", "Capital cap")}</th>
-                {[t("یک‌ماهه", "1 month"), t("سه‌ماهه", "3 months"), t("شش‌ماهه", "6 months")].map(
-                  (label) => (
-                    <th key={label}>
-                      {label} / {t("دلار", "USD")}
-                    </th>
-                  ),
-                )}
+                {[
+                  t("یک‌ماهه", "1 month"),
+                  t("سه‌ماهه", "3 months"),
+                  t("شش‌ماهه", "6 months"),
+                ].map((label) => (
+                  <th key={label}>
+                    {label} / {t("دلار", "USD")}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -941,7 +1056,12 @@ function PricingEditor({
                     <td key={m}>
                       <input
                         aria-label={
-                          product.label + " " + x.cap_usd + " " + m + t(" ماه", " months")
+                          product.label +
+                          " " +
+                          x.cap_usd +
+                          " " +
+                          m +
+                          t(" ماه", " months")
                         }
                         data-cap={x.cap_usd}
                         data-months={m}
@@ -1064,9 +1184,7 @@ function Events({ api, report }: { api: ApiClient; report: Report }) {
           <tbody>
             {data?.items.map((e) => (
               <tr key={e.id}>
-                <td>
-                  {dateTime(e.at, lang)}
-                </td>
+                <td>{dateTime(e.at, lang)}</td>
                 <td>{e.actor || t("اپراتور سرور", "Server operator")}</td>
                 <td>
                   {label(EVENTS, e.action, lang) || e.action}

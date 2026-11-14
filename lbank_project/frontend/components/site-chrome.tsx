@@ -34,7 +34,9 @@ export function SiteHeader({
       <BrandLogo lang={lang} />
       <nav aria-label={t("ناوبری اصلی", "Main navigation")}>
         <a href={anchor("why")}>{t("چرا آوینا", "Why Avina")}</a>
-        <a href={anchor("backtest")}>{t("کارنامهٔ پنج‌ساله", "Five-year record")}</a>
+        <a href={anchor("backtest")}>
+          {t("کارنامهٔ پنج‌ساله", "Five-year record")}
+        </a>
         <a href={anchor("products")}>{t("پلن‌ها", "Plans")}</a>
         <a href={path("/blog/")}>{t("بلاگ", "Blog")}</a>
         <a href={anchor("faq")}>{t("پرسش‌ها", "FAQ")}</a>

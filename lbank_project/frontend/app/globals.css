@@ -3442,3 +3442,93 @@ html[lang="fa"] .blog-contents ol {
 .admin-blog-tabs {
   flex-wrap: wrap;
 }
+/* Stablecoin payment */
+.payment-panel {
+  margin: 8px 0 26px;
+  padding: 22px;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  background: var(--primary-soft);
+}
+.payment-panel h3 {
+  margin: 4px 0 6px;
+}
+.payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+.payment-invoice {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.payment-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.qr-code {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+}
+.payment-qr small {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.payment-amount,
+.payment-address {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.payment-amount bdi {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--premium-text);
+}
+.payment-address bdi {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.payment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+.payment-paid strong {
+  color: var(--success);
+  font-size: 18px;
+}
+@media (max-width: 700px) {
+  .payment-invoice {
+    grid-template-columns: 1fr;
+  }
+  .qr-code {
+    width: 180px;
+    height: 180px;
+  }
+}
+.admin-payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 720px;
+  margin-bottom: 20px;
+}
+.admin-payment-form button[type="submit"] {
+  align-self: flex-start;
+}

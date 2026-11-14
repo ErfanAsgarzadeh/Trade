@@ -120,7 +120,11 @@ export default function AccountPanel({ api, report, notify }: Props) {
     }
   }
   async function disconnect() {
-    if (!window.confirm(t("اتصال ذخیره‌شده حذف شود؟", "Remove the saved connection?")))
+    if (
+      !window.confirm(
+        t("اتصال ذخیره‌شده حذف شود؟", "Remove the saved connection?"),
+      )
+    )
       return;
     setBusy(true);
     generation.current++;
@@ -194,7 +198,9 @@ export default function AccountPanel({ api, report, notify }: Props) {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="market">{t("نوع حساب", "Account type")}</label>
+                  <label htmlFor="market">
+                    {t("نوع حساب", "Account type")}
+                  </label>
                   <select
                     id="market"
                     value={market}
@@ -231,7 +237,9 @@ export default function AccountPanel({ api, report, notify }: Props) {
                 field("passphrase", "Passphrase", 1, 512)}
               {fields.includes("uid") &&
                 field("uid", t("شناسهٔ حساب", "Account ID"), 1, 128)}
-              <button type="submit">{t("ثبت کلیدهای حساب", "Save account keys")}</button>
+              <button type="submit">
+                {t("ثبت کلیدهای حساب", "Save account keys")}
+              </button>
             </fieldset>
           </form>
           <p className="note">
@@ -261,7 +269,10 @@ export default function AccountPanel({ api, report, notify }: Props) {
               disabled={busy || !connection?.configured}
               onClick={check}
             >
-              {t("بررسی اتصال و دریافت موجودی", "Check connection and load balance")}
+              {t(
+                "بررسی اتصال و دریافت موجودی",
+                "Check connection and load balance",
+              )}
             </button>
             <button
               id="disconnect"
@@ -294,7 +305,8 @@ export default function AccountPanel({ api, report, notify }: Props) {
           />
           <p className="note">
             {snapshot?.balance_scope
-              ? t("محدودهٔ موجودی: ", "Balance scope: ") + snapshot.balance_scope
+              ? t("محدودهٔ موجودی: ", "Balance scope: ") +
+                snapshot.balance_scope
               : ""}
           </p>
           <h3 className="positions-title">

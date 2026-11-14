@@ -10,7 +10,8 @@ export const pick =
 
 /** A site path in the given language: "/blog/" becomes "/en/blog/" in English. */
 export function localPath(lang: Lang, path: string) {
-  const clean = path.startsWith("/en/") || path === "/en" ? path.slice(3) || "/" : path;
+  const clean =
+    path.startsWith("/en/") || path === "/en" ? path.slice(3) || "/" : path;
   return lang === "en" ? "/en" + (clean === "/" ? "/" : clean) : clean;
 }
 

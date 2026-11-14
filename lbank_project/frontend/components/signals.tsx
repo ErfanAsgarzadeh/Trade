@@ -84,7 +84,10 @@ export default function Signals({
           )
         : loading
           ? t("در حال دریافت سیگنال‌ها…", "Loading signals…")
-          : t("هنوز سیگنالی از ربات‌ها ثبت نشده است.", "No signals from the bots yet.");
+          : t(
+              "هنوز سیگنالی از ربات‌ها ثبت نشده است.",
+              "No signals from the bots yet.",
+            );
   return (
     <section id="signals-section" className="panel">
       <Heading
@@ -98,7 +101,10 @@ export default function Signals({
       />
       <div className="actions">
         <span className="quiet-tag">
-          {t("به‌روزرسانی هر ۳۰ ثانیه · زمان تهران", "Updates every 30 seconds · Tehran time")}
+          {t(
+            "به‌روزرسانی هر ۳۰ ثانیه · زمان تهران",
+            "Updates every 30 seconds · Tehran time",
+          )}
         </span>
         <button
           id="refresh-signals"
@@ -156,7 +162,10 @@ export default function Signals({
                   <dt>{t("هدف اول", "First target")}</dt>
                   <dd>
                     {s.target === null
-                      ? t("مدیریت با استاپ متحرک", "Managed with a trailing stop")
+                      ? t(
+                          "مدیریت با استاپ متحرک",
+                          "Managed with a trailing stop",
+                        )
                       : num(s.target, lang)}
                   </dd>
                 </div>

@@ -136,7 +136,9 @@ export default function BacktestMotion() {
           <span className="replay-dot" />
           BACKTEST REPLAY
         </div>
-        <span className="replay-tag">{t("شبیه‌سازی تاریخی", "Historical simulation")}</span>
+        <span className="replay-tag">
+          {t("شبیه‌سازی تاریخی", "Historical simulation")}
+        </span>
       </div>
       <div className="replay-value">
         <div>
@@ -258,7 +260,12 @@ export default function BacktestMotion() {
         />
       </svg>
       <div className="replay-controls">
-        <span>{t("ارزش پایان روز · مقیاس لگاریتمی · دلار", "End-of-day value · log scale · USD")}</span>
+        <span>
+          {t(
+            "ارزش پایان روز · مقیاس لگاریتمی · دلار",
+            "End-of-day value · log scale · USD",
+          )}
+        </span>
         <button
           id="toggle-backtest-motion"
           onClick={toggle}

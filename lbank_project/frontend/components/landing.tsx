@@ -8,8 +8,34 @@ import { SiteFooter, SiteHeader } from "./site-chrome";
 import LatestPosts from "./latest-posts";
 
 const MONTHS: Record<Lang, string[]> = {
-  fa: ["ژانویه", "فوریه", "مارس", "آوریل", "مه", "ژوئن", "ژوئیه", "اوت", "سپتامبر", "اکتبر", "نوامبر", "دسامبر"],
-  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  fa: [
+    "ژانویه",
+    "فوریه",
+    "مارس",
+    "آوریل",
+    "مه",
+    "ژوئن",
+    "ژوئیه",
+    "اوت",
+    "سپتامبر",
+    "اکتبر",
+    "نوامبر",
+    "دسامبر",
+  ],
+  en: [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ],
 };
 
 /** The months of a calendar year that the backtest actually covers, from its monthly series. */
@@ -32,21 +58,30 @@ function content(lang: Lang) {
   const t = pick(lang);
   const steps = [
     {
-      name: t("حساب بسازید و پلن را انتخاب کنید", "Create an account and pick a plan"),
+      name: t(
+        "حساب بسازید و پلن را انتخاب کنید",
+        "Create an account and pick a plan",
+      ),
       text: t(
         "ثبت‌نام کمتر از یک دقیقه طول می‌کشد. پلن سیگنال یا معاملهٔ خودکار را متناسب با سرمایه‌تان انتخاب کنید.",
         "Sign-up takes under a minute. Choose the signals plan or automated trading to match your capital.",
       ),
     },
     {
-      name: t("حساب صرافی خودتان را وصل کنید", "Connect your own exchange account"),
+      name: t(
+        "حساب صرافی خودتان را وصل کنید",
+        "Connect your own exchange account",
+      ),
       text: t(
         "کلید API را بدون دسترسی برداشت بسازید و در پنل ثبت کنید. پول از حساب صرافی شما خارج نمی‌شود.",
         "Create an API key without withdrawal permission and add it in your panel. Your funds never leave your exchange account.",
       ),
     },
     {
-      name: t("معاملات را در پنل دنبال کنید", "Follow every trade in your panel"),
+      name: t(
+        "معاملات را در پنل دنبال کنید",
+        "Follow every trade in your panel",
+      ),
       text: t(
         "سیگنال‌ها، پوزیشن‌های باز، حد ضررها و نتیجهٔ هر معامله را لحظه‌به‌لحظه در پنل اختصاصی ببینید.",
         "See signals, open positions, stop-losses and the result of every trade in your private panel, live.",
@@ -56,42 +91,60 @@ function content(lang: Lang) {
   // The same questions feed the visible FAQ and its structured data, so the two can never disagree.
   const faqs = [
     {
-      q: t("آوینا چیست و چه کاری انجام می‌دهد؟", "What is Avina and what does it do?"),
+      q: t(
+        "آوینا چیست و چه کاری انجام می‌دهد؟",
+        "What is Avina and what does it do?",
+      ),
       a: t(
         "آوینا یک ربات معامله‌گر هوشمند ارز دیجیتال از خانوادهٔ ARTAX است که شبانه‌روز روی بازار فیوچرز معامله می‌کند و برای هر معامله حد ضرر و اندازهٔ پوزیشن مشخص دارد.",
         "Avina is a smart crypto trading bot from the ARTAX family. It trades futures around the clock, with a defined stop-loss and position size for every trade.",
       ),
     },
     {
-      q: t("آیا باید پولم را به آوینا واریز کنم؟", "Do I have to deposit money with Avina?"),
+      q: t(
+        "آیا باید پولم را به آوینا واریز کنم؟",
+        "Do I have to deposit money with Avina?",
+      ),
       a: t(
         "نه. سرمایه در حساب صرافی خودتان می‌ماند. آوینا فقط با کلید API معامله می‌کند و این کلید باید بدون دسترسی برداشت ساخته شود.",
         "No. Your capital stays in your own exchange account. Avina trades only through an API key, which must be created without withdrawal permission.",
       ),
     },
     {
-      q: t("آیا ربات معامله‌گر آوینا سود را تضمین می‌کند؟", "Does the Avina trading bot guarantee profit?"),
+      q: t(
+        "آیا ربات معامله‌گر آوینا سود را تضمین می‌کند؟",
+        "Does the Avina trading bot guarantee profit?",
+      ),
       a: t(
         "نه. هیچ ربات تریدری نمی‌تواند سود را تضمین کند. کارنامهٔ پنج‌ساله یک شبیه‌سازی تاریخی است، نه نتیجهٔ حساب زنده. معامله در بازار فیوچرز ریسک از دست دادن سرمایه دارد.",
         "No. No trading bot can guarantee profit. The five-year record is a historical simulation, not a live account result. Futures trading carries the risk of losing capital.",
       ),
     },
     {
-      q: t("تفاوت پلن سیگنال با معاملهٔ خودکار چیست؟", "What is the difference between signals and automated trading?"),
+      q: t(
+        "تفاوت پلن سیگنال با معاملهٔ خودکار چیست؟",
+        "What is the difference between signals and automated trading?",
+      ),
       a: t(
         "در پلن سیگنال، نقطهٔ ورود، حد ضرر و هدف را دریافت می‌کنید و خودتان معامله را اجرا می‌کنید؛ کلید صرافی لازم نیست. در پلن معاملهٔ خودکار، ربات ورود و مدیریت معامله را انجام می‌دهد.",
         "With signals you receive the entry, stop-loss and target and place the trade yourself; no exchange key is needed. With automated trading the bot enters and manages the trade for you.",
       ),
     },
     {
-      q: t("حد ضرر در آوینا چطور کار می‌کند؟", "How do stop-losses work in Avina?"),
+      q: t(
+        "حد ضرر در آوینا چطور کار می‌کند؟",
+        "How do stop-losses work in Avina?",
+      ),
       a: t(
         "هر پوزیشن از لحظهٔ ورود حد ضرر ثبت‌شده روی خود صرافی دارد. ربات بعد از هر تغییر، حد ضرر را دوباره از صرافی می‌خواند تا مطمئن شود درست ثبت شده است.",
         "Every position has a stop-loss placed on the exchange itself from the moment it opens. After every change the bot reads the stop back from the exchange to confirm it is in place.",
       ),
     },
     {
-      q: t("نتایج بک‌تست آوینا را چطور بررسی کنم؟", "How can I check Avina's backtest results?"),
+      q: t(
+        "نتایج بک‌تست آوینا را چطور بررسی کنم؟",
+        "How can I check Avina's backtest results?",
+      ),
       a: t(
         "دادهٔ روزانهٔ پنج سال، خلاصهٔ نتایج و روش محاسبه در همین صفحه قابل دانلود است. کارمزد، لغزش قیمت و فاندینگ در مدل لحاظ شده‌اند و محدودیت‌های شبیه‌سازی هم نوشته شده است.",
         "Five years of daily data, the results summary and the calculation method can be downloaded on this page. Fees, slippage and funding are included, and the simulation's limits are stated.",
@@ -117,7 +170,9 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
   }).replace(/</g, "\\u003c");
   const pct = (value: number) => percent(value, lang);
   const methodology =
-    lang === "en" ? "/backtest/methodology-en.md" : "/backtest/methodology-fa.md";
+    lang === "en"
+      ? "/backtest/methodology-en.md"
+      : "/backtest/methodology-fa.md";
   return (
     <LangProvider lang={lang}>
       <div className="landing" id="landing-page">
@@ -131,7 +186,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-hero-copy">
               <h1 id="hero-title">
                 <span className="hero-kicker">
-                  {t("ربات معامله‌گر هوشمند ارز دیجیتال", "Smart crypto trading bot")}
+                  {t(
+                    "ربات معامله‌گر هوشمند ارز دیجیتال",
+                    "Smart crypto trading bot",
+                  )}
                 </span>
                 {t("بازار هیچ‌وقت نمی‌خوابد.", "The market never sleeps.")}
                 <br />
@@ -145,7 +203,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
               </p>
               <dl className="hero-stats">
                 <div>
-                  <dt>{t("رشد سالانهٔ مرکب (CAGR)", "Compound annual growth (CAGR)")}</dt>
+                  <dt>
+                    {t(
+                      "رشد سالانهٔ مرکب (CAGR)",
+                      "Compound annual growth (CAGR)",
+                    )}
+                  </dt>
                   <dd>{pct(snapshot.cagr_pct)}</dd>
                 </div>
                 <div>
@@ -180,7 +243,8 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div>
               <span>{t("بازهٔ کامل آزمون", "Full test period")}</span>
               <strong>
-                {t("۵ سال", "5 years")} / {num(snapshot.days, lang)} {t("روز", "days")}
+                {t("۵ سال", "5 years")} / {num(snapshot.days, lang)}{" "}
+                {t("روز", "days")}
               </strong>
             </div>
             <div>
@@ -188,7 +252,9 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
               <strong>{money(snapshot.initial, lang)}</strong>
             </div>
             <div>
-              <span>{t("ارزش شبیه‌سازی‌شدهٔ پایان دوره", "Simulated final value")}</span>
+              <span>
+                {t("ارزش شبیه‌سازی‌شدهٔ پایان دوره", "Simulated final value")}
+              </span>
               <strong>{money(Math.round(snapshot.final), lang)}</strong>
             </div>
             <div>
@@ -196,7 +262,9 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
               <strong>{pct(snapshot.cagr_pct)}</strong>
             </div>
             <div className="proof-risk">
-              <span>{t("بیشترین افت سرمایهٔ دقیقه‌ای", "Max minute drawdown")}</span>
+              <span>
+                {t("بیشترین افت سرمایهٔ دقیقه‌ای", "Max minute drawdown")}
+              </span>
               <strong>{pct(snapshot.max_minute_dd_pct)}</strong>
             </div>
           </div>
@@ -204,7 +272,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">WHY AVINA</span>
-                <h2>{t("انضباطی که انسان‌ها کم می‌آورند.", "The discipline people run short of.")}</h2>
+                <h2>
+                  {t(
+                    "انضباطی که انسان‌ها کم می‌آورند.",
+                    "The discipline people run short of.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
@@ -218,7 +291,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                 {
                   code: "01",
                   label: "NON-CUSTODIAL",
-                  name: t("سرمایه در حساب خودتان", "Funds stay in your account"),
+                  name: t(
+                    "سرمایه در حساب خودتان",
+                    "Funds stay in your account",
+                  ),
                   text: t(
                     "آوینا به حساب صرافی شما وصل می‌شود و فقط معامله می‌کند. هیچ واریزی به ما لازم نیست و کلید API شما بدون دسترسی برداشت ثبت می‌شود.",
                     "Avina connects to your exchange account and only trades. You never deposit with us, and your API key is registered without withdrawal permission.",
@@ -227,7 +303,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                 {
                   code: "02",
                   label: "REAL STOP-LOSS",
-                  name: t("حد ضرر واقعی روی صرافی", "A real stop-loss on the exchange"),
+                  name: t(
+                    "حد ضرر واقعی روی صرافی",
+                    "A real stop-loss on the exchange",
+                  ),
                   text: t(
                     "هر پوزیشن از لحظهٔ ورود حد ضرر ثبت‌شده روی خود صرافی دارد و ربات بعد از هر تغییر، آن را دوباره از صرافی می‌خواند و تأیید می‌کند.",
                     "Every position carries a stop-loss on the exchange from the moment it opens, and the bot reads it back to confirm it after every change.",
@@ -267,7 +346,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">EVIDENCE BEFORE DECISION</span>
-                <h2>{t("کارنامه، پیش از تصمیم.", "The record, before you decide.")}</h2>
+                <h2>
+                  {t(
+                    "کارنامه، پیش از تصمیم.",
+                    "The record, before you decide.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
@@ -304,7 +388,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                     {t("دریافت دادهٔ روزانه", "Download daily data")}
                   </a>
                   <a href="/backtest/five-year-summary.json" download>
-                    {t("دریافت خلاصه و فرض‌ها", "Download summary and assumptions")}
+                    {t(
+                      "دریافت خلاصه و فرض‌ها",
+                      "Download summary and assumptions",
+                    )}
                   </a>
                   <a href={methodology} download>
                     {t("روش محاسبه", "Calculation method")}
@@ -314,7 +401,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
               <div className="annual-result-table">
                 <table>
                   <caption>
-                    {t("ارزش شبیه‌سازی‌شدهٔ پایان هر سال", "Simulated value at each year end")}
+                    {t(
+                      "ارزش شبیه‌سازی‌شدهٔ پایان هر سال",
+                      "Simulated value at each year end",
+                    )}
                   </caption>
                   <thead>
                     <tr>
@@ -327,8 +417,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                   <tbody>
                     {snapshot.annual.map((row) => (
                       <tr key={row.year}>
-                        <td>{lang === "en" ? row.year : num(row.year, lang)}</td>
-                        <td className="annual-months">{coverage(row.year, lang)}</td>
+                        <td>
+                          {lang === "en" ? row.year : num(row.year, lang)}
+                        </td>
+                        <td className="annual-months">
+                          {coverage(row.year, lang)}
+                        </td>
                         <td>{money(Math.round(row.equity), lang)}</td>
                         <td>
                           <bdi
@@ -350,7 +444,10 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             </div>
             <details className="methodology-details">
               <summary>
-                {t("بک‌تست با چه فرض‌هایی محاسبه شده؟", "What assumptions does the backtest use?")}{" "}
+                {t(
+                  "بک‌تست با چه فرض‌هایی محاسبه شده؟",
+                  "What assumptions does the backtest use?",
+                )}{" "}
                 <span aria-hidden="true">＋</span>
               </summary>
               <div className="methodology-grid">
@@ -373,7 +470,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                   </p>
                 </div>
                 <div>
-                  <h3>{t("معنای نمودار و افت سرمایه", "What the chart and drawdown mean")}</h3>
+                  <h3>
+                    {t(
+                      "معنای نمودار و افت سرمایه",
+                      "What the chart and drawdown mean",
+                    )}
+                  </h3>
                   <p>
                     {t(
                       "منحنی از ارزش پایان روز روی محور لگاریتمی ساخته شده است. DD از بدترین افت پایان دقیقه محاسبه می‌شود؛ افت تیک و داخل دقیقه در این عدد نیست.",
@@ -397,7 +499,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">THREE ENGINES, ONE ACCOUNT</span>
-                <h2>{t("سه موتور. یک حساب. ریسک پخش‌شده.", "Three engines. One account. Spread risk.")}</h2>
+                <h2>
+                  {t(
+                    "سه موتور. یک حساب. ریسک پخش‌شده.",
+                    "Three engines. One account. Spread risk.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
@@ -432,7 +539,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">HOW IT WORKS</span>
-                <h2>{t("شروع کار با آوینا در سه قدم.", "Get started with Avina in three steps.")}</h2>
+                <h2>
+                  {t(
+                    "شروع کار با آوینا در سه قدم.",
+                    "Get started with Avina in three steps.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
@@ -455,9 +567,15 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div>
               <span className="eyebrow">CHOOSE YOUR PLAN</span>
               <h2>
-                {t("سیگنال برای تصمیم خودتان.", "Signals for your own decisions.")}
+                {t(
+                  "سیگنال برای تصمیم خودتان.",
+                  "Signals for your own decisions.",
+                )}
                 <br />
-                {t("یا معاملهٔ خودکار با آوینا.", "Or automated trading with Avina.")}
+                {t(
+                  "یا معاملهٔ خودکار با آوینا.",
+                  "Or automated trading with Avina.",
+                )}
               </h2>
               <p>
                 {t(
@@ -475,14 +593,21 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">AVINA JOURNAL</span>
-                <h2>{t("یاد بگیرید، بعد معامله کنید.", "Learn first, then trade.")}</h2>
+                <h2>
+                  {t(
+                    "یاد بگیرید، بعد معامله کنید.",
+                    "Learn first, then trade.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
                   "راهنماهای کوتاه دربارهٔ ربات ترید، حد ضرر و مدیریت ریسک در بازار فیوچرز.",
                   "Short guides on trading bots, stop-losses and risk management in futures.",
                 )}{" "}
-                <a href={path("/blog/")}>{t("همهٔ مقاله‌ها", "All articles")}</a>
+                <a href={path("/blog/")}>
+                  {t("همهٔ مقاله‌ها", "All articles")}
+                </a>
               </p>
             </div>
             <LatestPosts />
@@ -491,7 +616,12 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
             <div className="landing-section-heading">
               <div>
                 <span className="eyebrow">FAQ</span>
-                <h2>{t("پرسش‌های پرتکرار دربارهٔ ربات آوینا.", "Frequently asked questions about Avina.")}</h2>
+                <h2>
+                  {t(
+                    "پرسش‌های پرتکرار دربارهٔ ربات آوینا.",
+                    "Frequently asked questions about Avina.",
+                  )}
+                </h2>
               </div>
               <p>
                 {t(
