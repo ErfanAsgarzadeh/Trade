@@ -24,7 +24,10 @@ export default function PublicProducts() {
     const item = plans?.products.find((p) => p.product === product);
     return item
       ? item.sales_enabled
-        ? t("فروش باز است؛ طرح‌ها را در پنل ببینید", "Sales are open; see the plans in your panel")
+        ? t(
+            "فروش باز است؛ طرح‌ها را در پنل ببینید",
+            "Sales are open; see the plans in your panel",
+          )
         : t("فروش فعلاً بسته است", "Sales are closed for now")
       : t("وضعیت فروش را در پنل ببینید", "See sales status in your panel");
   };

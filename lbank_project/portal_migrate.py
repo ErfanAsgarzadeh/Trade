@@ -24,6 +24,9 @@ TABLES={
  'license_cashflows':('user_id','event_id','amount_usd','at'),
  'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated','lang'),
  'blog_images':('id','name','width','height','size','data','created'),
+ 'site_settings':('name','value','updated'),
+ 'payment_invoices':('id','order_id','user_id','network','token','address','amount_micro','status','created','expires','paid_at','tx_ref'),
+ 'payment_transfers':('tx_ref','network','token','from_address','to_address','amount_micro','block_time','seen','invoice_id','status'),
 }
 
 

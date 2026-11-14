@@ -39,7 +39,9 @@ export default function LatestPosts() {
   if (posts && posts.length === 0)
     return (
       <p>
-        <a href={path("/blog/")}>{t("بلاگ آوینا را ببینید", "Visit the Avina blog")}</a>
+        <a href={path("/blog/")}>
+          {t("بلاگ آوینا را ببینید", "Visit the Avina blog")}
+        </a>
       </p>
     );
   return (

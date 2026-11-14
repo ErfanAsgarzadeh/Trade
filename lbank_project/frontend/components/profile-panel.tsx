@@ -78,7 +78,10 @@ export default function ProfilePanel({
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-          <button type="submit" disabled={busy || value.trim() === (email ?? "")}>
+          <button
+            type="submit"
+            disabled={busy || value.trim() === (email ?? "")}
+          >
             {t("ذخیرهٔ ایمیل", "Save email")}
           </button>
         </div>

@@ -24,6 +24,7 @@ import product_pricing
 from signal_feed import read_feed
 from portal_frontend import frontend_index, private_page, public_file, public_page, robots_txt, sitemap_xml
 import portal_blog
+from portal_payments import PaymentConflict, Payments
 from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
 
@@ -113,6 +114,22 @@ class BlogArticle(BaseModel):
     status:str=Field(pattern=r'^(draft|published)$')
     published_on:str|None=Field(default=None,pattern=r'^\d{4}-\d{2}-\d{2}$')
     expected_updated:float|None=None
+
+
+class InvoiceRequest(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    network:str=Field(pattern=r'^(tron|bsc)$')
+    token:str=Field(pattern=r'^(USDT|USDC)$')
+
+
+class PaymentSettings(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    tron_address:str=Field(default='',max_length=64)
+    bsc_address:str=Field(default='',max_length=64)
+    invoice_minutes:int=Field(default=60,ge=15,le=1440)
+    auto_approve_signals:bool=False
+    bsc_rpc:str=Field(default='',max_length=200)
+    trongrid_url:str=Field(default='',max_length=200)
 
 
 class AdminApproval(BaseModel):
@@ -344,7 +361,21 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/api/admin/orders')
     def admin_orders(request:Request,user=Depends(administrator),status:str=Query(default='pending',pattern=r'^(pending|approved|cancelled|rejected|all)$'),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
-        return AdminStore(repository(request)).orders(status,offset,limit)
+        result=AdminStore(repository(request)).orders(status,offset,limit)
+        payments=Payments(repository(request)).order_payments([o['id'] for o in result['items']])
+        for order in result['items']:order['payment']=payments.get(order['id'])
+        return result
+
+    @app.get('/api/admin/payments')
+    def admin_payments(request:Request,user=Depends(administrator)):
+        payments=Payments(repository(request))
+        return {'settings':payments.admin_settings(),'transfers':payments.transfers()}
+
+    @app.put('/api/admin/payments')
+    def admin_payment_settings(payload:PaymentSettings,request:Request,user=Depends(admin_mutation)):
+        try:return Payments(repository(request)).save_settings(user['id'],payload.model_dump())
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except ValueError as exc:raise HTTPException(422,str(exc))
 
     @app.post('/api/admin/orders/{order_id}/reject')
     def admin_reject(order_id:str,payload:AdminRejection,request:Request,user=Depends(admin_mutation)):
@@ -453,6 +484,23 @@ def create_app(store=None,reader=None,origin=None,secure=None):
                     payload.request_key,payload.expected_price_cents,product=payload.product)
         except BillingConflict as exc:raise HTTPException(409,str(exc))
         except ValueError:raise HTTPException(422,'Unknown tier or term')
+
+    # Pay an order in USDT/USDC directly to the owner's wallet; the payment watcher confirms it on-chain.
+    @app.get('/api/me/payment-methods')
+    def payment_methods(request:Request,user=Depends(identity)):
+        return {'methods':Payments(repository(request)).methods()}
+
+    @app.post('/api/me/license/orders/{order_id}/invoice')
+    def create_invoice(order_id:str,payload:InvoiceRequest,request:Request,user=Depends(mutation)):
+        try:return Payments(repository(request)).create_invoice(user['id'],order_id,payload.network,payload.token)
+        except PaymentConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError:raise HTTPException(422,'Unknown payment method')
+
+    @app.get('/api/me/license/orders/{order_id}/invoice')
+    def read_invoice(order_id:str,request:Request,user=Depends(identity)):
+        invoice=Payments(repository(request)).invoice(user['id'],order_id)
+        if not invoice:raise HTTPException(404,'No invoice for this order')
+        return invoice
 
     @app.post('/api/me/license/orders/{order_id}/cancel')
     def cancel_license(order_id:str,request:Request,user=Depends(mutation)):

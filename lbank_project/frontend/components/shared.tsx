@@ -126,7 +126,11 @@ export function DataTable({
 
 function EmptyRows() {
   const { t } = useLang();
-  return <p className="note">{t("داده‌ای برای نمایش وجود ندارد.", "Nothing to show yet.")}</p>;
+  return (
+    <p className="note">
+      {t("داده‌ای برای نمایش وجود ندارد.", "Nothing to show yet.")}
+    </p>
+  );
 }
 
 /** Presentation only: preserve the source precision, add an explicit signed status. */

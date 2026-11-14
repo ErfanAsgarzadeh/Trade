@@ -88,14 +88,25 @@ export default function Robots({
         className="connection-summary"
         role="status"
       >
-        <h3>{t("وضعیت معاملهٔ خودکار · TheTrueTrade", "Automated trading status · TheTrueTrade")}</h3>
+        <h3>
+          {t(
+            "وضعیت معاملهٔ خودکار · TheTrueTrade",
+            "Automated trading status · TheTrueTrade",
+          )}
+        </h3>
         <p>
           {!readiness
             ? t("در حال بررسی…", "Checking…")
             : readiness.status === "signals_only"
-              ? t("اشتراک شما فقط برای دریافت سیگنال است.", "Your subscription covers signals only.")
+              ? t(
+                  "اشتراک شما فقط برای دریافت سیگنال است.",
+                  "Your subscription covers signals only.",
+                )
               : readiness.status === "license_required"
-                ? t("لایسنس معتبر معاملهٔ خودکار لازم است.", "A valid automated-trading license is required.")
+                ? t(
+                    "لایسنس معتبر معاملهٔ خودکار لازم است.",
+                    "A valid automated-trading license is required.",
+                  )
                 : readiness.status === "connection_required"
                   ? t(
                       "ابتدا حساب فیوچرز TheTrueTrade را در بخش اتصال حساب ثبت کنید.",

@@ -35,7 +35,11 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
   const { lang, t, path } = useLang();
   const registering = initialMode === "register";
   const adminMode = initialMode === "admin";
-  const here = registering ? "/register/" : adminMode ? "/admin/" : "/dashboard/";
+  const here = registering
+    ? "/register/"
+    : adminMode
+      ? "/admin/"
+      : "/dashboard/";
   const [api] = useState(() => new ApiClient());
   const [user, setUser] = useState<Me | null>(null),
     [ready, setReady] = useState(false),
@@ -151,7 +155,9 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
         <BrandLogo compact />
         <div className="topbar-meta">
           <span className="system-dot" aria-hidden="true" />
-          <span>{t("فضای اختصاصی معامله‌گر", "Your private trading space")}</span>
+          <span>
+            {t("فضای اختصاصی معامله‌گر", "Your private trading space")}
+          </span>
         </div>
         <div className="topbar-actions">
           <a
@@ -346,7 +352,9 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
             <AdminWorkbench api={api} report={report} />
           ) : (
             <section id="admin-forbidden" className="panel">
-              <h1>{t("دسترسی مدیریتی ندارید", "You do not have admin access")}</h1>
+              <h1>
+                {t("دسترسی مدیریتی ندارید", "You do not have admin access")}
+              </h1>
               <p>
                 {t(
                   "این بخش فقط برای مدیر سامانه است.",
@@ -360,14 +368,25 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
           )
         ) : (
           <div id="account-panel" key={user.username}>
-            <nav className="section-nav" aria-label={t("بخش‌های پنل", "Panel sections")}>
+            <nav
+              className="section-nav"
+              aria-label={t("بخش‌های پنل", "Panel sections")}
+            >
               {[
                 ["overview", t("نمای کلی", "Overview")],
                 ["profile-section", t("اطلاعات کاربری", "Profile")],
-                ["license-section", t("لایسنس و تعرفه‌ها", "License and pricing")],
+                [
+                  "license-section",
+                  t("لایسنس و تعرفه‌ها", "License and pricing"),
+                ],
                 ["signals-section", t("سیگنال‌ها", "Signals")],
                 ...(p?.product !== "signals"
-                  ? [["connection-section", t("حساب صرافی", "Exchange account")]]
+                  ? [
+                      [
+                        "connection-section",
+                        t("حساب صرافی", "Exchange account"),
+                      ],
+                    ]
                   : []),
                 ...(p?.product !== "signals"
                   ? [["robot-section", t("ربات‌ها", "Bots")]]
@@ -398,7 +417,10 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                       : t("اجرای ربات: آزمایشی", "Bot execution: trial")}
                   </span>
                   <span className="quiet-tag">
-                    {t("سه استراتژی در یک پکیج", "Three strategies, one package")}
+                    {t(
+                      "سه استراتژی در یک پکیج",
+                      "Three strategies, one package",
+                    )}
                   </span>
                 </div>
               </div>
@@ -431,7 +453,12 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                 <strong id="license-cap">
                   {p?.cap_usd ? money(p.cap_usd, lang) : "—"}
                 </strong>
-                <p>{t("برای یک حساب · هر سه ربات", "One account · all three bots")}</p>
+                <p>
+                  {t(
+                    "برای یک حساب · هر سه ربات",
+                    "One account · all three bots",
+                  )}
+                </p>
               </article>
               <article className="stat-card">
                 <div className="stat-label">
@@ -493,7 +520,9 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
         <span>
           {t("شاهین · موج‌سوار · ققنوس", "Falcon · Wave Rider · Phoenix")}
         </span>
-        <span>{t("طراحی‌شده برای وب و موبایل", "Built for web and mobile")}</span>
+        <span>
+          {t("طراحی‌شده برای وب و موبایل", "Built for web and mobile")}
+        </span>
       </footer>
     </>
   );

@@ -7,9 +7,7 @@ export const num = (value: number, lang: Lang = "fa") =>
 export const money = (value: number, lang: Lang = "fa") =>
   lang === "en"
     ? "$" +
-      new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(
-        value,
-      )
+      new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value)
     : num(value, "fa") + " دلار";
 export const percent = (value: number, lang: Lang = "fa", digits = 1) =>
   lang === "en"
@@ -70,10 +68,7 @@ const STATES: Record<string, [string, string]> = {
     "آخرین بررسی پردازش به‌روز نیست",
     "Last runtime check is out of date",
   ],
-  health_unknown: [
-    "وضعیت زندهٔ پردازش مشخص نیست",
-    "Runtime health unknown",
-  ],
+  health_unknown: ["وضعیت زندهٔ پردازش مشخص نیست", "Runtime health unknown"],
   unavailable: ["وضعیت فعلاً در دسترس نیست", "Status unavailable right now"],
   queued: ["در صف بررسی اتصال", "Queued for a connection check"],
   retrying: [
