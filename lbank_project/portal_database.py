@@ -78,7 +78,15 @@ CREATE INDEX IF NOT EXISTS blog_posts_public ON blog_posts(status,published_on);
 SCHEMA_V8='''
 ALTER TABLE users ADD COLUMN email TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS users_email ON users(email) WHERE email IS NOT NULL;
-ALTER TABLE blog_posts ADD COLUMN lang TEXT NOT NULL DEFAULT 'fa' CHECK(lang IN ('fa','en'));
+CREATE TABLE IF NOT EXISTS blog_articles(id TEXT PRIMARY KEY,lang TEXT NOT NULL CHECK(lang IN ('fa','en')),
+ slug TEXT NOT NULL,title TEXT NOT NULL,description TEXT NOT NULL,keywords TEXT NOT NULL,body TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('draft','published')),published_on TEXT,
+ created REAL NOT NULL,updated REAL NOT NULL,UNIQUE(lang,slug));
+INSERT INTO blog_articles(id,lang,slug,title,description,keywords,body,status,published_on,created,updated)
+ SELECT id,'fa',slug,title,description,keywords,body,status,published_on,created,updated FROM blog_posts;
+DROP TABLE blog_posts;
+ALTER TABLE blog_articles RENAME TO blog_posts;
+CREATE INDEX IF NOT EXISTS blog_posts_public ON blog_posts(lang,status,published_on);
 '''
 
 

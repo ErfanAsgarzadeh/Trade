@@ -69,6 +69,9 @@ def test_admin_can_read_bounded_lists_without_customer_secrets(setup):
         assert 'password' not in response.text and 'encrypted' not in response.text and 'runtime/' not in response.text
         assert 'secret-customer' not in response.text and 'private-customer' not in response.text
         assert client.get('/api/admin/users?search=alice').json()['total']==1
+        store.set_email(alice,'Alice@Example.com')
+        found=client.get('/api/admin/users?search=alice%40example').json()
+        assert found['total']==1 and found['items'][0]['email']=='alice@example.com'
         assert client.get('/api/admin/users?limit=101').status_code==422
         assert client.get('/api/admin/users?offset=-1').status_code==422
         assert client.get('/api/admin/overview').json()['counts']['users']==3

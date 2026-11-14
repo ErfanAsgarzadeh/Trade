@@ -52,11 +52,31 @@ def test_persian_dates_follow_the_solar_hijri_calendar():
 def test_launch_articles_are_imported_once_and_deletions_stick(store):
     blog=BlogStore(store)
     seeded=blog.seed()
-    assert seeded>=5 and len(blog.published())==seeded
+    assert seeded>=10 and len(blog.published('fa'))+len(blog.published('en'))==seeded
+    assert {p['slug'] for p in blog.published('fa')}=={p['slug'] for p in blog.published('en')}
     victim=blog.all()[0]
     with store.db() as db:actor=db.execute("SELECT id FROM users WHERE username='manager'").fetchone()['id']
     blog.delete(actor,victim['id'],victim['updated'])
     assert blog.seed()==0 and len(blog.all())==seeded-1
+
+
+def test_launch_articles_do_not_describe_the_trading_method(store):
+    blog=BlogStore(store);blog.seed()
+    text=' '.join(blog.get(p['id'])['body'] for p in blog.all())
+    for word in ('Donchian','Ichimoku','ایچیموکو','پولبک','شکست روند','RSI','EMA'):
+        assert word not in text,word
+
+
+def test_old_launch_article_text_is_fixed_once_without_touching_edits(store):
+    import uuid,time,json as j
+    old=portal_blog.CONTENT_FIXES[0][2]
+    with store.db() as db:
+        db.execute('INSERT INTO blog_posts(id,lang,slug,title,description,keywords,body,status,published_on,created,updated) VALUES(?,?,?,?,?,?,?,?,?,?,?)',
+                   (str(uuid.uuid4()),'fa','what-is-a-trading-bot','t','d',j.dumps([]),'intro '+old,'published','2026-11-13',time.time(),time.time()))
+        db.execute("INSERT INTO service_gate(name,next_at) VALUES('blog:seeded',0)")
+    blog=BlogStore(store);blog.seed()
+    body=blog.article('what-is-a-trading-bot','fa')['body']
+    assert old not in body and portal_blog.CONTENT_FIXES[0][3] in body
 
 
 def test_admin_writes_drafts_publishes_schedules_and_deletes(store):
@@ -113,3 +133,43 @@ def test_public_blog_pages_seed_render_and_reject_unknown_addresses(store):
         for missing in ('/blog/not-a-post/','/blog/Upper/','/blog/a_b','/blog/..%2fadmin'):
             response=client.get(missing)
             assert response.status_code==404 and response.headers['x-robots-tag']=='noindex, nofollow'
+
+
+def test_english_blog_pages_hreflang_and_feeds(store):
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        index=client.get('/en/blog/')
+        assert index.status_code==200 and '<html lang="en" dir="ltr"' in index.text
+        assert '<link rel="canonical" href="https://avina.example/en/blog/"/>' in index.text
+        assert 'hreflang="fa" href="https://avina.example/blog/"' in index.text and 'Avina Blog' in index.text
+        page=client.get('/en/blog/futures-stop-loss/')
+        assert page.status_code==200 and '"inLanguage": "en"' in page.text
+        assert 'hreflang="fa" href="https://avina.example/blog/futures-stop-loss/"' in page.text
+        assert 'hreflang="en" href="https://avina.example/en/blog/futures-stop-loss/"' in page.text
+        assert client.get('/blog/futures-stop-loss/').text.count('rel="alternate" hreflang="en"')==1
+        assert client.get('/en/blog/no-such-post/').status_code==404
+        assert client.get('/api/blog/latest?lang=en').json()['items'][0]['date_label'].startswith('November')
+        assert client.get('/api/blog/latest?lang=de').status_code==422
+        assert '<language>en</language>' in client.get('/en/blog/rss.xml').text
+        sitemap=client.get('/sitemap.xml').text
+        assert '<loc>https://avina.example/en/blog/futures-stop-loss/</loc>' in sitemap
+        assert '<loc>https://avina.example/en/</loc>' in sitemap and '<loc>https://avina.example/en/register/</loc>' in sitemap
+        headers=login(client)
+        made=client.post('/api/admin/blog',headers=headers,json=article(lang='en',slug='futures-stop-loss'))
+        assert made.status_code==409  # same address in the same language
+        made=client.post('/api/admin/blog',headers=headers,json=article(lang='en',slug='english-only'))
+        assert made.status_code==201 and made.json()['lang']=='en'
+        assert client.get('/en/blog/english-only/').status_code==200 and client.get('/blog/english-only/').status_code==404
+
+
+def test_english_site_pages_are_served_in_english(store):
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        for path in ('/en/','/en/register/','/en/dashboard/','/en/admin/'):
+            page=client.get(path)
+            assert page.status_code==200 and '<html lang="en" dir="ltr"' in page.text,path
+            assert "'sha256-" in page.headers['content-security-policy']
+        home=client.get('/en/')
+        assert '<link rel="canonical" href="https://avina.example/en/"/>' in home.text
+        assert 'hreflang="fa" href="https://avina.example/"' in home.text and 'hreflang="x-default"' in home.text
+        assert client.get('/en/dashboard/').headers['x-robots-tag']=='noindex, nofollow'
+        assert '<html lang="fa" dir="rtl"' in client.get('/').text
+        assert 'hreflang="en" href="https://avina.example/en/"' in client.get('/').text
