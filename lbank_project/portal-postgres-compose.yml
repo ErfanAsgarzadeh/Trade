@@ -67,6 +67,15 @@ services:
     environment:
       <<: *environment
       PAYMENT_CHECK_SECONDS: ${PAYMENT_CHECK_SECONDS:-20}
+  # Sends signals and account notices to customers who linked Telegram; the bot token is set in the admin panel.
+  telegram-worker:
+    <<: *runtime
+    command: [python, -u, portal_telegram.py]
+    environment:
+      <<: *environment
+      PORTAL_SIGNAL_FEED_DB: ${PORTAL_SIGNAL_FEED_DB:-}
+      PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
+      HTTPS_PROXY: ${TELEGRAM_HTTPS_PROXY:-}
 volumes:
   portal_pgdata:
 secrets:

@@ -39,7 +39,7 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: "1"
       - run: python -m pip install -r lbank_project/requirements-dev.txt -r lbank_project/requirements-portal.txt
-      - run: python -m pytest lbank_project/tests/test_portal.py lbank_project/tests/test_portal_queue.py lbank_project/tests/test_multi_exchange.py lbank_project/tests/test_capital_licensing.py lbank_project/tests/test_customer_distribution.py lbank_project/tests/test_portal_frontend.py lbank_project/tests/test_signup_products.py lbank_project/tests/test_admin_workbench.py lbank_project/tests/test_public_backtest.py lbank_project/tests/test_blog.py lbank_project/tests/test_payments.py -q
+      - run: python -m pytest lbank_project/tests/test_portal.py lbank_project/tests/test_portal_queue.py lbank_project/tests/test_multi_exchange.py lbank_project/tests/test_capital_licensing.py lbank_project/tests/test_customer_distribution.py lbank_project/tests/test_portal_frontend.py lbank_project/tests/test_signup_products.py lbank_project/tests/test_admin_workbench.py lbank_project/tests/test_public_backtest.py lbank_project/tests/test_blog.py lbank_project/tests/test_payments.py lbank_project/tests/test_telegram.py -q
         env:
           PYTHONPATH: lbank_project
           PORTAL_TEST_DATABASE_URL: postgresql://portal_test:disposable-ci-password@127.0.0.1:5432/portal_test

@@ -8,6 +8,7 @@ import type { Lang } from "@/lib/i18n";
 import { Heading } from "./shared";
 import AdminBlog from "./admin-blog";
 import AdminPayments from "./admin-payments";
+import AdminTelegram from "./admin-telegram";
 import type { Invoice } from "./payment-panel";
 
 type Report = (error: unknown) => void;
@@ -61,6 +62,7 @@ const tabs = [
   ["users", "کاربران", "Users"],
   ["pricing", "قیمت و فروش", "Pricing and sales"],
   ["payments", "پرداخت", "Payments"],
+  ["telegram", "تلگرام", "Telegram"],
   ["blog", "بلاگ", "Blog"],
   ["audit", "سوابق عملیات", "Audit log"],
 ] as const;
@@ -90,6 +92,9 @@ const EVENTS: Record<string, Pair> = {
   blog_deleted: ["حذف مقاله", "Article deleted"],
   payment_received: ["دریافت پرداخت روی شبکه", "On-chain payment received"],
   payment_settings_saved: ["تغییر تنظیمات پرداخت", "Payment settings changed"],
+  telegram_configured: ["اتصال ربات تلگرام", "Telegram bot connected"],
+  telegram_removed: ["حذف ربات تلگرام", "Telegram bot removed"],
+  telegram_broadcast: ["پیام همگانی تلگرام", "Telegram broadcast"],
 };
 const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
   table[key]?.[lang === "en" ? 1 : 0];
@@ -324,6 +329,7 @@ export default function AdminWorkbench({
             <Pricing api={api} report={report} changed={changed} />
           )}
           {tab === "payments" && <AdminPayments api={api} report={report} />}
+          {tab === "telegram" && <AdminTelegram api={api} report={report} />}
           {tab === "blog" && <AdminBlog api={api} report={report} />}
           {tab === "audit" && <Events api={api} report={report} />}
         </div>

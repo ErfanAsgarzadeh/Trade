@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ApiClient, ApiError } from "@/lib/api";
 import { useLang } from "@/lib/lang";
 import { Heading } from "./shared";
+import TelegramPanel from "./telegram-panel";
 
 export default function ProfilePanel({
   api,
@@ -86,6 +87,7 @@ export default function ProfilePanel({
           </button>
         </div>
       </form>
+      <TelegramPanel api={api} />
     </section>
   );
 }
