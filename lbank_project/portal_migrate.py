@@ -23,6 +23,7 @@ TABLES={
  'license_approvals':('id','order_id','requested_by','payload','payment_ref','state','lease_token','lease_until','attempts','created','updated','error_code'),
  'license_cashflows':('user_id','event_id','amount_usd','at'),
  'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated','lang'),
+ 'blog_images':('id','name','width','height','size','data','created'),
 }
 
 

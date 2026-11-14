@@ -27,3 +27,30 @@ test("headings get unique ids and lists group by type", () => {
   assert.equal(blocks[0].kind === "h2" && blocks[0].id, "حد-ضرر");
   assert.equal(blocks[2].kind === "h2" && blocks[2].id, "حد-ضرر-2");
 });
+
+test("images: only this site's uploads render, anywhere in the text", () => {
+  const src = "/blog-media/0123456789abcdef01234567.webp";
+  const blocks = parseMarkdown(
+    `text\n![chart](${src} "Caption")\nmore\n\n![x](https://evil.example/a.webp)`,
+  );
+  assert.deepEqual(
+    blocks.map((b) => b.kind),
+    ["p", "figure", "p", "p"],
+  );
+  assert.deepEqual(blocks[1], {
+    kind: "figure",
+    alt: "chart",
+    src,
+    title: "Caption",
+  });
+  assert.deepEqual(blocks[3], {
+    kind: "p",
+    inline: [{ kind: "text", text: "x" }],
+  });
+  assert.deepEqual(inline(`a ![i](${src}) b`)[1], {
+    kind: "image",
+    alt: "i",
+    src,
+    title: "",
+  });
+});

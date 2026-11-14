@@ -11,6 +11,7 @@ import html
 import json
 from pathlib import Path
 import re
+import secrets
 import time
 import uuid
 
@@ -19,7 +20,11 @@ from portal_audit import record, require_admin
 SLUG = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
 DAY = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 SAFE_HREF = re.compile(r'^(/(?!/)\S*|#\S+|https://\S+)$')
-INLINE = re.compile(r'\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)')
+# Images: ![alt](/blog-media/<id>.webp "optional caption"). Only images uploaded to this site are allowed.
+IMAGE_SRC = re.compile(r'^/blog-media/([a-f0-9]{16,32})\.webp$')
+IMAGE = r'!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)'
+IMAGE_LINE = re.compile('^' + IMAGE + '$')
+INLINE = re.compile(IMAGE + r'|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)')
 LIMITS = dict(slug=80, title=120, description=300, keywords=300, body=60000)
 SEED_DIRECTORY = Path(__file__).with_name('frontend') / 'content' / 'blog'
 SITE_SUMMARY = {'fa': 'آوینا، ربات معامله‌گر هوشمند ارز دیجیتال و فیوچرز از خانوادهٔ ARTAX.',
@@ -35,18 +40,33 @@ class BlogConflict(Exception):
 
 # ---- Markdown subset -------------------------------------------------------------------------------------------
 
-def inline_html(source):
+def image_html(alt, src, title, sizes, inline=False):
+    """An uploaded image with its stored size (no layout shift) and lazy loading; anything else stays as text."""
+    match = IMAGE_SRC.match(src or '')
+    if not match or match[1] not in sizes:return html.escape(alt or '')
+    width, height = sizes[match[1]]
+    css = ' class="blog-inline-image"' if inline else ''
+    tag = (f'<img{css} src="{html.escape(src)}" alt="{html.escape(alt or "")}" width="{width}" height="{height}" '
+           'loading="lazy" decoding="async"/>')
+    if inline:return tag
+    caption = f'<figcaption>{html.escape(title)}</figcaption>' if title else ''
+    return f'<figure class="blog-figure">{tag}{caption}</figure>'
+
+
+def inline_html(source, sizes=None):
     out = []
     last = 0
     for match in INLINE.finditer(source):
         out.append(html.escape(source[last:match.start()]))
-        if match[1] is not None:
-            out.append('<strong>' + html.escape(match[1]) + '</strong>')
-        elif SAFE_HREF.match(match[3]):
-            external = ' rel="noopener" target="_blank"' if match[3].startswith('https://') else ''
-            out.append(f'<a href="{html.escape(match[3])}"{external}>{html.escape(match[2])}</a>')
+        if match[2] is not None:
+            out.append(image_html(match[1], match[2], match[3], sizes or {}, inline=True))
+        elif match[4] is not None:
+            out.append('<strong>' + html.escape(match[4]) + '</strong>')
+        elif SAFE_HREF.match(match[6]):
+            external = ' rel="noopener" target="_blank"' if match[6].startswith('https://') else ''
+            out.append(f'<a href="{html.escape(match[6])}"{external}>{html.escape(match[5])}</a>')
         else:
-            out.append(html.escape(match[2]))
+            out.append(html.escape(match[5]))
         last = match.end()
     out.append(html.escape(source[last:]))
     return ''.join(out)
@@ -59,7 +79,8 @@ def slugify(text):
 
 
 def blocks(source):
-    """Parse the Markdown subset into ('h2'|'h3', text, id), ('p'|'quote', text) and ('ul'|'ol', [items])."""
+    """Parse the Markdown subset into ('h2'|'h3', text, id), ('p'|'quote', text), ('ul'|'ol', [items]) and
+    ('figure', alt, src, caption) for an image on a line of its own."""
     out, paragraph, listing, ids = [], [], None, {}
 
     def flush():
@@ -76,8 +97,12 @@ def blocks(source):
         line = raw.strip()
         heading = re.match(r'^(##|###) (.+)$', line)
         item = re.match(r'^(?:(-)|\d+\.) (.+)$', line)
+        figure = IMAGE_LINE.match(line)
         if not line:
             flush()
+        elif figure:
+            flush()
+            out.append(('figure', figure[1], figure[2], figure[3] or ''))
         elif heading:
             flush()
             base = slugify(heading[2])
@@ -98,19 +123,60 @@ def blocks(source):
     return out
 
 
-def render_body(source):
+def image_ids(source):
+    """Ids of the uploaded images an article refers to, in order of appearance."""
+    return list(dict.fromkeys(re.findall(r'/blog-media/([a-f0-9]{16,32})\.webp', source or '')))
+
+
+def render_body(source, sizes=None):
+    """sizes maps image id to (width, height); images missing from it render as their alt text."""
+    sizes = sizes or {}
     parts = []
     for block in blocks(source):
         kind = block[0]
         if kind in ('h2', 'h3'):
             parts.append(f'<{kind} id="{html.escape(block[2])}">{html.escape(block[1])}</{kind}>')
+        elif kind == 'figure':
+            parts.append(image_html(block[1], block[2], block[3], sizes))
         elif kind == 'quote':
-            parts.append(f'<blockquote><p>{inline_html(block[1])}</p></blockquote>')
+            parts.append(f'<blockquote><p>{inline_html(block[1], sizes)}</p></blockquote>')
         elif kind in ('ul', 'ol'):
-            parts.append(f'<{kind}>' + ''.join(f'<li>{inline_html(item)}</li>' for item in block[1]) + f'</{kind}>')
+            parts.append(f'<{kind}>' + ''.join(f'<li>{inline_html(item, sizes)}</li>' for item in block[1]) + f'</{kind}>')
         else:
-            parts.append(f'<p>{inline_html(block[1])}</p>')
+            parts.append(f'<p>{inline_html(block[1], sizes)}</p>')
     return ''.join(parts)
+
+
+# ---- Images ----------------------------------------------------------------------------------------------------
+
+MAX_UPLOAD = 10 * 1024 * 1024
+MAX_SIDE = 1600
+MAX_PIXELS = 40_000_000
+
+
+def process_image(raw):
+    """Re-encode an upload as WebP: at most 1600 px a side, upright, with no EXIF or GPS metadata. ValueError otherwise."""
+    import io
+    import warnings
+    from PIL import Image, ImageOps
+    if not raw or len(raw) > MAX_UPLOAD:raise ValueError('Image too large')
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter('error', Image.DecompressionBombWarning)
+            with Image.open(io.BytesIO(raw)) as source:
+                if source.format not in ('JPEG', 'PNG', 'WEBP', 'GIF'):raise ValueError('Unsupported image type')
+                if source.width * source.height > MAX_PIXELS:raise ValueError('Image has too many pixels')
+                image = ImageOps.exif_transpose(source)
+                alpha = image.mode in ('RGBA', 'LA', 'PA') or (image.mode == 'P' and 'transparency' in image.info)
+                image = image.convert('RGBA' if alpha else 'RGB')
+                image.thumbnail((MAX_SIDE, MAX_SIDE))
+                out = io.BytesIO()
+                image.save(out, 'WEBP', quality=82, method=4)
+    except ValueError:
+        raise
+    except Exception as exc:  # Pillow raises many types for corrupt or hostile files.
+        raise ValueError('Not a readable image') from exc
+    return out.getvalue(), image.width, image.height
 
 
 def reading_minutes(body):
@@ -292,6 +358,56 @@ class BlogStore:
             record(db, actor, 'blog_deleted', post_id, dict(lang=current['lang'], slug=current['slug']))
         return dict(status='deleted')
 
+    # Images.
+    def add_image(self, actor, raw, name=''):
+        data, width, height = process_image(raw)
+        image_id = secrets.token_hex(12)
+        name = re.sub(r'[^\w .-]', '', str(name or ''))[:120]
+        with self.store.db() as db:
+            self.store.database.begin_write(db, 'blog')
+            require_admin(db, actor)
+            db.execute('INSERT INTO blog_images(id,name,width,height,size,data,created) VALUES(?,?,?,?,?,?,?)',
+                       (image_id, name, width, height, len(data), data, time.time()))
+            record(db, actor, 'blog_image_added', image_id, dict(name=name, width=width, height=height, size=len(data)))
+        return dict(id=image_id, url=f'/blog-media/{image_id}.webp', name=name, width=width, height=height, size=len(data))
+
+    def image(self, image_id):
+        """Bytes of one image, or None."""
+        if not re.fullmatch(r'[a-f0-9]{16,32}', image_id or ''):return None
+        with self.store.db() as db:
+            row = db.execute('SELECT data FROM blog_images WHERE id=?', (image_id,)).fetchone()
+        return bytes(row['data']) if row else None
+
+    def image_sizes(self, ids):
+        ids = [i for i in ids if re.fullmatch(r'[a-f0-9]{16,32}', i)]
+        if not ids:return {}
+        with self.store.db() as db:
+            rows = db.execute('SELECT id,width,height FROM blog_images WHERE id IN (' + ','.join('?' * len(ids)) + ')',
+                              tuple(ids)).fetchall()
+        return {row['id']: (row['width'], row['height']) for row in rows}
+
+    def images(self):
+        """All uploads, newest first, with the articles that use each one."""
+        with self.store.db() as db:
+            rows = db.execute('SELECT id,name,width,height,size,created FROM blog_images ORDER BY created DESC').fetchall()
+            posts = db.execute('SELECT id,lang,slug,title,body FROM blog_posts').fetchall()
+        used = {}
+        for post in posts:
+            for image_id in image_ids(post['body']):
+                used.setdefault(image_id, []).append(dict(id=post['id'], lang=post['lang'], slug=post['slug'], title=post['title']))
+        return [dict(row, url=f'/blog-media/{row["id"]}.webp', used_in=used.get(row['id'], [])) for row in rows]
+
+    def delete_image(self, actor, image_id):
+        with self.store.db() as db:
+            self.store.database.begin_write(db, 'blog')
+            require_admin(db, actor)
+            if not db.execute('SELECT 1 FROM blog_images WHERE id=?', (image_id,)).fetchone():raise LookupError('Image not found')
+            for post in db.execute('SELECT body FROM blog_posts').fetchall():
+                if image_id in image_ids(post['body']):raise BlogConflict('Image is used in an article')
+            db.execute('DELETE FROM blog_images WHERE id=?', (image_id,))
+            record(db, actor, 'blog_image_deleted', image_id)
+        return dict(status='deleted')
+
     def seed(self, directory=SEED_DIRECTORY):
         """Import each language's launch articles once, so later admin edits and deletions are never overwritten."""
         count = 0
@@ -432,10 +548,11 @@ def _footer(lang):
             f'<a href="{method}">{t["method"]}</a></nav></footer>')
 
 
-def _page(origin, css, lang, canonical, title, description, og_type, extra_head, body, alternates, other_href):
-    """alternates: {lang: path} of this page in each language, for hreflang."""
+def _page(origin, css, lang, canonical, title, description, og_type, extra_head, body, alternates, other_href, image=None):
+    """alternates: {lang: path} of this page in each language, for hreflang. image: (path, width, height) to share."""
     url = origin + canonical
-    image = origin + '/portal-assets/og-image.png'
+    image_path, image_width, image_height = image or ('/portal-assets/og-image.png', 1200, 630)
+    image = origin + image_path
     links = ''.join(f'<link rel="stylesheet" href="{_e(href)}"/>' for href in css)
     hreflang = ''.join(f'<link rel="alternate" hreflang="{code}" href="{_e(origin + href)}"/>' for code, href in alternates.items())
     if 'fa' in alternates:hreflang += f'<link rel="alternate" hreflang="x-default" href="{_e(origin + alternates["fa"])}"/>'
@@ -453,8 +570,8 @@ def _page(origin, css, lang, canonical, title, description, og_type, extra_head,
             f'<meta property="og:type" content="{og_type}"/><meta property="og:site_name" content="Avina"/>'
             f'<meta property="og:locale" content="{t["locale"]}"/><meta property="og:title" content="{_e(title)}"/>'
             f'<meta property="og:description" content="{_e(description)}"/><meta property="og:url" content="{_e(url)}"/>'
-            f'<meta property="og:image" content="{_e(image)}"/><meta property="og:image:width" content="1200"/>'
-            '<meta property="og:image:height" content="630"/><meta name="twitter:card" content="summary_large_image"/>'
+            f'<meta property="og:image" content="{_e(image)}"/><meta property="og:image:width" content="{image_width}"/>'
+            f'<meta property="og:image:height" content="{image_height}"/><meta name="twitter:card" content="summary_large_image"/>'
             f'<meta name="twitter:title" content="{_e(title)}"/><meta name="twitter:description" content="{_e(description)}"/>'
             f'<meta name="twitter:image" content="{_e(image)}"/>{extra_head}</head><body>'
             f'<div class="landing blog-page"><a class="skip-link" href="#blog-main">{t["skip"]}</a>{_header(lang, other_href)}'
@@ -478,7 +595,11 @@ def index_page(origin, css, posts, lang='fa'):
                  alternates, blog_path('en' if lang == 'fa' else 'fa'))
 
 
-def article_page(origin, css, post, related, translations=(), lang='fa'):
+def article_page(origin, css, post, related, translations=(), lang='fa', sizes=None):
+    """sizes maps the article's image ids to (width, height); the first image becomes its sharing image."""
+    sizes = sizes or {}
+    first = next((i for i in image_ids(post['body']) if i in sizes), None)
+    share = (f'/blog-media/{first}.webp', *sizes[first]) if first else None
     t = TEXT[lang]
     canonical = blog_path(lang, post['slug'])
     url = origin + canonical
@@ -502,7 +623,7 @@ def article_page(origin, css, post, related, translations=(), lang='fa'):
             f'<header class="blog-article-head"><h1>{_e(post["title"])}</h1><p class="blog-lead">{_e(post["description"])}</p>'
             f'<small><time datetime="{_e(post["published_on"])}">{date_label(post["published_on"], lang)}</time>'
             f'<span aria-hidden="true">·</span><span>{minutes_label(post["minutes"], lang)}</span>{updated}</small></header>'
-            f'{contents}<div class="blog-body">{render_body(post["body"])}</div>'
+            f'{contents}<div class="blog-body">{render_body(post["body"], sizes)}</div>'
             f'<aside class="blog-cta" aria-label="{t["cta_label"]}"><h2>{t["cta_h2"]}</h2><p>{t["cta_p"]}</p><div>'
             f'<a class="landing-primary" href="{path(lang, "/")}#backtest">{t["cta_record"]}</a>'
             f'<a class="landing-secondary" href="{path(lang, "/register/")}">{t["cta_signup"]}</a></div></aside>'
@@ -512,7 +633,7 @@ def article_page(origin, css, post, related, translations=(), lang='fa'):
     article = {'@type': 'BlogPosting', 'headline': post['title'], 'description': post['description'],
                'datePublished': post['published_on'], 'dateModified': max(post['updated_on'], post['published_on']),
                'inLanguage': lang, 'keywords': ', '.join(post['keywords']), 'url': url, 'mainEntityOfPage': url,
-               'image': origin + '/portal-assets/og-image.png', 'author': {'@id': origin + '/#org'},
+               'image': origin + (share[0] if share else '/portal-assets/og-image.png'), 'author': {'@id': origin + '/#org'},
                'publisher': {'@id': origin + '/#org'}}
     crumbs = {'@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': 1, 'name': t['brand'], 'item': origin + path(lang, '/')},
@@ -524,7 +645,8 @@ def article_page(origin, css, post, related, translations=(), lang='fa'):
     alternates = {code: blog_path(code, post['slug']) for code in LANGS if code in set(translations) | {lang}}
     other = 'en' if lang == 'fa' else 'fa'
     other_href = blog_path(other, post['slug']) if other in translations else blog_path(other)
-    return _page(origin, css, lang, canonical, title, post['description'], 'article', head, body, alternates, other_href)
+    return _page(origin, css, lang, canonical, title, post['description'], 'article', head, body, alternates, other_href,
+                 share)
 
 
 def rss_xml(origin, posts, lang='fa'):

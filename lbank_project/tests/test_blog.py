@@ -173,3 +173,64 @@ def test_english_site_pages_are_served_in_english(store):
         assert client.get('/en/dashboard/').headers['x-robots-tag']=='noindex, nofollow'
         assert '<html lang="fa" dir="rtl"' in client.get('/').text
         assert 'hreflang="en" href="https://avina.example/en/"' in client.get('/').text
+
+
+def jpeg_with_gps(width=2400,height=1200):
+    import io
+    from PIL import Image
+    image=Image.new('RGB',(width,height),(120,40,200))
+    exif=Image.Exif();exif[0x8825]={1:'N',2:(35.0,41.0,0.0)};exif[0x010F]='SecretCam'
+    out=io.BytesIO();image.save(out,'JPEG',exif=exif.tobytes());return out.getvalue()
+
+
+def test_uploaded_images_are_resized_reencoded_and_stripped_of_metadata():
+    import io
+    from PIL import Image
+    data,width,height=portal_blog.process_image(jpeg_with_gps())
+    assert (width,height)==(1600,800) and data[:4]==b'RIFF' and data[8:12]==b'WEBP'
+    assert b'SecretCam' not in data and not Image.open(io.BytesIO(data)).getexif()
+    for bad in (b'',b'not an image',b'<svg xmlns="http://www.w3.org/2000/svg"/>'):
+        with pytest.raises(ValueError):portal_blog.process_image(bad)
+    big=io.BytesIO();Image.new('L',(8000,6000)).save(big,'PNG')
+    with pytest.raises(ValueError):portal_blog.process_image(big.getvalue())
+
+
+def test_admin_uploads_images_places_them_anywhere_and_cannot_delete_used_ones(store):
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        raw=jpeg_with_gps()
+        assert client.post('/api/admin/blog/images',content=raw,headers={'Content-Type':'image/jpeg'}).status_code==401
+        customer=login(client,'alice')
+        assert client.post('/api/admin/blog/images',content=raw,headers={**customer,'Content-Type':'image/jpeg'}).status_code==403
+        headers=login(client)
+        assert client.post('/api/admin/blog/images',content=raw,headers={'Content-Type':'image/jpeg'}).status_code==403  # CSRF
+        assert client.post('/api/admin/blog/images',content=raw,headers={**headers,'Content-Type':'text/plain'}).status_code==415
+        assert client.post('/api/admin/blog/images',content=b'x',headers={**headers,'Content-Type':'image/png'}).status_code==422
+        too_big=b'x'*(portal_blog.MAX_UPLOAD+1)
+        assert client.post('/api/admin/blog/images',content=too_big,headers={**headers,'Content-Type':'image/png'}).status_code==413
+        image=client.post('/api/admin/blog/images?name=chart%20<b>.jpg',content=raw,headers={**headers,'Content-Type':'image/jpeg'})
+        assert image.status_code==201,image.text
+        image=image.json();assert image['width']==1600 and '<' not in image['name']
+        served=client.get(image['url'])
+        assert served.status_code==200 and served.headers['content-type']=='image/webp'
+        assert served.headers['cache-control']=='public, max-age=31536000, immutable' and served.content[8:12]==b'WEBP'
+        assert client.get('/blog-media/ffffffffffffffffffffffff.webp').status_code==404
+        assert client.get('/blog-media/..%2fportal.db').status_code==404
+        body=('مقدمه با تصویر کوچک ![نماد]('+image['url']+') وسط متن.\n![نمودار رشد سرمایه]('+image['url']+' "زیرنویس نمودار")\n'
+              'ادامه بلافاصله بعد از تصویر\n\n![خارجی](https://evil.example/x.webp)\n\n![گم‌شده](/blog-media/aaaaaaaaaaaaaaaaaaaaaaaa.webp)')
+        post=client.post('/api/admin/blog',headers=headers,json=article(slug='with-image',body=body))
+        assert post.status_code==201
+        page=client.get('/blog/with-image/').text
+        assert '<figure class="blog-figure"><img src="'+image['url']+'" alt="نمودار رشد سرمایه" width="1600" height="800"' in page
+        assert '<figcaption>زیرنویس نمودار</figcaption>' in page and 'class="blog-inline-image"' in page
+        assert 'evil.example' not in page and 'aaaaaaaaaaaaaaaaaaaaaaaa' not in page and '<p>ادامه بلافاصله بعد از تصویر</p>' in page
+        assert '<meta property="og:image" content="https://avina.example'+image['url']+'"/>' in page
+        assert '<meta property="og:image:width" content="1600"/>' in page
+        library=client.get('/api/admin/blog/images').json()['items']
+        assert library[0]['id']==image['id'] and library[0]['used_in'][0]['slug']=='with-image'
+        assert client.delete('/api/admin/blog/images/'+image['id'],headers=headers).status_code==409
+        post=post.json()
+        client.put('/api/admin/blog/'+post['id'],headers=headers,json=article(slug='with-image',body='بدون تصویر',expected_updated=post['updated']))
+        assert client.delete('/api/admin/blog/images/'+image['id'],headers=headers).status_code==200
+        assert client.get(image['url']).status_code==404
+        actions={e['action'] for e in client.get('/api/admin/audit').json()['items']}
+        assert {'blog_image_added','blog_image_deleted'}<=actions

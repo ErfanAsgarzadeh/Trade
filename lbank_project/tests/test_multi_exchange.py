@@ -154,7 +154,7 @@ def test_upgrade_from_v2_preserves_old_lbank_credentials_and_offline_migration(t
     store=PortalStore(source,key)
     assert store.connection('alice-id',decrypt=True)['secret']=='old-lbank-secret'
     with store.db() as db:
-        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3,4,5,6,7,8}
+        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3,4,5,6,7,8,9}
         assert db.execute("SELECT next_at FROM service_gate WHERE name='account-read:lbank'").fetchone()
         db.execute("UPDATE connections SET exchange_id='bybit' WHERE user_id='alice-id'")
     with pytest.raises(ValueError,match='Legacy'):store.connection('alice-id',decrypt=True)

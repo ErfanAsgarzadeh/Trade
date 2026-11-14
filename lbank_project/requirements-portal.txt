@@ -1,3 +1,5 @@
 -r requirements.txt
 psycopg[binary]==3.2.6
 psycopg-pool==3.2.6
+# Blog images are re-encoded on upload (resize, strip metadata, WebP).
+pillow==12.2.0
