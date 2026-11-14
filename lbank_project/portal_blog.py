@@ -560,7 +560,7 @@ def _page(origin, css, lang, canonical, title, description, og_type, extra_head,
     return (f'<!DOCTYPE html><html lang="{lang}" dir="{"ltr" if lang == "en" else "rtl"}" data-theme="dark"><head>'
             '<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>'
             '<meta name="theme-color" content="#100424"/>'
-            '<link rel="preload" href="/portal-assets/arabic.woff" as="font" type="font/woff" crossorigin="anonymous"/>'
+            '<link rel="preload" href="/portal-assets/vazirmatn-arabic.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>'
             f'{links}<script src="/portal-assets/appearance.js"></script>'
             f'<title>{_e(title)}</title><meta name="description" content="{_e(description)}"/>'
             f'<link rel="canonical" href="{_e(url)}"/>{hreflang}'

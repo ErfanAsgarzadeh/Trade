@@ -1,11 +1,16 @@
 @import "../public/portal-assets/titanium.css";
+/* Persian text in Vazirmatn (variable weights 100-900, OFL); the unicode-range keeps Latin text on Lato. */
 @font-face {
-  font-family: TradeArabic;
-  src: url("/portal-assets/arabic.woff") format("woff");
+  font-family: Vazirmatn;
+  src: url("/portal-assets/vazirmatn-arabic.woff2") format("woff2");
   font-display: swap;
-  font-weight: 400;
+  font-weight: 100 900;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC;
 }
-/* Avina brand kit: Persian in Noto Sans Arabic, Latin in Lato. */
+/* Avina: Persian in Vazirmatn, Latin in Lato. */
 @font-face {
   font-family: Lato;
   src: url("/portal-assets/lato-400.woff2") format("woff2");
@@ -19,7 +24,7 @@
   font-weight: 700 900;
 }
 :root {
-  font-family: Lato, TradeArabic, Tahoma, Arial, sans-serif;
+  font-family: Lato, Vazirmatn, Tahoma, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.9;
@@ -311,7 +316,7 @@ textarea {
   margin-top: 25px;
 }
 .strategy-tags span {
-  font-family: Arial, TradeArabic, sans-serif;
+  font-family: Arial, Vazirmatn, sans-serif;
   font-size: 12px;
   border: 1px solid var(--line);
   border-radius: 30px;
@@ -1143,7 +1148,7 @@ dialog::backdrop {
     gap: 6px;
   }
   .strategy-tags span {
-    font-family: Arial, TradeArabic, sans-serif;
+    font-family: Arial, Vazirmatn, sans-serif;
     font-size: 10px;
     padding: 4px 12px;
   }
