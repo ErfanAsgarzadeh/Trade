@@ -6,6 +6,39 @@ import { longDate, money, num } from "@/lib/format";
 import { useLang } from "@/lib/lang";
 import { Heading } from "./shared";
 import PaymentPanel from "./payment-panel";
+import { discountLabel, type Discount } from "@/lib/referral";
+
+/** Discount lines under a price: invite discount, coupon and credit, each as a negative amount. */
+function Discounts({
+  items,
+  listCents,
+  usd,
+}: {
+  items?: Discount[];
+  listCents?: number | null;
+  usd: (v: number) => string;
+}) {
+  const { lang, t } = useLang();
+  if (!items?.length || listCents == null) return null;
+  return (
+    <ul className="discount-lines" aria-label={t("تخفیف‌ها", "Discounts")}>
+      <li>
+        <span>{t("قیمت پلن", "Plan price")}</span>
+        <s>{usd(listCents / 100)}</s>
+      </li>
+      {items.map((d) => (
+        <li key={d.kind} className="discount">
+          <span>{discountLabel(d, lang)}</span>
+          <strong>
+            {lang === "en"
+              ? "−" + usd(d.cents / 100)
+              : usd(d.cents / 100) + " کم"}
+          </strong>
+        </li>
+      ))}
+    </ul>
+  );
+}
 interface Props {
   api: ApiClient;
   report: (e: unknown) => void;
@@ -549,6 +582,11 @@ export default function LicensePanel({
                     faNumber(months) +
                     t(" ماه", months === 1 ? " month" : " months")}
             </p>
+            <Discounts
+              items={currentQuote?.discounts}
+              listCents={currentQuote?.list_price_cents}
+              usd={usd}
+            />
             <div className="price-divider" />
             <div className="price-meta">
               <span>{t("سقف سرمایه", "Capital cap")}</span>
@@ -667,17 +705,26 @@ export default function LicensePanel({
         {snapshot?.orders
           .filter((o) => o.status === "pending")
           .slice(0, 1)
-          .map((o) => (
-            <PaymentPanel
-              key={o.id}
-              api={api}
-              orderId={o.id}
-              onPaid={() => {
-                notify(t("پرداخت تأیید شد.", "Payment confirmed."));
-                void refresh().catch(report);
-              }}
-            />
-          ))}
+          .map((o) =>
+            o.price_cents === 0 ? (
+              <p key={o.id} className="payment-panel note" role="status">
+                {t(
+                  "این سفارش کامل با اعتبار شما پرداخت شده و پرداخت دیگری لازم نیست؛ پس از بررسی پشتیبانی فعال می‌شود.",
+                  "This order is fully paid with your credit; no payment is needed. It activates after review.",
+                )}
+              </p>
+            ) : (
+              <PaymentPanel
+                key={o.id}
+                api={api}
+                orderId={o.id}
+                onPaid={() => {
+                  notify(t("پرداخت تأیید شد.", "Payment confirmed."));
+                  void refresh().catch(report);
+                }}
+              />
+            ),
+          )}
         {!snapshot?.orders.length ? (
           <p className="empty-state">
             {t(
@@ -715,7 +762,17 @@ export default function LicensePanel({
                     · {usd(o.cap_usd)} / {faNumber(o.months)}{" "}
                     {t("ماه", o.months === 1 ? "month" : "months")}
                   </td>
-                  <td>{usd(o.price_cents / 100)}</td>
+                  <td>
+                    {o.list_price_cents != null &&
+                      o.list_price_cents !== o.price_cents && (
+                        <>
+                          <s className="muted">
+                            {usd(o.list_price_cents / 100)}
+                          </s>{" "}
+                        </>
+                      )}
+                    {usd(o.price_cents / 100)}
+                  </td>
                   <td>{faDate(o.created * 1000)}</td>
                   <td>
                     <span className={"order-status " + o.status}>
@@ -783,10 +840,23 @@ export default function LicensePanel({
                       " · term starts after support approval",
                     ))}
           </p>
+          <Discounts
+            items={checkout?.discounts}
+            listCents={checkout?.list_price_cents}
+            usd={usd}
+          />
           <div className="checkout-total">
-            <span>{t("مبلغ درخواست", "Amount")}</span>
+            <span>{t("مبلغ قابل پرداخت", "Amount to pay")}</span>
             <strong>{checkout ? usd(checkout.price_cents / 100) : ""}</strong>
           </div>
+          {checkout?.price_cents === 0 && (
+            <p className="note">
+              {t(
+                "اعتبار شما کل مبلغ را پوشش می‌دهد و پرداختی لازم نیست.",
+                "Your credit covers the full amount; no payment is needed.",
+              )}
+            </p>
+          )}
           <p className="note">
             {t(
               "بعد از ثبت درخواست، مبلغ را با USDT یا USDC مستقیم به کیف پول آوینا پرداخت می‌کنید و پرداخت خودکار روی شبکه تأیید می‌شود. برای معاملهٔ خودکار، شناسه و سرمایهٔ حساب صرافی هم بررسی می‌شود.",

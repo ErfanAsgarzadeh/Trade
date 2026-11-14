@@ -112,7 +112,7 @@ class Payments:
 
     def settings(self, db=None):
         def read(db):
-            rows = db.execute("SELECT name,value FROM site_settings WHERE name LIKE 'payment.%'").fetchall()
+            rows = db.execute('SELECT name,value FROM site_settings WHERE name LIKE ?', ('payment.%',)).fetchall()
             return {**DEFAULTS, **{row['name'][8:]: row['value'] for row in rows}}
         if db is not None:return read(db)
         with self.store.db() as db:return read(db)
@@ -155,7 +155,7 @@ class Payments:
         settings = self.settings()
         with self.store.db() as db:
             gates = {row['name']: row['next_at'] for row in db.execute(
-                "SELECT name,next_at FROM service_gate WHERE name LIKE 'payments:%'").fetchall()}
+                'SELECT name,next_at FROM service_gate WHERE name LIKE ?', ('payments:%',)).fetchall()}
         return dict(tron_address=settings['tron_address'], bsc_address=settings['bsc_address'],
                     invoice_minutes=int(settings['invoice_minutes']), auto_approve_signals=bool(settings['auto_approver']),
                     bsc_rpc=settings['bsc_rpc'], trongrid_url=settings['trongrid_url'], methods=self.methods(settings),
@@ -190,6 +190,7 @@ class Payments:
             if not address:raise PaymentConflict('This payment method is not enabled')
             order = db.execute('SELECT * FROM license_orders WHERE id=? AND user_id=?', (order_id, user)).fetchone()
             if not order or order['status'] != 'pending':raise PaymentConflict('Only a pending order can be paid')
+            if int(order['price_cents']) <= 0:raise PaymentConflict('Nothing to pay; credit covers this order')
             if db.execute("SELECT 1 FROM payment_invoices WHERE order_id=? AND status='paid'", (order_id,)).fetchone():
                 raise PaymentConflict('This order is already paid')
             current = db.execute("SELECT * FROM payment_invoices WHERE order_id=? AND status='open' AND expires>? "

@@ -9,6 +9,7 @@ import { Heading } from "./shared";
 import AdminBlog from "./admin-blog";
 import AdminPayments from "./admin-payments";
 import AdminTelegram from "./admin-telegram";
+import AdminReferrals from "./admin-referrals";
 import type { Invoice } from "./payment-panel";
 
 type Report = (error: unknown) => void;
@@ -36,6 +37,7 @@ interface AdminOrder {
   product: Product;
   kind: string;
   price_cents: number;
+  list_price_cents: number | null;
   status: string;
   created: number;
   approval_state: string | null;
@@ -63,6 +65,7 @@ const tabs = [
   ["pricing", "قیمت و فروش", "Pricing and sales"],
   ["payments", "پرداخت", "Payments"],
   ["telegram", "تلگرام", "Telegram"],
+  ["referrals", "دعوت و پاداش", "Referrals"],
   ["blog", "بلاگ", "Blog"],
   ["audit", "سوابق عملیات", "Audit log"],
 ] as const;
@@ -95,6 +98,12 @@ const EVENTS: Record<string, Pair> = {
   telegram_configured: ["اتصال ربات تلگرام", "Telegram bot connected"],
   telegram_removed: ["حذف ربات تلگرام", "Telegram bot removed"],
   telegram_broadcast: ["پیام همگانی تلگرام", "Telegram broadcast"],
+  referral_settings: ["تنظیمات دعوت", "Referral settings"],
+  referral_program_saved: ["ذخیرهٔ برنامهٔ دعوت", "Referral program saved"],
+  referral_program_deleted: ["حذف برنامهٔ دعوت", "Referral program deleted"],
+  referral_code_saved: ["ذخیرهٔ کد دعوت", "Referral code saved"],
+  referral_reward_granted: ["ثبت پاداش دستی", "Manual reward granted"],
+  referral_reward_voided: ["ابطال پاداش", "Reward voided"],
 };
 const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
   table[key]?.[lang === "en" ? 1 : 0];
@@ -330,6 +339,7 @@ export default function AdminWorkbench({
           )}
           {tab === "payments" && <AdminPayments api={api} report={report} />}
           {tab === "telegram" && <AdminTelegram api={api} report={report} />}
+          {tab === "referrals" && <AdminReferrals api={api} report={report} />}
           {tab === "blog" && <AdminBlog api={api} report={report} />}
           {tab === "audit" && <Events api={api} report={report} />}
         </div>
@@ -673,9 +683,23 @@ function Orders({
                   </small>
                 </td>
                 <td>{usd(o.cap_usd)}</td>
-                <td>{usd(o.price_cents / 100)}</td>
                 <td>
-                  {!o.payment ? (
+                  {usd(o.price_cents / 100)}
+                  {o.list_price_cents != null &&
+                    o.list_price_cents !== o.price_cents && (
+                      <small className="note">
+                        {" "}
+                        ({t("تخفیف/اعتبار ", "discount/credit ")}
+                        {usd((o.list_price_cents - o.price_cents) / 100)})
+                      </small>
+                    )}
+                </td>
+                <td>
+                  {o.price_cents === 0 ? (
+                    <span className="note">
+                      {t("کامل با اعتبار پرداخت شده", "Paid in full by credit")}
+                    </span>
+                  ) : !o.payment ? (
                     <span className="note">
                       {t("هنوز پرداختی شروع نشده", "Not started")}
                     </span>
@@ -818,7 +842,12 @@ function Orders({
                 id="admin-payment-ref"
                 name="payment_ref"
                 dir="ltr"
-                defaultValue={selection?.order.payment?.tx_ref ?? ""}
+                defaultValue={
+                  selection?.order.payment?.tx_ref ??
+                  (selection?.order.price_cents === 0
+                    ? "credit-" + selection.order.id
+                    : "")
+                }
                 minLength={4}
                 maxLength={120}
                 required

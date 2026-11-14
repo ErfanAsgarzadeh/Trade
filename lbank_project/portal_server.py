@@ -26,6 +26,7 @@ from portal_frontend import frontend_index, private_page, public_file, public_pa
 import portal_blog
 from portal_payments import PaymentConflict, Payments
 from portal_telegram import Telegram, TelegramError
+from portal_referrals import ReferralConflict, Referrals
 from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
 
@@ -49,6 +50,7 @@ class Login(BaseModel):
 class Registration(Login):
     password_confirmation:SecretStr=Field(min_length=12,max_length=128)
     email:str=Field(min_length=6,max_length=254)
+    referral_code:str|None=Field(default=None,max_length=24)
 
 
 class EmailChange(BaseModel):
@@ -152,6 +154,47 @@ class TelegramSettings(BaseModel):
 class TelegramBroadcast(BaseModel):
     model_config=ConfigDict(extra='forbid')
     text:str=Field(min_length=1,max_length=3500)
+
+
+class ReferralCode(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    code:str=Field(min_length=3,max_length=24)
+
+
+class ReferralSettings(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    enabled:bool
+    attach_days:int=Field(ge=0,le=365)
+    credit_max_percent:int=Field(ge=0,le=100)
+
+
+class ReferralProgram(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    name:str=Field(min_length=2,max_length=80)
+    config:dict
+    active:bool=True
+    is_default:bool=False
+    starts:float|None=None
+    ends:float|None=None
+
+
+class AdminReferralCode(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    code:str=Field(min_length=3,max_length=24)
+    owner:str|None=Field(default=None,max_length=40)
+    program_id:str|None=Field(default=None,max_length=40)
+    label:str=Field(default='',max_length=80)
+    max_uses:int=Field(default=0,ge=0,le=1000000)
+    active:bool=True
+
+
+class ReferralGrant(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    username:str=Field(min_length=2,max_length=40)
+    kind:str=Field(pattern=r'^(credit|coupon)$')
+    value:float=Field(gt=0,le=100000)
+    note:str=Field(default='',max_length=200)
+    expiry_days:int=Field(default=0,ge=0,le=3650)
 
 
 class AdminApproval(BaseModel):
@@ -405,6 +448,50 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except PermissionError:raise HTTPException(403,'Administrator required')
         except ValueError as exc:raise HTTPException(422,str(exc))
 
+    def referral_call(function):
+        try:return function()
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except LookupError as exc:raise HTTPException(404,str(exc))
+        except ReferralConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
+    @app.get('/api/admin/referrals')
+    def admin_referrals(request:Request,user=Depends(administrator)):
+        return Referrals(repository(request)).admin_overview()
+
+    @app.put('/api/admin/referrals/settings')
+    def admin_referral_settings(payload:ReferralSettings,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).save_settings(user['id'],payload.model_dump()))
+
+    @app.post('/api/admin/referrals/programs',status_code=201)
+    def admin_referral_create(payload:ReferralProgram,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).save_program(user['id'],None,**payload.model_dump()))
+
+    @app.put('/api/admin/referrals/programs/{program_id}')
+    def admin_referral_update(program_id:str,payload:ReferralProgram,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).save_program(user['id'],program_id,**payload.model_dump()))
+
+    @app.delete('/api/admin/referrals/programs/{program_id}')
+    def admin_referral_delete(program_id:str,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).delete_program(user['id'],program_id))
+
+    @app.post('/api/admin/referrals/codes',status_code=201)
+    def admin_referral_code_create(payload:AdminReferralCode,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).save_code(user['id'],payload.code,payload.owner,payload.program_id,payload.label,payload.max_uses,payload.active,True))
+
+    @app.put('/api/admin/referrals/codes/{code}')
+    def admin_referral_code_update(code:str,payload:AdminReferralCode,request:Request,user=Depends(admin_mutation)):
+        if payload.code.upper()!=code.upper():raise HTTPException(422,'Code mismatch')
+        return referral_call(lambda:Referrals(repository(request)).save_code(user['id'],code,None,payload.program_id,payload.label,payload.max_uses,payload.active,False))
+
+    @app.post('/api/admin/referrals/rewards',status_code=201)
+    def admin_referral_grant(payload:ReferralGrant,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).grant(user['id'],payload.username,payload.kind,payload.value,payload.note,payload.expiry_days))
+
+    @app.post('/api/admin/referrals/rewards/{reward_id}/void')
+    def admin_referral_void(reward_id:str,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).void(user['id'],reward_id))
+
     @app.get('/api/admin/payments')
     def admin_payments(request:Request,user=Depends(administrator)):
         payments=Payments(repository(request))
@@ -524,6 +611,30 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except BillingConflict as exc:raise HTTPException(409,str(exc))
         except ValueError:raise HTTPException(422,'Unknown tier or term')
 
+    # Referrals: a personal invite code, what it earns, and credit/coupons for purchases.
+    @app.get('/api/referral/{code}')
+    def referral_lookup(code:str,request:Request):
+        if len(code)>24:raise HTTPException(404,'Unknown code')
+        client=request.client.host if request.client else 'unknown'
+        if not repository(request).attempt('referral:'+client):raise HTTPException(429,'Too many lookups')
+        return Referrals(repository(request)).lookup(code)
+
+    @app.get('/api/me/referral')
+    def referral_account(request:Request,user=Depends(identity)):
+        return Referrals(repository(request)).account(user['id'])
+
+    @app.put('/api/me/referral/code')
+    def referral_code(payload:ReferralCode,request:Request,user=Depends(mutation)):
+        try:return Referrals(repository(request)).set_code(user['id'],payload.code)
+        except ReferralConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
+    @app.post('/api/me/referral/attach')
+    def referral_attach(payload:ReferralCode,request:Request,user=Depends(mutation)):
+        try:return Referrals(repository(request)).attach_later(user['id'],payload.code)
+        except ReferralConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
     # Telegram: link this account to the site's bot to receive signals and notices there.
     @app.get('/api/me/telegram')
     def telegram_account(request:Request,user=Depends(identity)):
@@ -589,9 +700,11 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         password=payload.password.get_secret_value()
         if not secrets.compare_digest(password.encode(),payload.password_confirmation.get_secret_value().encode()):
             raise HTTPException(422,'Password confirmation does not match')
-        try:token,csrf=store.register(payload.username,password,payload.email)
+        try:token,csrf=store.register(payload.username,password,payload.email,(payload.referral_code or '').strip() or None)
         except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except ReferralConflict as exc:raise HTTPException(409,str(exc))
         except ValueError as exc:
+            if 'referral' in str(exc).lower():raise HTTPException(422,'Invalid referral code')
             if 'email' in str(exc).lower():raise HTTPException(422,'Invalid email')
             raise HTTPException(409,'Username unavailable')
         store.logout(request.cookies.get(COOKIE,''))

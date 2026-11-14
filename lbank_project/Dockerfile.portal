@@ -11,7 +11,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
 COPY requirements.txt requirements-portal.txt ./
 RUN pip install --no-cache-dir -r requirements-portal.txt
-COPY portal_thetruetrade.py exchanges.py portal_execution.py portal_server.py portal_store.py portal_database.py portal_jobs.py portal_worker.py portal_exchanges.py portal_migrate.py portal_runtime.py portal_lbank.py portal_admin.py portal_billing.py portal_frontend.py portal_admin_store.py portal_audit.py portal_blog.py portal_payments.py portal_telegram.py portal_setup.py product_pricing.py signal_feed.py capital_plans.py customer_manager.py license_access.py ./
+COPY portal_thetruetrade.py exchanges.py portal_execution.py portal_server.py portal_store.py portal_database.py portal_jobs.py portal_worker.py portal_exchanges.py portal_migrate.py portal_runtime.py portal_lbank.py portal_admin.py portal_billing.py portal_frontend.py portal_admin_store.py portal_audit.py portal_blog.py portal_payments.py portal_telegram.py portal_referrals.py portal_setup.py product_pricing.py signal_feed.py capital_plans.py customer_manager.py license_access.py ./
 COPY --from=frontend /web/out ./frontend/out
 COPY --from=frontend /web/public ./frontend/public
 # Launch articles: imported into the database once on first start, then managed in the admin panel.

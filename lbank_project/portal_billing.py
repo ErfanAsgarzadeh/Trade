@@ -65,9 +65,10 @@ class Billing:
     def snapshot(self, user, now=None):
         with self.store.db() as db:
             document = self._document(db, user)
-            orders = db.execute('SELECT id,cap_usd,months,kind,product,price_cents,status,created,updated '
+            orders = db.execute('SELECT id,cap_usd,months,kind,product,price_cents,list_price_cents,discounts,status,created,updated '
                                 'FROM license_orders WHERE user_id=? ORDER BY created DESC LIMIT 30', (user,)).fetchall()
-        return dict(license=public_license(document, now), orders=[dict(r) for r in orders],
+        return dict(license=public_license(document, now),
+                    orders=[dict(r, discounts=json.loads(r['discounts']) if r['discounts'] else []) for r in orders],
                     payment_mode='manual_review', cashflow_monitoring='operator_verified')
 
     def _quote(self, db, user, cap, months, kind, now, product='autotrade'):
@@ -100,9 +101,15 @@ class Billing:
                     full_price_cents=pricing.priced(config,cap,months),currency='USD',
                     price_version=config['version'],starts_at=iso(start),expires_at=iso(end))
 
+    def _discounted(self, db, user, quote, now, reserve_order=None):
+        from portal_referrals import Referrals
+        payable, lines = Referrals(self.store).price(db, user, quote, now, reserve_order)
+        return dict(quote, list_price_cents=quote['price_cents'], price_cents=payable, discounts=lines)
+
     def quote(self,user,cap,months,kind='subscription',now=None,product='autotrade'):
+        now=time.time() if now is None else now
         with self.store.db() as db:
-            return self._quote(db,user,cap,months,kind,time.time() if now is None else now,product)
+            return self._discounted(db,user,self._quote(db,user,cap,months,kind,now,product),now)
 
     def order(self, user, cap, months, kind, request_key, expected_price_cents, now=None, product='autotrade'):
         now = time.time() if now is None else now
@@ -118,15 +125,30 @@ class Billing:
                 return dict(id=existing['id'], status=existing['status'], already_exists=True)
             if db.execute("SELECT id FROM license_orders WHERE user_id=? AND status='pending'", (user,)).fetchone():
                 raise BillingConflict('Cancel or finish your pending order first')
-            quote = self._quote(db, user, cap, months, kind, now,product)
+            quote = self._discounted(db, user, self._quote(db, user, cap, months, kind, now,product), now)
             # Proration can fall by cents between preview and submit; never charge more than accepted.
             if quote['price_cents'] > expected_price_cents or (kind == 'subscription' and quote['price_cents'] != expected_price_cents):
                 raise BillingConflict('Price changed; request a fresh quote')
             oid = str(uuid.uuid4())
-            db.execute('INSERT INTO license_orders(id,user_id,cap_usd,months,kind,price_cents,price_version,status,created,updated,request_key,product) '
-                       'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', (oid, user, cap, months, kind, quote['price_cents'], quote['price_version'], 'pending', now, now, request_key,product))
+            referee = sum(line['cents'] for line in quote['discounts'] if line['kind'] == 'referee')
+            db.execute('INSERT INTO license_orders(id,user_id,cap_usd,months,kind,price_cents,price_version,status,created,updated,request_key,product,'
+                       'list_price_cents,referee_discount_cents,discounts) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                       (oid, user, cap, months, kind, quote['price_cents'], quote['price_version'], 'pending', now, now, request_key,product,
+                        quote['list_price_cents'], referee, json.dumps(quote['discounts']) if quote['discounts'] else None))
+            # Reserve the same credit and coupon the customer just accepted (same lock, same result).
+            reserved = self._discounted(db, user, self._quote(db, user, cap, months, kind, now, product), now, reserve_order=oid)
+            if reserved['price_cents'] != quote['price_cents']:raise BillingConflict('Price changed; request a fresh quote')
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_requested:' + oid, now))
-            return dict(id=oid, status='pending', already_exists=False)
+            approver = None
+            if quote['price_cents'] == 0 and product == 'signals':
+                from portal_payments import Payments
+                approver = Payments(self.store).settings(db).get('auto_approver')
+        if approver:
+            # Fully covered by credit: a signal subscription needs no payment or exchange checks.
+            from portal_admin_store import AdminStore
+            try:AdminStore(self.store).request_approval(approver, oid, 'credit-' + oid)
+            except Exception:pass  # Stays on the admin desk for a manual approval.
+        return dict(id=oid, status='pending', already_exists=False)
 
     def cancel(self, user, oid):
         with self.store.db() as db:
@@ -134,6 +156,8 @@ class Billing:
             if db.execute("UPDATE license_orders SET status='cancelled',updated=? WHERE id=? AND user_id=? AND status='pending'",
                           (time.time(), oid, user)).rowcount != 1:
                 raise BillingConflict('Pending order not found')
+            from portal_referrals import Referrals
+            Referrals(self.store).release(db, oid)
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_cancelled:' + oid, time.time()))
 
     def document(self, user):
@@ -187,7 +211,8 @@ class Billing:
             quote = self._quote(db, user, order['cap_usd'], order['months'], order['kind'], now,product)
             if order['price_version'] != quote['price_version']:
                 raise BillingConflict('Price version changed; create a new order')
-            if order['kind'] == 'subscription' and quote['price_cents'] != order['price_cents']:
+            listed = order['list_price_cents'] if order['list_price_cents'] is not None else order['price_cents']
+            if order['kind'] == 'subscription' and quote['price_cents'] != listed:
                 raise BillingConflict('Order price changed')
             username = db.execute('SELECT username FROM users WHERE id=?', (user,)).fetchone()['username']
             previous = json.loads(old)['payload'] if old else None
@@ -212,6 +237,8 @@ class Billing:
             db.execute("UPDATE license_orders SET status='approved',payment_ref=?,updated=? WHERE id=?",
                        (payment_ref, now, oid))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_approved:' + oid, now))
+            from portal_referrals import Referrals
+            Referrals(self.store).on_approved(db, order, now)
             from portal_telegram import notify
             until = quote['expires_at'][:10]
             notify(db, user, f'🎉 اشتراک آوینای شما فعال شد (معتبر تا {until}).' + (' سیگنال‌ها از این پس همین‌جا ارسال می‌شوند.' if product == 'signals' else ''),

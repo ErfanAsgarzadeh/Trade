@@ -16,7 +16,7 @@ TABLES={
  'audit':('id','user_id','event','at'),
  'account_jobs':('user_id','revision','state','lease_token','lease_until','not_before','attempts','updated'),
  'service_gate':('name','next_at'),
- 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref','product'),
+ 'license_orders':('id','user_id','cap_usd','months','kind','price_cents','price_version','status','created','updated','request_key','payment_ref','product','list_price_cents','referee_discount_cents','discounts'),
  'product_pricing':('product','prices','enabled','version','updated'),
  'capital_licenses':('user_id','account_id','document','updated'),
  'admin_events':('id','actor_id','action','target','details','at'),
@@ -27,6 +27,11 @@ TABLES={
  'site_settings':('name','value','updated'),
  'telegram_links':('user_id','chat_id','username','lang','signals','notices','linked'),
  'payment_invoices':('id','order_id','user_id','network','token','address','amount_micro','status','created','expires','paid_at','tx_ref'),
+ 'referral_programs':('id','name','config','active','is_default','starts','ends','created','updated'),
+ 'referral_codes':('code','user_id','program_id','label','active','max_uses','uses','personal','created'),
+ 'referrals':('user_id','referrer_id','code','program_id','created'),
+ 'referral_rewards':('id','user_id','kind','value','remaining','source','referee_id','order_id','program_id','note','status','created','available_at','expires'),
+ 'referral_credit_uses':('order_id','reward_id','cents'),
  'payment_transfers':('tx_ref','network','token','from_address','to_address','amount_micro','block_time','seen','invoice_id','status'),
 }
 
@@ -61,8 +66,10 @@ def migrate_sqlite(source,target,key):
                     select_fields=','.join(columns[:-1])+",'fa' AS lang"
                 if table=='connections' and 'exchange_id' not in {r['name'] for r in src.execute('PRAGMA table_info(connections)')}:
                     select_fields=','.join(columns[:-1])+",'lbank' AS exchange_id"
-                if table=='license_orders' and 'product' not in {r['name'] for r in src.execute('PRAGMA table_info(license_orders)')}:
-                    select_fields=','.join(columns[:-1])+",'autotrade' AS product"
+                if table=='license_orders':
+                    present={r['name'] for r in src.execute('PRAGMA table_info(license_orders)')}
+                    defaults={'product':"'autotrade'",'list_price_cents':'NULL','referee_discount_cents':'0','discounts':'NULL'}
+                    select_fields=','.join(c if c in present else defaults[c]+' AS '+c for c in columns)
                 rows=src.execute('SELECT '+select_fields+' FROM '+table).fetchall()
                 counts[table]=len(rows)
                 query='INSERT INTO '+table+' ('+fields+') VALUES('+','.join('?' for _ in columns)+')'

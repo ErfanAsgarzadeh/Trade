@@ -6,6 +6,7 @@ import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
 import { SiteFooter, SiteHeader } from "./site-chrome";
 import LatestPosts from "./latest-posts";
+import RefCapture from "./ref-capture";
 
 const MONTHS: Record<Lang, string[]> = {
   fa: [
@@ -179,6 +180,7 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
         <a className="skip-link" href="#landing-main">
           {t("رفتن به محتوا", "Skip to content")}
         </a>
+        <RefCapture />
         <SiteHeader home lang={lang} />
         <main id="landing-main">
           <section className="landing-hero" aria-labelledby="hero-title">

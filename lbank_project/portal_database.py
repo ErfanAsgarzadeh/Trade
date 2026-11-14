@@ -115,6 +115,29 @@ CREATE INDEX IF NOT EXISTS telegram_outbox_pending ON telegram_outbox(sent,creat
 CREATE TABLE IF NOT EXISTS telegram_signal_sent(user_id TEXT NOT NULL,signal_key TEXT NOT NULL,sent REAL NOT NULL,
  PRIMARY KEY(user_id,signal_key));
 '''
+SCHEMA_V12='''
+CREATE TABLE IF NOT EXISTS referral_programs(id TEXT PRIMARY KEY,name TEXT NOT NULL,config TEXT NOT NULL,
+ active INTEGER NOT NULL DEFAULT 1,is_default INTEGER NOT NULL DEFAULT 0,starts REAL,ends REAL,created REAL NOT NULL,updated REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS referral_codes(code TEXT PRIMARY KEY,user_id TEXT REFERENCES users(id),
+ program_id TEXT REFERENCES referral_programs(id),label TEXT NOT NULL DEFAULT '',active INTEGER NOT NULL DEFAULT 1,
+ max_uses INTEGER NOT NULL DEFAULT 0,uses INTEGER NOT NULL DEFAULT 0,personal INTEGER NOT NULL DEFAULT 0,created REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS referral_codes_owner ON referral_codes(user_id,personal,created);
+CREATE TABLE IF NOT EXISTS referrals(user_id TEXT PRIMARY KEY REFERENCES users(id),referrer_id TEXT REFERENCES users(id),
+ code TEXT NOT NULL,program_id TEXT REFERENCES referral_programs(id),created REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS referrals_referrer ON referrals(referrer_id,created);
+CREATE TABLE IF NOT EXISTS referral_rewards(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),
+ kind TEXT NOT NULL CHECK(kind IN ('credit','coupon')),value BIGINT NOT NULL,remaining BIGINT NOT NULL,
+ source TEXT NOT NULL CHECK(source IN ('referral','admin')),referee_id TEXT REFERENCES users(id),order_id TEXT,
+ program_id TEXT REFERENCES referral_programs(id),note TEXT NOT NULL DEFAULT '',status TEXT NOT NULL CHECK(status IN ('active','void')),
+ created REAL NOT NULL,available_at REAL NOT NULL,expires REAL);
+CREATE INDEX IF NOT EXISTS referral_rewards_owner ON referral_rewards(user_id,kind,status);
+CREATE UNIQUE INDEX IF NOT EXISTS referral_rewards_order ON referral_rewards(order_id) WHERE order_id IS NOT NULL;
+CREATE TABLE IF NOT EXISTS referral_credit_uses(order_id TEXT NOT NULL REFERENCES license_orders(id),
+ reward_id TEXT NOT NULL REFERENCES referral_rewards(id),cents BIGINT NOT NULL,PRIMARY KEY(order_id,reward_id));
+ALTER TABLE license_orders ADD COLUMN list_price_cents INTEGER;
+ALTER TABLE license_orders ADD COLUMN referee_discount_cents INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE license_orders ADD COLUMN discounts TEXT
+'''
 
 
 class PostgresConnection:
@@ -183,8 +206,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7,8,9,10,11}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11)):
+            if versions-{1,2,3,4,5,6,7,8,9,10,11,12}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

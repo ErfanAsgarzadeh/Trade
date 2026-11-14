@@ -1,3 +1,4 @@
+import type { Discount } from "./referral";
 export type Product = "signals" | "autotrade";
 export interface ProductPlan {
   product: Product;
@@ -40,6 +41,8 @@ export interface Order {
   months: number;
   kind: string;
   price_cents: number;
+  list_price_cents?: number | null;
+  discounts?: Discount[];
   status: string;
   created: number;
 }
@@ -53,6 +56,8 @@ export interface Quote {
   months: number;
   kind: string;
   price_cents: number;
+  list_price_cents?: number;
+  discounts?: Discount[];
   expires_at: string;
 }
 export interface Exchange {

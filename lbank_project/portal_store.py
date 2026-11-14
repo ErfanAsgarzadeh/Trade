@@ -55,7 +55,7 @@ class PortalStore:
                        (user,username,password_hash(password),normal_email(email) if email else None))
         return user
 
-    def register(self,username,password,email):
+    def register(self,username,password,email,referral_code=None):
         """Create the user, session and audit event in one transaction."""
         user=str(uuid.uuid4());token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
         hashed=password_hash(password);email=normal_email(email)
@@ -70,6 +70,11 @@ class PortalStore:
             db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
                        (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+43200))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'registered',time.time()))
+            if referral_code:
+                from portal_referrals import Referrals
+                referrals=Referrals(self)
+                # An invalid code fails the sign-up so the visitor can fix it; disabled programs are ignored.
+                if referrals.settings(db)['enabled']:referrals.attach(db,user,referral_code)
         return token,csrf
 
     def set_admin(self,username,enabled=True):
