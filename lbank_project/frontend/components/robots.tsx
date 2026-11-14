@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { ApiClient } from "@/lib/api";
 import type { Robot } from "@/lib/types";
-import { states } from "@/lib/format";
+import { num, stateLabel } from "@/lib/format";
+import { useLang } from "@/lib/lang";
 import { DataTable } from "./shared";
 export default function Robots({
   api,
@@ -11,6 +12,7 @@ export default function Robots({
   api: ApiClient;
   report: (e: unknown) => void;
 }) {
+  const { lang, t } = useLang();
   const [readiness, setReadiness] = useState<{
     status: string;
     checks: {
@@ -64,10 +66,12 @@ export default function Robots({
       <div className="section-heading">
         <div>
           <span className="eyebrow">THREE DIFFERENT PERSPECTIVES</span>
-          <h2>ربات‌های حساب شما</h2>
+          <h2>{t("ربات‌های حساب شما", "Your account's bots")}</h2>
           <p>
-            عملکرد زیر مربوط به اجرای آزمایشی اختصاصی شماست؛ معاملات واقعی صرافی
-            نیست.
+            {t(
+              "عملکرد زیر مربوط به اجرای آزمایشی اختصاصی شماست؛ معاملات واقعی صرافی نیست.",
+              "The results below come from your private trial run, not real exchange trades.",
+            )}
           </p>
         </div>
         <button
@@ -76,7 +80,7 @@ export default function Robots({
           disabled={busy}
           onClick={refresh}
         >
-          به‌روزرسانی ↻
+          {t("به‌روزرسانی", "Refresh")}
         </button>
       </div>
       <div
@@ -84,60 +88,84 @@ export default function Robots({
         className="connection-summary"
         role="status"
       >
-        <h3>وضعیت معاملهٔ خودکار · TheTrueTrade</h3>
+        <h3>{t("وضعیت معاملهٔ خودکار · TheTrueTrade", "Automated trading status · TheTrueTrade")}</h3>
         <p>
           {!readiness
-            ? "در حال بررسی…"
+            ? t("در حال بررسی…", "Checking…")
             : readiness.status === "signals_only"
-              ? "اشتراک شما فقط برای دریافت سیگنال است."
+              ? t("اشتراک شما فقط برای دریافت سیگنال است.", "Your subscription covers signals only.")
               : readiness.status === "license_required"
-                ? "لایسنس معتبر معاملهٔ خودکار لازم است."
+                ? t("لایسنس معتبر معاملهٔ خودکار لازم است.", "A valid automated-trading license is required.")
                 : readiness.status === "connection_required"
-                  ? "ابتدا حساب فیوچرز TheTrueTrade را در بخش اتصال حساب ثبت کنید."
+                  ? t(
+                      "ابتدا حساب فیوچرز TheTrueTrade را در بخش اتصال حساب ثبت کنید.",
+                      "First add your TheTrueTrade futures account in the exchange section.",
+                    )
                   : readiness.status === "verification_required"
-                    ? "بررسی اتصال حساب را انجام دهید؛ نتیجهٔ معتبر باید به‌روز باشد."
-                    : "اتصال خواندنی حساب تأیید شده؛ اجرای واقعی هنوز آماده نیست."}
+                    ? t(
+                        "بررسی اتصال حساب را انجام دهید؛ نتیجهٔ معتبر باید به‌روز باشد.",
+                        "Run the account connection check; a recent valid result is required.",
+                      )
+                    : t(
+                        "اتصال خواندنی حساب تأیید شده؛ اجرای واقعی هنوز آماده نیست.",
+                        "Read access is verified; live execution is not ready yet.",
+                      )}
         </p>
         <p className="note">
-          بررسی موجودی یا داشتن لایسنس، معامله را شروع نمی‌کند. ثبت سفارش تا
-          تکمیل تطبیق حساب، اجرای اختصاصی مشتری و تأیید استاپ صرافی بسته است.
+          {t(
+            "بررسی موجودی یا داشتن لایسنس، معامله را شروع نمی‌کند. ثبت سفارش تا تکمیل تطبیق حساب، اجرای اختصاصی مشتری و تأیید استاپ صرافی بسته است.",
+            "Checking a balance or holding a license does not start trading. Orders stay off until account matching, a dedicated runtime and exchange stop confirmation are complete.",
+          )}
         </p>
       </div>
       <div id="robots" className="grid bots">
         {robots.map((r) => (
           <article className="bot" key={r.bot}>
             <h3>{r.name}</h3>
-            <p>{states[r.state] || r.state}</p>
+            <p>{stateLabel(r.state, lang) || r.state}</p>
             <p>
-              پوزیشن باز: {r.positions.length} · معاملات اخیر: {r.trades.length}
+              {t("پوزیشن باز: ", "Open positions: ")}
+              {num(r.positions.length, lang)}
+              {t(" · معاملات اخیر: ", " · Recent trades: ")}
+              {num(r.trades.length, lang)}
             </p>
             {r.positions.length > 0 && (
               <>
-                <h4>پوزیشن‌های باز</h4>
+                <h4>{t("پوزیشن‌های باز", "Open positions")}</h4>
                 <DataTable
                   sideColumns={[1]}
-                  headers={["نماد", "جهت", "ورود", "استاپ"]}
-                  rows={r.positions.map((t) => [
-                    t.symbol,
-                    t.side,
-                    t.entry_price ?? t.entry,
-                    t.active_sl ?? t.stop,
+                  headers={[
+                    t("نماد", "Symbol"),
+                    t("جهت", "Side"),
+                    t("ورود", "Entry"),
+                    t("استاپ", "Stop"),
+                  ]}
+                  rows={r.positions.map((x) => [
+                    x.symbol,
+                    x.side,
+                    x.entry_price ?? x.entry,
+                    x.active_sl ?? x.stop,
                   ])}
                 />
               </>
             )}
             {r.trades.length > 0 && (
               <>
-                <h4>معاملات اخیر</h4>
+                <h4>{t("معاملات اخیر", "Recent trades")}</h4>
                 <DataTable
                   sideColumns={[1]}
                   financialColumns={[3]}
-                  headers={["نماد", "جهت", "ورود", "سود و زیان"]}
-                  rows={r.trades.map((t) => [
-                    t.symbol,
-                    t.side,
-                    t.entry_price ?? t.entry,
-                    t.pnl_usd ?? t.pnl,
+                  headers={[
+                    t("نماد", "Symbol"),
+                    t("جهت", "Side"),
+                    t("ورود", "Entry"),
+                    t("سود و زیان", "PnL"),
+                  ]}
+                  rows={r.trades.map((x) => [
+                    x.symbol,
+                    x.side,
+                    x.entry_price ?? x.entry,
+                    x.pnl_usd ?? x.pnl,
                   ])}
                 />
               </>

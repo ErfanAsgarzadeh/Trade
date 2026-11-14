@@ -1,21 +1,45 @@
 /** Same-origin, cookie-based transport. A previous session can never publish a late response. */
-const messages: Record<number, string> = {
-  401: "نام کاربری یا رمز نادرست است، یا نشست شما پایان یافته.",
-  403: "درخواست تأیید نشد؛ صفحه را تازه کنید.",
-  404: "درخواست یا فایل موردنظر پیدا نشد.",
-  409: "درخواست با وضعیت فعلی سازگار نیست؛ وضعیت و درخواست‌های در انتظار را بررسی کنید.",
-  422: "اطلاعات واردشده معتبر نیست.",
-  429: "درخواست‌ها زیاد است؛ کمی بعد دوباره تلاش کنید.",
-  503: "سرویس مشغول است؛ کمی بعد دوباره تلاش کنید.",
+const messages: Record<number, [string, string]> = {
+  401: [
+    "نام کاربری یا رمز نادرست است، یا نشست شما پایان یافته.",
+    "Wrong username or password, or your session has ended.",
+  ],
+  403: [
+    "درخواست تأیید نشد؛ صفحه را تازه کنید.",
+    "Request not authorized; refresh the page.",
+  ],
+  404: [
+    "درخواست یا فایل موردنظر پیدا نشد.",
+    "The requested item was not found.",
+  ],
+  409: [
+    "درخواست با وضعیت فعلی سازگار نیست؛ وضعیت و درخواست‌های در انتظار را بررسی کنید.",
+    "This conflicts with the current state; check the status and pending requests.",
+  ],
+  422: ["اطلاعات واردشده معتبر نیست.", "Some of the details entered are not valid."],
+  429: [
+    "درخواست‌ها زیاد است؛ کمی بعد دوباره تلاش کنید.",
+    "Too many requests; try again shortly.",
+  ],
+  503: [
+    "سرویس مشغول است؛ کمی بعد دوباره تلاش کنید.",
+    "The service is busy; try again shortly.",
+  ],
 };
+// Error text follows the page language set on <html>.
+const english = () =>
+  typeof document !== "undefined" && document.documentElement.lang === "en";
 export class ApiError extends Error {
   constructor(public status: number) {
-    super(messages[status] || "درخواست انجام نشد.");
+    super(
+      messages[status]?.[english() ? 1 : 0] ??
+        (english() ? "The request failed." : "درخواست انجام نشد."),
+    );
   }
 }
 export class SessionChanged extends Error {
   constructor() {
-    super("نشست تغییر کرده است.");
+    super(english() ? "Your session changed." : "نشست تغییر کرده است.");
   }
 }
 export class ApiClient {
@@ -66,5 +90,9 @@ export class ApiClient {
   }
 }
 export function errorText(error: unknown) {
-  return error instanceof Error ? error.message : "درخواست انجام نشد.";
+  return error instanceof Error
+    ? error.message
+    : english()
+      ? "The request failed."
+      : "درخواست انجام نشد.";
 }

@@ -75,7 +75,7 @@ with TestClient(create_app(store,origin=origin,secure=False),base_url=origin) as
     for path in ('/','/dashboard/','/register/','/admin/','/healthz'):
         assert client.get(path).status_code==200,path
     assert not any(p['sales_enabled'] for p in client.get('/api/plans').json()['products'])
-    result=client.post('/api/register',headers={'X-Portal-Request':'1'},json={'username':'preview-user','password':'disposable-preview-password','password_confirmation':'disposable-preview-password'})
+    result=client.post('/api/register',headers={'X-Portal-Request':'1'},json={'username':'preview-user','password':'disposable-preview-password','password_confirmation':'disposable-preview-password','email':'preview@example.com'})
     assert result.status_code==201,result.status_code
     entries=client.get('/api/exchanges').json()['exchanges']
     assert next(e for e in entries if e['id']=='thetruetrade')['markets']==['futures']

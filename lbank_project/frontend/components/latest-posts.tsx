@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { faNumber } from "@/lib/format";
+import { num } from "@/lib/format";
+import { useLang } from "@/lib/lang";
 
 type LatestPost = {
   slug: string;
@@ -13,10 +14,11 @@ type LatestPost = {
 
 // Articles are written in the admin panel, so the landing page reads the latest ones at view time.
 export default function LatestPosts() {
+  const { lang, t, path } = useLang();
   const [posts, setPosts] = useState<LatestPost[] | null>(null);
   useEffect(() => {
     let current = true;
-    fetch("/api/blog/latest?limit=3", {
+    fetch(`/api/blog/latest?limit=3&lang=${lang}`, {
       credentials: "omit",
       cache: "no-store",
     })
@@ -33,11 +35,11 @@ export default function LatestPosts() {
     return () => {
       current = false;
     };
-  }, []);
+  }, [lang]);
   if (posts && posts.length === 0)
     return (
       <p>
-        <a href="/blog/">بلاگ آوینا را ببینید ←</a>
+        <a href={path("/blog/")}>{t("بلاگ آوینا را ببینید", "Visit the Avina blog")}</a>
       </p>
     );
   return (
@@ -47,10 +49,12 @@ export default function LatestPosts() {
           <small>
             <time dateTime={post.published_on}>{post.date_label}</time>
             <span aria-hidden="true">·</span>
-            <span>{faNumber(post.minutes)} دقیقه مطالعه</span>
+            <span>
+              {num(post.minutes, lang)} {t("دقیقه مطالعه", "min read")}
+            </span>
           </small>
           <h3>
-            <a href={`/blog/${post.slug}/`}>{post.title}</a>
+            <a href={path(`/blog/${post.slug}/`)}>{post.title}</a>
           </h3>
           <p>{post.description}</p>
         </article>

@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from portal_store import PortalStore
+from portal_store import EmailTaken, PortalStore
 from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
@@ -21,7 +21,7 @@ from portal_exchanges import catalog,validate_connection,UnsupportedAccount
 from portal_billing import Billing, BillingConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index, public_file, public_page, robots_txt, sitemap_xml
+from portal_frontend import frontend_index, private_page, public_file, public_page, robots_txt, sitemap_xml
 import portal_blog
 from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
@@ -45,6 +45,12 @@ class Login(BaseModel):
 
 class Registration(Login):
     password_confirmation:SecretStr=Field(min_length=12,max_length=128)
+    email:str=Field(min_length=6,max_length=254)
+
+
+class EmailChange(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    email:str=Field(min_length=6,max_length=254)
 
 
 class Connection(BaseModel):
@@ -97,6 +103,7 @@ class AdminRejection(BaseModel):
 
 class BlogArticle(BaseModel):
     model_config=ConfigDict(extra='forbid')
+    lang:str=Field(default='fa',pattern=r'^(fa|en)$')
     slug:str=Field(min_length=1,max_length=80,pattern=r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
     title:str=Field(min_length=1,max_length=120)
     description:str=Field(min_length=1,max_length=300)
@@ -145,7 +152,9 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=[parsed.hostname])
     frontend=Path(os.getenv('PORTAL_FRONTEND_DIR',str(Path(__file__).with_name('frontend')/'out')))
     public=Path(__file__).with_name('frontend')/'public'
-    page_files={'/':'index.html','/register':'register.html','/register/':'register.html','/admin':'admin.html','/admin/':'admin.html','/dashboard':'dashboard.html','/dashboard/':'dashboard.html'}
+    page_files={'/':'index.html','/register':'register.html','/register/':'register.html','/admin':'admin.html','/admin/':'admin.html','/dashboard':'dashboard.html','/dashboard/':'dashboard.html',
+                '/en':'en.html','/en/':'en.html','/en/register':'en/register.html','/en/register/':'en/register.html',
+                '/en/admin':'en/admin.html','/en/admin/':'en/admin.html','/en/dashboard':'en/dashboard.html','/en/dashboard/':'en/dashboard.html'}
     app.mount('/backtest',StaticFiles(directory=public/'backtest'),name='backtest-evidence')
     app.mount('/portal-assets',StaticFiles(directory=public/'portal-assets'),name='portal-assets')
     app.mount('/_next',StaticFiles(directory=frontend/'_next',check_dir=False),name='next-assets')
@@ -183,9 +192,9 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except ValueError as exc:
             raise HTTPException(409 if 'version changed' in str(exc).lower() else 422,'Check fields and latest version')
 
-    def blog_posts(request):
+    def blog_posts(request,lang='fa'):
         store=repository(request)
-        return BlogStore(store).published() if hasattr(store,'database') else []
+        return BlogStore(store).published(lang) if hasattr(store,'database') else []
 
     def site_css():
         try:return portal_blog.stylesheets(frontend_index(frontend)[0])
@@ -205,9 +214,10 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             if len(body)>limit:return JSONResponse({'detail':'Request too large'},status_code=413)
         response=await call_next(request)
         path=request.url.path
-        public=public_file(path) or (path=='/blog' or path.startswith('/blog/')) and response.status_code==200
+        blog_page=path in ('/blog','/en/blog') or path.startswith(('/blog/','/en/blog/'))
+        public=public_file(path) or blog_page and response.status_code==200
         page=page_files.get(path) or (public[1] if isinstance(public,tuple) else None)
-        if response.status_code==404 and path.startswith('/blog/'):page='404.html'
+        if response.status_code==404 and blog_page:page='404.html'
         script_hashes=''
         if page:
             try:script_hashes=frontend_index(frontend,page)[1]
@@ -215,7 +225,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         # Hashed build files never change; brand assets may. Public pages revalidate; everything else is private.
         if path.startswith('/_next/static/'):cache='public, max-age=31536000, immutable'
         elif path.startswith('/portal-assets/'):cache='public, max-age=86400'
-        elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml','/blog/rss.xml'):cache='public, max-age=3600'
+        elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml','/blog/rss.xml','/en/blog/rss.xml'):cache='public, max-age=3600'
         elif public:cache='no-cache'
         else:
             cache='no-store'
@@ -241,61 +251,77 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         app.add_exception_handler(PoolTimeout,database_busy)
         app.add_exception_handler(TooManyRequests,database_busy)
 
+    def not_built():
+        return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
+
+    def not_found():
+        try:return HTMLResponse(frontend_index(frontend,'404.html')[0],status_code=404)
+        except OSError:return HTMLResponse('Not found',status_code=404)
+
+    # Public pages in both languages.
     @app.get('/',response_class=HTMLResponse)
-    def home():
-        try:return HTMLResponse(public_page(frontend,'/',origin))
-        except OSError:
-            return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
-
-    @app.get('/dashboard',response_class=HTMLResponse)
-    @app.get('/dashboard/',response_class=HTMLResponse)
-    def dashboard_page():
-        try:return HTMLResponse(frontend_index(frontend,'dashboard.html')[0])
-        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
-
+    @app.get('/en',response_class=HTMLResponse)
+    @app.get('/en/',response_class=HTMLResponse)
     @app.get('/register',response_class=HTMLResponse)
     @app.get('/register/',response_class=HTMLResponse)
-    def registration_page():
-        try:return HTMLResponse(public_page(frontend,'/register/',origin))
-        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+    @app.get('/en/register',response_class=HTMLResponse)
+    @app.get('/en/register/',response_class=HTMLResponse)
+    def public_pages(request:Request):
+        try:return HTMLResponse(public_page(frontend,request.url.path,origin))
+        except OSError:return not_built()
+
+    # Signed-in pages: the client checks the session; the server serves the same shell to everyone.
+    @app.get('/dashboard',response_class=HTMLResponse)
+    @app.get('/dashboard/',response_class=HTMLResponse)
+    @app.get('/admin',response_class=HTMLResponse)
+    @app.get('/admin/',response_class=HTMLResponse)
+    @app.get('/en/dashboard',response_class=HTMLResponse)
+    @app.get('/en/dashboard/',response_class=HTMLResponse)
+    @app.get('/en/admin',response_class=HTMLResponse)
+    @app.get('/en/admin/',response_class=HTMLResponse)
+    def private_pages(request:Request):
+        try:return HTMLResponse(private_page(frontend,page_files[request.url.path]))
+        except OSError:return not_built()
 
     @app.get('/blog/rss.xml')
+    @app.get('/en/blog/rss.xml')
     def blog_feed(request:Request):
-        return Response(portal_blog.rss_xml(origin,blog_posts(request)),media_type='application/rss+xml; charset=utf-8')
+        lang='en' if request.url.path.startswith('/en/') else 'fa'
+        return Response(portal_blog.rss_xml(origin,blog_posts(request,lang),lang),media_type='application/rss+xml; charset=utf-8')
 
     @app.get('/blog',response_class=HTMLResponse)
     @app.get('/blog/',response_class=HTMLResponse)
+    @app.get('/en/blog',response_class=HTMLResponse)
+    @app.get('/en/blog/',response_class=HTMLResponse)
     def blog_index(request:Request):
-        return HTMLResponse(portal_blog.index_page(origin,site_css(),blog_posts(request)))
+        lang='en' if request.url.path.startswith('/en/') else 'fa'
+        return HTMLResponse(portal_blog.index_page(origin,site_css(),blog_posts(request,lang),lang))
 
     @app.get('/blog/{slug}',response_class=HTMLResponse)
     @app.get('/blog/{slug}/',response_class=HTMLResponse)
+    @app.get('/en/blog/{slug}',response_class=HTMLResponse)
+    @app.get('/en/blog/{slug}/',response_class=HTMLResponse)
     def blog_article(slug:str,request:Request):
+        lang='en' if request.url.path.startswith('/en/') else 'fa'
         store=repository(request)
-        post=BlogStore(store).article(slug) if hasattr(store,'database') else None
-        if not post:
-            try:return HTMLResponse(frontend_index(frontend,'404.html')[0],status_code=404)
-            except OSError:return HTMLResponse('Not found',status_code=404)
-        related=[item for item in blog_posts(request) if item['slug']!=post['slug']][:2]
-        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related))
+        if not hasattr(store,'database'):return not_found()
+        blog=BlogStore(store);post=blog.article(slug,lang)
+        if not post:return not_found()
+        related=[item for item in blog_posts(request,lang) if item['slug']!=post['slug']][:2]
+        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang))
 
     @app.get('/api/blog/latest')
-    def blog_latest(request:Request,limit:int=Query(default=3,ge=1,le=12)):
+    def blog_latest(request:Request,limit:int=Query(default=3,ge=1,le=12),lang:str=Query(default='fa',pattern=r'^(fa|en)$')):
         return {'items':[dict(slug=p['slug'],title=p['title'],description=p['description'],published_on=p['published_on'],
-                              date_label=portal_blog.persian_date(p['published_on']),minutes=p['minutes']) for p in blog_posts(request)[:limit]]}
-
-    @app.get('/admin',response_class=HTMLResponse)
-    @app.get('/admin/',response_class=HTMLResponse)
-    def admin_page():
-        try:return HTMLResponse(frontend_index(frontend,'admin.html')[0])
-        except OSError:return HTMLResponse('Build the Next.js frontend first.',status_code=503)
+                              date_label=portal_blog.date_label(p['published_on'],lang),minutes=p['minutes'])
+                         for p in blog_posts(request,lang)[:limit]]}
 
     @app.get('/api/admin/overview')
     def admin_overview(request:Request,user=Depends(administrator)):
         return AdminStore(repository(request)).overview()
 
     @app.get('/api/admin/users')
-    def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=40),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
+    def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=80),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
         return AdminStore(repository(request)).users(search,offset,limit)
 
     @app.patch('/api/admin/users/{user_id}')
@@ -365,7 +391,9 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def robots_file():return Response(robots_txt(origin),media_type='text/plain; charset=utf-8')
 
     @app.get('/sitemap.xml')
-    def sitemap(request:Request):return Response(sitemap_xml(origin,frontend,blog_posts(request)),media_type='application/xml')
+    def sitemap(request:Request):
+        posts={lang:blog_posts(request,lang) for lang in ('fa','en')}
+        return Response(sitemap_xml(origin,frontend,posts),media_type='application/xml')
 
     @app.get('/manifest.webmanifest')
     def manifest():
@@ -425,8 +453,11 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         password=payload.password.get_secret_value()
         if not secrets.compare_digest(password.encode(),payload.password_confirmation.get_secret_value().encode()):
             raise HTTPException(422,'Password confirmation does not match')
-        try:token,csrf=store.register(payload.username,password)
-        except ValueError:raise HTTPException(409,'Username unavailable')
+        try:token,csrf=store.register(payload.username,password,payload.email)
+        except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except ValueError as exc:
+            if 'email' in str(exc).lower():raise HTTPException(422,'Invalid email')
+            raise HTTPException(409,'Username unavailable')
         store.logout(request.cookies.get(COOKIE,''))
         response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=43200,path='/')
         return {'username':payload.username,'csrf':csrf}
@@ -459,7 +490,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/api/me')
     def me(user=Depends(identity)):
-        return dict(username=user['username'],csrf=user['csrf'],role=user['role'],live_execution_supported=False)
+        return dict(username=user['username'],email=user.get('email'),csrf=user['csrf'],role=user['role'],live_execution_supported=False)
+
+    @app.put('/api/me/email')
+    def change_email(payload:EmailChange,request:Request,user=Depends(mutation)):
+        try:return {'email':repository(request).set_email(user['id'],payload.email)}
+        except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except ValueError:raise HTTPException(422,'Invalid email')
 
     @app.get('/api/exchanges',dependencies=[Depends(identity)])
     def exchanges():return {'exchanges':catalog(),'live_execution_supported':False}

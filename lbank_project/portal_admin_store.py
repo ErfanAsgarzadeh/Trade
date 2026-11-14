@@ -37,10 +37,10 @@ class AdminStore:
                     issuer_last_seen=heartbeat['next_at'] if heartbeat else None)
 
     def users(self,search='',offset=0,limit=30):
-        where=' WHERE username LIKE ?';params=('%'+search+'%',)
+        where=' WHERE (u.username LIKE ? OR u.email LIKE ?)';params=('%'+search+'%','%'+search.lower()+'%')
         with self.store.db() as db:
-            total=db.execute('SELECT COUNT(*) AS n FROM users'+where,params).fetchone()['n']
-            rows=db.execute('SELECT u.id,u.username,u.disabled,u.role,CASE WHEN u.runtime IS NULL THEN 0 ELSE 1 END AS has_runtime, '
+            total=db.execute('SELECT COUNT(*) AS n FROM users u'+where,params).fetchone()['n']
+            rows=db.execute('SELECT u.id,u.username,u.email,u.disabled,u.role,CASE WHEN u.runtime IS NULL THEN 0 ELSE 1 END AS has_runtime, '
                             'CASE WHEN c.user_id IS NULL THEN 0 ELSE 1 END AS has_connection FROM users u '
                             'LEFT JOIN connections c ON c.user_id=u.id'+where+' ORDER BY u.username LIMIT ? OFFSET ?',params+(limit,offset)).fetchall()
         return dict(items=[dict(r) for r in rows],total=total,offset=offset,limit=limit)

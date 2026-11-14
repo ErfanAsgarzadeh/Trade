@@ -42,7 +42,7 @@ def issuer(tmp_path):
 
 
 def signup(client,name='new-trader'):
-    response=client.post('/api/register',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,password_confirmation=PASSWORD))
+    response=client.post('/api/register',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,password_confirmation=PASSWORD,email=name+'@example.com'))
     assert response.status_code==201,response.text
     return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':response.json()['csrf']}
 
@@ -57,7 +57,7 @@ def activate(store,issuer,name='alice',product='signals',now=None,cap=10000):
 
 def test_registration_starts_isolated_session_without_a_license(store):
     with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
-        payload=dict(username='new-trader',password=PASSWORD,password_confirmation=PASSWORD)
+        payload=dict(username='new-trader',password=PASSWORD,password_confirmation=PASSWORD,email='new-trader@example.com')
         assert client.post('/api/register',json=payload).status_code==403
         assert client.post('/api/register',headers={'X-Portal-Request':'1'},json={**payload,'password_confirmation':'different-password'}).status_code==422
         assert client.post('/api/register',headers={'X-Portal-Request':'1'},json={**payload,'role':'admin'}).status_code==422
@@ -80,13 +80,13 @@ def test_registration_starts_isolated_session_without_a_license(store):
 def test_registration_rate_limit_shared_between_processes(store):
     for _ in range(10):assert store.attempt('signup:testclient')
     with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
-        response=client.post('/api/register',headers={'X-Portal-Request':'1'},json=dict(username='new-user',password=PASSWORD,password_confirmation=PASSWORD))
+        response=client.post('/api/register',headers={'X-Portal-Request':'1'},json=dict(username='new-user',password=PASSWORD,password_confirmation=PASSWORD,email='new-user@example.com'))
         assert response.status_code==429
 
 
 def test_duplicate_registration_is_atomic(store):
     def register(_):
-        try:store.register('same-user',PASSWORD);return True
+        try:store.register('same-user',PASSWORD,'same@example.com');return True
         except ValueError:return False
     with ThreadPoolExecutor(max_workers=4) as pool:assert sum(pool.map(register,range(4)))==1
     with store.db() as db:
@@ -261,3 +261,22 @@ def test_capital_breach_blocks_entries_but_not_paid_signal_access(store,issuer):
     b.cashflow('alice',issuer[0],'deposit:breach','1000',now+1)
     status=b.snapshot(user,now+72*3600+2)['license']
     assert status['state']=='capital_exceeded' and not status['entries_allowed'] and status['signals_allowed']
+
+
+def test_registration_requires_a_unique_valid_email_that_users_can_change(store):
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        base=dict(password=PASSWORD,password_confirmation=PASSWORD)
+        h={'X-Portal-Request':'1'}
+        assert client.post('/api/register',headers=h,json=dict(base,username='no-email')).status_code==422
+        assert client.post('/api/register',headers=h,json=dict(base,username='bad-email',email='not an email')).status_code==422
+        first=signup(client,'first-user')
+        assert client.get('/api/me').json()['email']=='first-user@example.com'
+        client.post('/api/logout',headers=first)
+        taken=client.post('/api/register',headers=h,json=dict(base,username='second-user',email='First-User@Example.com '))
+        assert taken.status_code==409 and taken.json()['detail']=='Email unavailable'
+        second=signup(client,'second-user')
+        assert client.put('/api/me/email',json={'email':'x@example.com'}).status_code==403  # CSRF required
+        assert client.put('/api/me/email',headers=second,json={'email':'first-user@example.com'}).status_code==409
+        assert client.put('/api/me/email',headers=second,json={'email':'nope'}).status_code==422
+        assert client.put('/api/me/email',headers=second,json={'email':' New@Example.COM'}).json()['email']=='new@example.com'
+        assert client.get('/api/me').json()['email']=='new@example.com'

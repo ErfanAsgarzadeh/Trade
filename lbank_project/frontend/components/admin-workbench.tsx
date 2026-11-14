@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiClient, errorText } from "@/lib/api";
 import type { Plans, ProductPlan, Product } from "@/lib/types";
-import { faDate, faNumber, usd } from "@/lib/format";
+import { dateTime, longDate, money, num } from "@/lib/format";
+import { useLang } from "@/lib/lang";
+import type { Lang } from "@/lib/i18n";
 import { Heading } from "./shared";
 import AdminBlog from "./admin-blog";
 
@@ -16,6 +18,7 @@ interface PageData<T> {
 interface AdminUser {
   id: string;
   username: string;
+  email: string | null;
   role: string;
   disabled: number;
   has_runtime: number;
@@ -50,37 +53,51 @@ interface Overview {
   account_queue: { states: Record<string, number> };
 }
 const tabs = [
-  ["overview", "نمای کلی"],
-  ["orders", "کارتابل درخواست‌ها"],
-  ["users", "کاربران"],
-  ["pricing", "قیمت و فروش"],
-  ["blog", "بلاگ"],
-  ["audit", "سوابق عملیات"],
+  ["overview", "نمای کلی", "Overview"],
+  ["orders", "کارتابل درخواست‌ها", "Requests"],
+  ["users", "کاربران", "Users"],
+  ["pricing", "قیمت و فروش", "Pricing and sales"],
+  ["blog", "بلاگ", "Blog"],
+  ["audit", "سوابق عملیات", "Audit log"],
 ] as const;
-const labels: Record<string, string> = {
-  pending: "در انتظار بررسی",
-  approved: "صادرشده",
-  cancelled: "لغوشده",
-  rejected: "ردشده",
-  queued: "در صف صدور",
-  running: "در حال صدور",
-  failed: "صدور ناموفق",
-  completed: "صادرشده",
+type Pair = [string, string];
+const LABELS: Record<string, Pair> = {
+  pending: ["در انتظار بررسی", "Awaiting review"],
+  approved: ["صادرشده", "Issued"],
+  cancelled: ["لغوشده", "Cancelled"],
+  rejected: ["ردشده", "Rejected"],
+  queued: ["در صف صدور", "Queued for issuing"],
+  running: ["در حال صدور", "Issuing"],
+  failed: ["صدور ناموفق", "Issuing failed"],
+  completed: ["صادرشده", "Issued"],
 };
-const eventLabels: Record<string, string> = {
-  role_changed: "تغییر نقش از مسیر سرور",
-  user_disabled: "تعلیق دسترسی کاربر",
-  user_enabled: "فعال‌سازی کاربر",
-  order_rejected: "رد درخواست",
-  approval_requested: "ارسال به صف صدور",
-  license_issued: "صدور لایسنس",
-  issuance_failed: "خطای صدور",
-  pricing_saved: "ذخیرهٔ تعرفه",
-  sales_closed: "بستن فروش",
-  blog_created: "ساخت مقاله",
-  blog_updated: "ویرایش مقاله",
-  blog_deleted: "حذف مقاله",
+const EVENTS: Record<string, Pair> = {
+  role_changed: ["تغییر نقش از مسیر سرور", "Role changed on the server"],
+  user_disabled: ["تعلیق دسترسی کاربر", "User access suspended"],
+  user_enabled: ["فعال‌سازی کاربر", "User enabled"],
+  order_rejected: ["رد درخواست", "Request rejected"],
+  approval_requested: ["ارسال به صف صدور", "Sent to the issuing queue"],
+  license_issued: ["صدور لایسنس", "License issued"],
+  issuance_failed: ["خطای صدور", "Issuing error"],
+  pricing_saved: ["ذخیرهٔ تعرفه", "Prices saved"],
+  sales_closed: ["بستن فروش", "Sales closed"],
+  blog_created: ["ساخت مقاله", "Article created"],
+  blog_updated: ["ویرایش مقاله", "Article updated"],
+  blog_deleted: ["حذف مقاله", "Article deleted"],
 };
+const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
+  table[key]?.[lang === "en" ? 1 : 0];
+function useFormat() {
+  const { lang, t } = useLang();
+  return {
+    lang,
+    t,
+    usd: (v: number) => money(v, lang),
+    faNumber: (v: number) => num(v, lang),
+    faDate: (v: string | number) => longDate(v, lang),
+    labels: (key: string) => label(LABELS, key, lang),
+  };
+}
 function Pager({
   offset,
   total,
@@ -90,22 +107,25 @@ function Pager({
   total: number;
   onChange: (n: number) => void;
 }) {
+  const { t, faNumber } = useFormat();
   return (
     <div className="admin-pagination">
-      <span>{faNumber(total)} مورد</span>
+      <span>
+        {faNumber(total)} {t("مورد", "items")}
+      </span>
       <button
         className="secondary small"
         disabled={offset === 0}
         onClick={() => onChange(Math.max(0, offset - 30))}
       >
-        قبلی
+        {t("قبلی", "Previous")}
       </button>
       <button
         className="secondary small"
         disabled={offset + 30 >= total}
         onClick={() => onChange(offset + 30)}
       >
-        بعدی
+        {t("بعدی", "Next")}
       </button>
     </div>
   );
@@ -118,6 +138,7 @@ export default function AdminWorkbench({
   api: ApiClient;
   report: Report;
 }) {
+  const { lang, t, faNumber } = useFormat();
   const [tab, setTab] = useState<(typeof tabs)[number][0]>("overview"),
     [revision, setRevision] = useState(0),
     [data, setData] = useState<Overview | null>(null);
@@ -141,17 +162,22 @@ export default function AdminWorkbench({
       <section className="dashboard-hero">
         <div>
           <span className="eyebrow">AVINA / CONTROL ROOM</span>
-          <h1>کارتابل مدیریت سامانه</h1>
-          <p>کاربران، درخواست‌ها و فروش؛ با دسترسی اختصاصی مدیر.</p>
-          <span className="pill admin-role">مدیر سامانه</span>
+          <h1>{t("کارتابل مدیریت سامانه", "Admin control room")}</h1>
+          <p>
+            {t(
+              "کاربران، درخواست‌ها و فروش؛ با دسترسی اختصاصی مدیر.",
+              "Users, requests and sales; for the administrator only.",
+            )}
+          </p>
+          <span className="pill admin-role">{t("مدیر سامانه", "Administrator")}</span>
         </div>
-        <a className="button secondary" href="/dashboard/">
-          بازگشت به پنل مشتری ←
+        <a className="button secondary" href={lang === "en" ? "/en/dashboard/" : "/dashboard/"}>
+          {t("بازگشت به پنل مشتری", "Back to customer panel")}
         </a>
       </section>
       <div className="admin-layout">
-        <nav className="admin-nav" aria-label="بخش‌های مدیریت">
-          {tabs.map(([key, label]) => (
+        <nav className="admin-nav" aria-label={t("بخش‌های مدیریت", "Admin sections")}>
+          {tabs.map(([key, fa, en]) => (
             <button
               key={key}
               id={"admin-tab-" + key}
@@ -159,8 +185,7 @@ export default function AdminWorkbench({
               aria-current={tab === key ? "page" : undefined}
               onClick={() => setTab(key)}
             >
-              {label}
-              <span aria-hidden="true">←</span>
+              {t(fa, en)}
             </button>
           ))}
         </nav>
@@ -169,9 +194,9 @@ export default function AdminWorkbench({
             <>
               <div className="stat-grid">
                 {[
-                  ["users", "کل کاربران"],
-                  ["pending_orders", "درخواست در انتظار"],
-                  ["issued_licenses", "لایسنس صادرشده"],
+                  ["users", t("کل کاربران", "Total users")],
+                  ["pending_orders", t("درخواست در انتظار", "Pending requests")],
+                  ["issued_licenses", t("لایسنس صادرشده", "Licenses issued")],
                 ].map(([key, label], i) => (
                   <article className="stat-card" key={key}>
                     <div className="stat-label">
@@ -183,52 +208,54 @@ export default function AdminWorkbench({
                     </strong>
                     <p>
                       {key === "issued_licenses"
-                        ? "تعداد کل صدور؛ شامل دوره‌های منقضی"
-                        : "اطلاعات پایگاه دادهٔ سامانه"}
+                        ? t("تعداد کل صدور؛ شامل دوره‌های منقضی", "All issued, including expired terms")
+                        : t("اطلاعات پایگاه دادهٔ سامانه", "From the site database")}
                     </p>
                   </article>
                 ))}
               </div>
               <section className="panel">
-                <Heading eyebrow="OPERATIONS" title="وضعیت سرویس‌ها" />
+                <Heading eyebrow="OPERATIONS" title={t("وضعیت سرویس‌ها", "Service status")} />
                 <div className="admin-overview-services">
                   <article>
-                    <h3>صف صدور لایسنس</h3>
+                    <h3>{t("صف صدور لایسنس", "License issuing queue")}</h3>
                     <strong>
                       {data ? faNumber(data.counts.queued_approvals) : "—"}
                     </strong>
-                    <p>در صف یا در حال امضا</p>
+                    <p>{t("در صف یا در حال امضا", "Queued or being signed")}</p>
                     <p className="note">
                       {data?.issuer_last_seen
-                        ? "آخرین فعالیت سرویس: " +
-                          new Date(data.issuer_last_seen * 1000).toLocaleString(
-                            "fa-IR",
-                            { timeZone: "Asia/Tehran" },
-                          )
-                        : "سرویس صدور هنوز فعالیتی ثبت نکرده است."}
+                        ? t("آخرین فعالیت سرویس: ", "Last service activity: ") +
+                          dateTime(data.issuer_last_seen, lang)
+                        : t(
+                            "سرویس صدور هنوز فعالیتی ثبت نکرده است.",
+                            "The issuing service has not reported in yet.",
+                          )}
                     </p>
                   </article>
                   <article>
-                    <h3>نیازمند رسیدگی</h3>
+                    <h3>{t("نیازمند رسیدگی", "Needs attention")}</h3>
                     <strong>
                       {data ? faNumber(data.counts.failed_approvals) : "—"}
                     </strong>
-                    <p>درخواست‌های صدور ناموفق</p>
+                    <p>{t("درخواست‌های صدور ناموفق", "Failed issuing requests")}</p>
                     <button
                       className="text-button"
                       onClick={() => setTab("orders")}
                     >
-                      مشاهدهٔ درخواست‌ها ←
+                      {t("مشاهدهٔ درخواست‌ها", "View requests")}
                     </button>
                   </article>
                 </div>
                 <p className="note">
-                  تأیید مدیر ابتدا در صف ثبت می‌شود. صدور نهایی به سرویس امضای
-                  جداگانه نیاز دارد؛ کلید خصوصی وارد مرورگر نمی‌شود.
+                  {t(
+                    "تأیید مدیر ابتدا در صف ثبت می‌شود. صدور نهایی به سرویس امضای جداگانه نیاز دارد؛ کلید خصوصی وارد مرورگر نمی‌شود.",
+                    "Admin approval is queued first. Final issuing needs the separate signing service; the private key never enters the browser.",
+                  )}
                 </p>
               </section>
               <section className="panel">
-                <Heading eyebrow="SALES STATUS" title="وضعیت فروش محصولات" />
+                <Heading eyebrow="SALES STATUS" title={t("وضعیت فروش محصولات", "Product sales status")} />
                 {data?.pricing.products.map((p) => (
                   <div key={p.product} className="admin-status-row">
                     <strong>{p.label}</strong>
@@ -238,18 +265,18 @@ export default function AdminWorkbench({
                         (p.sales_enabled ? "approved" : "cancelled")
                       }
                     >
-                      {p.sales_enabled ? "فروش باز" : "فروش بسته"}
+                      {p.sales_enabled ? t("فروش باز", "Sales open") : t("فروش بسته", "Sales closed")}
                     </span>
                     <button
                       className="text-button"
                       onClick={() => setTab("pricing")}
                     >
-                      مدیریت تعرفه ←
+                      {t("مدیریت تعرفه", "Manage prices")}
                     </button>
                   </div>
                 ))}
                 <button className="secondary" onClick={changed}>
-                  به‌روزرسانی وضعیت ↻
+                  {t("به‌روزرسانی وضعیت", "Refresh status")}
                 </button>
               </section>
             </>
@@ -280,6 +307,7 @@ function Users({
   report: Report;
   changed: () => void;
 }) {
+  const { t } = useFormat();
   const [search, setSearch] = useState(""),
     [query, setQuery] = useState(""),
     [offset, setOffset] = useState(0),
@@ -309,8 +337,11 @@ function Users({
     if (
       !window.confirm(
         user.disabled
-          ? "دسترسی این کاربر فعال شود؟"
-          : "دسترسی این کاربر به پنل تعلیق و نشست‌هایش بسته شود؟ این کار پوزیشن‌های ربات را نمی‌بندد.",
+          ? t("دسترسی این کاربر فعال شود؟", "Enable this user's access?")
+          : t(
+              "دسترسی این کاربر به پنل تعلیق و نشست‌هایش بسته شود؟ این کار پوزیشن‌های ربات را نمی‌بندد.",
+              "Suspend this user's panel access and end their sessions? This does not close bot positions.",
+            ),
       )
     )
       return;
@@ -331,8 +362,11 @@ function Users({
     <section className="panel">
       <Heading
         eyebrow="CUSTOMERS"
-        title="مدیریت کاربران"
-        description="تغییر وضعیت دسترسی به پنل؛ نقش مدیر فقط از مسیر سرور تغییر می‌کند."
+        title={t("مدیریت کاربران", "Users")}
+        description={t(
+          "تغییر وضعیت دسترسی به پنل؛ نقش مدیر فقط از مسیر سرور تغییر می‌کند.",
+          "Change panel access; the admin role can only be changed on the server.",
+        )}
       />
       <form
         className="admin-search"
@@ -343,18 +377,18 @@ function Users({
         }}
       >
         <label className="sr-only" htmlFor="admin-user-search">
-          جست‌وجوی نام کاربری
+          {t("جست‌وجوی نام کاربری یا ایمیل", "Search username or email")}
         </label>
         <input
           id="admin-user-search"
           dir="ltr"
           value={search}
-          maxLength={40}
-          placeholder="username"
+          maxLength={80}
+          placeholder={t("نام کاربری یا ایمیل", "username or email")}
           onChange={(e) => setSearch(e.target.value)}
         />
         <button type="submit" className="secondary">
-          جست‌وجو
+          {t("جست‌وجو", "Search")}
         </button>
       </form>
       <div className="table-wrap">
@@ -362,12 +396,13 @@ function Users({
           <thead>
             <tr>
               {[
-                "نام کاربری",
-                "نقش",
-                "دسترسی",
-                "اتصال",
-                "اجرای اختصاصی",
-                "عملیات",
+                t("نام کاربری", "Username"),
+                t("ایمیل", "Email"),
+                t("نقش", "Role"),
+                t("دسترسی", "Access"),
+                t("اتصال", "Connection"),
+                t("اجرای اختصاصی", "Dedicated runtime"),
+                t("عملیات", "Actions"),
               ].map((h) => (
                 <th key={h}>{h}</th>
               ))}
@@ -379,20 +414,23 @@ function Users({
                 <td>
                   <bdi>{u.username}</bdi>
                 </td>
-                <td>{u.role === "admin" ? "مدیر" : "مشتری"}</td>
-                <td>{u.disabled ? "تعلیق‌شده" : "فعال"}</td>
-                <td>{u.has_connection ? "ثبت‌شده" : "ندارد"}</td>
-                <td>{u.has_runtime ? "متصل" : "متصل نیست"}</td>
+                <td>
+                  <bdi dir="ltr">{u.email || "—"}</bdi>
+                </td>
+                <td>{u.role === "admin" ? t("مدیر", "Admin") : t("مشتری", "Customer")}</td>
+                <td>{u.disabled ? t("تعلیق‌شده", "Suspended") : t("فعال", "Active")}</td>
+                <td>{u.has_connection ? t("ثبت‌شده", "Saved") : t("ندارد", "None")}</td>
+                <td>{u.has_runtime ? t("متصل", "Connected") : t("متصل نیست", "Not connected")}</td>
                 <td>
                   {u.role === "admin" ? (
-                    <span className="note">مدیریت از مسیر سرور</span>
+                    <span className="note">{t("مدیریت از مسیر سرور", "Managed on the server")}</span>
                   ) : (
                     <button
                       className="text-button"
                       disabled={busy}
                       onClick={() => toggle(u)}
                     >
-                      {u.disabled ? "فعال‌سازی" : "تعلیق دسترسی"}
+                      {u.disabled ? t("فعال‌سازی", "Enable") : t("تعلیق دسترسی", "Suspend access")}
                     </button>
                   )}
                 </td>
@@ -405,7 +443,10 @@ function Users({
         <Pager offset={offset} total={data.total} onChange={setOffset} />
       )}
       <p className="note">
-        تعلیق ورود به پنل، جایگزین توقف ربات یا ابطال لایسنس نصب‌شده نیست.
+        {t(
+          "تعلیق ورود به پنل، جایگزین توقف ربات یا ابطال لایسنس نصب‌شده نیست.",
+          "Suspending panel access does not stop a bot or revoke an installed license.",
+        )}
       </p>
     </section>
   );
@@ -420,6 +461,7 @@ function Orders({
   report: Report;
   changed: () => void;
 }) {
+  const { t, usd, faNumber, faDate, labels } = useFormat();
   const [status, setStatus] = useState("pending"),
     [offset, setOffset] = useState(0),
     [revision, setRevision] = useState(0),
@@ -500,11 +542,14 @@ function Orders({
     <section className="panel">
       <Heading
         eyebrow="APPROVAL DESK"
-        title="کارتابل درخواست‌های خرید"
-        description="پرداخت و اطلاعات حساب را مستقل بررسی کنید؛ تأیید، درخواست امضا را در صف قرار می‌دهد."
+        title={t("کارتابل درخواست‌های خرید", "Purchase requests")}
+        description={t(
+          "پرداخت و اطلاعات حساب را مستقل بررسی کنید؛ تأیید، درخواست امضا را در صف قرار می‌دهد.",
+          "Check the payment and account details independently; approving queues the signing request.",
+        )}
       />
       <div className="admin-filters">
-        <label htmlFor="admin-order-filter">وضعیت درخواست</label>
+        <label htmlFor="admin-order-filter">{t("وضعیت درخواست", "Request status")}</label>
         <select
           id="admin-order-filter"
           value={status}
@@ -515,7 +560,7 @@ function Orders({
         >
           {["pending", "approved", "rejected", "cancelled", "all"].map((s) => (
             <option key={s} value={s}>
-              {s === "all" ? "همه" : labels[s]}
+              {s === "all" ? t("همه", "All") : labels(s)}
             </option>
           ))}
         </select>
@@ -524,7 +569,7 @@ function Orders({
           className="secondary"
           onClick={() => setRevision((n) => n + 1)}
         >
-          به‌روزرسانی ↻
+          {t("به‌روزرسانی", "Refresh")}
         </button>
       </div>
       <div className="table-wrap">
@@ -532,12 +577,12 @@ function Orders({
           <thead>
             <tr>
               {[
-                "کاربر / پیگیری",
-                "محصول / دوره",
-                "سرمایه",
-                "مبلغ",
-                "وضعیت",
-                "عملیات",
+                t("کاربر / پیگیری", "User / reference"),
+                t("محصول / دوره", "Product / term"),
+                t("سرمایه", "Capital"),
+                t("مبلغ", "Amount"),
+                t("وضعیت", "Status"),
+                t("عملیات", "Actions"),
               ].map((h) => (
                 <th key={h}>{h}</th>
               ))}
@@ -553,10 +598,12 @@ function Orders({
                   </small>
                 </td>
                 <td>
-                  {o.product === "signals" ? "فقط سیگنال" : "معاملهٔ خودکار"}
+                  {o.product === "signals"
+                    ? t("فقط سیگنال", "Signals only")
+                    : t("معاملهٔ خودکار", "Automated trading")}
                   <small className="admin-row-note">
-                    {faNumber(o.months)} ماه ·{" "}
-                    {o.kind === "upgrade" ? "ارتقا" : "اشتراک"}
+                    {faNumber(o.months)} {t("ماه", o.months === 1 ? "month" : "months")} ·{" "}
+                    {o.kind === "upgrade" ? t("ارتقا", "Upgrade") : t("اشتراک", "Subscription")}
                   </small>
                 </td>
                 <td>{usd(o.cap_usd)}</td>
@@ -569,12 +616,15 @@ function Orders({
                     }
                   >
                     {o.status === "pending" && o.approval_state
-                      ? labels[o.approval_state] || o.approval_state
-                      : labels[o.status]}
+                      ? labels(o.approval_state) || o.approval_state
+                      : labels(o.status)}
                   </span>
                   {o.error_code && (
                     <small className="admin-row-note">
-                      اطلاعات، تعرفه و سرویس صدور را بررسی کنید.
+                      {t(
+                        "اطلاعات، تعرفه و سرویس صدور را بررسی کنید.",
+                        "Check the details, the price and the issuing service.",
+                      )}
                     </small>
                   )}
                 </td>
@@ -591,8 +641,8 @@ function Orders({
                         }
                       >
                         {o.approval_state === "failed"
-                          ? "اصلاح و تلاش مجدد"
-                          : "بررسی و تأیید"}
+                          ? t("اصلاح و تلاش مجدد", "Fix and retry")
+                          : t("بررسی و تأیید", "Review and approve")}
                       </button>
                       <button
                         className="text-button danger"
@@ -600,7 +650,7 @@ function Orders({
                           setSelection({ order: o, action: "reject" })
                         }
                       >
-                        رد درخواست
+                        {t("رد درخواست", "Reject")}
                       </button>
                     </div>
                   )}
@@ -611,7 +661,9 @@ function Orders({
         </table>
       </div>
       {data && !data.items.length && (
-        <p className="empty-state">درخواستی با این وضعیت وجود ندارد.</p>
+        <p className="empty-state">
+          {t("درخواستی با این وضعیت وجود ندارد.", "No requests with this status.")}
+        </p>
       )}
       {data && (
         <Pager offset={offset} total={data.total} onChange={setOffset} />
@@ -628,8 +680,8 @@ function Orders({
           <span className="eyebrow">REVIEW REQUEST</span>
           <h2>
             {selection?.action === "reject"
-              ? "رد درخواست"
-              : "تأیید بررسی و ارسال برای صدور"}
+              ? t("رد درخواست", "Reject request")
+              : t("تأیید بررسی و ارسال برای صدور", "Approve and send for issuing")}
           </h2>
           <p>
             {selection?.order.username} ·{" "}
@@ -637,7 +689,7 @@ function Orders({
           </p>
           {selection?.action === "reject" ? (
             <>
-              <label htmlFor="admin-reject-reason">دلیل رد درخواست</label>
+              <label htmlFor="admin-reject-reason">{t("دلیل رد درخواست", "Reason for rejection")}</label>
               <textarea
                 id="admin-reject-reason"
                 name="reason"
@@ -649,7 +701,7 @@ function Orders({
           ) : (
             <>
               <label htmlFor="admin-payment-ref">
-                شناسهٔ رسید پرداخت تأییدشده
+                {t("شناسهٔ رسید پرداخت تأییدشده", "Verified payment reference")}
               </label>
               <input
                 id="admin-payment-ref"
@@ -662,7 +714,7 @@ function Orders({
               {selection?.order.product === "autotrade" && (
                 <>
                   <label htmlFor="admin-account-id">
-                    شناسهٔ تأییدشدهٔ حساب، مانند exchange:uid
+                    {t("شناسهٔ تأییدشدهٔ حساب، مانند exchange:uid", "Verified account ID, e.g. exchange:uid")}
                   </label>
                   <input
                     id="admin-account-id"
@@ -671,7 +723,7 @@ function Orders({
                     maxLength={120}
                     required
                   />
-                  <label htmlFor="admin-equity">اکوییتی تأییدشده، دلار</label>
+                  <label htmlFor="admin-equity">{t("اکوییتی تأییدشده، دلار", "Verified equity, USD")}</label>
                   <input
                     id="admin-equity"
                     name="equity_usd"
@@ -690,11 +742,16 @@ function Orders({
                   checked={verified}
                   onChange={(e) => setVerified(e.target.checked)}
                 />
-                پرداخت و، در صورت نیاز، شناسه و سرمایهٔ حساب را بررسی کرده‌ام.
+                {t(
+                  "پرداخت و، در صورت نیاز، شناسه و سرمایهٔ حساب را بررسی کرده‌ام.",
+                  "I have checked the payment and, where needed, the account ID and capital.",
+                )}
               </label>
               <p className="note">
-                این اقدام امضای لایسنس را به صف می‌فرستد. تا تکمیل صدور، اشتراک
-                فعال نمی‌شود.
+                {t(
+                  "این اقدام امضای لایسنس را به صف می‌فرستد. تا تکمیل صدور، اشتراک فعال نمی‌شود.",
+                  "This queues the license for signing. The subscription is not active until issuing completes.",
+                )}
               </p>
             </>
           )}
@@ -708,10 +765,10 @@ function Orders({
               type="submit"
             >
               {busy
-                ? "در حال ثبت…"
+                ? t("در حال ثبت…", "Saving…")
                 : selection?.action === "reject"
-                  ? "رد درخواست"
-                  : "ارسال به صف صدور"}
+                  ? t("رد درخواست", "Reject request")
+                  : t("ارسال به صف صدور", "Send to issuing queue")}
             </button>
             <button
               type="button"
@@ -719,7 +776,7 @@ function Orders({
               disabled={busy}
               onClick={() => setSelection(null)}
             >
-              بازگشت
+              {t("بازگشت", "Back")}
             </button>
           </div>
         </form>
@@ -737,6 +794,7 @@ function Pricing({
   report: Report;
   changed: () => void;
 }) {
+  const { t } = useFormat();
   const [data, setData] = useState<Plans | null>(null),
     [revision, setRevision] = useState(0);
   useEffect(() => {
@@ -758,8 +816,11 @@ function Pricing({
       <section className="panel">
         <Heading
           eyebrow="PRICING & SALES"
-          title="تعرفه و وضعیت فروش"
-          description="قیمت‌ها برای هر سرویس مستقل‌اند. ذخیرهٔ پیش‌نویس فروش همان محصول را می‌بندد؛ بازکردن فروش اقدام جداگانه است."
+          title={t("تعرفه و وضعیت فروش", "Prices and sales status")}
+          description={t(
+            "قیمت‌ها برای هر سرویس مستقل‌اند. ذخیرهٔ پیش‌نویس فروش همان محصول را می‌بندد؛ بازکردن فروش اقدام جداگانه است.",
+            "Each service has its own prices. Saving a draft closes sales for that product; opening sales is a separate step.",
+          )}
         />
       </section>
       {data?.products.map((product) => (
@@ -788,17 +849,18 @@ function PricingEditor({
   report: Report;
   done: () => void;
 }) {
+  const { t, usd } = useFormat();
   const [values, setValues] = useState<Record<string, Record<string, string>>>(
       () =>
         Object.fromEntries(
-          product.tiers.map((t) => [
-            String(t.cap_usd),
+          product.tiers.map((x) => [
+            String(x.cap_usd),
             Object.fromEntries(
               ["1", "3", "6"].map((m) => [
                 m,
-                t.prices_cents[m] === null
+                x.prices_cents[m] === null
                   ? ""
-                  : String(t.prices_cents[m]! / 100),
+                  : String(x.prices_cents[m]! / 100),
               ]),
             ),
           ]),
@@ -848,48 +910,54 @@ function PricingEditor({
       <div className="section-heading">
         <h2>{product.label}</h2>
         <span className="order-status">
-          {product.sales_enabled ? "فروش باز" : "فروش بسته"}
+          {product.sales_enabled ? t("فروش باز", "Sales open") : t("فروش بسته", "Sales closed")}
         </span>
       </div>
       <form onSubmit={save}>
         <div className="table-wrap">
           <table className="admin-price-table">
             <caption className="sr-only">
-              قیمت‌های {product.label} به دلار
+              {t("قیمت‌های ", "Prices for ")}
+              {product.label}
+              {t(" به دلار", " in USD")}
             </caption>
             <thead>
               <tr>
-                <th>سقف سرمایه</th>
-                {["یک‌ماهه", "سه‌ماهه", "شش‌ماهه"].map((label) => (
-                  <th key={label}>{label} / دلار</th>
-                ))}
+                <th>{t("سقف سرمایه", "Capital cap")}</th>
+                {[t("یک‌ماهه", "1 month"), t("سه‌ماهه", "3 months"), t("شش‌ماهه", "6 months")].map(
+                  (label) => (
+                    <th key={label}>
+                      {label} / {t("دلار", "USD")}
+                    </th>
+                  ),
+                )}
               </tr>
             </thead>
             <tbody>
-              {product.tiers.map((t) => (
-                <tr key={t.cap_usd}>
-                  <td>{usd(t.cap_usd)}</td>
+              {product.tiers.map((x) => (
+                <tr key={x.cap_usd}>
+                  <td>{usd(x.cap_usd)}</td>
                   {["1", "3", "6"].map((m) => (
                     <td key={m}>
                       <input
                         aria-label={
-                          product.label + " " + t.cap_usd + " " + m + " ماه"
+                          product.label + " " + x.cap_usd + " " + m + t(" ماه", " months")
                         }
-                        data-cap={t.cap_usd}
+                        data-cap={x.cap_usd}
                         data-months={m}
                         type="number"
                         dir="ltr"
                         min="0.01"
                         max="200000"
                         step="0.01"
-                        value={values[String(t.cap_usd)][m]}
+                        value={values[String(x.cap_usd)][m]}
                         disabled={busy}
                         required
                         onChange={(e) =>
                           setValues((v) => ({
                             ...v,
-                            [t.cap_usd]: {
-                              ...v[t.cap_usd],
+                            [x.cap_usd]: {
+                              ...v[x.cap_usd],
                               [m]: e.target.value,
                             },
                           }))
@@ -903,7 +971,7 @@ function PricingEditor({
           </table>
         </div>
         <button className="secondary" type="submit" disabled={busy}>
-          ذخیرهٔ پیش‌نویس و بستن فروش
+          {t("ذخیرهٔ پیش‌نویس و بستن فروش", "Save draft and close sales")}
         </button>
       </form>
       <div className="admin-sales-controls">
@@ -916,14 +984,18 @@ function PricingEditor({
                 disabled={busy || !configured}
                 onChange={(e) => setConfirmed(e.target.checked)}
               />
-              قیمت‌های ذخیره‌شده نهایی و آمادهٔ فروش هستند.
+              {t(
+                "قیمت‌های ذخیره‌شده نهایی و آمادهٔ فروش هستند.",
+                "The saved prices are final and ready for sale.",
+              )}
             </label>
             <button
               className="admin-open-sales"
               disabled={busy || !confirmed || !configured}
               onClick={() => sales(true)}
             >
-              بازکردن فروش {product.label}
+              {t("بازکردن فروش ", "Open sales: ")}
+              {product.label}
             </button>
           </>
         ) : (
@@ -932,19 +1004,23 @@ function PricingEditor({
             disabled={busy}
             onClick={() => sales(false)}
           >
-            بستن فروش {product.label}
+            {t("بستن فروش ", "Close sales: ")}
+            {product.label}
           </button>
         )}
       </div>
       <p className="note">
-        با تغییر تعرفه، درخواست‌های در انتظار با نسخهٔ قدیمی باید دوباره ثبت
-        شوند. اشتراک‌های پرداخت‌شده با بستن فروش باطل نمی‌شوند.
+        {t(
+          "با تغییر تعرفه، درخواست‌های در انتظار با نسخهٔ قدیمی باید دوباره ثبت شوند. اشتراک‌های پرداخت‌شده با بستن فروش باطل نمی‌شوند.",
+          "After a price change, pending requests on the old version must be resubmitted. Closing sales does not cancel paid subscriptions.",
+        )}
       </p>
     </section>
   );
 }
 
 function Events({ api, report }: { api: ApiClient; report: Report }) {
+  const { lang, t } = useFormat();
   const [data, setData] = useState<PageData<EventRow> | null>(null),
     [offset, setOffset] = useState(0);
   useEffect(() => {
@@ -965,14 +1041,22 @@ function Events({ api, report }: { api: ApiClient; report: Report }) {
     <section className="panel">
       <Heading
         eyebrow="AUDIT TRAIL"
-        title="سوابق عملیات مدیریتی"
-        description="عامل، زمان و نتیجهٔ تغییرات حساس در سامانه ثبت می‌شوند."
+        title={t("سوابق عملیات مدیریتی", "Admin audit log")}
+        description={t(
+          "عامل، زمان و نتیجهٔ تغییرات حساس در سامانه ثبت می‌شوند.",
+          "Who made each sensitive change, when, and what happened.",
+        )}
       />
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
-              {["زمان تهران", "عامل", "عملیات", "شناسهٔ موضوع"].map((h) => (
+              {[
+                t("زمان تهران", "Tehran time"),
+                t("عامل", "Actor"),
+                t("عملیات", "Action"),
+                t("شناسهٔ موضوع", "Target ID"),
+              ].map((h) => (
                 <th key={h}>{h}</th>
               ))}
             </tr>
@@ -981,13 +1065,11 @@ function Events({ api, report }: { api: ApiClient; report: Report }) {
             {data?.items.map((e) => (
               <tr key={e.id}>
                 <td>
-                  {new Date(e.at * 1000).toLocaleString("fa-IR", {
-                    timeZone: "Asia/Tehran",
-                  })}
+                  {dateTime(e.at, lang)}
                 </td>
-                <td>{e.actor || "اپراتور سرور"}</td>
+                <td>{e.actor || t("اپراتور سرور", "Server operator")}</td>
                 <td>
-                  {eventLabels[e.action] || e.action}
+                  {label(EVENTS, e.action, lang) || e.action}
                   {typeof e.details.reason === "string" && (
                     <small className="admin-row-note">{e.details.reason}</small>
                   )}

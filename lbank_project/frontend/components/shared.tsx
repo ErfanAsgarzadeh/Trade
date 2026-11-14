@@ -1,7 +1,22 @@
+"use client";
 import type { Cell } from "@/lib/types";
-export function BrandLogo({ compact = false }: { compact?: boolean }) {
+import { localPath, type Lang } from "@/lib/i18n";
+import { useLang } from "@/lib/lang";
+export function BrandLogo({
+  compact = false,
+  lang,
+}: {
+  compact?: boolean;
+  lang?: Lang;
+}) {
+  const context = useLang().lang;
+  const current = lang ?? context;
   return (
-    <a className="logo" href="/" aria-label="Avina، صفحهٔ اصلی">
+    <a
+      className="logo"
+      href={localPath(current, "/")}
+      aria-label={current === "en" ? "Avina home" : "Avina، صفحهٔ اصلی"}
+    >
       <img
         className="logo-mark"
         src="/portal-assets/avina-mark.png"
@@ -104,13 +119,19 @@ export function DataTable({
           ))}
         </tbody>
       </table>
-      {!rows.length && <p className="note">داده‌ای برای نمایش وجود ندارد.</p>}
+      {!rows.length && <EmptyRows />}
     </div>
   );
 }
 
+function EmptyRows() {
+  const { t } = useLang();
+  return <p className="note">{t("داده‌ای برای نمایش وجود ندارد.", "Nothing to show yet.")}</p>;
+}
+
 /** Presentation only: preserve the source precision, add an explicit signed status. */
 export function FinancialValue({ value }: { value: Cell }) {
+  const { t } = useLang();
   const numeric =
     typeof value === "number"
       ? value
@@ -123,7 +144,11 @@ export function FinancialValue({ value }: { value: Cell }) {
     <bdi
       className={"financial-value financial-" + status}
       aria-label={
-        (numeric > 0 ? "سود" : numeric < 0 ? "زیان" : "بدون تغییر") +
+        (numeric > 0
+          ? t("سود", "Profit")
+          : numeric < 0
+            ? t("زیان", "Loss")
+            : t("بدون تغییر", "No change")) +
         ": " +
         String(value)
       }

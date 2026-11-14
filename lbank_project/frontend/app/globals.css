@@ -615,11 +615,16 @@ textarea {
   text-align: center;
   cursor: pointer;
 }
+/* The invisible radio covers its whole option, so a click anywhere on it selects the term. */
 .term-switch input {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  width: 1px;
-  height: 1px;
+  cursor: pointer;
+  z-index: 1;
 }
 .term-switch span {
   display: block;
@@ -3132,8 +3137,8 @@ bdi,
     font-size: 15px;
   }
 }
-.blog-body ol,
-.blog-contents ol {
+html[lang="fa"] .blog-body ol,
+html[lang="fa"] .blog-contents ol {
   list-style: persian;
 }
 /* Admin blog editor */
@@ -3237,5 +3242,141 @@ bdi,
 @media (max-width: 900px) {
   .admin-blog-grid {
     grid-template-columns: 1fr;
+  }
+}
+.profile-form {
+  max-width: 620px;
+}
+.profile-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.profile-row input {
+  flex: 1;
+}
+@media (max-width: 600px) {
+  .profile-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* Hero fits the first screen: header plus hero never exceed the viewport height on desktop. */
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 18px 0 0;
+}
+.hero-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hero-stats dt {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.hero-stats dd {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--premium-text);
+}
+.hero-stats .proof-risk dd {
+  color: var(--loss);
+}
+.result-to {
+  font-size: 0.5em;
+  color: var(--text-secondary);
+  margin: 0 12px;
+}
+.annual-months {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.language-link {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.language-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+@media (min-width: 901px) {
+  .landing-hero {
+    min-height: calc(100svh - 93px);
+    padding: clamp(14px, 3svh, 40px) 0;
+    gap: 48px;
+  }
+  .landing-hero h1 {
+    font-size: clamp(32px, 5.2svh, 52px);
+    line-height: 1.5;
+  }
+  .hero-kicker {
+    margin-bottom: 6px;
+  }
+  .landing-intro {
+    margin: clamp(8px, 1.6svh, 18px) 0;
+    line-height: 2.1;
+  }
+  .landing-hero-actions {
+    margin: clamp(12px, 2.4svh, 26px) 0 clamp(8px, 1.6svh, 18px);
+  }
+  .hero-disclosure {
+    margin-top: 6px;
+  }
+  .equity-motion {
+    max-height: max(170px, calc(100svh - 470px));
+  }
+  .replay-card {
+    padding-top: 16px;
+  }
+  .replay-bottom {
+    padding: 12px 22px;
+  }
+}
+@media (max-width: 900px) {
+  .hero-stats dd {
+    font-size: 18px;
+  }
+}
+@media (max-width: 600px) {
+  .landing-hero h1 {
+    font-size: 30px;
+  }
+  .hero-stats {
+    gap: 8px 18px;
+    margin-top: 12px;
+  }
+  .hero-stats dt {
+    font-size: 10px;
+  }
+  .hero-stats dd {
+    font-size: 16px;
+  }
+  .replay-bottom {
+    flex-wrap: wrap;
+  }
+  .language-link {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 600px) {
+  .landing-header {
+    flex-wrap: wrap;
+  }
+  .landing-header-actions {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .landing-header-actions .theme-switcher label {
+    display: none;
   }
 }

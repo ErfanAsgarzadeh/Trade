@@ -147,7 +147,7 @@ def test_signup_and_closed_product_sales_on_mobile(tmp_path, appearance):
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.goto(origin+'/register/');page.wait_for_selector('#register-form')
             page.screenshot(path=str(screenshots/'register-mobile.png'),full_page=True)
-            page.locator('#username').fill('fresh-user');page.locator('#password').fill('disposable-signup-password')
+            page.locator('#username').fill('fresh-user');page.locator('#email').fill('fresh-user@example.com');page.locator('#password').fill('disposable-signup-password')
             page.locator('#password-confirmation').fill('different-password')
             page.locator('#register-form button').click()
             page.wait_for_function("()=>document.getElementById('message').textContent.includes('یکسان نیستند')")
