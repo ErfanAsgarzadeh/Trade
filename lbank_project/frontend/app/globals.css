@@ -615,11 +615,16 @@ textarea {
   text-align: center;
   cursor: pointer;
 }
+/* The invisible radio covers its whole option, so a click anywhere on it selects the term. */
 .term-switch input {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  width: 1px;
-  height: 1px;
+  cursor: pointer;
+  z-index: 1;
 }
 .term-switch span {
   display: block;
