@@ -12,6 +12,7 @@ from portal_server import create_app
 from portal_store import PortalStore
 from portal_telegram import Telegram, TelegramError, Worker
 from pricing_helpers import enable_test_prices
+from db_targets import TARGETS, fresh_store
 
 ORIGIN='https://avina.example';PASSWORD='disposable-test-password'
 TOKEN='123456789:'+'A'*35
@@ -35,9 +36,9 @@ class FakeBot:
                              'from':{'id':chat,'username':'u%d'%chat,'language_code':lang},'text':text}})
 
 
-@pytest.fixture
-def setup(tmp_path):
-    store=PortalStore(tmp_path/'portal.db',Fernet.generate_key())
+@pytest.fixture(params=TARGETS)
+def setup(request,tmp_path):
+    store=fresh_store(request.param,tmp_path)
     admin=store.create_user('manager',PASSWORD,'m@example.com');store.set_admin('manager')
     alice=store.create_user('alice',PASSWORD,'a@example.com');bob=store.create_user('bob',PASSWORD,'b@example.com')
     bot=FakeBot();Telegram(store,bot).configure(admin,TOKEN)

@@ -14,6 +14,14 @@ import Robots from "./robots";
 import Pwa from "./pwa";
 import Signals from "./signals";
 import AdminWorkbench from "./admin-workbench";
+import ReferralPanel from "./referral-panel";
+import {
+  captureRef,
+  forgetRef,
+  offerText,
+  storedRef,
+  type RefereeOffer,
+} from "@/lib/referral";
 
 type Mode = "login" | "register" | "admin";
 
@@ -46,6 +54,32 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
     [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false),
     [billing, setBilling] = useState<BillingSnapshot | null>(null);
+  const [refCode, setRefCode] = useState(""),
+    [refOffer, setRefOffer] = useState<{
+      valid: boolean;
+      offer?: RefereeOffer | null;
+    } | null>(null),
+    [referrals, setReferrals] = useState(false);
+  useEffect(() => {
+    if (!registering) return;
+    captureRef();
+    setRefCode(storedRef());
+  }, [registering]);
+  // Show the visitor what the invite code gives them before they sign up.
+  useEffect(() => {
+    const code = refCode.trim();
+    setRefOffer(null);
+    if (!registering || code.length < 3) return;
+    const timer = setTimeout(() => {
+      api
+        .request<{ valid: boolean; offer?: RefereeOffer | null }>(
+          "/api/referral/" + encodeURIComponent(code),
+        )
+        .then(setRefOffer)
+        .catch(() => setRefOffer(null));
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [api, refCode, registering]);
   const report = useCallback((error: unknown) => {
     if (!(error instanceof SessionChanged)) setMessage(errorText(error));
   }, []);
@@ -92,6 +126,17 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
       setBusy(false);
       return;
     }
+    const referral = registering ? refCode.trim() : "";
+    if (referral && refOffer && !refOffer.valid) {
+      setMessage(
+        t(
+          "کد دعوت معتبر نیست؛ آن را اصلاح یا پاک کنید.",
+          "The invite code is not valid; fix or clear it.",
+        ),
+      );
+      setBusy(false);
+      return;
+    }
     try {
       await api.request(registering ? "/api/register" : "/api/login", "POST", {
         username: data.get("username"),
@@ -100,6 +145,7 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
           ? {
               password_confirmation: data.get("password_confirmation"),
               email: data.get("email"),
+              ...(referral ? { referral_code: referral } : {}),
             }
           : {}),
       });
@@ -107,6 +153,7 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
       const me = await api.request<Me>("/api/me");
       api.csrf = me.csrf;
       if (registering) {
+        forgetRef();
         window.location.assign(path("/dashboard/"));
         return;
       }
@@ -122,8 +169,8 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
       else if (registering && error instanceof ApiError && error.status === 422)
         setMessage(
           t(
-            "اطلاعات را بررسی کنید: نام کاربری انگلیسی، ایمیل معتبر و رمز حداقل ۱۲ کاراکتر.",
-            "Check the details: a lowercase username, a valid email and a password of at least 12 characters.",
+            "اطلاعات را بررسی کنید: نام کاربری انگلیسی، ایمیل معتبر، رمز حداقل ۱۲ کاراکتر و کد دعوت درست.",
+            "Check the details: a lowercase username, a valid email, a password of at least 12 characters and a correct invite code.",
           ),
         );
       else report(error);
@@ -310,6 +357,38 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                       maxLength={128}
                       required
                     />
+                    <label htmlFor="referral-code-input">
+                      {t("کد دعوت (اختیاری)", "Invite code (optional)")}
+                    </label>
+                    <input
+                      id="referral-code-input"
+                      name="referral_code"
+                      dir="ltr"
+                      maxLength={24}
+                      value={refCode}
+                      onChange={(e) => setRefCode(e.target.value)}
+                      aria-describedby="referral-offer"
+                    />
+                    <p
+                      id="referral-offer"
+                      className={
+                        "note" +
+                        (refOffer && !refOffer.valid ? " warning-text" : "")
+                      }
+                      role="status"
+                    >
+                      {refOffer?.valid
+                        ? refOffer.offer && refOffer.offer.type !== "none"
+                          ? t("🎁 با این کد: ", "🎁 With this code: ") +
+                            offerText(refOffer.offer, lang)
+                          : t("کد دعوت معتبر است.", "Valid invite code.")
+                        : refOffer
+                          ? t(
+                              "این کد دعوت معتبر نیست.",
+                              "This invite code is not valid.",
+                            )
+                          : ""}
+                    </p>
                     <p className="note">
                       {t(
                         "رمز عبور حداقل ۱۲ کاراکتر باشد. ثبت‌نام به معنی خرید یا شروع معامله نیست.",
@@ -380,6 +459,9 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                   t("لایسنس و تعرفه‌ها", "License and pricing"),
                 ],
                 ["signals-section", t("سیگنال‌ها", "Signals")],
+                ...(referrals
+                  ? [["referral-section", t("دعوت دوستان", "Invite friends")]]
+                  : []),
                 ...(p?.product !== "signals"
                   ? [
                       [
@@ -497,6 +579,12 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
               report={report}
               notify={setMessage}
               onSnapshot={setBilling}
+            />
+            <ReferralPanel
+              api={api}
+              notify={setMessage}
+              report={report}
+              onEnabled={setReferrals}
             />
             <Signals api={api} entitlement={p} report={report} />
             {p?.product !== "signals" && (

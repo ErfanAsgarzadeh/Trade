@@ -60,10 +60,10 @@ class AdminStore:
         args=(status,) if status!='all' else ()
         with self.store.db() as db:
             total=db.execute('SELECT COUNT(*) AS n FROM license_orders o'+clause,args).fetchone()['n']
-            rows=db.execute('SELECT o.id,o.user_id,u.username,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.price_version,o.status,o.created,o.updated,'
+            rows=db.execute('SELECT o.id,o.user_id,u.username,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.list_price_cents,o.discounts,o.price_version,o.status,o.created,o.updated,'
                             'a.state AS approval_state,a.error_code FROM license_orders o JOIN users u ON u.id=o.user_id '
                             'LEFT JOIN license_approvals a ON a.order_id=o.id'+clause+' ORDER BY o.created DESC,o.id LIMIT ? OFFSET ?',args+(limit,offset)).fetchall()
-        return dict(items=[dict(r) for r in rows],total=total,offset=offset,limit=limit)
+        return dict(items=[dict(r,discounts=json.loads(r['discounts']) if r['discounts'] else []) for r in rows],total=total,offset=offset,limit=limit)
 
     def _owner(self,oid):
         with self.store.db() as db:row=db.execute('SELECT user_id FROM license_orders WHERE id=?',(oid,)).fetchone()
@@ -75,6 +75,8 @@ class AdminStore:
         with self.write(actor,owner) as db:
             if db.execute("UPDATE license_orders SET status='rejected',updated=? WHERE id=? AND status='pending'",(time.time(),oid)).rowcount!=1:
                 raise BillingConflict('Only pending orders can be rejected')
+            from portal_referrals import Referrals
+            Referrals(self.store).release(db,oid)
             db.execute("UPDATE license_approvals SET state='cancelled',lease_token=NULL,lease_until=0,updated=? WHERE order_id=? AND state!='completed'",(time.time(),oid))
             record(db,actor,'order_rejected',oid,dict(reason=reason))
         return dict(status='rejected')

@@ -21,7 +21,7 @@ def store(request,tmp_path):
         if os.getenv('PORTAL_TEST_ALLOW_RESET')!='1':pytest.fail('Set PORTAL_TEST_ALLOW_RESET=1 ONLY for a disposable test database')
         store=PortalStore(target,key)
         with store.db() as db:
-            db.execute('TRUNCATE telegram_signal_sent,telegram_outbox,telegram_link_codes,telegram_links,payment_transfers,payment_invoices,site_settings,blog_images,blog_posts,account_jobs,service_gate,account_cache,connections,sessions,attempts,audit,users RESTART IDENTITY CASCADE')
+            db.execute('TRUNCATE referral_credit_uses,referral_rewards,referrals,referral_codes,referral_programs,telegram_signal_sent,telegram_outbox,telegram_link_codes,telegram_links,payment_transfers,payment_invoices,site_settings,blog_images,blog_posts,account_jobs,service_gate,account_cache,connections,sessions,attempts,audit,users RESTART IDENTITY CASCADE')
     else:store=PortalStore(tmp_path/'portal.db',key)
     store.create_user('alice','long-test-password');store.create_user('bob','long-test-password')
     yield store
@@ -187,7 +187,7 @@ def test_offline_migration_preserves_logins_keys_cache_and_sequence(store,tmp_pa
         # Use an empty destination. Existing users in fixture are explicitly removed for this migration test.
         if store.database.postgres:
             target=os.environ['PORTAL_TEST_DATABASE_URL']
-            with store.db() as db:db.execute('TRUNCATE telegram_signal_sent,telegram_outbox,telegram_link_codes,telegram_links,payment_transfers,payment_invoices,site_settings,blog_images,blog_posts,account_jobs,service_gate,account_cache,connections,sessions,attempts,audit,users RESTART IDENTITY CASCADE')
+            with store.db() as db:db.execute('TRUNCATE referral_credit_uses,referral_rewards,referrals,referral_codes,referral_programs,telegram_signal_sent,telegram_outbox,telegram_link_codes,telegram_links,payment_transfers,payment_invoices,site_settings,blog_images,blog_posts,account_jobs,service_gate,account_cache,connections,sessions,attempts,audit,users RESTART IDENTITY CASCADE')
         else:target=tmp_path/'target.db'
         counts=migrate_sqlite(source.path,target,key)
         copied=PortalStore(target,key)

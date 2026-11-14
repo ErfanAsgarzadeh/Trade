@@ -11,15 +11,16 @@ from portal_payments import Payments, PaymentConflict, Watcher, amount_text, bsc
 from portal_server import create_app
 from portal_store import PortalStore
 from pricing_helpers import enable_test_prices
+from db_targets import TARGETS, fresh_store
 
 ORIGIN='https://avina.example';PASSWORD='disposable-test-password'
 TRON='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'          # a valid TRON address (the USDT contract, used only as a test target)
 BSC='0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed'
 
 
-@pytest.fixture
-def store(tmp_path):
-    store=PortalStore(tmp_path/'portal.db',Fernet.generate_key())
+@pytest.fixture(params=TARGETS)
+def store(request,tmp_path):
+    store=fresh_store(request.param,tmp_path)
     store.create_user('manager',PASSWORD,'m@example.com');store.set_admin('manager')
     store.create_user('alice',PASSWORD,'a@example.com');store.create_user('bob',PASSWORD,'b@example.com')
     enable_test_prices(store)
