@@ -48,9 +48,9 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/portal-assets/arabic.woff"
+          href="/portal-assets/vazirmatn-arabic.woff2"
           as="font"
-          type="font/woff"
+          type="font/woff2"
           crossOrigin="anonymous"
         />
         <script
