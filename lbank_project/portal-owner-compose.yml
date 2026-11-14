@@ -4,3 +4,6 @@ services:
   portal:
     volumes:
       - ./runtime:/app/owner-runtime:ro
+  telegram-worker:
+    volumes:
+      - ./runtime:/app/owner-runtime:ro

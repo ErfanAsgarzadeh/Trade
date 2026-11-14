@@ -236,6 +236,10 @@ class Payments:
                        (match['order_id'], match['id']))
             record(db, None, 'payment_received', match['order_id'], dict(tx_ref=tx_ref, network=network, token=token,
                                                                          amount=amount_text(amount_micro)))
+            from portal_telegram import notify
+            paid = amount_text(amount_micro) + ' ' + token
+            notify(db, match['user_id'], f'✅ پرداخت {paid} شما روی شبکه تأیید شد. سفارش برای فعال‌سازی ثبت شد.',
+                   f'✅ Your payment of {paid} is confirmed on-chain. Your order is queued for activation.')
             order = db.execute('SELECT product FROM license_orders WHERE id=?', (match['order_id'],)).fetchone()
             approver = self.settings(db)['auto_approver']
         if order['product'] == 'signals' and approver:

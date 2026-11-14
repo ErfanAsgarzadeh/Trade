@@ -212,6 +212,10 @@ class Billing:
             db.execute("UPDATE license_orders SET status='approved',payment_ref=?,updated=? WHERE id=?",
                        (payment_ref, now, oid))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_approved:' + oid, now))
+            from portal_telegram import notify
+            until = quote['expires_at'][:10]
+            notify(db, user, f'🎉 اشتراک آوینای شما فعال شد (معتبر تا {until}).' + (' سیگنال‌ها از این پس همین‌جا ارسال می‌شوند.' if product == 'signals' else ''),
+                   f'🎉 Your Avina subscription is active (valid until {until}).' + (' Signals will now arrive here.' if product == 'signals' else ''))
             db.execute("UPDATE license_approvals SET state='completed',lease_token=NULL,lease_until=0,error_code=NULL,updated=? WHERE order_id=?",(now,oid))
             from portal_audit import record
             record(db,job['requested_by'] if approval_job else None,'license_issued',oid,dict(license_id=payload['license_id']))

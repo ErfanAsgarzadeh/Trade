@@ -3537,3 +3537,25 @@ html[lang="fa"] .blog-contents ol {
 .admin-payment-form button[type="submit"] {
   align-self: flex-start;
 }
+.telegram-panel {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 620px;
+}
+.telegram-panel h3 {
+  margin: 0;
+}
+.telegram-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.admin-steps {
+  line-height: 2.2;
+  padding-inline-start: 22px;
+}

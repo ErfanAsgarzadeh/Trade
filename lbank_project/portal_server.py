@@ -25,6 +25,7 @@ from signal_feed import read_feed
 from portal_frontend import frontend_index, private_page, public_file, public_page, robots_txt, sitemap_xml
 import portal_blog
 from portal_payments import PaymentConflict, Payments
+from portal_telegram import Telegram, TelegramError
 from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
 
@@ -130,6 +131,27 @@ class PaymentSettings(BaseModel):
     auto_approve_signals:bool=False
     bsc_rpc:str=Field(default='',max_length=200)
     trongrid_url:str=Field(default='',max_length=200)
+
+
+class TelegramPreferences(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    signals:bool
+    notices:bool
+
+
+class TelegramLink(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    lang:str=Field(default='fa',pattern=r'^(fa|en)$')
+
+
+class TelegramSettings(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    token:str=Field(default='',max_length=100)
+
+
+class TelegramBroadcast(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    text:str=Field(min_length=1,max_length=3500)
 
 
 class AdminApproval(BaseModel):
@@ -366,6 +388,23 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         for order in result['items']:order['payment']=payments.get(order['id'])
         return result
 
+    @app.get('/api/admin/telegram')
+    def admin_telegram(request:Request,user=Depends(administrator)):
+        return Telegram(repository(request)).status()
+
+    @app.put('/api/admin/telegram')
+    def admin_telegram_settings(payload:TelegramSettings,request:Request,user=Depends(admin_mutation)):
+        try:return Telegram(repository(request)).configure(user['id'],payload.token)
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except TelegramError:raise HTTPException(502,'Telegram rejected the token or could not be reached')
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
+    @app.post('/api/admin/telegram/broadcast')
+    def admin_telegram_broadcast(payload:TelegramBroadcast,request:Request,user=Depends(admin_mutation)):
+        try:return Telegram(repository(request)).broadcast(user['id'],payload.text)
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
     @app.get('/api/admin/payments')
     def admin_payments(request:Request,user=Depends(administrator)):
         payments=Payments(repository(request))
@@ -484,6 +523,25 @@ def create_app(store=None,reader=None,origin=None,secure=None):
                     payload.request_key,payload.expected_price_cents,product=payload.product)
         except BillingConflict as exc:raise HTTPException(409,str(exc))
         except ValueError:raise HTTPException(422,'Unknown tier or term')
+
+    # Telegram: link this account to the site's bot to receive signals and notices there.
+    @app.get('/api/me/telegram')
+    def telegram_account(request:Request,user=Depends(identity)):
+        return Telegram(repository(request)).account(user['id'])
+
+    @app.post('/api/me/telegram/link')
+    def telegram_link(payload:TelegramLink,request:Request,user=Depends(mutation)):
+        try:return Telegram(repository(request)).link_code(user['id'],payload.lang)
+        except LookupError:raise HTTPException(409,'Telegram is not set up yet')
+
+    @app.put('/api/me/telegram')
+    def telegram_preferences(payload:TelegramPreferences,request:Request,user=Depends(mutation)):
+        try:return Telegram(repository(request)).preferences(user['id'],payload.signals,payload.notices)
+        except LookupError:raise HTTPException(409,'Telegram is not linked')
+
+    @app.delete('/api/me/telegram')
+    def telegram_unlink(request:Request,user=Depends(mutation)):
+        return Telegram(repository(request)).unlink(user['id'])
 
     # Pay an order in USDT/USDC directly to the owner's wallet; the payment watcher confirms it on-chain.
     @app.get('/api/me/payment-methods')
