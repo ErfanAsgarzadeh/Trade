@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import os
 import ipaddress
 from pathlib import Path
+import re
 import secrets
 from urllib.parse import urlsplit
 
@@ -207,7 +208,9 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             try:length=int(request.headers.get('Content-Length','0'))
             except ValueError:return JSONResponse({'detail':'Invalid request'},status_code=400)
             # Article bodies are the one larger payload; credentials and everything else stay at 16 KiB.
-            limit=262144 if request.url.path.startswith('/api/admin/blog') else 16384
+            if request.url.path=='/api/admin/blog/images':limit=portal_blog.MAX_UPLOAD
+            elif request.url.path.startswith('/api/admin/blog'):limit=262144
+            else:limit=16384
             if request.headers.get('Transfer-Encoding') or not 0<=length<=limit:
                 return JSONResponse({'detail':'Request too large'},status_code=413)
             body=await request.body()
@@ -225,6 +228,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         # Hashed build files never change; brand assets may. Public pages revalidate; everything else is private.
         if path.startswith('/_next/static/'):cache='public, max-age=31536000, immutable'
         elif path.startswith('/portal-assets/'):cache='public, max-age=86400'
+        # An uploaded image never changes under its id; a new upload gets a new id.
+        elif path.startswith('/blog-media/') and response.status_code==200:cache='public, max-age=31536000, immutable'
         elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml','/blog/rss.xml','/en/blog/rss.xml'):cache='public, max-age=3600'
         elif public:cache='no-cache'
         else:
@@ -308,7 +313,16 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         blog=BlogStore(store);post=blog.article(slug,lang)
         if not post:return not_found()
         related=[item for item in blog_posts(request,lang) if item['slug']!=post['slug']][:2]
-        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang))
+        sizes=blog.image_sizes(portal_blog.image_ids(post['body']))
+        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang,sizes))
+
+    @app.get('/blog-media/{name}')
+    def blog_media(name:str,request:Request):
+        store=repository(request)
+        match=re.fullmatch(r'([a-f0-9]{16,32})\.webp',name)
+        data=BlogStore(store).image(match[1]) if match and hasattr(store,'database') else None
+        if data is None:return Response('Not found',status_code=404,media_type='text/plain')
+        return Response(data,media_type='image/webp')
 
     @app.get('/api/blog/latest')
     def blog_latest(request:Request,limit:int=Query(default=3,ge=1,le=12),lang:str=Query(default='fa',pattern=r'^(fa|en)$')):
@@ -365,6 +379,22 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/api/admin/blog')
     def admin_blog(request:Request,user=Depends(administrator)):
         return {'items':BlogStore(repository(request)).all()}
+
+    @app.get('/api/admin/blog/images')
+    def admin_blog_images(request:Request,user=Depends(administrator)):
+        return {'items':BlogStore(repository(request)).images()}
+
+    @app.post('/api/admin/blog/images',status_code=201)
+    async def admin_blog_upload(request:Request,user=Depends(admin_mutation),name:str=Query(default='',max_length=200)):
+        if not request.headers.get('Content-Type','').startswith('image/'):raise HTTPException(415,'Upload a JPEG, PNG, WebP or GIF image')
+        body=await request.body()
+        try:return BlogStore(repository(request)).add_image(user['id'],body,name)
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except ValueError:raise HTTPException(422,'Not a readable JPEG, PNG, WebP or GIF image of at most 10 MB')
+
+    @app.delete('/api/admin/blog/images/{image_id}')
+    def admin_blog_image_delete(image_id:str,request:Request,user=Depends(admin_mutation)):
+        return blog_call(lambda:BlogStore(repository(request)).delete_image(user['id'],image_id))
 
     @app.get('/api/admin/blog/{post_id}')
     def admin_blog_post(post_id:str,request:Request,user=Depends(administrator)):

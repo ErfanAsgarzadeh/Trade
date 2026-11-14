@@ -16,7 +16,10 @@ const messages: Record<number, [string, string]> = {
     "درخواست با وضعیت فعلی سازگار نیست؛ وضعیت و درخواست‌های در انتظار را بررسی کنید.",
     "This conflicts with the current state; check the status and pending requests.",
   ],
-  422: ["اطلاعات واردشده معتبر نیست.", "Some of the details entered are not valid."],
+  422: [
+    "اطلاعات واردشده معتبر نیست.",
+    "Some of the details entered are not valid.",
+  ],
   429: [
     "درخواست‌ها زیاد است؛ کمی بعد دوباره تلاش کنید.",
     "Too many requests; try again shortly.",
@@ -60,7 +63,10 @@ export class ApiClient {
     this.controllers.add(controller);
     const headers: Record<string, string> = { "X-Portal-Request": "1" };
     if (method !== "GET") headers["X-CSRF-Token"] = this.csrf;
-    if (body !== undefined) headers["Content-Type"] = "application/json";
+    // A file is sent as-is (image uploads); anything else as JSON.
+    const raw = typeof Blob !== "undefined" && body instanceof Blob;
+    if (body !== undefined)
+      headers["Content-Type"] = raw ? (body as Blob).type : "application/json";
     try {
       const response = await this.transport(path, {
         method,
@@ -68,7 +74,12 @@ export class ApiClient {
         credentials: "same-origin",
         cache: "no-store",
         signal: controller.signal,
-        body: body === undefined ? undefined : JSON.stringify(body),
+        body:
+          body === undefined
+            ? undefined
+            : raw
+              ? (body as Blob)
+              : JSON.stringify(body),
       });
       const data = await response.json();
       if (epoch !== this.generation) throw new SessionChanged();

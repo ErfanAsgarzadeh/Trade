@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiClient, ApiError, errorText } from "@/lib/api";
 import { num } from "@/lib/format";
 import { localPath, pick, type Lang } from "@/lib/i18n";
@@ -34,11 +34,30 @@ interface Draft {
   body: string;
   published_on: string;
 }
+interface Upload {
+  id: string;
+  url: string;
+  name: string;
+  width: number;
+  height: number;
+  size: number;
+  used_in?: { id: string; lang: Lang; slug: string; title: string }[];
+}
 const today = () => new Date().toISOString().slice(0, 10);
+// A readable default alt text from the file name; the writer should replace it with a real description.
+const altFrom = (name: string) =>
+  name
+    .replace(/\.[a-z0-9]+$/i, "")
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .slice(0, 100);
+const markdownFor = (image: Upload, alt = altFrom(image.name)) =>
+  `![${alt.replace(/[\[\]]/g, "")}](${image.url})`;
 
 function state(post: Summary, ui: Lang) {
   const t = pick(ui);
-  if (post.status === "draft") return [t("پیش‌نویس", "Draft"), "warning", "draft"];
+  if (post.status === "draft")
+    return [t("پیش‌نویس", "Draft"), "warning", "draft"];
   if (post.published_on && post.published_on > today())
     return [t("زمان‌بندی‌شده", "Scheduled"), "neutral", "scheduled"];
   return [t("منتشرشده", "Published"), "success", "live"];
@@ -97,6 +116,26 @@ function seoChecks(d: Draft, ui: Lang) {
         "Links to at least one other page on the site.",
       ),
     ],
+    ...(() => {
+      const images = blocks.flatMap((b) =>
+        b.kind === "figure"
+          ? [b.alt]
+          : b.kind === "p" || b.kind === "quote"
+            ? b.inline.flatMap((i) => (i.kind === "image" ? [i.alt] : []))
+            : [],
+      );
+      return images.length
+        ? [
+            [
+              images.every((alt) => alt.trim().length >= 5),
+              t(
+                "همهٔ تصاویر توضیح (alt) دارند؛ متن داخل [ ] را با توصیف واقعی تصویر جایگزین کنید.",
+                "Every image has alt text; replace the text inside [ ] with a real description.",
+              ),
+            ] as const,
+          ]
+        : [];
+    })(),
     [
       words >= 400,
       t(
@@ -245,7 +284,9 @@ function Editor({
             slug: article.slug,
             title: article.title,
             description: article.description,
-            keywords: article.keywords.join(article.lang === "en" ? ", " : "، "),
+            keywords: article.keywords.join(
+              article.lang === "en" ? ", " : "، ",
+            ),
             body: article.body,
             published_on: article.published_on ?? "",
           }
@@ -263,7 +304,103 @@ function Editor({
     [slugTouched, setSlugTouched] = useState(!!article),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
-    [view, setView] = useState<"write" | "preview">("write");
+    [view, setView] = useState<"write" | "preview">("write"),
+    [uploading, setUploading] = useState(0),
+    [library, setLibrary] = useState<Upload[] | null>(null),
+    [showLibrary, setShowLibrary] = useState(false);
+  const area = useRef<HTMLTextAreaElement>(null),
+    picker = useRef<HTMLInputElement>(null),
+    caret = useRef<{ start: number; end: number } | null>(null);
+  const loadLibrary = useCallback(
+    () =>
+      api
+        .request<{ items: Upload[] }>("/api/admin/blog/images")
+        .then((d) => setLibrary(d.items))
+        .catch((e) => setMessage(errorText(e))),
+    [api],
+  );
+  useEffect(() => {
+    if (showLibrary) void loadLibrary();
+  }, [showLibrary, loadLibrary]);
+  // Insert Markdown where the cursor was, on lines of its own, and put the cursor after it.
+  function insert(text: string) {
+    setView("write");
+    setDraft((d) => {
+      const at = caret.current ?? {
+        start: d.body.length,
+        end: d.body.length,
+      };
+      const before = d.body.slice(0, at.start).replace(/\s*$/, "");
+      const after = d.body.slice(at.end).replace(/^\s*/, "");
+      const block = (before ? "\n\n" : "") + text + (after ? "\n\n" : "\n");
+      const position = before.length + block.length;
+      caret.current = { start: position, end: position };
+      requestAnimationFrame(() => {
+        area.current?.focus();
+        area.current?.setSelectionRange(position, position);
+      });
+      return { ...d, body: before + block + after };
+    });
+  }
+  const remember = () => {
+    if (area.current)
+      caret.current = {
+        start: area.current.selectionStart,
+        end: area.current.selectionEnd,
+      };
+  };
+  async function upload(files: File[]) {
+    const images = files.filter((f) => f.type.startsWith("image/"));
+    if (!images.length) return;
+    // The textarea keeps its cursor after losing focus, so read it now; each insert then moves it forward.
+    if (view === "write") remember();
+    setUploading((n) => n + images.length);
+    setMessage("");
+    for (const file of images) {
+      try {
+        const image = await api.request<Upload>(
+          "/api/admin/blog/images?name=" + encodeURIComponent(file.name),
+          "POST",
+          file,
+        );
+        insert(markdownFor(image));
+      } catch (e) {
+        setMessage(
+          e instanceof ApiError &&
+            (e.status === 422 || e.status === 413 || e.status === 415)
+            ? t(
+                `«${file.name}» بارگذاری نشد: فقط JPEG، PNG، WebP یا GIF تا ۱۰ مگابایت.`,
+                `"${file.name}" was not uploaded: JPEG, PNG, WebP or GIF up to 10 MB only.`,
+              )
+            : errorText(e),
+        );
+      } finally {
+        setUploading((n) => n - 1);
+      }
+    }
+    if (showLibrary) void loadLibrary();
+  }
+  async function removeImage(image: Upload) {
+    if (
+      !window.confirm(
+        t("این تصویر برای همیشه حذف شود؟", "Delete this image permanently?"),
+      )
+    )
+      return;
+    try {
+      await api.request("/api/admin/blog/images/" + image.id, "DELETE");
+      void loadLibrary();
+    } catch (e) {
+      setMessage(
+        e instanceof ApiError && e.status === 409
+          ? t(
+              "این تصویر در مقاله‌ای استفاده شده؛ اول آن را از متن مقاله بردارید.",
+              "This image is used in an article; remove it from the article first.",
+            )
+          : errorText(e),
+      );
+    }
+  }
   const blocks = useMemo(() => parseMarkdown(draft.body), [draft.body]);
   const checks = useMemo(() => seoChecks(draft, lang), [draft, lang]);
   const set = (key: keyof Draft) => (value: string) =>
@@ -309,7 +446,10 @@ function Editor({
                 "ذخیره شد؛ مقاله در تاریخ انتشار در سایت دیده می‌شود.",
                 "Saved; the article appears on the site on its publish date.",
               )
-            : t("منتشر شد و در سایت دیده می‌شود.", "Published and live on the site.")
+            : t(
+                "منتشر شد و در سایت دیده می‌شود.",
+                "Published and live on the site.",
+              )
           : t("پیش‌نویس ذخیره شد.", "Draft saved."),
       );
     } catch (e) {
@@ -373,7 +513,9 @@ function Editor({
       </div>
       <div className="admin-blog-grid">
         <div className="admin-blog-fields">
-          <label htmlFor="blog-lang">{t("زبان مقاله", "Article language")}</label>
+          <label htmlFor="blog-lang">
+            {t("زبان مقاله", "Article language")}
+          </label>
           <select
             id="blog-lang"
             value={draft.lang}
@@ -390,7 +532,9 @@ function Editor({
             maxLength={120}
             onChange={(e) => set("title")(e.target.value)}
           />
-          <label htmlFor="blog-slug">{t("آدرس مقاله", "Article address")}</label>
+          <label htmlFor="blog-slug">
+            {t("آدرس مقاله", "Article address")}
+          </label>
           <input
             id="blog-slug"
             dir="ltr"
@@ -418,7 +562,10 @@ function Editor({
             </p>
           )}
           <label htmlFor="blog-description">
-            {t("توضیح کوتاه (نمایش در گوگل)", "Short description (shown in Google)")}
+            {t(
+              "توضیح کوتاه (نمایش در گوگل)",
+              "Short description (shown in Google)",
+            )}
           </label>
           <textarea
             id="blog-description"
@@ -486,15 +633,145 @@ function Editor({
             >
               {t("پیش‌نمایش", "Preview")}
             </button>
+            <button
+              type="button"
+              className="secondary"
+              disabled={uploading > 0}
+              onClick={() => picker.current?.click()}
+            >
+              {uploading
+                ? t("در حال بارگذاری…", "Uploading…")
+                : t("افزودن تصویر", "Add image")}
+            </button>
+            <button
+              type="button"
+              className={showLibrary ? "active" : "secondary"}
+              aria-pressed={showLibrary}
+              onClick={() => setShowLibrary((v) => !v)}
+            >
+              {t("کتابخانهٔ تصاویر", "Image library")}
+            </button>
+            <input
+              ref={picker}
+              id="blog-image-file"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              hidden
+              onChange={(e) => {
+                void upload(Array.from(e.target.files ?? []));
+                e.target.value = "";
+              }}
+            />
             <span>
               {num(readingMinutes(draft.body), lang)}{" "}
               {t("دقیقه مطالعه", "min read")}
             </span>
           </div>
+          <p className="field-hint">
+            {t(
+              'تصویر را با دکمه، کشیدن روی متن یا چسباندن (Ctrl+V) اضافه کنید؛ در محل نشانگر درج می‌شود. هر تصویر به WebP با حداکثر ۱۶۰۰ پیکسل تبدیل و اطلاعات مکان و دوربین آن حذف می‌شود. برای زیرنویس: ![توضیح](آدرس "زیرنویس")',
+              'Add images with the button, by dragging onto the text or by pasting (Ctrl+V); they go in at the cursor. Each image is converted to WebP at most 1600 px, with location and camera data removed. For a caption: ![description](address "caption")',
+            )}
+          </p>
+          {showLibrary && (
+            <div className="admin-media" id="blog-media-library">
+              {library === null ? (
+                <p className="note">{t("در حال دریافت…", "Loading…")}</p>
+              ) : !library.length ? (
+                <p className="note">
+                  {t(
+                    "هنوز تصویری بارگذاری نشده است.",
+                    "No images uploaded yet.",
+                  )}
+                </p>
+              ) : (
+                library.map((image) => (
+                  <article key={image.id} className="admin-media-item">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={image.url} alt="" loading="lazy" />
+                    <small dir="ltr">
+                      {image.width}×{image.height} ·{" "}
+                      {Math.round(image.size / 1024)} KB
+                    </small>
+                    <small>
+                      {image.used_in?.length
+                        ? t("استفاده در: ", "Used in: ") +
+                          image.used_in.map((u) => u.title).join("، ")
+                        : t("استفاده نشده", "Not used")}
+                    </small>
+                    <div className="admin-media-actions">
+                      <button
+                        type="button"
+                        className="small"
+                        onClick={() => insert(markdownFor(image))}
+                      >
+                        {t("درج در متن", "Insert")}
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary small"
+                        onClick={() => {
+                          void navigator.clipboard?.writeText(
+                            markdownFor(image),
+                          );
+                          setMessage(
+                            t("کد تصویر کپی شد.", "Image code copied."),
+                          );
+                        }}
+                      >
+                        {t("کپی کد", "Copy code")}
+                      </button>
+                      <button
+                        type="button"
+                        className="secondary small danger"
+                        disabled={!!image.used_in?.length}
+                        title={
+                          image.used_in?.length
+                            ? t(
+                                "در مقاله استفاده شده است",
+                                "Used in an article",
+                              )
+                            : undefined
+                        }
+                        onClick={() => removeImage(image)}
+                      >
+                        {t("حذف", "Delete")}
+                      </button>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          )}
           {view === "write" ? (
             <textarea
               id="blog-body"
+              ref={area}
               dir={draft.lang === "en" ? "ltr" : "rtl"}
+              onSelect={remember}
+              onKeyUp={remember}
+              onClick={remember}
+              onBlur={remember}
+              onPaste={(e) => {
+                const files = Array.from(e.clipboardData.files);
+                if (files.some((f) => f.type.startsWith("image/"))) {
+                  e.preventDefault();
+                  remember();
+                  void upload(files);
+                }
+              }}
+              onDragOver={(e) => {
+                if (Array.from(e.dataTransfer.types).includes("Files"))
+                  e.preventDefault();
+              }}
+              onDrop={(e) => {
+                const files = Array.from(e.dataTransfer.files);
+                if (!files.length) return;
+                e.preventDefault();
+                remember();
+                void upload(files);
+              }}
               aria-label={t("متن مقاله", "Article body")}
               value={draft.body}
               maxLength={60000}

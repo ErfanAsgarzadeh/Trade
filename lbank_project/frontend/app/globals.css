@@ -3380,3 +3380,65 @@ html[lang="fa"] .blog-contents ol {
     display: none;
   }
 }
+/* Blog images */
+.blog-figure {
+  margin: 28px 0;
+}
+.blog-figure img,
+.blog-inline-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.blog-figure img {
+  display: block;
+  margin: 0 auto;
+}
+.blog-figure figcaption {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.blog-inline-image {
+  display: inline-block;
+  max-height: 1.6em;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+.admin-media {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.admin-media-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.admin-media-item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--primary-soft);
+}
+.admin-media-item small {
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.admin-media-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.admin-blog-tabs {
+  flex-wrap: wrap;
+}
