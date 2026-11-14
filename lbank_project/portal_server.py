@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from portal_store import PortalStore
+from portal_store import EmailTaken, PortalStore
 from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
@@ -45,6 +45,12 @@ class Login(BaseModel):
 
 class Registration(Login):
     password_confirmation:SecretStr=Field(min_length=12,max_length=128)
+    email:str=Field(min_length=6,max_length=254)
+
+
+class EmailChange(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    email:str=Field(min_length=6,max_length=254)
 
 
 class Connection(BaseModel):
@@ -295,7 +301,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         return AdminStore(repository(request)).overview()
 
     @app.get('/api/admin/users')
-    def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=40),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
+    def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=80),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
         return AdminStore(repository(request)).users(search,offset,limit)
 
     @app.patch('/api/admin/users/{user_id}')
@@ -425,8 +431,11 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         password=payload.password.get_secret_value()
         if not secrets.compare_digest(password.encode(),payload.password_confirmation.get_secret_value().encode()):
             raise HTTPException(422,'Password confirmation does not match')
-        try:token,csrf=store.register(payload.username,password)
-        except ValueError:raise HTTPException(409,'Username unavailable')
+        try:token,csrf=store.register(payload.username,password,payload.email)
+        except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except ValueError as exc:
+            if 'email' in str(exc).lower():raise HTTPException(422,'Invalid email')
+            raise HTTPException(409,'Username unavailable')
         store.logout(request.cookies.get(COOKIE,''))
         response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=43200,path='/')
         return {'username':payload.username,'csrf':csrf}
@@ -459,7 +468,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/api/me')
     def me(user=Depends(identity)):
-        return dict(username=user['username'],csrf=user['csrf'],role=user['role'],live_execution_supported=False)
+        return dict(username=user['username'],email=user.get('email'),csrf=user['csrf'],role=user['role'],live_execution_supported=False)
+
+    @app.put('/api/me/email')
+    def change_email(payload:EmailChange,request:Request,user=Depends(mutation)):
+        try:return {'email':repository(request).set_email(user['id'],payload.email)}
+        except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except ValueError:raise HTTPException(422,'Invalid email')
 
     @app.get('/api/exchanges',dependencies=[Depends(identity)])
     def exchanges():return {'exchanges':catalog(),'live_execution_supported':False}

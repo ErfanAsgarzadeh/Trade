@@ -9,6 +9,7 @@ export interface ProductPlan {
 export interface Me {
   role: "customer" | "admin";
   username: string;
+  email?: string | null;
   csrf: string;
   live_execution_supported: boolean;
 }

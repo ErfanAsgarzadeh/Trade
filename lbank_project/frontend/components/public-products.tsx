@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { Plans } from "@/lib/types";
+import { useLang } from "@/lib/lang";
 export default function PublicProducts() {
+  const { t } = useLang();
   const [plans, setPlans] = useState<Plans | null>(null);
   useEffect(() => {
     let current = true;
@@ -22,27 +24,31 @@ export default function PublicProducts() {
     const item = plans?.products.find((p) => p.product === product);
     return item
       ? item.sales_enabled
-        ? "فروش باز است؛ طرح‌ها را در پنل ببینید"
-        : "فروش فعلاً بسته است"
-      : "وضعیت فروش را در پنل ببینید";
+        ? t("فروش باز است؛ طرح‌ها را در پنل ببینید", "Sales are open; see the plans in your panel")
+        : t("فروش فعلاً بسته است", "Sales are closed for now")
+      : t("وضعیت فروش را در پنل ببینید", "See sales status in your panel");
   };
   return (
     <div className="landing-product-cards">
       <article>
         <span>SIGNALS</span>
-        <h3>فقط سیگنال</h3>
+        <h3>{t("فقط سیگنال", "Signals only")}</h3>
         <p>
-          ورود پیشنهادی، حد ضرر، هدف در صورت تعریف و زمان اعتبار؛ بدون نیاز به
-          کلید صرافی. تصمیم و اجرای معامله با شماست.
+          {t(
+            "ورود پیشنهادی، حد ضرر، هدف در صورت تعریف و زمان اعتبار؛ بدون نیاز به کلید صرافی. تصمیم و اجرای معامله با شماست.",
+            "Suggested entry, stop-loss, a target where defined, and a validity window; no exchange key needed. The decision and the trade are yours.",
+          )}
         </p>
         <small>{status("signals")}</small>
       </article>
       <article>
         <span>AUTOTRADE</span>
-        <h3>معاملهٔ خودکار</h3>
+        <h3>{t("معاملهٔ خودکار", "Automated trading")}</h3>
         <p>
-          مجوز ورود و مدیریت معاملات ربات، همراه با سیگنال‌ها. موتور فعلی
-          آزمایشی است و سفارش واقعی به صرافی فعال نیست.
+          {t(
+            "مجوز ورود و مدیریت معاملات ربات، همراه با سیگنال‌ها. موتور فعلی آزمایشی است و سفارش واقعی به صرافی فعال نیست.",
+            "A license for the bot to enter and manage trades, signals included. The current engine is in trial and does not yet place real exchange orders.",
+          )}
         </p>
         <small>{status("autotrade")}</small>
       </article>

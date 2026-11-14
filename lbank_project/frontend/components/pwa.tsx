@@ -1,11 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useLang } from "@/lib/lang";
 interface InstallEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: string }>;
 }
 export default function Pwa({ notify }: { notify: (message: string) => void }) {
+  const { t } = useLang();
   const [prompt, setPrompt] = useState<InstallEvent | null>(null);
+  const offlineText = t(
+      "اتصال اینترنت قطع است؛ وضعیت نمایش‌داده‌شده ممکن است به‌روز نباشد.",
+      "You are offline; the status shown may be out of date.",
+    ),
+    onlineText = t(
+      "اتصال برقرار شد؛ برای دریافت آخرین وضعیت، به‌روزرسانی را بزنید.",
+      "Back online; refresh to get the latest status.",
+    );
   useEffect(() => {
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/portal-sw.js").catch(() => {});
@@ -14,12 +24,8 @@ export default function Pwa({ notify }: { notify: (message: string) => void }) {
       setPrompt(event as InstallEvent);
     };
     const installed = () => setPrompt(null);
-    const offline = () =>
-      notify(
-        "اتصال اینترنت قطع است؛ وضعیت نمایش‌داده‌شده ممکن است به‌روز نباشد.",
-      );
-    const online = () =>
-      notify("اتصال برقرار شد؛ برای دریافت آخرین وضعیت، به‌روزرسانی را بزنید.");
+    const offline = () => notify(offlineText);
+    const online = () => notify(onlineText);
     window.addEventListener("beforeinstallprompt", install);
     window.addEventListener("appinstalled", installed);
     window.addEventListener("offline", offline);
@@ -30,7 +36,7 @@ export default function Pwa({ notify }: { notify: (message: string) => void }) {
       window.removeEventListener("offline", offline);
       window.removeEventListener("online", online);
     };
-  }, [notify]);
+  }, [notify, offlineText, onlineText]);
   if (!prompt) return null;
   return (
     <button
@@ -42,7 +48,7 @@ export default function Pwa({ notify }: { notify: (message: string) => void }) {
         setPrompt(null);
       }}
     >
-      نصب اپلیکیشن
+      {t("نصب اپلیکیشن", "Install app")}
     </button>
   );
 }

@@ -75,6 +75,11 @@ CREATE TABLE IF NOT EXISTS blog_posts(id TEXT PRIMARY KEY,slug TEXT UNIQUE NOT N
  created REAL NOT NULL,updated REAL NOT NULL);
 CREATE INDEX IF NOT EXISTS blog_posts_public ON blog_posts(status,published_on);
 '''
+SCHEMA_V8='''
+ALTER TABLE users ADD COLUMN email TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS users_email ON users(email) WHERE email IS NOT NULL;
+ALTER TABLE blog_posts ADD COLUMN lang TEXT NOT NULL DEFAULT 'fa' CHECK(lang IN ('fa','en'));
+'''
 
 
 class PostgresConnection:
@@ -143,8 +148,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7)):
+            if versions-{1,2,3,4,5,6,7,8}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

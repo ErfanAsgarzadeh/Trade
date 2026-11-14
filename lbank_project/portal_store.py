@@ -4,6 +4,7 @@ import hmac
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import sqlite3
 import time
@@ -20,6 +21,20 @@ def password_hash(password, salt=None):
     return salt + ':' + digest
 
 
+
+EMAIL=re.compile(r'^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,24}$')
+
+
+class EmailTaken(ValueError):
+    """Another account already uses this email address."""
+
+
+def normal_email(value):
+    """Trimmed, lower-cased address; ValueError when it is not a plain email address."""
+    email=str(value or '').strip().lower()
+    if len(email)>254 or not EMAIL.match(email):raise ValueError('Invalid email')
+    return email
+
 class PortalStore:
     def __init__(self, path, key):
         self.vault = Fernet(key)
@@ -33,22 +48,25 @@ class PortalStore:
 
     def close(self):self.database.close()
 
-    def create_user(self, username, password):
+    def create_user(self, username, password, email=None):
         user = str(uuid.uuid4())
         with self.db() as db:
-            db.execute('INSERT INTO users(id,username,password) VALUES(?,?,?)',
-                       (user,username,password_hash(password)))
+            db.execute('INSERT INTO users(id,username,password,email) VALUES(?,?,?,?)',
+                       (user,username,password_hash(password),normal_email(email) if email else None))
         return user
 
-    def register(self,username,password):
+    def register(self,username,password,email):
         """Create the user, session and audit event in one transaction."""
         user=str(uuid.uuid4());token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
-        hashed=password_hash(password)
+        hashed=password_hash(password);email=normal_email(email)
         with self.db() as db:
-            self.database.begin_write(db,'register:'+username)
+            # One lock for all sign-ups: usernames and emails are both unique.
+            self.database.begin_write(db,'register')
             if db.execute('SELECT id FROM users WHERE username=?',(username,)).fetchone():
                 raise ValueError('Username unavailable')
-            db.execute('INSERT INTO users(id,username,password) VALUES(?,?,?)',(user,username,hashed))
+            if db.execute('SELECT id FROM users WHERE email=?',(email,)).fetchone():
+                raise EmailTaken('Email unavailable')
+            db.execute('INSERT INTO users(id,username,password,email) VALUES(?,?,?,?)',(user,username,hashed,email))
             db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
                        (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+43200))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'registered',time.time()))
@@ -92,9 +110,19 @@ class PortalStore:
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user['id'],'login',time.time()))
             return token,csrf
 
+    def set_email(self,user,email):
+        email=normal_email(email)
+        with self.db() as db:
+            self.database.begin_write(db,'register')
+            other=db.execute('SELECT id FROM users WHERE email=?',(email,)).fetchone()
+            if other and other['id']!=user:raise EmailTaken('Email unavailable')
+            db.execute('UPDATE users SET email=? WHERE id=?',(email,user))
+            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'email_changed',time.time()))
+        return email
+
     def session(self, token):
         with self.db() as db:
-            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,sessions.csrf FROM sessions '
+            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,users.email,sessions.csrf FROM sessions '
                            'JOIN users ON users.id=sessions.user_id WHERE token_hash=? AND expires>? AND disabled=0',
                            (hashlib.sha256(token.encode()).hexdigest(),time.time())).fetchone()
             return dict(row) if row else None

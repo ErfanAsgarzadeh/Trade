@@ -8,7 +8,7 @@ from portal_store import PortalStore
 
 
 TABLES={
- 'users':('id','username','password','disabled','runtime','role'),
+ 'users':('id','username','password','disabled','runtime','role','email'),
  'sessions':('token_hash','user_id','csrf','expires'),
  'connections':('user_id','encrypted','market','revision','updated','exchange_id'),
  'account_cache':('user_id','revision','snapshot','checked','status'),
@@ -22,7 +22,7 @@ TABLES={
  'admin_events':('id','actor_id','action','target','details','at'),
  'license_approvals':('id','order_id','requested_by','payload','payment_ref','state','lease_token','lease_until','attempts','created','updated','error_code'),
  'license_cashflows':('user_id','event_id','amount_usd','at'),
- 'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated'),
+ 'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated','lang'),
 }
 
 
@@ -49,8 +49,11 @@ def migrate_sqlite(source,target,key):
                 if table not in existing:continue
                 fields=','.join(columns)
                 select_fields=fields
-                if table=='users' and 'role' not in {r['name'] for r in src.execute('PRAGMA table_info(users)')}:
-                    select_fields=','.join(columns[:-1])+",'customer' AS role"
+                if table=='users':
+                    present={r['name'] for r in src.execute('PRAGMA table_info(users)')}
+                    select_fields=','.join(c if c in present else {'role':"'customer' AS role",'email':'NULL AS email'}[c] for c in columns)
+                if table=='blog_posts' and 'lang' not in {r['name'] for r in src.execute('PRAGMA table_info(blog_posts)')}:
+                    select_fields=','.join(columns[:-1])+",'fa' AS lang"
                 if table=='connections' and 'exchange_id' not in {r['name'] for r in src.execute('PRAGMA table_info(connections)')}:
                     select_fields=','.join(columns[:-1])+",'lbank' AS exchange_id"
                 if table=='license_orders' and 'product' not in {r['name'] for r in src.execute('PRAGMA table_info(license_orders)')}:

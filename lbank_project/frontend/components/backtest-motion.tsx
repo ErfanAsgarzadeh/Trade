@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import snapshot from "@/public/backtest/five-year-summary.json";
-import { faNumber, usd } from "@/lib/format";
+import { money, percent } from "@/lib/format";
+import { useLang } from "@/lib/lang";
 
 const W = 760,
   H = 390,
@@ -9,8 +10,11 @@ const W = 760,
   RIGHT = 28,
   TOP = 32,
   BOTTOM = 46,
-  DURATION = 10000;
+  // Five years replay in a few seconds; reduced-motion users get the final frame.
+  DURATION = 4200;
 export default function BacktestMotion() {
+  const { lang, t } = useLang();
+  const usd = (value: number) => money(value, lang);
   const container = useRef<HTMLDivElement>(null),
     [progress, setProgress] = useState(1),
     [playing, setPlaying] = useState(false),
@@ -132,11 +136,11 @@ export default function BacktestMotion() {
           <span className="replay-dot" />
           BACKTEST REPLAY
         </div>
-        <span className="replay-tag">شبیه‌سازی تاریخی</span>
+        <span className="replay-tag">{t("شبیه‌سازی تاریخی", "Historical simulation")}</span>
       </div>
       <div className="replay-value">
         <div>
-          <span>ارزش حساب در بازپخش</span>
+          <span>{t("ارزش حساب در بازپخش", "Account value in replay")}</span>
           <strong id="replay-equity">{usd(point.value)}</strong>
         </div>
         <span className="replay-date" dir="ltr">
@@ -150,12 +154,16 @@ export default function BacktestMotion() {
         aria-labelledby="equity-chart-title equity-chart-description"
       >
         <title id="equity-chart-title">
-          رشد سرمایهٔ شبیه‌سازی‌شده از ۱۰٬۰۰۰ تا ۹۶۴٬۴۵۲ دلار، سال‌های ۲۰۲۱ تا
-          ۲۰۲۵
+          {t(
+            "رشد سرمایهٔ شبیه‌سازی‌شده از ۱۰٬۰۰۰ تا ۹۶۴٬۴۵۲ دلار، سال‌های ۲۰۲۱ تا ۲۰۲۵",
+            "Simulated growth from $10,000 to $964,452, 2021 to 2025",
+          )}
         </title>
         <desc id="equity-chart-description">
-          منحنی ارزش پایان روز روی محور لگاریتمی، سه ربات روی یک حساب و
-          بدون برداشت. بیشترین افت سرمایهٔ دقیقه‌ای ۳۰٫۷٪ بوده است.
+          {t(
+            "منحنی ارزش پایان روز روی محور لگاریتمی، سه ربات روی یک حساب و بدون برداشت. بیشترین افت سرمایهٔ دقیقه‌ای ۳۰٫۷٪ بوده است.",
+            "End-of-day value on a log scale, three bots on one account, no withdrawals. The largest minute drawdown was 30.7%.",
+          )}
         </desc>
         <defs>
           <linearGradient id="equity-fill" x1="0" y1="0" x2="0" y2="1">
@@ -250,33 +258,35 @@ export default function BacktestMotion() {
         />
       </svg>
       <div className="replay-controls">
-        <span>ارزش پایان روز · مقیاس لگاریتمی · دلار</span>
+        <span>{t("ارزش پایان روز · مقیاس لگاریتمی · دلار", "End-of-day value · log scale · USD")}</span>
         <button
           id="toggle-backtest-motion"
           onClick={toggle}
           aria-pressed={playing}
         >
           {playing
-            ? "توقف موشن"
+            ? t("توقف", "Pause")
             : progress >= 1
-              ? "بازپخش مسیر"
-              : "ادامهٔ بازپخش"}{" "}
-          <span aria-hidden="true">{playing ? "Ⅱ" : "↻"}</span>
+              ? t("پخش دوباره", "Replay")
+              : t("ادامه", "Resume")}
         </button>
       </div>
       <div className="replay-bottom">
         <div>
-          <span>سرمایهٔ اولیه</span>
+          <span>{t("سرمایهٔ اولیه", "Starting capital")}</span>
           <strong>{usd(snapshot.initial)}</strong>
         </div>
-        <span className="replay-divider" />
         <div>
-          <span>ارزش پایان پنج سال</span>
+          <span>{t("ارزش پایان پنج سال", "Value after five years")}</span>
           <strong>{usd(Math.round(snapshot.final))}</strong>
         </div>
+        <div>
+          <span>{t("رشد سالانهٔ مرکب", "CAGR")}</span>
+          <strong>{percent(snapshot.cagr_pct, lang)}</strong>
+        </div>
         <div className="replay-dd">
-          <span>بیشترین افت دقیقه‌ای</span>
-          <strong>{faNumber(snapshot.max_minute_dd_pct)}٪</strong>
+          <span>{t("بیشترین افت دقیقه‌ای", "Max minute drawdown")}</span>
+          <strong>{percent(snapshot.max_minute_dd_pct, lang)}</strong>
         </div>
       </div>
       <div className="replay-ornament" aria-hidden="true" />

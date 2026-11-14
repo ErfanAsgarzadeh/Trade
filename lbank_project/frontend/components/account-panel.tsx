@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiClient } from "@/lib/api";
 import type { Connection, Exchange } from "@/lib/types";
-import { states } from "@/lib/format";
+import { dateTime, stateLabel } from "@/lib/format";
+import { useLang } from "@/lib/lang";
 import { DataTable, Heading } from "./shared";
 interface Props {
   api: ApiClient;
@@ -11,6 +12,8 @@ interface Props {
 }
 const emptyCredentials = { api_key: "", secret: "", passphrase: "", uid: "" };
 export default function AccountPanel({ api, report, notify }: Props) {
+  const { lang, t } = useLang();
+  const state = (key: string) => stateLabel(key, lang);
   const [catalog, setCatalog] = useState<Exchange[]>([]),
     [connection, setConnection] = useState<Connection | null>(null);
   const [exchange, setExchange] = useState("thetruetrade"),
@@ -92,7 +95,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
       });
       setCredentials(emptyCredentials);
       await refresh();
-      notify(states.saved_unverified);
+      notify(state("saved_unverified")!);
     } catch (e) {
       report(e);
     } finally {
@@ -104,7 +107,12 @@ export default function AccountPanel({ api, report, notify }: Props) {
     try {
       await api.request("/api/me/connection/refresh", "POST");
       await refresh();
-      notify("درخواست بررسی ثبت شد؛ نتیجه پس از بررسی نمایش داده می‌شود.");
+      notify(
+        t(
+          "درخواست بررسی ثبت شد؛ نتیجه پس از بررسی نمایش داده می‌شود.",
+          "Check requested; the result appears once it is done.",
+        ),
+      );
     } catch (e) {
       report(e);
     } finally {
@@ -112,14 +120,15 @@ export default function AccountPanel({ api, report, notify }: Props) {
     }
   }
   async function disconnect() {
-    if (!window.confirm("اتصال ذخیره‌شده حذف شود؟")) return;
+    if (!window.confirm(t("اتصال ذخیره‌شده حذف شود؟", "Remove the saved connection?")))
+      return;
     setBusy(true);
     generation.current++;
     try {
       await api.request("/api/me/connection", "DELETE");
       setCredentials(emptyCredentials);
       await refresh();
-      notify("اتصال حذف شد.");
+      notify(t("اتصال حذف شد.", "Connection removed."));
     } catch (e) {
       report(e);
     } finally {
@@ -154,8 +163,11 @@ export default function AccountPanel({ api, report, notify }: Props) {
     <section id="connection-section" className="panel">
       <Heading
         eyebrow="CONNECTED TO YOUR ACCOUNT"
-        title="حساب صرافی شما"
-        description="اتصال حساب و مشاهدهٔ موجودی، در فضای اختصاصی شما."
+        title={t("حساب صرافی شما", "Your exchange account")}
+        description={t(
+          "اتصال حساب و مشاهدهٔ موجودی، در فضای اختصاصی شما.",
+          "Connect your account and see your balance in your private space.",
+        )}
         number="03 / ACCOUNT"
       />
       <div className="grid">
@@ -167,7 +179,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
             >
               <div className="form-pair">
                 <div>
-                  <label htmlFor="exchange-id">صرافی</label>
+                  <label htmlFor="exchange-id">{t("صرافی", "Exchange")}</label>
                   <select
                     id="exchange-id"
                     value={exchange}
@@ -182,7 +194,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="market">نوع حساب</label>
+                  <label htmlFor="market">{t("نوع حساب", "Account type")}</label>
                   <select
                     id="market"
                     value={market}
@@ -193,7 +205,9 @@ export default function AccountPanel({ api, report, notify }: Props) {
                   >
                     {venue?.markets.map((m) => (
                       <option key={m} value={m}>
-                        {m === "spot" ? "Spot" : "Futures / قرارداد دائمی"}
+                        {m === "spot"
+                          ? "Spot"
+                          : t("Futures / قرارداد دائمی", "Futures / perpetual")}
                       </option>
                     ))}
                   </select>
@@ -215,14 +229,16 @@ export default function AccountPanel({ api, report, notify }: Props) {
               />
               {fields.includes("password") &&
                 field("passphrase", "Passphrase", 1, 512)}
-              {fields.includes("uid") && field("uid", "شناسهٔ حساب", 1, 128)}
-              <button type="submit">ثبت کلیدهای حساب ←</button>
+              {fields.includes("uid") &&
+                field("uid", t("شناسهٔ حساب", "Account ID"), 1, 128)}
+              <button type="submit">{t("ثبت کلیدهای حساب", "Save account keys")}</button>
             </fieldset>
           </form>
           <p className="note">
-            برای مشاهدهٔ موجودی، کلید فقط‌خواندنی و بدون مجوز برداشت کافی است.
-            ثبت کلید به معنی شروع معامله نیست؛ معاملات خودکار واقعی هنوز فعال
-            نیستند.
+            {t(
+              "برای مشاهدهٔ موجودی، کلید فقط‌خواندنی و بدون مجوز برداشت کافی است. ثبت کلید به معنی شروع معامله نیست؛ معاملات خودکار واقعی هنوز فعال نیستند.",
+              "A read-only key without withdrawal permission is enough to see your balance. Saving a key does not start trading; real automated trades are not active yet.",
+            )}
           </p>
         </div>
         <div className="connection-summary">
@@ -234,9 +250,9 @@ export default function AccountPanel({ api, report, notify }: Props) {
                 " · " +
                 connection.market +
                 " · " +
-                (states[connection.account?.status || ""] ||
-                  states.saved_unverified)
-              : "حسابی ثبت نشده"}
+                (state(connection.account?.status || "") ||
+                  state("saved_unverified"))
+              : t("حسابی ثبت نشده", "No account connected")}
           </h3>
           <div className="actions">
             <button
@@ -245,7 +261,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
               disabled={busy || !connection?.configured}
               onClick={check}
             >
-              بررسی اتصال و دریافت موجودی
+              {t("بررسی اتصال و دریافت موجودی", "Check connection and load balance")}
             </button>
             <button
               id="disconnect"
@@ -253,20 +269,22 @@ export default function AccountPanel({ api, report, notify }: Props) {
               disabled={busy || !connection?.configured}
               onClick={disconnect}
             >
-              حذف اتصال
+              {t("حذف اتصال", "Remove connection")}
             </button>
           </div>
           <p className="note">
             {connection?.account?.checked_at
-              ? "آخرین بررسی: " +
-                new Date(connection.account.checked_at * 1000).toLocaleString(
-                  "fa-IR",
-                  { timeZone: "Asia/Tehran" },
-                )
+              ? t("آخرین بررسی: ", "Last checked: ") +
+                dateTime(connection.account.checked_at, lang)
               : ""}
           </p>
           <DataTable
-            headers={["دارایی", "آزاد", "قفل‌شده", "کل"]}
+            headers={[
+              t("دارایی", "Asset"),
+              t("آزاد", "Free"),
+              t("قفل‌شده", "Locked"),
+              t("کل", "Total"),
+            ]}
             rows={(snapshot?.balances || []).map((b) => [
               b.asset,
               b.free,
@@ -276,21 +294,23 @@ export default function AccountPanel({ api, report, notify }: Props) {
           />
           <p className="note">
             {snapshot?.balance_scope
-              ? "محدودهٔ موجودی: " + snapshot.balance_scope
+              ? t("محدودهٔ موجودی: ", "Balance scope: ") + snapshot.balance_scope
               : ""}
           </p>
-          <h3 className="positions-title">پوزیشن‌های حساب صرافی</h3>
+          <h3 className="positions-title">
+            {t("پوزیشن‌های حساب صرافی", "Exchange account positions")}
+          </h3>
           <DataTable
             financialColumns={[5]}
             sideColumns={[1]}
             headers={[
-              "نماد",
-              "جهت",
-              "قرارداد",
-              "ورود",
-              "قیمت فعلی",
-              "سود شناور",
-              "اهرم",
+              t("نماد", "Symbol"),
+              t("جهت", "Side"),
+              t("قرارداد", "Contracts"),
+              t("ورود", "Entry"),
+              t("قیمت فعلی", "Mark price"),
+              t("سود شناور", "Unrealized PnL"),
+              t("اهرم", "Leverage"),
             ]}
             rows={(snapshot?.positions || []).map((p) => [
               p.symbol,
@@ -306,12 +326,17 @@ export default function AccountPanel({ api, report, notify }: Props) {
             connection?.market === "futures" &&
             !snapshot.positions_complete && (
               <p className="note">
-                فهرست ممکن است شامل همهٔ قراردادها یا صفحات حساب نباشد.
+                {t(
+                  "فهرست ممکن است شامل همهٔ قراردادها یا صفحات حساب نباشد.",
+                  "This list may not include every contract or account page.",
+                )}
               </p>
             )}
           <p className="note">
-            موجودی صرافی و سرمایهٔ آزمایشی ربات جدا هستند. حذف اتصال از پنل،
-            کلید را در صرافی باطل نمی‌کند.
+            {t(
+              "موجودی صرافی و سرمایهٔ آزمایشی ربات جدا هستند. حذف اتصال از پنل، کلید را در صرافی باطل نمی‌کند.",
+              "Your exchange balance and the bot's trial capital are separate. Removing the connection here does not revoke the key at the exchange.",
+            )}
           </p>
         </div>
       </div>

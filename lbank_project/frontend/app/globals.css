@@ -3239,3 +3239,20 @@ bdi,
     grid-template-columns: 1fr;
   }
 }
+.profile-form {
+  max-width: 620px;
+}
+.profile-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.profile-row input {
+  flex: 1;
+}
+@media (max-width: 600px) {
+  .profile-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

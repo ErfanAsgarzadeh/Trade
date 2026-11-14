@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { ApiClient } from "@/lib/api";
 import type { License } from "@/lib/types";
-import { faNumber } from "@/lib/format";
+import { dateTime, num } from "@/lib/format";
+import { useLang } from "@/lib/lang";
 import { Heading } from "./shared";
 interface Signal {
   bot: string;
@@ -20,13 +21,11 @@ interface Feed {
   status: string;
   signals: Signal[];
 }
-const names: Record<string, string> = {
-  main: "شاهین",
-  c3: "موج‌سوار",
-  pa: "ققنوس",
+const names: Record<string, [string, string]> = {
+  main: ["شاهین", "Falcon"],
+  c3: ["موج‌سوار", "Wave Rider"],
+  pa: ["ققنوس", "Phoenix"],
 };
-const date = (stamp: number) =>
-  new Date(stamp * 1000).toLocaleString("fa-IR", { timeZone: "Asia/Tehran" });
 export default function Signals({
   api,
   entitlement,
@@ -36,6 +35,8 @@ export default function Signals({
   entitlement?: License;
   report: (e: unknown) => void;
 }) {
+  const { lang, t } = useLang();
+  const date = (stamp: number) => dateTime(stamp, lang);
   const [feed, setFeed] = useState<Feed | null>(null),
     [refresh, setRefresh] = useState(0),
     [loading, setLoading] = useState(false);
@@ -67,31 +68,45 @@ export default function Signals({
     };
   }, [api, entitlement, refresh, report]);
   const empty = !entitlement?.signals_allowed
-    ? "برای دریافت سیگنال، اشتراک فعال لازم دارید. پس از تعیین قیمت‌ها می‌توانید نوع اشتراک را انتخاب کنید."
+    ? t(
+        "برای دریافت سیگنال، اشتراک فعال لازم دارید. پس از تعیین قیمت‌ها می‌توانید نوع اشتراک را انتخاب کنید.",
+        "You need an active subscription to receive signals. You can choose one once prices are set.",
+      )
     : feed?.status === "not_configured"
-      ? "منبع سیگنال هنوز راه‌اندازی نشده است. سیگنال نمونه یا ساختگی نمایش داده نمی‌شود."
+      ? t(
+          "منبع سیگنال هنوز راه‌اندازی نشده است. سیگنال نمونه یا ساختگی نمایش داده نمی‌شود.",
+          "The signal source is not set up yet. No sample or made-up signals are shown.",
+        )
       : feed?.status === "unavailable"
-        ? "منبع سیگنال فعلاً در دسترس نیست؛ بعداً به‌روزرسانی کنید."
+        ? t(
+            "منبع سیگنال فعلاً در دسترس نیست؛ بعداً به‌روزرسانی کنید.",
+            "The signal source is unavailable right now; refresh later.",
+          )
         : loading
-          ? "در حال دریافت سیگنال‌ها…"
-          : "هنوز سیگنالی از ربات‌ها ثبت نشده است.";
+          ? t("در حال دریافت سیگنال‌ها…", "Loading signals…")
+          : t("هنوز سیگنالی از ربات‌ها ثبت نشده است.", "No signals from the bots yet.");
   return (
     <section id="signals-section" className="panel">
       <Heading
         eyebrow="STRATEGY SIGNALS"
-        title="سیگنال‌های ربات‌ها"
-        description="پیشنهادهای استراتژی برای تصمیم‌گیری شما؛ نمایش سیگنال به معنی انجام معامله نیست."
+        title={t("سیگنال‌های ربات‌ها", "Bot signals")}
+        description={t(
+          "پیشنهادهای استراتژی برای تصمیم‌گیری شما؛ نمایش سیگنال به معنی انجام معامله نیست.",
+          "Strategy suggestions for your own decisions; showing a signal does not place a trade.",
+        )}
         number="03 / SIGNALS"
       />
       <div className="actions">
-        <span className="quiet-tag">به‌روزرسانی هر ۳۰ ثانیه · زمان تهران</span>
+        <span className="quiet-tag">
+          {t("به‌روزرسانی هر ۳۰ ثانیه · زمان تهران", "Updates every 30 seconds · Tehran time")}
+        </span>
         <button
           id="refresh-signals"
           className="secondary"
           disabled={loading || !entitlement?.signals_allowed}
           onClick={() => setRefresh((v) => v + 1)}
         >
-          به‌روزرسانی سیگنال‌ها ↻
+          {t("به‌روزرسانی سیگنال‌ها", "Refresh signals")}
         </button>
       </div>
       {!feed?.signals.length ? (
@@ -111,51 +126,57 @@ export default function Signals({
                 </strong>
                 <span className="order-status">
                   {s.status === "expired"
-                    ? "منقضی؛ قابل اجرا نیست"
-                    : "در بازهٔ اعتبار"}
+                    ? t("منقضی؛ قابل اجرا نیست", "Expired; do not trade")
+                    : t("در بازهٔ اعتبار", "Valid now")}
                 </span>
               </div>
               <p>
-                {names[s.bot] || s.bot} ·{" "}
+                {names[s.bot]?.[lang === "en" ? 1 : 0] || s.bot} ·{" "}
                 <span
                   className={
                     s.side === "long" ? "financial-profit" : "financial-loss"
                   }
                 >
-                  {s.side === "long" ? "خرید / Long" : "فروش / Short"}
+                  {s.side === "long"
+                    ? t("خرید / Long", "Long")
+                    : t("فروش / Short", "Short")}
                 </span>{" "}
                 · <bdi>{s.timeframe}</bdi>
               </p>
               <dl>
                 <div>
-                  <dt>ورود پیشنهادی</dt>
-                  <dd>{faNumber(s.entry)}</dd>
+                  <dt>{t("ورود پیشنهادی", "Suggested entry")}</dt>
+                  <dd>{num(s.entry, lang)}</dd>
                 </div>
                 <div>
-                  <dt>حد ضرر</dt>
-                  <dd>{faNumber(s.stop)}</dd>
+                  <dt>{t("حد ضرر", "Stop-loss")}</dt>
+                  <dd>{num(s.stop, lang)}</dd>
                 </div>
                 <div>
-                  <dt>هدف اول</dt>
+                  <dt>{t("هدف اول", "First target")}</dt>
                   <dd>
                     {s.target === null
-                      ? "مدیریت با استاپ متحرک"
-                      : faNumber(s.target)}
+                      ? t("مدیریت با استاپ متحرک", "Managed with a trailing stop")
+                      : num(s.target, lang)}
                   </dd>
                 </div>
               </dl>
               <p className="note">
-                ثبت: {date(s.published_at)}
+                {t("ثبت: ", "Published: ")}
+                {date(s.published_at)}
                 <br />
-                پایان اعتبار: {date(s.expires_at)}
+                {t("پایان اعتبار: ", "Valid until: ")}
+                {date(s.expires_at)}
               </p>
             </article>
           ))}
         </div>
       )}
       <p className="note">
-        سطوح سیگنال، قیمت تضمین‌شدهٔ اجرا نیستند. سیگنال‌های منقضی برای مرور
-        سابقه‌اند و نباید سفارش جدیدی بر اساس آن‌ها گذاشته شود.
+        {t(
+          "سطوح سیگنال، قیمت تضمین‌شدهٔ اجرا نیستند. سیگنال‌های منقضی برای مرور سابقه‌اند و نباید سفارش جدیدی بر اساس آن‌ها گذاشته شود.",
+          "Signal levels are not guaranteed fill prices. Expired signals are for history only; do not place new orders from them.",
+        )}
       </p>
     </section>
   );

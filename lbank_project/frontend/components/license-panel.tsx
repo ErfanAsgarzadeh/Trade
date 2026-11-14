@@ -2,19 +2,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiClient, errorText } from "@/lib/api";
 import type { BillingSnapshot, Plans, Quote, Product } from "@/lib/types";
-import { faDate, faNumber, usd } from "@/lib/format";
-import { Arrow, Heading } from "./shared";
+import { longDate, money, num } from "@/lib/format";
+import { useLang } from "@/lib/lang";
+import { Heading } from "./shared";
 interface Props {
   api: ApiClient;
   report: (e: unknown) => void;
   notify: (s: string) => void;
   onSnapshot: (s: BillingSnapshot) => void;
 }
-const orderLabels: Record<string, string> = {
-  pending: "در انتظار بررسی",
-  approved: "تأیید و صادر شد",
-  cancelled: "لغوشده",
-  rejected: "ردشده",
+const orderLabels: Record<string, [string, string]> = {
+  pending: ["در انتظار بررسی", "Awaiting review"],
+  approved: ["تأیید و صادر شد", "Approved and issued"],
+  cancelled: ["لغوشده", "Cancelled"],
+  rejected: ["ردشده", "Rejected"],
 };
 export default function LicensePanel({
   api,
@@ -22,6 +23,10 @@ export default function LicensePanel({
   notify,
   onSnapshot,
 }: Props) {
+  const { lang, t } = useLang();
+  const usd = (value: number) => money(value, lang),
+    faDate = (value: string | number) => longDate(value, lang),
+    faNumber = (value: number) => num(value, lang);
   const [plans, setPlans] = useState<Plans | null>(null),
     [snapshot, setSnapshot] = useState<BillingSnapshot | null>(null);
   const [product, setProduct] = useState<Product>("autotrade");
@@ -142,24 +147,51 @@ export default function LicensePanel({
       ? quote
       : null;
   const purchaseNote = !salesEnabled
-    ? "فروش این اشتراک تا تعیین و تأیید قیمت نهایی بسته است."
+    ? t(
+        "فروش این اشتراک تا تعیین و تأیید قیمت نهایی بسته است.",
+        "This subscription is closed until final prices are set.",
+      )
     : pending
-      ? "یک درخواست در انتظار بررسی دارید؛ ابتدا آن را تکمیل یا لغو کنید."
+      ? t(
+          "یک درخواست در انتظار بررسی دارید؛ ابتدا آن را تکمیل یا لغو کنید.",
+          "You have a request awaiting review; complete or cancel it first.",
+        )
       : active && cap <= (p?.cap_usd || 0)
-        ? "برای ارتقا، سقفی بالاتر از پلن فعلی انتخاب کنید. رشد سرمایه از سود در همین دوره نیازی به ارتقا ندارد."
+        ? t(
+            "برای ارتقا، سقفی بالاتر از پلن فعلی انتخاب کنید. رشد سرمایه از سود در همین دوره نیازی به ارتقا ندارد.",
+            "To upgrade, choose a higher cap than your current plan. Growth from profit during the period needs no upgrade.",
+          )
         : quoteError ||
           (product === "signals"
-            ? "فعال‌سازی سیگنال‌ها پس از تأیید پرداخت انجام می‌شود؛ اتصال صرافی لازم نیست."
-            : "فعال‌سازی پس از تأیید پرداخت و سرمایهٔ حساب توسط پشتیبانی انجام می‌شود.");
+            ? t(
+                "فعال‌سازی سیگنال‌ها پس از تأیید پرداخت انجام می‌شود؛ اتصال صرافی لازم نیست.",
+                "Signals are activated once payment is confirmed; no exchange connection needed.",
+              )
+            : t(
+                "فعال‌سازی پس از تأیید پرداخت و سرمایهٔ حساب توسط پشتیبانی انجام می‌شود.",
+                "Activation follows support's confirmation of payment and account capital.",
+              ));
   const alert =
     p?.state === "grace"
-      ? "واریز جدید از سقف پلن عبور کرده است. مهلت ارتقا تا " +
+      ? t(
+          "واریز جدید از سقف پلن عبور کرده است. مهلت ارتقا تا ",
+          "A new deposit took you over the plan cap. You can upgrade until ",
+        ) +
         (p.grace_ends_at ? faDate(p.grace_ends_at) : "—") +
-        " است؛ سپس فقط ورود جدید متوقف می‌شود."
+        t(
+          " است؛ سپس فقط ورود جدید متوقف می‌شود.",
+          "; after that only new entries stop.",
+        )
       : p?.state === "capital_exceeded"
-        ? "سقف سرمایه رد شده است؛ برای ادامهٔ ورود جدید، لایسنس ارتقایافته را نصب کنید. مدیریت معاملات باز ادامه دارد."
+        ? t(
+            "سقف سرمایه رد شده است؛ برای ادامهٔ ورود جدید، لایسنس ارتقایافته را نصب کنید. مدیریت معاملات باز ادامه دارد.",
+            "The capital cap is exceeded; install an upgraded license to keep opening trades. Open trades are still managed.",
+          )
         : p?.state === "expired"
-          ? "اعتبار لایسنس تمام شده است؛ برای ورودهای جدید اشتراک را تمدید کنید."
+          ? t(
+              "اعتبار لایسنس تمام شده است؛ برای ورودهای جدید اشتراک را تمدید کنید.",
+              "Your license has expired; renew to allow new entries.",
+            )
           : "";
   async function openCheckout() {
     if (!currentQuote) return;
@@ -200,9 +232,9 @@ export default function LicensePanel({
       setCheckout(null);
       await refresh();
       notify(
-        "درخواست شما ثبت شد. کد پیگیری: " +
+        t("درخواست شما ثبت شد. کد پیگیری: ", "Request submitted. Reference: ") +
           r.id.slice(0, 8) +
-          " · در انتظار بررسی پشتیبانی",
+          t(" · در انتظار بررسی پشتیبانی", " · awaiting support review"),
       );
     } catch (e) {
       setCheckoutError(errorText(e));
@@ -211,7 +243,8 @@ export default function LicensePanel({
     }
   }
   async function cancel(id: string) {
-    if (!window.confirm("درخواست بررسی لایسنس لغو شود؟")) return;
+    if (!window.confirm(t("درخواست بررسی لایسنس لغو شود؟", "Cancel this license request?")))
+      return;
     setBusy(true);
     try {
       await api.request(
@@ -219,7 +252,7 @@ export default function LicensePanel({
         "POST",
       );
       await refresh();
-      notify("درخواست لغو شد.");
+      notify(t("درخواست لغو شد.", "Request cancelled."));
     } catch (e) {
       report(e);
     } finally {
@@ -231,8 +264,11 @@ export default function LicensePanel({
       <section id="license-section" className="panel license-panel">
         <Heading
           eyebrow="A PLAN THAT GROWS WITH YOU"
-          title="لایسنس، متناسب با سرمایهٔ شما"
-          description="هر سه ربات در تمام پلن‌ها. سرمایهٔ حساب را انتخاب کنید و دورهٔ مناسب خود را بسازید."
+          title={t("لایسنس، متناسب با سرمایهٔ شما", "A license sized to your capital")}
+          description={t(
+            "هر سه ربات در تمام پلن‌ها. سرمایهٔ حساب را انتخاب کنید و دورهٔ مناسب خود را بسازید.",
+            "All three bots in every plan. Pick your account capital and the term that suits you.",
+          )}
           number="01 / LICENSE"
         />
         <div
@@ -246,8 +282,8 @@ export default function LicensePanel({
         <div className="license-detail">
           <span id="license-account">
             {p?.account_id
-              ? "حساب متصل به لایسنس: " + p.account_id
-              : "هنوز لایسنس فعالی ندارید."}
+              ? t("حساب متصل به لایسنس: ", "Licensed account: ") + p.account_id
+              : t("هنوز لایسنس فعالی ندارید.", "You have no active license yet.")}
           </span>
           {p?.license_id && (
             <a
@@ -256,7 +292,7 @@ export default function LicensePanel({
               className="text-link"
               download="trade-license.json"
             >
-              دانلود لایسنس امضاشده ↙
+              {t("دانلود لایسنس امضاشده", "Download signed license")}
             </a>
           )}
           <button
@@ -267,7 +303,7 @@ export default function LicensePanel({
               setBusy(true);
               try {
                 await refresh();
-                notify("وضعیت لایسنس به‌روز شد.");
+                notify(t("وضعیت لایسنس به‌روز شد.", "License status updated."));
               } catch (e) {
                 report(e);
               } finally {
@@ -275,16 +311,22 @@ export default function LicensePanel({
               }
             }}
           >
-            به‌روزرسانی وضعیت ↻
+            {t("به‌روزرسانی وضعیت", "Refresh status")}
           </button>
         </div>
         <p className="note">
           {product === "signals"
-            ? "اشتراک سیگنال پس از تأیید پرداخت در همین پنل فعال می‌شود؛ نیازی به کلید صرافی یا نصب فایل روی ربات ندارید."
-            : "وضعیت این بخش مربوط به لایسنس صادرشده است؛ اعمال آن روی ربات پس از نصب فایل توسط مدیر انجام می‌شود. واریز و برداشت‌های مبنای لایسنس با بررسی پشتیبانی ثبت می‌شوند."}
+            ? t(
+                "اشتراک سیگنال پس از تأیید پرداخت در همین پنل فعال می‌شود؛ نیازی به کلید صرافی یا نصب فایل روی ربات ندارید.",
+                "The signals subscription activates in this panel once payment is confirmed; no exchange key or bot file is needed.",
+              )
+            : t(
+                "وضعیت این بخش مربوط به لایسنس صادرشده است؛ اعمال آن روی ربات پس از نصب فایل توسط مدیر انجام می‌شود. واریز و برداشت‌های مبنای لایسنس با بررسی پشتیبانی ثبت می‌شوند.",
+                "This shows the issued license; it takes effect on the bot once the admin installs the file. Deposits and withdrawals for the license base are recorded after support review.",
+              )}
         </p>
         <fieldset className="product-fieldset">
-          <legend>چه سرویسی می‌خواهید؟</legend>
+          <legend>{t("چه سرویسی می‌خواهید؟", "Which service do you want?")}</legend>
           <div className="product-options">
             <label
               className={
@@ -302,13 +344,15 @@ export default function LicensePanel({
                 onChange={() => setProduct("signals")}
               />
               <span className="eyebrow">SIGNALS</span>
-              <strong>فقط سیگنال</strong>
+              <strong>{t("فقط سیگنال", "Signals only")}</strong>
               <p>
-                سیگنال ورود، حد ضرر و هدف را در پنل ببینید؛ تصمیم و اجرای معامله
-                با شماست.
+                {t(
+                  "سیگنال ورود، حد ضرر و هدف را در پنل ببینید؛ تصمیم و اجرای معامله با شماست.",
+                  "See entry, stop-loss and target in your panel; the decision and the trade are yours.",
+                )}
               </p>
               <span className="quiet-tag">
-                بدون کلید صرافی · بدون اجرای سفارش
+                {t("بدون کلید صرافی · بدون اجرای سفارش", "No exchange key · no order execution")}
               </span>
             </label>
             <label
@@ -327,24 +371,35 @@ export default function LicensePanel({
                 onChange={() => setProduct("autotrade")}
               />
               <span className="eyebrow">AUTOTRADE</span>
-              <strong>معاملهٔ خودکار</strong>
-              <p>مجوز ورود و مدیریت معاملات با ربات، همراه با سیگنال‌ها.</p>
+              <strong>{t("معاملهٔ خودکار", "Automated trading")}</strong>
+              <p>
+                {t(
+                  "مجوز ورود و مدیریت معاملات با ربات، همراه با سیگنال‌ها.",
+                  "A license for the bot to enter and manage trades, signals included.",
+                )}
+              </p>
               <span className="quiet-tag">
-                اجرای فعلی آزمایشی است؛ سفارش واقعی فعال نیست
+                {t(
+                  "اجرای فعلی آزمایشی است؛ سفارش واقعی فعال نیست",
+                  "Current execution is a trial; real orders are not active",
+                )}
               </span>
             </label>
           </div>
         </fieldset>
         {!salesEnabled && (
           <div id="sales-closed" className="notice">
-            قیمت نهایی این سرویس هنوز تأیید نشده است؛ امکان خرید و پرداخت بسته
-            است.
+            {t(
+              "قیمت نهایی این سرویس هنوز تأیید نشده است؛ امکان خرید و پرداخت بسته است.",
+              "Final prices for this service are not confirmed yet; purchase and payment are closed.",
+            )}
           </div>
         )}
         <div className="plan-builder">
           <div className="plan-controls">
             <label htmlFor="capital-tier">
-              سقف سرمایهٔ حساب <span className="field-hint">دلار آمریکا</span>
+              {t("سقف سرمایهٔ حساب", "Account capital cap")}{" "}
+              <span className="field-hint">{t("دلار آمریکا", "US dollars")}</span>
             </label>
             <select
               id="capital-tier"
@@ -354,25 +409,29 @@ export default function LicensePanel({
               aria-describedby="tier-help"
             >
               {!selectedProduct ? (
-                <option value={10000}>در حال دریافت تعرفه‌ها…</option>
+                <option value={10000}>{t("در حال دریافت تعرفه‌ها…", "Loading prices…")}</option>
               ) : (
-                selectedProduct.tiers.map((t) => (
-                  <option key={t.cap_usd} value={t.cap_usd}>
-                    تا {usd(t.cap_usd)}
+                selectedProduct.tiers.map((x) => (
+                  <option key={x.cap_usd} value={x.cap_usd}>
+                    {t("تا ", "Up to ")}
+                    {usd(x.cap_usd)}
                   </option>
                 ))
               )}
             </select>
             <p id="tier-help" className="note">
-              پلنی را انتخاب کنید که سرمایهٔ فعلی حسابتان را پوشش دهد.
+              {t(
+                "پلنی را انتخاب کنید که سرمایهٔ فعلی حسابتان را پوشش دهد.",
+                "Choose a plan that covers your account's current capital.",
+              )}
             </p>
             <fieldset className="term-fieldset">
-              <legend>مدت اشتراک</legend>
+              <legend>{t("مدت اشتراک", "Subscription term")}</legend>
               <div className="term-switch">
                 {[
-                  [1, "یک‌ماهه"],
-                  [3, "سه‌ماهه"],
-                  [6, "شش‌ماهه"],
+                  [1, t("یک‌ماهه", "1 month")],
+                  [3, t("سه‌ماهه", "3 months")],
+                  [6, t("شش‌ماهه", "6 months")],
                 ].map(([n, label]) => (
                   <label key={n}>
                     <input
@@ -390,17 +449,21 @@ export default function LicensePanel({
             </fieldset>
             <p id="term-help" className="note">
               {active
-                ? "ارتقا با حفظ تاریخ پایان و مدت پلن فعلی انجام می‌شود. تمدید پس از پایان اعتبار در دسترس است."
+                ? t(
+                    "ارتقا با حفظ تاریخ پایان و مدت پلن فعلی انجام می‌شود. تمدید پس از پایان اعتبار در دسترس است.",
+                    "An upgrade keeps your current end date and term. Renewal is available after expiry.",
+                  )
                 : ""}
             </p>
             <div className="plan-inclusions">
-              <span>✓ شاهین، موج‌سوار و ققنوس</span>
-              <span>✓ به‌روزرسانی و پشتیبانی نصب</span>
-              <span>✓ یک حساب اختصاصی</span>
+              <span>✓ {t("شاهین، موج‌سوار و ققنوس", "Falcon, Wave Rider and Phoenix")}</span>
+              <span>✓ {t("به‌روزرسانی و پشتیبانی نصب", "Updates and setup support")}</span>
+              <span>✓ {t("یک حساب اختصاصی", "One dedicated account")}</span>
               <span>
+                ✓{" "}
                 {product === "signals"
-                  ? "✓ ورود، حد ضرر و اعتبار سیگنال"
-                  : "✓ مدیریت معاملات باز پس از انقضا"}
+                  ? t("ورود، حد ضرر و اعتبار سیگنال", "Entry, stop-loss and signal validity")
+                  : t("مدیریت معاملات باز پس از انقضا", "Open trades managed after expiry")}
               </span>
             </div>
           </div>
@@ -408,55 +471,60 @@ export default function LicensePanel({
             <div className="price-card-top">
               <span>
                 {product === "signals"
-                  ? "سیگنال هر سه ربات"
-                  : "معاملهٔ خودکار هر سه ربات"}
+                  ? t("سیگنال هر سه ربات", "Signals from all three bots")
+                  : t("معاملهٔ خودکار هر سه ربات", "Automated trading, all three bots")}
               </span>
               <span className="price-badge">
                 {active && canQuote
-                  ? "ارتقای پلن"
+                  ? t("ارتقای پلن", "Plan upgrade")
                   : saving > 0
-                    ? faNumber(saving) + "٪ صرفه‌جویی"
+                    ? lang === "en"
+                      ? `Save ${saving}%`
+                      : faNumber(saving) + "٪ صرفه‌جویی"
                     : "USD"}
               </span>
             </div>
             <div className="price-line">
               <strong id="plan-price">
                 {!hasPrice
-                  ? "تعیین نشده"
+                  ? t("تعیین نشده", "Not set")
                   : canQuote && !currentQuote
                     ? "…"
                     : faNumber(
                         (currentQuote?.price_cents ?? fullPrice * 100) / 100,
                       )}
               </strong>
-              {hasPrice && <span>دلار</span>}
+              {hasPrice && <span>{t("دلار", "USD")}</span>}
             </div>
             <p id="monthly-equivalent">
               {!hasPrice
-                ? "پس از تأیید قیمت‌ها، فروش این سرویس باز می‌شود."
+                ? t(
+                    "پس از تأیید قیمت‌ها، فروش این سرویس باز می‌شود.",
+                    "Sales open once prices are confirmed.",
+                  )
                 : active && currentQuote
-                  ? "مابه‌التفاوت تا " +
+                  ? t("مابه‌التفاوت تا ", "Prorated difference until ") +
                     faDate(currentQuote.expires_at) +
-                    " · پایان دوره تغییر نمی‌کند"
-                  : "معادل " +
+                    t(" · پایان دوره تغییر نمی‌کند", " · the end date stays the same")
+                  : t("معادل ", "Equals ") +
                     usd(fullPrice / months) +
-                    " در ماه · قیمت کل " +
+                    t(" در ماه · قیمت کل ", " per month · total for ") +
                     faNumber(months) +
-                    " ماه"}
+                    t(" ماه", months === 1 ? " month" : " months")}
             </p>
             <div className="price-divider" />
             <div className="price-meta">
-              <span>سقف سرمایه</span>
+              <span>{t("سقف سرمایه", "Capital cap")}</span>
               <strong>{usd(cap)}</strong>
             </div>
             <div className="price-meta">
-              <span>نوع درخواست</span>
+              <span>{t("نوع درخواست", "Request type")}</span>
               <strong>
                 {active
-                  ? "ارتقای پلن فعال"
+                  ? t("ارتقای پلن فعال", "Upgrade active plan")
                   : p?.state === "expired"
-                    ? "تمدید اشتراک"
-                    : "اشتراک جدید"}
+                    ? t("تمدید اشتراک", "Renew subscription")
+                    : t("اشتراک جدید", "New subscription")}
               </strong>
             </div>
             <button
@@ -465,65 +533,71 @@ export default function LicensePanel({
               disabled={!salesEnabled || !currentQuote || busy || pending}
               onClick={openCheckout}
             >
-              {salesEnabled ? "بررسی و ثبت درخواست ←" : "فروش فعلاً بسته است"}
+              {salesEnabled
+                ? t("بررسی و ثبت درخواست", "Review and submit")
+                : t("فروش فعلاً بسته است", "Sales are closed for now")}
             </button>
             <p className="price-note">{purchaseNote}</p>
           </div>
         </div>
         <div className="policy-strip">
           <div>
-            <span className="policy-icon">
-              <Arrow />
-            </span>
-            <h3>رشد از سود، بدون ارتقای اجباری</h3>
+            <span className="policy-icon">✦</span>
+            <h3>{t("رشد از سود، بدون ارتقای اجباری", "Grow from profit, no forced upgrade")}</h3>
             <p>
-              سود ربات در طول دوره هزینهٔ اضافه ندارد؛ سرمایه در تمدید دوباره
-              بررسی می‌شود.
+              {t(
+                "سود ربات در طول دوره هزینهٔ اضافه ندارد؛ سرمایه در تمدید دوباره بررسی می‌شود.",
+                "Profit made during the term costs nothing extra; capital is reviewed again at renewal.",
+              )}
             </p>
           </div>
           <div>
             <span className="policy-icon">＋</span>
-            <h3>واریز جدید، با مهلت ارتقا</h3>
+            <h3>{t("واریز جدید، با مهلت ارتقا", "New deposits get an upgrade window")}</h3>
             <p>
-              اگر سرمایهٔ مبنا از سقف بیشتر شود، ۷۲ ساعت برای ارتقا دارید؛ سپس
-              فقط ورود جدید متوقف می‌شود.
+              {t(
+                "اگر سرمایهٔ مبنا از سقف بیشتر شود، ۷۲ ساعت برای ارتقا دارید؛ سپس فقط ورود جدید متوقف می‌شود.",
+                "If your base capital goes over the cap you have 72 hours to upgrade; after that only new entries stop.",
+              )}
             </p>
           </div>
           <div>
             <span className="policy-icon">◷</span>
-            <h3>ارتقا با مابه‌التفاوت</h3>
+            <h3>{t("ارتقا با مابه‌التفاوت", "Upgrade for the difference")}</h3>
             <p>
-              برای ارتقای پلن فعال، فقط مابه‌التفاوت متناسب با زمان باقی‌مانده
-              محاسبه می‌شود.
+              {t(
+                "برای ارتقای پلن فعال، فقط مابه‌التفاوت متناسب با زمان باقی‌مانده محاسبه می‌شود.",
+                "Upgrading an active plan costs only the difference for the time remaining.",
+              )}
             </p>
           </div>
         </div>
         <details className="pricing-details">
           <summary>
-            مقایسهٔ کامل تعرفه‌ها <span>＋</span>
+            {t("مقایسهٔ کامل تعرفه‌ها", "Compare all prices")} <span aria-hidden="true">＋</span>
           </summary>
           <div className="table-wrap">
             <table className="pricing-table">
               <caption className="sr-only">
-                تعرفهٔ پکیج سه ربات، دلار آمریکا
+                {t("تعرفهٔ پکیج سه ربات، دلار آمریکا", "Three-bot package prices, USD")}
               </caption>
               <thead>
                 <tr>
-                  <th>سقف سرمایه</th>
-                  <th>یک‌ماهه</th>
-                  <th>سه‌ماهه</th>
-                  <th>شش‌ماهه</th>
+                  <th>{t("سقف سرمایه", "Capital cap")}</th>
+                  <th>{t("یک‌ماهه", "1 month")}</th>
+                  <th>{t("سه‌ماهه", "3 months")}</th>
+                  <th>{t("شش‌ماهه", "6 months")}</th>
                 </tr>
               </thead>
               <tbody id="pricing-rows">
-                {selectedProduct?.tiers.map((t) => (
-                  <tr key={t.cap_usd}>
-                    <td>{usd(t.cap_usd)}</td>
+                {selectedProduct?.tiers.map((x) => (
+                  <tr key={x.cap_usd}>
+                    <td>{usd(x.cap_usd)}</td>
                     {["1", "3", "6"].map((m) => (
                       <td key={m}>
-                        {t.prices_cents[m] === null
-                          ? "تعیین نشده"
-                          : usd((t.prices_cents[m] || 0) / 100)}
+                        {x.prices_cents[m] === null
+                          ? t("تعیین نشده", "Not set")
+                          : usd((x.prices_cents[m] || 0) / 100)}
                       </td>
                     ))}
                   </tr>
@@ -536,13 +610,15 @@ export default function LicensePanel({
       <section className="panel" id="orders-section">
         <Heading
           eyebrow="SUBSCRIPTION HISTORY"
-          title="درخواست‌های اشتراک"
+          title={t("درخواست‌های اشتراک", "Subscription requests")}
           number="02 / ORDERS"
         />
         {!snapshot?.orders.length ? (
           <p className="empty-state">
-            هنوز درخواستی ثبت نکرده‌اید. پلن مناسب خود را از بخش بالا انتخاب
-            کنید.
+            {t(
+              "هنوز درخواستی ثبت نکرده‌اید. پلن مناسب خود را از بخش بالا انتخاب کنید.",
+              "You have no requests yet. Choose a plan in the section above.",
+            )}
           </p>
         ) : null}
         <div className="table-wrap">
@@ -550,14 +626,14 @@ export default function LicensePanel({
             <thead>
               <tr>
                 {[
-                  "کد پیگیری",
-                  "پلن / دوره",
-                  "مبلغ",
-                  "تاریخ ثبت",
-                  "وضعیت",
-                  "عملیات",
-                ].map((t) => (
-                  <th key={t}>{t}</th>
+                  t("کد پیگیری", "Reference"),
+                  t("پلن / دوره", "Plan / term"),
+                  t("مبلغ", "Amount"),
+                  t("تاریخ ثبت", "Submitted"),
+                  t("وضعیت", "Status"),
+                  t("عملیات", "Actions"),
+                ].map((h) => (
+                  <th key={h}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -568,14 +644,17 @@ export default function LicensePanel({
                     <bdi>{o.id.slice(0, 8)}</bdi>
                   </td>
                   <td>
-                    {o.product === "signals" ? "سیگنال" : "معاملهٔ خودکار"} ·{" "}
-                    {usd(o.cap_usd)} / {faNumber(o.months)} ماه
+                    {o.product === "signals"
+                      ? t("سیگنال", "Signals")
+                      : t("معاملهٔ خودکار", "Automated trading")}{" "}
+                    · {usd(o.cap_usd)} / {faNumber(o.months)}{" "}
+                    {t("ماه", o.months === 1 ? "month" : "months")}
                   </td>
                   <td>{usd(o.price_cents / 100)}</td>
                   <td>{faDate(o.created * 1000)}</td>
                   <td>
                     <span className={"order-status " + o.status}>
-                      {orderLabels[o.status] || o.status}
+                      {orderLabels[o.status]?.[lang === "en" ? 1 : 0] || o.status}
                     </span>
                   </td>
                   <td>
@@ -584,9 +663,9 @@ export default function LicensePanel({
                         className="text-button"
                         disabled={busy}
                         onClick={() => cancel(o.id)}
-                        aria-label={"لغو درخواست " + o.id.slice(0, 8)}
+                        aria-label={t("لغو درخواست ", "Cancel request ") + o.id.slice(0, 8)}
                       >
-                        لغو درخواست
+                        {t("لغو درخواست", "Cancel request")}
                       </button>
                     ) : (
                       "—"
@@ -598,8 +677,10 @@ export default function LicensePanel({
           </table>
         </div>
         <p className="note">
-          ثبت درخواست، پرداخت یا فعال‌سازی خودکار نیست؛ پشتیبانی آن را بررسی
-          می‌کند.
+          {t(
+            "ثبت درخواست، پرداخت یا فعال‌سازی خودکار نیست؛ پشتیبانی آن را بررسی می‌کند.",
+            "Submitting a request is not a payment or an automatic activation; support reviews it.",
+          )}
         </p>
       </section>
       <dialog
@@ -613,27 +694,29 @@ export default function LicensePanel({
       >
         <div className="dialog-body">
           <span className="eyebrow">ONE LAST LOOK</span>
-          <h2 id="checkout-title">مرور درخواست لایسنس</h2>
+          <h2 id="checkout-title">{t("مرور درخواست لایسنس", "Review your license request")}</h2>
           <p>
             {checkout &&
               (checkout.product === "signals"
-                ? "فقط سیگنال، سقف "
-                : "معاملهٔ خودکار، سقف ") +
+                ? t("فقط سیگنال، سقف ", "Signals only, cap ")
+                : t("معاملهٔ خودکار، سقف ", "Automated trading, cap ")) +
                 usd(checkout.cap_usd) +
-                "، " +
+                t("، ", ", ") +
                 faNumber(checkout.months) +
-                " ماه" +
+                t(" ماه", checkout.months === 1 ? " month" : " months") +
                 (checkout.kind === "upgrade"
-                  ? " · پایان اعتبار " + faDate(checkout.expires_at)
-                  : " · شروع دوره پس از تأیید پشتیبانی")}
+                  ? t(" · پایان اعتبار ", " · valid until ") + faDate(checkout.expires_at)
+                  : t(" · شروع دوره پس از تأیید پشتیبانی", " · term starts after support approval"))}
           </p>
           <div className="checkout-total">
-            <span>مبلغ درخواست</span>
+            <span>{t("مبلغ درخواست", "Amount")}</span>
             <strong>{checkout ? usd(checkout.price_cents / 100) : ""}</strong>
           </div>
           <p className="note">
-            پرداخت آنلاین در این پنل فعال نیست. فعال‌سازی پس از تأیید پرداخت،
-            شناسه و سرمایهٔ حساب انجام می‌شود.
+            {t(
+              "پرداخت آنلاین در این پنل فعال نیست. فعال‌سازی پس از تأیید پرداخت، شناسه و سرمایهٔ حساب انجام می‌شود.",
+              "Online payment is not active in this panel yet. Activation follows confirmation of payment, account ID and capital.",
+            )}
           </p>
           <label className="consent">
             <input
@@ -643,7 +726,10 @@ export default function LicensePanel({
               disabled={busy}
               onChange={(e) => setConsent(e.target.checked)}
             />
-            تعرفه، مدت و شرایط لایسنس یک حساب را خوانده‌ام.
+            {t(
+              "تعرفه، مدت و شرایط لایسنس یک حساب را خوانده‌ام.",
+              "I have read the price, term and single-account license terms.",
+            )}
           </label>
           <p id="checkout-error" role="alert">
             {checkoutError}
@@ -654,14 +740,14 @@ export default function LicensePanel({
               disabled={!consent || busy}
               onClick={confirm}
             >
-              ثبت درخواست
+              {t("ثبت درخواست", "Submit request")}
             </button>
             <button
               className="secondary"
               disabled={busy}
               onClick={() => setCheckout(null)}
             >
-              بازگشت
+              {t("بازگشت", "Back")}
             </button>
           </div>
         </div>
