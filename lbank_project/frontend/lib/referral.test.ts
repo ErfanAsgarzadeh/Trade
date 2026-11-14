@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { captureRef, offerText, rewardText, storedRef } from "./referral";
+import {
+  captureRef,
+  offerText,
+  rewardText,
+  storedRef,
+  type RefereeOffer,
+} from "./referral";
 
 test("offer and reward sentences describe the program in both languages", () => {
   const offer = {
@@ -10,7 +16,7 @@ test("offer and reward sentences describe the program in both languages", () => 
     window_days: 0,
     min_order_usd: 0,
     products: ["autotrade", "signals"],
-  } as const;
+  } satisfies RefereeOffer;
   assert.equal(offerText({ ...offer }, "en"), "10% off the first purchase");
   assert.equal(
     offerText(
