@@ -45,6 +45,8 @@ export interface Order {
   discounts?: Discount[];
   status: string;
   created: number;
+  paid?: boolean;
+  refund_state?: "due" | "done" | null;
 }
 export interface BillingSnapshot {
   license: License;

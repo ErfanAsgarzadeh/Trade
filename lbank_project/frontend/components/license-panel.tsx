@@ -779,9 +779,16 @@ export default function LicensePanel({
                       {orderLabels[o.status]?.[lang === "en" ? 1 : 0] ||
                         o.status}
                     </span>
+                    {o.refund_state ? (
+                      <small className="admin-row-note">
+                        {o.refund_state === "done"
+                          ? t("بازپرداخت شد", "Refunded")
+                          : t("بازپرداخت در جریان", "Refund in progress")}
+                      </small>
+                    ) : null}
                   </td>
                   <td>
-                    {o.status === "pending" ? (
+                    {o.status === "pending" && !o.paid ? (
                       <button
                         className="text-button"
                         disabled={busy}

@@ -26,6 +26,10 @@ class BillingConflict(ValueError):
     pass
 
 
+class PaidOrderConflict(BillingConflict):
+    """The order already has a confirmed payment, so the customer can no longer cancel it."""
+
+
 def sign(payload, private, previous=None):
     key = serialization.load_pem_private_key(Path(private).read_bytes(), password=None)
     if not isinstance(key, Ed25519PrivateKey):
@@ -65,17 +69,28 @@ class Billing:
     def snapshot(self, user, now=None):
         with self.store.db() as db:
             document = self._document(db, user)
-            orders = db.execute('SELECT id,cap_usd,months,kind,product,price_cents,list_price_cents,discounts,status,created,updated '
-                                'FROM license_orders WHERE user_id=? ORDER BY created DESC LIMIT 30', (user,)).fetchall()
+            orders = db.execute('SELECT o.id,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.list_price_cents,o.discounts,o.status,o.created,o.updated,'
+                                'o.refund_state,CASE WHEN EXISTS(SELECT 1 FROM payment_invoices p WHERE p.order_id=o.id AND p.status=\'paid\') '
+                                'THEN 1 ELSE 0 END AS paid FROM license_orders o WHERE o.user_id=? ORDER BY o.created DESC LIMIT 30', (user,)).fetchall()
         return dict(license=public_license(document, now),
-                    orders=[dict(r, discounts=json.loads(r['discounts']) if r['discounts'] else []) for r in orders],
+                    orders=[dict(r, paid=bool(r['paid']), discounts=json.loads(r['discounts']) if r['discounts'] else []) for r in orders],
                     payment_mode='manual_review', cashflow_monitoring='operator_verified')
 
-    def _quote(self, db, user, cap, months, kind, now, product='autotrade'):
+    def _settled(self, db, order):
+        """Paid on-chain or fully covered by credit: the customer owes nothing more, so the order keeps its own price."""
+        return int(order['price_cents'])==0 or bool(db.execute("SELECT 1 FROM payment_invoices WHERE order_id=? AND status='paid'",(order['id'],)).fetchone())
+
+    def _quote(self, db, user, cap, months, kind, now, product='autotrade', settled=None):
         price_cents(cap,months)  # Validate the supported capital tier and term, never the legacy price.
-        config=pricing.settings(db,product)
-        try:cost=pricing.priced(config,cap,months)
-        except ValueError as exc:raise BillingConflict(str(exc)) from None
+        if settled is not None and kind=='subscription':
+            # A settled subscription is issued at the price and period it was ordered at, whatever the tariff or sales state is now.
+            cost=full=settled['list_price_cents'] if settled['list_price_cents'] is not None else settled['price_cents']
+            version=settled['price_version']
+        else:
+            config=pricing.settings(db,product)
+            try:cost=pricing.priced(config,cap,months)
+            except ValueError as exc:raise BillingConflict(str(exc)) from None
+            full,version=cost,config['version']
         if kind not in ('subscription','upgrade'):raise ValueError('Unknown purchase kind')
         document=self._document(db,user)
         p=json.loads(document)['payload'] if document else None
@@ -98,8 +113,8 @@ class Billing:
             if active:raise BillingConflict('Upgrade the active license or renew after expiry')
             start,end=now,add_months(now,months)
         return dict(cap_usd=cap,months=months,kind=kind,product=product,price_cents=cost,
-                    full_price_cents=pricing.priced(config,cap,months),currency='USD',
-                    price_version=config['version'],starts_at=iso(start),expires_at=iso(end))
+                    full_price_cents=full,currency='USD',
+                    price_version=version,starts_at=iso(start),expires_at=iso(end))
 
     def _discounted(self, db, user, quote, now, reserve_order=None):
         from portal_referrals import Referrals
@@ -153,9 +168,12 @@ class Billing:
     def cancel(self, user, oid):
         with self.store.db() as db:
             self.store.database.begin_write(db, 'billing:' + user)
+            if self.store.database.postgres:self.store.database.begin_write(db, 'payments')  # Serialise with a payment being matched.
             if db.execute("UPDATE license_orders SET status='cancelled',updated=? WHERE id=? AND user_id=? AND status='pending'",
                           (time.time(), oid, user)).rowcount != 1:
                 raise BillingConflict('Pending order not found')
+            if db.execute("SELECT 1 FROM payment_invoices WHERE order_id=? AND status='paid'", (oid,)).fetchone():
+                raise PaidOrderConflict('This order is already paid and cannot be cancelled; contact support')  # Rolls the update back.
             from portal_referrals import Referrals
             Referrals(self.store).release(db, oid)
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'license_order_cancelled:' + oid, time.time()))
@@ -208,12 +226,15 @@ class Billing:
             old = self._document(db, user)
             if old and product=='autotrade' and json.loads(old)['payload'].get('product','autotrade')=='autotrade' and json.loads(old)['payload']['account_id'] != account_id:
                 raise BillingConflict('License is bound to a different exchange account')
-            quote = self._quote(db, user, order['cap_usd'], order['months'], order['kind'], now,product)
-            if order['price_version'] != quote['price_version']:
-                raise BillingConflict('Price version changed; create a new order')
-            listed = order['list_price_cents'] if order['list_price_cents'] is not None else order['price_cents']
-            if order['kind'] == 'subscription' and quote['price_cents'] != listed:
-                raise BillingConflict('Order price changed')
+            settled = self._settled(db, order)
+            quote = self._quote(db, user, order['cap_usd'], order['months'], order['kind'], now,product, order if settled else None)
+            if not settled:
+                if order['price_version'] != quote['price_version']:
+                    raise BillingConflict('Price version changed; create a new order')
+                listed = order['list_price_cents'] if order['list_price_cents'] is not None else order['price_cents']
+                if order['kind'] == 'subscription' and quote['price_cents'] != listed:
+                    raise BillingConflict('Order price changed')
+            else:quote['price_version'] = order['price_version']
             username = db.execute('SELECT username FROM users WHERE id=?', (user,)).fetchone()['username']
             previous = json.loads(old)['payload'] if old else None
             upgrading = order['kind'] == 'upgrade'

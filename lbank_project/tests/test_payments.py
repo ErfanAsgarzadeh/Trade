@@ -6,7 +6,7 @@ from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 import pytest
 
-from portal_billing import Billing
+from portal_billing import Billing, BillingConflict
 from portal_payments import Payments, PaymentConflict, Watcher, amount_text, bsc_address, tron_address, TOKENS
 from portal_server import create_app
 from portal_store import PortalStore
@@ -122,11 +122,12 @@ def test_paid_signals_order_is_queued_for_signing_when_auto_approval_is_on(store
 
 
 class FakeChain:
-    def __init__(self):self.calls=[];self.block=1000;self.logs=[];self.trc20=[]
+    def __init__(self):self.calls=[];self.block=1000;self.logs=[];self.trc20=[];self.stamp=lambda number:int(time.time())
     def __call__(self,url,payload=None,headers=None):
         self.calls.append((url,payload))
         if payload is None:return {'data':self.trc20}
         if payload['method']=='eth_blockNumber':return {'result':hex(self.block)}
+        if payload['method']=='eth_getBlockByNumber':return {'result':dict(number=payload['params'][0],timestamp=hex(self.stamp(int(payload['params'][0],16))))}
         params=payload['params'][0]
         start,end=int(params['fromBlock'],16),int(params['toBlock'],16)
         assert params['topics'][2]=='0x'+'0'*24+BSC.lower()[2:]
@@ -134,7 +135,7 @@ class FakeChain:
 
 
 def log(block,amount_wei,tx,contract=TOKENS[('bsc','USDT')]['contract']):
-    return dict(block=block,address=contract,data=hex(amount_wei),transactionHash=tx,logIndex='0x1',
+    return dict(block=block,blockNumber=hex(block),address=contract,data=hex(amount_wei),transactionHash=tx,logIndex='0x1',
                 topics=['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef','0x'+'0'*24+'1'*40,'0x'+'0'*24+BSC.lower()[2:]])
 
 
@@ -187,3 +188,77 @@ def test_payment_api_for_customers_and_admins(store):
         orders=client.get('/api/admin/orders').json()['items']
         assert next(o for o in orders if o['id']==a)['payment']['amount']==made.json()['amount']
         assert client.get('/api/admin/payments').json()['settings']['tron_address']==TRON
+
+
+def test_watcher_judges_a_late_payment_by_the_block_time_not_when_it_was_seen(store):
+    configure(store);payments=Payments(store)
+    alice,a,_=order(store,'alice')
+    start=time.time()-30*3600
+    invoice=payments.create_invoice(alice,a,'bsc','USDT',now=start)  # expired about 29 hours ago, past the 24 hour late window
+    payments.expire()
+    chain=FakeChain();chain.stamp=lambda number:int(start+600);chain.block=1000
+    watcher=Watcher(store,chain);watcher.once()  # first pass sets the cursor
+    chain.logs=[log(990,invoice['amount_micro']*10**12,'0xlate'),log(991,invoice['amount_micro']*10**12,'0xlate2')]
+    chain.block=1020;watcher.once()
+    assert payments.invoice(alice,a)['status']=='paid' and payments.invoice(alice,a)['tx_ref']=='bsc:0xlate:1'
+    assert sum(1 for url,p in chain.calls if p and p['method']=='eth_getBlockByNumber')==2  # one lookup per block
+    with store.db() as db:assert db.execute('SELECT block_time FROM payment_transfers WHERE tx_ref=?',('bsc:0xlate:1',)).fetchone()['block_time']==int(start+600)
+
+
+def test_a_paid_order_cannot_be_cancelled_by_the_customer(store):
+    configure(store);payments=Payments(store)
+    alice,a,_=order(store,'alice')
+    invoice=payments.create_invoice(alice,a,'tron','USDT')
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username='alice',password=PASSWORD))
+        h={'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':r.json()['csrf']}
+        assert next(o for o in client.get('/api/me/license').json()['orders'] if o['id']==a)['paid'] is False
+        payments.record_transfer('tron','USDT','tron:paid','T',TRON,invoice['amount_micro'],time.time())
+        assert next(o for o in client.get('/api/me/license').json()['orders'] if o['id']==a)['paid'] is True
+        refused=client.post(f'/api/me/license/orders/{a}/cancel',headers=h)
+        assert refused.status_code==409 and 'paid' in refused.json()['detail']
+        assert client.post('/api/me/license/orders/nope/cancel',headers=h).status_code==404
+    with pytest.raises(BillingConflict):Billing(store).cancel(alice,a)
+    with store.db() as db:assert db.execute('SELECT status FROM license_orders WHERE id=?',(a,)).fetchone()['status']=='pending'
+
+
+def test_admin_attaches_an_unmatched_transfer_to_an_order(store):
+    configure(store,auto=True);payments=Payments(store);manager=uid(store,'manager')
+    alice,a,_=order(store,'alice','signals');bob,b,_=order(store,'bob','signals')
+    invoice=payments.create_invoice(alice,a,'bsc','USDT')
+    short=invoice['amount_micro']-1_000_000  # the exchange deducted its withdrawal fee
+    assert payments.record_transfer('bsc','USDT','bsc:0xfee:1','0xs',BSC,short,time.time()) is None
+    assert payments.record_transfer('bsc','USDC','bsc:0xusdc:1','0xs',BSC,short,time.time()) is None
+    with pytest.raises(PermissionError):payments.attach_transfer(alice,'bsc:0xfee:1',a)
+    with pytest.raises(LookupError):payments.attach_transfer(manager,'bsc:0xnone:1',a)
+    with pytest.raises(PaymentConflict):payments.attach_transfer(manager,'bsc:0xusdc:1',a)  # no USDC invoice on this order
+    with pytest.raises(PaymentConflict):payments.attach_transfer(manager,'bsc:0xfee:1',b)    # bob has no invoice at all
+    result=payments.attach_transfer(manager,'bsc:0xfee:1',a[:8])
+    assert result['order_id']==a and payments.invoice(alice,a)['status']=='paid' and payments.invoice(alice,a)['tx_ref']=='bsc:0xfee:1'
+    with store.db() as db:
+        assert db.execute("SELECT status,invoice_id FROM payment_transfers WHERE tx_ref='bsc:0xfee:1'").fetchone()['invoice_id']==invoice['id']
+        assert db.execute("SELECT 1 FROM admin_events WHERE action='payment_attached' AND target=?",(a,)).fetchone()
+        assert db.execute("SELECT payment_ref FROM license_approvals WHERE order_id=?",(a,)).fetchone()['payment_ref']=='bsc:0xfee:1'
+    with pytest.raises(PaymentConflict):payments.attach_transfer(manager,'bsc:0xfee:1',a)  # already matched
+    assert payments.record_transfer('bsc','USDT','bsc:0xfee:2','0xs',BSC,short,time.time()) is None
+    with pytest.raises(PaymentConflict):payments.attach_transfer(manager,'bsc:0xfee:2',a)  # order already paid
+    Billing(store).cancel(bob,b)
+    with pytest.raises(PaymentConflict):payments.attach_transfer(manager,'bsc:0xfee:2',b)  # not pending
+
+
+def test_attach_route_is_admin_only_and_strict(store):
+    configure(store);payments=Payments(store)
+    alice,a,_=order(store,'alice');invoice=payments.create_invoice(alice,a,'tron','USDT')
+    payments.record_transfer('tron','USDT','tron:short','T',TRON,invoice['amount_micro']-500_000,time.time())
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        def login(name):
+            r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD))
+            return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':r.json()['csrf']}
+        url='/api/admin/payments/transfers/attach';body=dict(tx_ref='tron:short',order_id=a)
+        assert client.post(url,headers=login('alice'),json=body).status_code==403
+        h=login('manager')
+        assert client.post(url,headers=h,json=dict(body,extra=1)).status_code==422
+        assert client.post(url,headers=h,json=dict(body,order_id='zz')).status_code==422
+        assert client.post(url,headers=h,json=dict(body,tx_ref='tron:none')).status_code==404
+        assert client.post(url,headers=h,json=body).status_code==200
+        assert client.post(url,headers=h,json=body).status_code==409

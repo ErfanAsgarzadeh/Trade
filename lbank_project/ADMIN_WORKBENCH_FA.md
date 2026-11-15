@@ -76,8 +76,8 @@ python portal_issuer.py --private-key issuer-keys/license.private.pem --once
 فقط این سرویس باید secret کلید خصوصی را در `/run/secrets/license_private`
 دریافت کند. همان کلید رمزگذاری پنل و اتصال DB نیز لازم‌اند. در SQLite پوشهٔ
 runtime/portal مشترک و در PostgreSQL همان تنظیم اتصال استفاده شود.
-این سرویس عمداً خودکار به Compose وب اضافه نشده تا کلید خصوصی به‌اشتباه
-در سرویس عمومی mount نشود. Dockerfile پنل، کد رابط مدیریت را می‌سازد ولی
+سرویس `issuer` اکنون در `portal-postgres-compose.yml` و `portal-compose.yml` تعریف شده و فقط خودش کلید
+`issuer-keys/license.private.pem` را می‌گیرد (ساخت کلید: `PUBLIC_SITE_FA.md`). Dockerfile پنل، کد رابط مدیریت را می‌سازد ولی
 کلید خصوصی یا worker صدور را به وب نمی‌دهد.
 
 در هر صدور، قیمت جاری و وضعیت فروش، اعتبار سفارش، نقش مدیر درخواست‌دهنده،

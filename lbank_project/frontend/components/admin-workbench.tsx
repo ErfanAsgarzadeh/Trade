@@ -43,6 +43,8 @@ interface AdminOrder {
   approval_state: string | null;
   error_code: string | null;
   payment: Invoice | null;
+  refund_state: "due" | "done" | null;
+  refund_ref: string | null;
 }
 interface EventRow {
   id: string;
@@ -85,6 +87,11 @@ const EVENTS: Record<string, Pair> = {
   user_disabled: ["تعلیق دسترسی کاربر", "User access suspended"],
   user_enabled: ["فعال‌سازی کاربر", "User enabled"],
   order_rejected: ["رد درخواست", "Request rejected"],
+  order_refunded: ["ثبت بازپرداخت سفارش", "Order refund recorded"],
+  payment_attached: [
+    "وصل‌کردن واریز به سفارش",
+    "Transfer attached to an order",
+  ],
   approval_requested: ["ارسال به صف صدور", "Sent to the issuing queue"],
   license_issued: ["صدور لایسنس", "License issued"],
   issuance_failed: ["خطای صدور", "Issuing error"],
@@ -522,6 +529,67 @@ function Users({
   );
 }
 
+function RefundBadge({
+  api,
+  report,
+  order,
+  changed,
+}: {
+  api: ApiClient;
+  report: Report;
+  order: AdminOrder;
+  changed: () => void;
+}) {
+  const { t } = useFormat();
+  const [ref, setRef] = useState(""),
+    [busy, setBusy] = useState(false);
+  async function record(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await api.request(
+        "/api/admin/orders/" + encodeURIComponent(order.id) + "/refund",
+        "POST",
+        { refund_ref: ref.trim() },
+      );
+      changed();
+    } catch (err) {
+      report(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+  if (order.refund_state === "done")
+    return (
+      <small className="admin-row-note">
+        <span className="pill success">{t("بازپرداخت شد", "Refunded")}</span>{" "}
+        <bdi dir="ltr">{order.refund_ref}</bdi>
+      </small>
+    );
+  return (
+    <form className="admin-row-note" onSubmit={record}>
+      <span className="pill warning">{t("بازپرداخت لازم", "Refund due")}</span>
+      <label className="sr-only" htmlFor={"refund-" + order.id}>
+        {t("شناسهٔ تراکنش بازپرداخت", "Refund transaction reference")}
+      </label>
+      <input
+        id={"refund-" + order.id}
+        dir="ltr"
+        value={ref}
+        pattern="[A-Za-z0-9:._\-]{4,120}"
+        minLength={4}
+        maxLength={120}
+        required
+        placeholder={t("شناسهٔ تراکنش بازپرداخت", "Refund transaction ID")}
+        onChange={(e) => setRef(e.target.value)}
+      />
+      <button className="text-button" type="submit" disabled={busy}>
+        {t("ثبت بازپرداخت", "Record refund")}
+      </button>
+    </form>
+  );
+}
+
 function Orders({
   api,
   report,
@@ -746,6 +814,17 @@ function Orders({
                       ? labels(o.approval_state) || o.approval_state
                       : labels(o.status)}
                   </span>
+                  {o.refund_state && (
+                    <RefundBadge
+                      api={api}
+                      report={report}
+                      order={o}
+                      changed={() => {
+                        setRevision((n) => n + 1);
+                        changed();
+                      }}
+                    />
+                  )}
                   {o.error_code && (
                     <small className="admin-row-note">
                       {t(
@@ -832,6 +911,14 @@ function Orders({
                 maxLength={500}
                 required
               />
+              {selection.order.payment?.status === "paid" && (
+                <p className="note warning-text" role="alert">
+                  {t(
+                    "این سفارش پرداخت شده است. با رد آن، مبلغ باید به مشتری بازپرداخت شود؛ سفارش با نشان «بازپرداخت لازم» در فهرست می‌ماند تا شناسهٔ تراکنش بازپرداخت را ثبت کنید.",
+                    "This order is already paid. Rejecting it means the money must be refunded; it stays listed as refund due until you record the refund transaction.",
+                  )}
+                </p>
+              )}
             </>
           ) : (
             <>

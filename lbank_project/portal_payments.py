@@ -232,23 +232,59 @@ class Payments:
                        (tx_ref, network, token, sender, receiver, amount_micro if amount_micro is not None else -1, block_time,
                         now, match['id'] if match else None, 'matched' if match else 'unmatched'))
             if not match:return None
-            db.execute("UPDATE payment_invoices SET status='paid',paid_at=?,tx_ref=? WHERE id=?", (now, tx_ref, match['id']))
-            db.execute("UPDATE payment_invoices SET status='replaced' WHERE order_id=? AND id!=? AND status IN ('open','expired')",
-                       (match['order_id'], match['id']))
-            record(db, None, 'payment_received', match['order_id'], dict(tx_ref=tx_ref, network=network, token=token,
-                                                                         amount=amount_text(amount_micro)))
-            from portal_telegram import notify
-            paid = amount_text(amount_micro) + ' ' + token
-            notify(db, match['user_id'], f'✅ پرداخت {paid} شما روی شبکه تأیید شد. سفارش برای فعال‌سازی ثبت شد.',
-                   f'✅ Your payment of {paid} is confirmed on-chain. Your order is queued for activation.')
-            order = db.execute('SELECT product FROM license_orders WHERE id=?', (match['order_id'],)).fetchone()
-            approver = self.settings(db)['auto_approver']
+            order, approver = self._settle(db, match, tx_ref, amount_micro, now, network, token)
+        self._auto_approve(order, approver, match['order_id'], tx_ref)
+        return dict(match, status='paid', tx_ref=tx_ref)
+
+    def _settle(self, db, invoice, tx_ref, amount_micro, now, network, token, actor=None):
+        """Mark the invoice paid, retire the order's other invoices and tell the customer. Returns (order, auto approver)."""
+        db.execute("UPDATE payment_invoices SET status='paid',paid_at=?,tx_ref=? WHERE id=?", (now, tx_ref, invoice['id']))
+        db.execute("UPDATE payment_invoices SET status='replaced' WHERE order_id=? AND id!=? AND status IN ('open','expired')",
+                   (invoice['order_id'], invoice['id']))
+        record(db, actor, 'payment_attached' if actor else 'payment_received', invoice['order_id'],
+               dict(tx_ref=tx_ref, network=network, token=token, amount=amount_text(amount_micro)))
+        from portal_telegram import notify
+        paid = amount_text(amount_micro) + ' ' + token
+        notify(db, invoice['user_id'], f'✅ پرداخت {paid} شما روی شبکه تأیید شد. سفارش برای فعال‌سازی ثبت شد.',
+               f'✅ Your payment of {paid} is confirmed on-chain. Your order is queued for activation.')
+        order = db.execute('SELECT product FROM license_orders WHERE id=?', (invoice['order_id'],)).fetchone()
+        return order, self.settings(db)['auto_approver']
+
+    def _auto_approve(self, order, approver, order_id, tx_ref):
         if order['product'] == 'signals' and approver:
             # Signals need no exchange checks: queue the license for the signing service as the admin who enabled this.
             from portal_admin_store import AdminStore
-            try:AdminStore(self.store).request_approval(approver, match['order_id'], tx_ref)
+            try:AdminStore(self.store).request_approval(approver, order_id, tx_ref)
             except Exception:pass  # Stays paid and visible on the admin desk for a manual approval.
-        return dict(match, status='paid', tx_ref=tx_ref)
+
+    def attach_transfer(self, actor, tx_ref, order_id, now=None):
+        """Admin: link an unmatched transfer (e.g. an exchange took its fee off the amount) to a pending order that has an invoice
+        for the same network and token. Accepts the full order id or its unique leading characters (the customer's reference)."""
+        now = time.time() if now is None else now
+        order_id = str(order_id or '').strip().lower()
+        if not re.fullmatch(r'[0-9a-f-]{8,36}', order_id):raise ValueError('Invalid order reference')
+        with self.store.db() as db:
+            self.store.database.begin_write(db, 'payments')
+            require_admin(db, actor)
+            transfer = db.execute('SELECT * FROM payment_transfers WHERE tx_ref=?', (tx_ref,)).fetchone()
+            if not transfer:raise LookupError('Transfer not found')
+            if transfer['status'] != 'unmatched':raise PaymentConflict('This transfer is already matched')
+            if transfer['amount_micro'] < 0:raise PaymentConflict('This transfer amount cannot be read exactly')
+            orders = db.execute('SELECT * FROM license_orders WHERE id=? OR id LIKE ? LIMIT 2', (order_id, order_id + '%')).fetchall()
+            exact = [o for o in orders if o['id'] == order_id]
+            if len(orders) > 1 and not exact:raise PaymentConflict('Order reference is ambiguous')
+            order = (exact or orders or [None])[0]
+            if not order:raise LookupError('Order not found')
+            if order['status'] != 'pending':raise PaymentConflict('Only a pending order can take a payment')
+            if db.execute("SELECT 1 FROM payment_invoices WHERE order_id=? AND status='paid'", (order['id'],)).fetchone():
+                raise PaymentConflict('This order is already paid')
+            invoice = db.execute("SELECT * FROM payment_invoices WHERE order_id=? AND network=? AND token=? AND status!='cancelled' "
+                                 'ORDER BY created DESC LIMIT 1', (order['id'], transfer['network'], transfer['token'])).fetchone()
+            if not invoice:raise PaymentConflict('The order has no invoice for this network and token')
+            db.execute("UPDATE payment_transfers SET status='matched',invoice_id=? WHERE tx_ref=?", (invoice['id'], tx_ref))
+            approval, approver = self._settle(db, invoice, tx_ref, transfer['amount_micro'], now, transfer['network'], transfer['token'], actor)
+        self._auto_approve(approval, approver, order['id'], tx_ref)
+        return dict(status='attached', order_id=order['id'], invoice_id=invoice['id'], tx_ref=tx_ref)
 
     def expire(self, now=None):
         now = time.time() if now is None else now
@@ -328,6 +364,15 @@ class Watcher:
                 for a in range(start, stop + 1, BSC_SMALL_RANGE):out += query(a, min(stop, a + BSC_SMALL_RANGE - 1))
                 return out
 
+        stamps = {}  # Block timestamps, fetched once per block in this pass: the late-payment window is judged by chain time.
+
+        def block_time(number):
+            if number not in stamps:
+                block = rpc('eth_getBlockByNumber', [hex(number), False])
+                if not block:raise RuntimeError('Block unavailable')
+                stamps[number] = int(block['timestamp'], 16)
+            return stamps[number]
+
         found = 0
         for (network, token), info in TOKENS.items():
             if network != 'bsc':continue
@@ -337,7 +382,7 @@ class Watcher:
                 micro = value // 10 ** 12 if value % 10 ** 12 == 0 else None  # 18 decimals; exact amounts only.
                 sender = '0x' + log['topics'][1][-40:]
                 ref = f'bsc:{log["transactionHash"]}:{int(log["logIndex"], 16)}'
-                self.payments.record_transfer(network, token, ref, sender, address, micro, time.time())
+                self.payments.record_transfer(network, token, ref, sender, address, micro, block_time(int(log['blockNumber'], 16)))
                 found += 1
         self._gate(key, end)
         return found
