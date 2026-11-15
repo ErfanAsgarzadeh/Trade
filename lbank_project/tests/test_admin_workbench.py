@@ -198,3 +198,75 @@ def test_offline_migration_preserves_roles_audit_and_resets_signing_leases(setup
             assert job['state']=='queued' and job['lease_token'] is None and job['attempts']==0
         assert AdminStore(copy).events()['total']>=2
     finally:copy.close()
+
+
+TRON='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
+
+
+def pay(store,oid,user):
+    """Confirm an on-chain payment for the order, like the watcher would."""
+    from portal_payments import Payments
+    payments=Payments(store);payments.save_settings(store_admin(store),dict(tron_address=TRON))
+    invoice=payments.create_invoice(user,oid,'tron','USDT')
+    payments.record_transfer('tron','USDT','tron:'+oid[:12],'Tsender',TRON,invoice['amount_micro'],time.time())
+
+
+def store_admin(store):
+    with store.db() as db:return db.execute("SELECT id FROM users WHERE username='manager'").fetchone()['id']
+
+
+def test_paid_or_credit_covered_orders_are_issued_at_their_own_price_after_a_tariff_change(setup):
+    store,admin,alice,bob,private,_,_=setup
+    paid=order(setup);unpaid=order(setup,bob);workbench=AdminStore(store)
+    pay(store,paid,alice)
+    version=lambda:next(p for p in product_pricing.catalog(store)['products'] if p['product']=='signals')['version']
+    before=version();product_pricing.close_sales(store,'signals',actor=admin)  # new tariff version and sales closed
+    assert version()!=before
+    with pytest.raises(BillingConflict):workbench.request_approval(admin,unpaid,'receipt:unpaid')  # unpaid orders keep today's behaviour
+    workbench.request_approval(admin,paid,'receipt:paid')
+    assert Issuer(store,private).once()
+    snapshot=Billing(store).snapshot(alice)
+    assert snapshot['license']['state']=='active' and next(o for o in snapshot['orders'] if o['id']==paid)['status']=='approved'
+    with store.db() as db:
+        listed=db.execute('SELECT list_price_cents,price_cents FROM license_orders WHERE id=?',(paid,)).fetchone()
+        document=json.loads(db.execute('SELECT document FROM capital_licenses WHERE user_id=?',(alice,)).fetchone()['document'])['payload']
+    assert document['full_price_cents']==(listed['list_price_cents'] if listed['list_price_cents'] is not None else listed['price_cents'])
+    # A fully credit-covered order (price 0) is also issued after the tariff moved on.
+    with store.db() as db:db.execute('UPDATE license_orders SET price_cents=0 WHERE id=?',(unpaid,))
+    workbench.request_approval(admin,unpaid,'receipt:credit');assert Issuer(store,private).once()
+    assert Billing(store).snapshot(bob)['license']['state']=='active'
+
+
+def test_paid_automated_trading_order_is_approved_at_its_recorded_price_when_sales_are_closed(setup):
+    store,admin,alice,_,private,_,_=setup
+    oid=order(setup,product='autotrade');pay(store,oid,alice)
+    product_pricing.close_sales(store,'autotrade',actor=admin)
+    with pytest.raises(BillingConflict):Billing(store).quote(alice,10000,1,product='autotrade')
+    AdminStore(store).request_approval(admin,oid,'receipt:auto',account_id='lbank:12345',equity_usd='9000')
+    assert Issuer(store,private).once()
+    assert Billing(store).snapshot(alice)['license']['state']=='active'
+
+
+def test_rejecting_a_paid_order_records_a_refund_that_the_admin_closes(setup):
+    store,admin,alice,bob,_,_,_=setup
+    paid=order(setup);free=order(setup,bob);pay(store,paid,alice);workbench=AdminStore(store)
+    assert workbench.reject(admin,free,'پرداخت دریافت نشد')['refund_state'] is None
+    assert workbench.reject(admin,paid,'حساب تأیید نشد')['refund_state']=='due'
+    assert Billing(store).snapshot(bob)['orders'][0]['refund_state'] is None
+    mine=Billing(store).snapshot(alice)['orders'][0]
+    assert mine['status']=='rejected' and mine['refund_state']=='due' and mine['paid'] is True
+    with pytest.raises(BillingConflict):workbench.refund(admin,free,'refund:nothing-due')
+    with pytest.raises(PermissionError):workbench.refund(alice,paid,'refund:tx0001')
+    with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
+        h=login(client)
+        assert client.post(f'/api/admin/orders/{paid}/refund',headers=h,json=dict(refund_ref='bad ref')).status_code==422
+        assert client.post(f'/api/admin/orders/{paid}/refund',headers=h,json=dict(refund_ref='refund:tx0001',extra=1)).status_code==422
+        rows=client.get('/api/admin/orders?status=rejected').json()['items']
+        assert {o['id']:o['refund_state'] for o in rows}=={paid:'due',free:None}
+        assert client.post(f'/api/admin/orders/{paid}/refund',headers=h,json=dict(refund_ref='refund:tx0001')).json()['refund_state']=='done'
+        assert client.post(f'/api/admin/orders/{paid}/refund',headers=h,json=dict(refund_ref='refund:tx0002')).status_code==409
+        rows=client.get('/api/admin/orders?status=rejected').json()['items']
+        assert next(o for o in rows if o['id']==paid)['refund_ref']=='refund:tx0001'
+    assert Billing(store).snapshot(alice)['orders'][0]['refund_state']=='done'
+    events={e['action'] for e in workbench.events(limit=100)['items']}
+    assert {'order_rejected','order_refunded'}<=events

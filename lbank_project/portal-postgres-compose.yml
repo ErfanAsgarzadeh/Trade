@@ -76,6 +76,14 @@ services:
       PORTAL_SIGNAL_FEED_DB: ${PORTAL_SIGNAL_FEED_DB:-}
       PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
       HTTPS_PROXY: ${TELEGRAM_HTTPS_PROXY:-}
+  # Signs approved licenses. The only service that holds the issuer private key; it has no ports and the web never sees it.
+  issuer:
+    <<: *runtime
+    command: [python, -u, portal_issuer.py, --private-key, /run/secrets/license_private]
+    build:
+      context: .
+      dockerfile: Dockerfile.issuer
+    secrets: [portal_key, portal_database_url, license_private]
 volumes:
   portal_pgdata:
 secrets:
@@ -85,3 +93,5 @@ secrets:
     file: ./issuer-keys/portal_database_url
   portal_key:
     file: ./issuer-keys/portal.key
+  license_private:
+    file: ./issuer-keys/license.private.pem

@@ -28,6 +28,69 @@ interface Transfer {
   explorer_url: string;
 }
 
+function AttachForm({
+  api,
+  report,
+  transfer,
+  done,
+}: {
+  api: ApiClient;
+  report: (e: unknown) => void;
+  transfer: Transfer;
+  done: () => void;
+}) {
+  const { t } = useLang();
+  const [order, setOrder] = useState(""),
+    [busy, setBusy] = useState(false);
+  async function attach(e: React.FormEvent) {
+    e.preventDefault();
+    const amount = transfer.amount ?? "?";
+    if (
+      !window.confirm(
+        t(
+          `این واریز به مبلغ ${amount} ${transfer.token} به عنوان پرداخت کامل سفارش ${order} ثبت شود؟ این کار برگشت‌پذیر نیست.`,
+          `Record this transfer of ${amount} ${transfer.token} as full payment for order ${order}? This cannot be undone.`,
+        ),
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      await api.request("/api/admin/payments/transfers/attach", "POST", {
+        tx_ref: transfer.tx_ref,
+        order_id: order.trim(),
+      });
+      done();
+    } catch (err) {
+      report(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+  if (transfer.status !== "unmatched" || transfer.amount === null) return null;
+  return (
+    <form className="admin-row-note" onSubmit={attach}>
+      <label className="sr-only" htmlFor={"attach-" + transfer.tx_ref}>
+        {t("کد سفارش", "Order reference")}
+      </label>
+      <input
+        id={"attach-" + transfer.tx_ref}
+        dir="ltr"
+        value={order}
+        pattern="[0-9a-fA-F\-]{8,36}"
+        minLength={8}
+        maxLength={36}
+        required
+        placeholder={t("کد سفارش", "Order reference")}
+        onChange={(e) => setOrder(e.target.value)}
+      />
+      <button className="text-button" type="submit" disabled={busy}>
+        {t("وصل به سفارش", "Attach to order")}
+      </button>
+    </form>
+  );
+}
+
 export default function AdminPayments({
   api,
   report,
@@ -227,8 +290,8 @@ export default function AdminPayments({
           eyebrow="INCOMING TRANSFERS"
           title={t("واریزهای دریافتی", "Incoming transfers")}
           description={t(
-            "همهٔ واریزهای تأییدشده به آدرس‌های شما. واریزی که با هیچ فاکتوری جور نشده (مبلغ یا شبکهٔ اشتباه، پرداخت دیرتر از ۲۴ ساعت) را دستی بررسی کنید و از کارتابل درخواست‌ها با همین شناسه تأیید کنید.",
-            "Every confirmed transfer to your addresses. Check unmatched ones (wrong amount or network, paid more than 24 hours late) by hand and approve the request with this reference.",
+            "همهٔ واریزهای تأییدشده به آدرس‌های شما. واریزی که با هیچ فاکتوری جور نشده (مبلغ یا شبکهٔ اشتباه، پرداخت دیرتر از ۲۴ ساعت) را دستی بررسی کنید. اگر صرافی کارمزد را از مبلغ کم کرده، واریز را همین‌جا به سفارش مشتری وصل کنید و سپس درخواست را تأیید کنید.",
+            "Every confirmed transfer to your addresses. Check unmatched ones (wrong amount or network, paid more than 24 hours late) by hand. If the customer's exchange deducted its fee, attach the transfer to their order here, then approve the request.",
           )}
         />
         <div className="table-wrap">
@@ -272,6 +335,12 @@ export default function AdminPayments({
                     <a href={x.explorer_url} target="_blank" rel="noopener">
                       <bdi dir="ltr">{x.tx_ref.slice(0, 22)}…</bdi>
                     </a>
+                    <AttachForm
+                      api={api}
+                      report={report}
+                      transfer={x}
+                      done={() => void load()}
+                    />
                   </td>
                 </tr>
               ))}

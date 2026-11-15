@@ -19,7 +19,7 @@ from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
 from portal_exchanges import catalog,validate_connection,UnsupportedAccount
-from portal_billing import Billing, BillingConflict
+from portal_billing import Billing, BillingConflict, PaidOrderConflict
 import product_pricing
 from signal_feed import read_feed
 from portal_frontend import frontend_index, private_page, public_file, public_page, robots_txt, sitemap_xml
@@ -104,6 +104,17 @@ class AdminOpenSales(AdminVersion):
 class AdminRejection(BaseModel):
     model_config=ConfigDict(extra='forbid')
     reason:str=Field(min_length=3,max_length=500)
+
+
+class AdminRefund(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    refund_ref:str=Field(pattern=r'^[A-Za-z0-9:._-]{4,120}$')
+
+
+class TransferAttach(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    tx_ref:str=Field(min_length=4,max_length=200)
+    order_id:str=Field(pattern=r'^[0-9a-fA-F-]{8,36}$')
 
 
 class BlogArticle(BaseModel):
@@ -497,6 +508,14 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         payments=Payments(repository(request))
         return {'settings':payments.admin_settings(),'transfers':payments.transfers()}
 
+    @app.post('/api/admin/payments/transfers/attach')
+    def admin_attach_transfer(payload:TransferAttach,request:Request,user=Depends(admin_mutation)):
+        try:return Payments(repository(request)).attach_transfer(user['id'],payload.tx_ref,payload.order_id)
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except LookupError:raise HTTPException(404,'Record not found')
+        except PaymentConflict as exc:raise HTTPException(409,str(exc))
+        except ValueError as exc:raise HTTPException(422,str(exc))
+
     @app.put('/api/admin/payments')
     def admin_payment_settings(payload:PaymentSettings,request:Request,user=Depends(admin_mutation)):
         try:return Payments(repository(request)).save_settings(user['id'],payload.model_dump())
@@ -507,6 +526,10 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def admin_reject(order_id:str,payload:AdminRejection,request:Request,user=Depends(admin_mutation)):
         if not payload.reason.strip():raise HTTPException(422,'Reason required')
         return admin_call(lambda:AdminStore(repository(request)).reject(user['id'],order_id,payload.reason.strip()))
+
+    @app.post('/api/admin/orders/{order_id}/refund')
+    def admin_refund(order_id:str,payload:AdminRefund,request:Request,user=Depends(admin_mutation)):
+        return admin_call(lambda:AdminStore(repository(request)).refund(user['id'],order_id,payload.refund_ref))
 
     @app.post('/api/admin/orders/{order_id}/approve',status_code=202)
     def admin_approve(order_id:str,payload:AdminApproval,request:Request,user=Depends(admin_mutation)):
@@ -674,6 +697,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.post('/api/me/license/orders/{order_id}/cancel')
     def cancel_license(order_id:str,request:Request,user=Depends(mutation)):
         try:Billing(repository(request)).cancel(user['id'],order_id)
+        except PaidOrderConflict as exc:raise HTTPException(409,str(exc))
         except BillingConflict:raise HTTPException(404,'Pending order not found')
         return {'status':'cancelled'}
 

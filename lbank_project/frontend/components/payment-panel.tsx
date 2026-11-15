@@ -282,6 +282,12 @@ export default function PaymentPanel({
               </p>
               <p className="note warning-text">
                 {t(
+                  "برداشت از صرافی معمولاً کارمزد را از مبلغ کم می‌کند. مطمئن شوید مبلغی که به کیف پول ما می‌رسد دقیقاً برابر مبلغ نشان‌داده‌شده است؛ برای این کار کارمزد برداشت را به مبلغ ارسالی اضافه کنید.",
+                  "Withdrawals from an exchange usually deduct the fee from the amount. Make sure the amount that ARRIVES equals the amount shown, so add the withdrawal fee to the amount you send.",
+                )}
+              </p>
+              <p className="note warning-text">
+                {t(
                   "فقط روی همین شبکه و دقیقاً همین مبلغ بفرستید؛ کارمزد شبکه جداست. مبلغ دیگر یا شبکهٔ دیگر خودکار شناسایی نمی‌شود و باید با پشتیبانی پیگیری شود.",
                   "Send only on this network and exactly this amount; the network fee is separate. A different amount or network is not recognized automatically and needs support.",
                 )}

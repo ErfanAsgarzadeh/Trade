@@ -138,6 +138,10 @@ ALTER TABLE license_orders ADD COLUMN list_price_cents INTEGER;
 ALTER TABLE license_orders ADD COLUMN referee_discount_cents INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE license_orders ADD COLUMN discounts TEXT
 '''
+SCHEMA_V13='''
+ALTER TABLE license_orders ADD COLUMN refund_state TEXT CHECK(refund_state IN ('due','done'));
+ALTER TABLE license_orders ADD COLUMN refund_ref TEXT
+'''
 
 
 class PostgresConnection:
@@ -206,8 +210,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7,8,9,10,11,12}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12)):
+            if versions-{1,2,3,4,5,6,7,8,9,10,11,12,13}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12),(13,SCHEMA_V13)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

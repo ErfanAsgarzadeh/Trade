@@ -51,6 +51,29 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+  # Signs approved licenses. The only service that holds the issuer private key; it has no ports and the web never sees it.
+  issuer:
+    build:
+      context: .
+      dockerfile: Dockerfile.issuer
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    command: [python, -u, portal_issuer.py, --private-key, /run/secrets/license_private]
+    environment:
+      PORTAL_DB: /app/runtime/portal/portal.db
+      PORTAL_KEY_FILE: /run/secrets/portal_key
+    volumes: [./runtime/portal:/app/runtime/portal]
+    secrets: [portal_key, license_private]
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
 secrets:
   portal_key:
     file: ./issuer-keys/portal.key
+  license_private:
+    file: ./issuer-keys/license.private.pem

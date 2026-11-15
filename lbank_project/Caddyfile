@@ -1,8 +1,14 @@
 # Public entry point of the customer site (portal-public-compose.yml). TLS is automatic for {$PORTAL_DOMAIN}.
 {$PORTAL_DOMAIN} {
 	encode zstd gzip
-	request_body {
+	# Blog image upload accepts up to 10MB (portal_blog.MAX_UPLOAD); every other request body stays at 1MB.
+	@blog_upload path /api/admin/blog/images
+	@other_bodies not path /api/admin/blog/images
+	request_body @other_bodies {
 		max_size 1MB
+	}
+	request_body @blog_upload {
+		max_size 10MB
 	}
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"

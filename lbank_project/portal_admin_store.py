@@ -60,7 +60,7 @@ class AdminStore:
         args=(status,) if status!='all' else ()
         with self.store.db() as db:
             total=db.execute('SELECT COUNT(*) AS n FROM license_orders o'+clause,args).fetchone()['n']
-            rows=db.execute('SELECT o.id,o.user_id,u.username,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.list_price_cents,o.discounts,o.price_version,o.status,o.created,o.updated,'
+            rows=db.execute('SELECT o.id,o.user_id,u.username,o.cap_usd,o.months,o.kind,o.product,o.price_cents,o.list_price_cents,o.discounts,o.price_version,o.status,o.created,o.updated,o.refund_state,o.refund_ref,'
                             'a.state AS approval_state,a.error_code FROM license_orders o JOIN users u ON u.id=o.user_id '
                             'LEFT JOIN license_approvals a ON a.order_id=o.id'+clause+' ORDER BY o.created DESC,o.id LIMIT ? OFFSET ?',args+(limit,offset)).fetchall()
         return dict(items=[dict(r,discounts=json.loads(r['discounts']) if r['discounts'] else []) for r in rows],total=total,offset=offset,limit=limit)
@@ -73,13 +73,26 @@ class AdminStore:
     def reject(self,actor,oid,reason):
         owner=self._owner(oid)
         with self.write(actor,owner) as db:
+            if self.store.database.postgres:self.store.database.begin_write(db,'payments')  # Serialise with a payment being matched.
             if db.execute("UPDATE license_orders SET status='rejected',updated=? WHERE id=? AND status='pending'",(time.time(),oid)).rowcount!=1:
                 raise BillingConflict('Only pending orders can be rejected')
+            # A rejected order the customer already paid must be refunded by hand; keep it on the desk until that is recorded.
+            paid=bool(db.execute("SELECT 1 FROM payment_invoices WHERE order_id=? AND status='paid'",(oid,)).fetchone())
+            if paid:db.execute("UPDATE license_orders SET refund_state='due' WHERE id=?",(oid,))
             from portal_referrals import Referrals
             Referrals(self.store).release(db,oid)
             db.execute("UPDATE license_approvals SET state='cancelled',lease_token=NULL,lease_until=0,updated=? WHERE order_id=? AND state!='completed'",(time.time(),oid))
-            record(db,actor,'order_rejected',oid,dict(reason=reason))
-        return dict(status='rejected')
+            record(db,actor,'order_rejected',oid,dict(reason=reason,refund_due=paid))
+        return dict(status='rejected',refund_state='due' if paid else None)
+
+    def refund(self,actor,oid,refund_ref):
+        if not isinstance(refund_ref,str) or not re.fullmatch(r'[A-Za-z0-9:._-]{4,120}',refund_ref):raise ValueError('A refund transaction reference is required')
+        owner=self._owner(oid)
+        with self.write(actor,owner) as db:
+            if db.execute("UPDATE license_orders SET refund_state='done',refund_ref=?,updated=? WHERE id=? AND refund_state='due'",(refund_ref,time.time(),oid)).rowcount!=1:
+                raise BillingConflict('No refund is due for this order')
+            record(db,actor,'order_refunded',oid,dict(refund_ref=refund_ref))
+        return dict(status='refunded',refund_state='done',refund_ref=refund_ref)
 
     def request_approval(self,actor,oid,payment_ref,account_id=None,equity_usd=None):
         owner=self._owner(oid);now=time.time()
@@ -91,8 +104,9 @@ class AdminStore:
             if existing and existing['state'] in ('queued','running'):
                 if json.loads(existing['payload'])!=payload:raise BillingConflict('A different approval is already queued')
                 return dict(id=existing['id'],status=existing['state'],already_pending=True)
-            quote=Billing(self.store)._quote(db,owner,order['cap_usd'],order['months'],order['kind'],now,order['product'])
-            if quote['price_version']!=order['price_version']:raise BillingConflict('Tariff version changed; request a new order')
+            billing=Billing(self.store);settled=billing._settled(db,order)  # Paid or credit-covered orders keep their own price and period.
+            quote=billing._quote(db,owner,order['cap_usd'],order['months'],order['kind'],now,order['product'],order if settled else None)
+            if not settled and quote['price_version']!=order['price_version']:raise BillingConflict('Tariff version changed; request a new order')
             if order['product']=='autotrade':
                 if not account_id or not re.fullmatch(r'[a-z0-9][a-z0-9:._-]{2,119}',account_id):raise ValueError('Verified account UID required')
                 equity=money(equity_usd,positive=True)
