@@ -6,6 +6,6 @@ uvicorn==0.54.0
 pydantic==2.13.5
 cryptography==50.0.2
 psycopg[binary]==3.2.6
-psycopg-pool==3.2.6
+psycopg-pool==3.3.3
 # Blog images are re-encoded on upload (resize, strip metadata, WebP).
 pillow==12.2.0
