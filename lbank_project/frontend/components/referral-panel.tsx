@@ -22,7 +22,7 @@ interface Reward {
   created: number;
   available_at: number;
   expires: number | null;
-  state: "available" | "pending" | "used" | "expired" | "void";
+  state: "available" | "pending" | "used" | "expired" | "void" | "review";
 }
 interface Account {
   enabled: boolean;
@@ -43,6 +43,7 @@ const STATES: Record<Reward["state"], [string, string]> = {
   used: ["استفاده‌شده", "Used"],
   expired: ["منقضی", "Expired"],
   void: ["باطل‌شده", "Voided"],
+  review: ["در بررسی", "Under review"],
 };
 
 /** Invite friends: personal code and link, what the program pays, earned credit and coupons. */

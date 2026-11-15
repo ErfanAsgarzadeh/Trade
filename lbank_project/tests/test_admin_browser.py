@@ -17,6 +17,8 @@ from portal_billing import Billing
 from portal_issuer import Issuer
 from capital_plans import PRICES,TERMS
 import customer_manager
+import portal_totp
+from totp_helpers import AUTH, Authenticator, enable_totp
 
 
 @pytest.mark.parametrize("appearance", ["dark", "light"])
@@ -26,7 +28,7 @@ def test_admin_workbench_journey_and_mobile_layout(tmp_path, appearance):
     if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):pytest.skip('Chromium unavailable')
     screenshots=Path(os.getenv('PORTAL_SCREENSHOTS',str(tmp_path/'screenshots')));screenshots=screenshots/appearance;screenshots.mkdir(parents=True,exist_ok=True)
     store=PortalStore(tmp_path/'admin.db',Fernet.generate_key())
-    store.create_user('manager','disposable-manager-password');store.set_admin('manager')
+    store.create_user('manager','disposable-manager-password');store.set_admin('manager');enable_totp(store,'manager')
     alice=store.create_user('alice','disposable-customer-password');bob=store.create_user('bob','disposable-customer-password')
     private,public=tmp_path/'issuer.private.pem',tmp_path/'issuer.public.pem';customer_manager.keygen(private,public)
     listener=socket.socket();listener.bind(('127.0.0.1',0));listener.listen(128)
@@ -45,7 +47,8 @@ def test_admin_workbench_journey_and_mobile_layout(tmp_path, appearance):
             page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
             page.on('dialog',lambda d:d.accept())
             page.goto(origin+'/admin/');page.locator('#username').fill('manager');page.locator('#password').fill('disposable-manager-password');page.locator('#login-form button').click()
-            page.wait_for_selector('#admin-workbench');page.wait_for_function("()=>document.getElementById('admin-count-users').textContent==='۳'")
+            page.wait_for_selector('#totp');page.locator('#totp').fill(AUTH['manager'].code());page.locator('#login-form button').click()
+            page.wait_for_selector('#admin-workbench');assert page.locator('#totp-banner').count()==0;page.wait_for_function("()=>document.getElementById('admin-count-users').textContent==='۳'")
             page.screenshot(path=str(screenshots/'admin-overview-desktop.png'),full_page=True)
             page.locator('#admin-tab-pricing').click();page.wait_for_selector('#admin-pricing-signals')
             assert page.locator('#admin-pricing-signals .admin-open-sales').is_disabled()
@@ -96,6 +99,50 @@ def test_admin_workbench_journey_and_mobile_layout(tmp_path, appearance):
             page.locator('#username').fill('alice');page.locator('#password').fill('disposable-customer-password');page.locator('#login-form button').click()
             page.wait_for_selector('#admin-forbidden');assert page.locator('#admin-workbench').count()==0
             assert page.request.get(origin+'/api/admin/users').status==403
+            assert not errors,errors
+            browser.close()
+    finally:
+        server.should_exit=True;thread.join(timeout=10);listener.close();store.close()
+
+
+def test_admin_without_two_step_login_sees_the_banner_and_sets_it_up_in_the_profile(tmp_path):
+    module=pytest.importorskip('playwright.sync_api')
+    executable=os.getenv('PORTAL_TEST_CHROMIUM') or shutil.which('chromium')
+    if not executable and not os.getenv('PORTAL_TEST_PLAYWRIGHT_BROWSER'):pytest.skip('Chromium unavailable')
+    store=PortalStore(tmp_path/'admin2.db',Fernet.generate_key())
+    store.create_user('root','disposable-root-password');store.set_admin('root')
+    listener=socket.socket();listener.bind(('127.0.0.1',0));listener.listen(128)
+    origin='http://127.0.0.1:'+str(listener.getsockname()[1])
+    server=uvicorn.Server(uvicorn.Config(create_app(store,origin=origin,secure=False),log_level='error',access_log=False))
+    thread=threading.Thread(target=lambda:server.run(sockets=[listener]),daemon=True);thread.start()
+    try:
+        deadline=time.monotonic()+10
+        while not server.started and time.monotonic()<deadline:time.sleep(.02)
+        assert server.started
+        with module.sync_playwright() as p:
+            browser=p.chromium.launch(executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
+            context=browser.new_context(viewport={'width':1100,'height':900},locale='en-US',reduced_motion='reduce')
+            page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+            page.on('console',lambda msg:errors.append(msg.text) if msg.type=='error' and ('Content Security Policy' in msg.text or 'Hydration' in msg.text) else None)
+            page.goto(origin+'/en/dashboard/');page.wait_for_selector('#login-form');page.locator('#forgot-password').click()
+            page.wait_for_selector('#recovery-request-form');assert 'only works if you linked Telegram' in page.locator('#recovery-panel').inner_text()
+            page.locator('#recovery-username').fill('root');page.locator('#recovery-request-form button').click()
+            page.wait_for_selector('#recovery-confirm-form');assert page.locator('#recovery-code').is_visible()
+            page.locator('#recovery-cancel').click();page.wait_for_selector('#login-form')
+            page.goto(origin+'/en/register/');page.wait_for_selector('#register-form')
+            honeypot=page.locator('#register-form input[name="website"]');assert honeypot.count()==1 and honeypot.bounding_box()['x']<-5000
+            page.goto(origin+'/en/admin/');page.locator('#username').fill('root');page.locator('#password').fill('disposable-root-password');page.locator('#login-form button').click()
+            page.wait_for_selector('#admin-workbench');assert page.locator('#totp-banner').is_visible()
+            assert page.request.patch(origin+'/api/admin/users/x',data='{}').status in (403,)
+            page.goto(origin+'/en/dashboard/');page.wait_for_selector('#totp-start');page.locator('#totp-start').click()
+            page.locator('#totp-password').fill('disposable-root-password');page.locator('#totp-start-form button').click()
+            page.wait_for_selector('#totp-secret');secret=page.locator('#totp-secret').inner_text().strip()
+            assert page.locator('#totp-confirm-form svg.qr-code').is_visible()
+            page.locator('#totp-code').fill(Authenticator(secret).code());page.locator('#totp-confirm-form button').click()
+            page.wait_for_selector('#recovery-codes');assert page.locator('#recovery-codes li').count()==10
+            assert page.locator('#copy-recovery').is_visible();page.locator('#recovery-saved').click()
+            page.wait_for_selector('#totp-disable-form')
+            page.goto(origin+'/en/admin/');page.wait_for_selector('#admin-workbench');assert page.locator('#totp-banner').count()==0
             assert not errors,errors
             browser.close()
     finally:

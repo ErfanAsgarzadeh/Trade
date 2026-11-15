@@ -4,6 +4,7 @@ import { ApiClient, ApiError, errorText } from "@/lib/api";
 import { dateTime, num } from "@/lib/format";
 import { useLang } from "@/lib/lang";
 import { Heading } from "./shared";
+import TotpField from "./totp-field";
 
 interface Status {
   configured: boolean;
@@ -24,6 +25,7 @@ export default function AdminTelegram({
   const { lang, t } = useLang();
   const [status, setStatus] = useState<Status | null>(null),
     [token, setToken] = useState(""),
+    [totp, setTotp] = useState(""),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
     [note, setNote] = useState("");
@@ -36,15 +38,26 @@ export default function AdminTelegram({
     void load();
   }, [load]);
   async function save(value: string) {
+    if (!/^\d{6}$/.test(totp)) {
+      setNote(
+        t(
+          "ابتدا کد ۶ رقمی برنامهٔ احراز هویت را وارد کنید.",
+          "Enter the 6-digit code from your authenticator app first.",
+        ),
+      );
+      return;
+    }
     setBusy(true);
     setNote("");
     try {
       setStatus(
         await api.request<Status>("/api/admin/telegram", "PUT", {
           token: value,
+          totp,
         }),
       );
       setToken("");
+      setTotp("");
       setNote(
         value
           ? t("ربات وصل شد.", "Bot connected.")
@@ -202,6 +215,7 @@ export default function AdminTelegram({
             "The token is stored encrypted and never shown again. Do not share it anywhere else.",
           )}
         </p>
+        <TotpField id="telegram-totp" value={totp} onChange={setTotp} />
         <div className="telegram-actions">
           <button type="submit" disabled={busy || !token.trim()}>
             {t("ذخیره و اتصال ربات", "Save and connect bot")}

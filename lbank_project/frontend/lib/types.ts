@@ -12,6 +12,7 @@ export interface Me {
   username: string;
   email?: string | null;
   csrf: string;
+  totp_enabled?: boolean;
   live_execution_supported: boolean;
 }
 export interface Plans {

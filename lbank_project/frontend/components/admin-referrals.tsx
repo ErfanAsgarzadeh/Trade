@@ -11,6 +11,7 @@ import {
   type ReferrerReward,
 } from "@/lib/referral";
 import { Heading } from "./shared";
+import TotpField from "./totp-field";
 
 interface Program {
   id: string;
@@ -41,6 +42,7 @@ interface Overview {
     enabled: boolean;
     attach_days: number;
     credit_max_percent: number;
+    max_discount_percent: number;
   };
   programs: Program[];
   codes: Code[];
@@ -95,7 +97,7 @@ const referrer = (o: Partial<ReferrerReward> = {}): ReferrerReward => ({
   value: 0,
   trigger: "first",
   max_per_referee: 0,
-  hold_days: 0,
+  hold_days: 7,
   expiry_days: 0,
   max_total_usd: 0,
   min_order_usd: 0,
@@ -122,7 +124,7 @@ const PRESETS: { fa: string; en: string; make: () => Partial<Draft> }[] = [
     make: () => ({
       name: "Two-sided",
       referee: referee({ type: "percent", value: 10 }),
-      referrer: referrer({ type: "coupon", value: 10 }),
+      referrer: referrer({ type: "coupon", value: 10, hold_days: 7 }),
     }),
   },
   {
@@ -131,7 +133,7 @@ const PRESETS: { fa: string; en: string; make: () => Partial<Draft> }[] = [
     make: () => ({
       name: "Give and get",
       referee: referee({ type: "percent", value: 10 }),
-      referrer: referrer({ type: "credit", value: 20 }),
+      referrer: referrer({ type: "credit", value: 20, hold_days: 7 }),
     }),
   },
   {
@@ -143,7 +145,7 @@ const PRESETS: { fa: string; en: string; make: () => Partial<Draft> }[] = [
         type: "commission",
         value: 20,
         trigger: "every",
-        hold_days: 14,
+        hold_days: 7,
       }),
     }),
   },
@@ -156,6 +158,7 @@ const PRESETS: { fa: string; en: string; make: () => Partial<Draft> }[] = [
       referrer: referrer({
         type: "credit",
         value: 10,
+        hold_days: 7,
         tiers: [
           { referrals: 5, value: 20 },
           { referrals: 10, value: 30 },
@@ -195,6 +198,7 @@ export default function AdminReferrals({
   const [data, setData] = useState<Overview | null>(null),
     [draft, setDraft] = useState<Draft | null>(null),
     [busy, setBusy] = useState(false),
+    [grantTotp, setGrantTotp] = useState(""),
     [note, setNote] = useState("");
   const usd = (cents: number) => money(cents / 100, lang);
   const load = useCallback(
@@ -368,6 +372,7 @@ export default function AdminReferrals({
               enabled: values.get("enabled") === "on",
               attach_days: Number(values.get("attach_days")),
               credit_max_percent: Number(values.get("credit_max_percent")),
+              max_discount_percent: Number(values.get("max_discount_percent")),
             },
             t("تنظیمات ذخیره شد.", "Settings saved."),
           );
@@ -417,6 +422,29 @@ export default function AdminReferrals({
               max={100}
               defaultValue={data.settings.credit_max_percent}
             />
+          </div>
+          <div>
+            <label htmlFor="discount-max">
+              {t(
+                "سقف مجموع تخفیف‌ها از قیمت لیست (٪)",
+                "Max total discount of the list price (%)",
+              )}
+            </label>
+            <input
+              id="discount-max"
+              name="max_discount_percent"
+              type="number"
+              dir="ltr"
+              min={0}
+              max={100}
+              defaultValue={data.settings.max_discount_percent}
+            />
+            <p className="field-hint">
+              {t(
+                "تخفیف دوست، کوپن و اعتبار روی هم از این سهم بیشتر نمی‌شوند.",
+                "The friend discount, coupon and credit together never exceed this share.",
+              )}
+            </p>
           </div>
         </div>
         <button type="submit" disabled={busy}>
@@ -1089,9 +1117,15 @@ export default function AdminReferrals({
               value: Number(values.get("value")),
               note: values.get("note"),
               expiry_days: Number(values.get("expiry_days") || 0),
+              totp: grantTotp,
             },
             t("پاداش ثبت شد.", "Reward granted."),
-          ).then((ok) => ok && target.reset());
+          ).then((ok) => {
+            if (ok) {
+              target.reset();
+              setGrantTotp("");
+            }
+          });
         }}
       >
         <div className="referral-grid">
@@ -1148,6 +1182,7 @@ export default function AdminReferrals({
             <input id="grant-note" name="note" maxLength={200} />
           </div>
         </div>
+        <TotpField id="grant-totp" value={grantTotp} onChange={setGrantTotp} />
         <button type="submit" disabled={busy}>
           {t("ثبت پاداش", "Grant")}
         </button>
@@ -1218,24 +1253,58 @@ export default function AdminReferrals({
                       {r.state === "void" ? (
                         t("باطل‌شده", "Voided")
                       ) : (
-                        <button
-                          type="button"
-                          className="text-button"
-                          disabled={busy}
-                          onClick={() =>
-                            window.confirm(
-                              t("این پاداش باطل شود؟", "Void this reward?"),
-                            ) &&
-                            void call(
-                              "/api/admin/referrals/rewards/" + r.id + "/void",
-                              "POST",
-                              {},
-                              t("پاداش باطل شد.", "Reward voided."),
-                            )
-                          }
-                        >
-                          {t("ابطال", "Void")}
-                        </button>
+                        <>
+                          {r.state === "review" && (
+                            <>
+                              <span className="pill warning">
+                                {t("در بررسی", "In review")}
+                              </span>{" "}
+                              <button
+                                type="button"
+                                className="text-button"
+                                disabled={busy}
+                                onClick={() =>
+                                  window.confirm(
+                                    t(
+                                      "این پاداش آزاد و قابل استفاده شود؟ خریدار و دعوت‌کننده از یک کیف پول پرداخت کرده‌اند.",
+                                      "Release this reward for use? The buyer and the inviter paid from the same wallet.",
+                                    ),
+                                  ) &&
+                                  void call(
+                                    "/api/admin/referrals/rewards/" +
+                                      r.id +
+                                      "/release",
+                                    "POST",
+                                    {},
+                                    t("پاداش آزاد شد.", "Reward released."),
+                                  )
+                                }
+                              >
+                                {t("آزادسازی", "Release")}
+                              </button>{" "}
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            className="text-button"
+                            disabled={busy}
+                            onClick={() =>
+                              window.confirm(
+                                t("این پاداش باطل شود؟", "Void this reward?"),
+                              ) &&
+                              void call(
+                                "/api/admin/referrals/rewards/" +
+                                  r.id +
+                                  "/void",
+                                "POST",
+                                {},
+                                t("پاداش باطل شد.", "Reward voided."),
+                              )
+                            }
+                          >
+                            {t("ابطال", "Void")}
+                          </button>
+                        </>
                       )}
                     </td>
                   </tr>

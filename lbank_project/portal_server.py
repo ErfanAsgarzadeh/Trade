@@ -14,7 +14,8 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from portal_store import EmailTaken, PortalStore
+from portal_store import EmailTaken, LoginLocked, PortalStore, SESSION_SECONDS, TwoFactorRequired
+import portal_security
 from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
@@ -41,21 +42,60 @@ def trusted_proxies(value):
     return ','.join(str(ipaddress.ip_network(v,strict=False)) for v in hosts)
 
 
-class Login(BaseModel):
+class Credentials(BaseModel):
     model_config=ConfigDict(extra='forbid')
     username:str=Field(min_length=2,max_length=40,pattern=r'^[a-z][a-z0-9-]+$')
     password:SecretStr=Field(min_length=12,max_length=128)
 
 
-class Registration(Login):
+class Login(Credentials):
+    totp:str|None=Field(default=None,max_length=14,pattern=r'^(\d{6}|[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4})$')
+
+
+class Registration(Credentials):
     password_confirmation:SecretStr=Field(min_length=12,max_length=128)
     email:str=Field(min_length=6,max_length=254)
     referral_code:str|None=Field(default=None,max_length=24)
+    website:str=Field(default='',max_length=200)      # Honeypot: people never see this field, so it must stay empty.
+    form_token:str=Field(default='',max_length=100)   # Signed timestamp from GET /api/register/token.
 
 
 class EmailChange(BaseModel):
     model_config=ConfigDict(extra='forbid')
     email:str=Field(min_length=6,max_length=254)
+    current_password:SecretStr=Field(min_length=1,max_length=128)
+
+
+class PasswordChange(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    current_password:SecretStr=Field(min_length=1,max_length=128)
+    new_password:SecretStr=Field(min_length=12,max_length=128)
+    new_password_confirmation:SecretStr=Field(min_length=12,max_length=128)
+
+
+class ResetRequest(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    username:str=Field(min_length=2,max_length=40,pattern=r'^[a-z][a-z0-9-]+$')
+
+
+class ResetConfirm(ResetRequest):
+    code:str=Field(pattern=r'^\d{8}$')
+    new_password:SecretStr=Field(min_length=12,max_length=128)
+    new_password_confirmation:SecretStr=Field(min_length=12,max_length=128)
+
+
+class TotpSetup(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    current_password:SecretStr=Field(min_length=1,max_length=128)
+
+
+class TotpEnable(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    code:str=Field(pattern=r'^\d{6}$')
+
+
+class TotpDisable(TotpSetup):
+    code:str=Field(min_length=6,max_length=14,pattern=r'^(\d{6}|[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4})$')
 
 
 class Connection(BaseModel):
@@ -144,6 +184,10 @@ class PaymentSettings(BaseModel):
     auto_approve_signals:bool=False
     bsc_rpc:str=Field(default='',max_length=200)
     trongrid_url:str=Field(default='',max_length=200)
+    bsc_rpc_verify:str=Field(default='',max_length=200)
+    tron_verify_url:str=Field(default='',max_length=200)
+    auto_approve_max_usd:int=Field(default=500,ge=0,le=1000000)
+    totp:str=Field(pattern=r'^\d{6}$')
 
 
 class TelegramPreferences(BaseModel):
@@ -160,6 +204,7 @@ class TelegramLink(BaseModel):
 class TelegramSettings(BaseModel):
     model_config=ConfigDict(extra='forbid')
     token:str=Field(default='',max_length=100)
+    totp:str=Field(pattern=r'^\d{6}$')
 
 
 class TelegramBroadcast(BaseModel):
@@ -177,6 +222,7 @@ class ReferralSettings(BaseModel):
     enabled:bool
     attach_days:int=Field(ge=0,le=365)
     credit_max_percent:int=Field(ge=0,le=100)
+    max_discount_percent:int=Field(default=100,ge=0,le=100)
 
 
 class ReferralProgram(BaseModel):
@@ -206,6 +252,7 @@ class ReferralGrant(BaseModel):
     value:float=Field(gt=0,le=100000)
     note:str=Field(default='',max_length=200)
     expiry_days:int=Field(default=0,ge=0,le=3650)
+    totp:str=Field(pattern=r'^\d{6}$')
 
 
 class AdminApproval(BaseModel):
@@ -276,7 +323,24 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     def admin_mutation(user=Depends(mutation)):
         if user['role']!='admin':raise HTTPException(403,'Administrator required')
+        # Reading stays possible so an administrator can sign in and set up two-step login; changing anything needs it.
+        if not user['totp_enabled']:raise HTTPException(403,'Two-factor setup required')
         return user
+
+    def throttled(request,user):
+        """Codes and passwords are only checked at a bounded rate per account."""
+        if not repository(request).attempt('reauth:'+user['id']):raise HTTPException(429,'Too many attempts; retry in one minute')
+
+    def reauthenticate(request,user,password):
+        throttled(request,user)
+        if not repository(request).password_matches(user['id'],password.get_secret_value()):raise HTTPException(403,'Current password is incorrect')
+
+    def step_up(request,user,code):
+        throttled(request,user)
+        if not portal_security.step_up(repository(request),user['id'],code):raise HTTPException(403,'Invalid two-factor code')
+
+    def set_session_cookie(response,token,role):
+        response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=SESSION_SECONDS.get(role,SESSION_SECONDS['customer']),path='/')
 
     def admin_call(function):
         try:return function()
@@ -331,8 +395,11 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         if response.status_code>=400:cache='no-store'
         response.headers.update({'Cache-Control':cache,'X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
+                                 # Wallet payments use the injected window.ethereum provider, which none of these features touch.
+                                 'Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()',
+                                 'Cross-Origin-Opener-Policy':'same-origin',
                                  'Content-Security-Policy':f"default-src 'self'; script-src 'self' {script_hashes}; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
-        if secure:response.headers['Strict-Transport-Security']='max-age=31536000'
+        if secure:response.headers['Strict-Transport-Security']='max-age=31536000; includeSubDomains'
         return response
 
     @app.exception_handler(RequestValidationError)
@@ -448,6 +515,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.put('/api/admin/telegram')
     def admin_telegram_settings(payload:TelegramSettings,request:Request,user=Depends(admin_mutation)):
+        step_up(request,user,payload.totp)
         try:return Telegram(repository(request)).configure(user['id'],payload.token)
         except PermissionError:raise HTTPException(403,'Administrator required')
         except TelegramError:raise HTTPException(502,'Telegram rejected the token or could not be reached')
@@ -497,7 +565,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.post('/api/admin/referrals/rewards',status_code=201)
     def admin_referral_grant(payload:ReferralGrant,request:Request,user=Depends(admin_mutation)):
+        step_up(request,user,payload.totp)
         return referral_call(lambda:Referrals(repository(request)).grant(user['id'],payload.username,payload.kind,payload.value,payload.note,payload.expiry_days))
+
+    @app.post('/api/admin/referrals/rewards/{reward_id}/release')
+    def admin_referral_release(reward_id:str,request:Request,user=Depends(admin_mutation)):
+        return referral_call(lambda:Referrals(repository(request)).release_held(user['id'],reward_id))
 
     @app.post('/api/admin/referrals/rewards/{reward_id}/void')
     def admin_referral_void(reward_id:str,request:Request,user=Depends(admin_mutation)):
@@ -518,7 +591,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.put('/api/admin/payments')
     def admin_payment_settings(payload:PaymentSettings,request:Request,user=Depends(admin_mutation)):
-        try:return Payments(repository(request)).save_settings(user['id'],payload.model_dump())
+        step_up(request,user,payload.totp)
+        try:return Payments(repository(request)).save_settings(user['id'],payload.model_dump(exclude={'totp'}))
         except PermissionError:raise HTTPException(403,'Administrator required')
         except ValueError as exc:raise HTTPException(422,str(exc))
 
@@ -715,24 +789,33 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         except Exception:raise HTTPException(503,'Database unavailable')
         return {'status':'ok'}
 
+    @app.get('/api/register/token')
+    def register_token(request:Request):
+        store=repository(request)
+        if not store.attempt('signup-token:'+(request.client.host if request.client else 'unknown')):raise HTTPException(429,'Too many requests')
+        return {'token':store.form_token()}
+
     @app.post('/api/register',status_code=201)
     def register(payload:Registration,request:Request,response:Response):
         same_origin(request)
         store=repository(request)
         client=request.client.host if request.client else 'unknown'
         if not store.attempt('signup:'+client):raise HTTPException(429,'Too many signup attempts')
+        # Bots fill the hidden field or submit instantly; both get the same answer as any other invalid form.
+        if payload.website or not store.form_token_valid(payload.form_token):
+            raise HTTPException(422,'Invalid fields; check input length and required fields')
         password=payload.password.get_secret_value()
         if not secrets.compare_digest(password.encode(),payload.password_confirmation.get_secret_value().encode()):
             raise HTTPException(422,'Password confirmation does not match')
         try:token,csrf=store.register(payload.username,password,payload.email,(payload.referral_code or '').strip() or None)
-        except EmailTaken:raise HTTPException(409,'Email unavailable')
+        except EmailTaken:raise HTTPException(409,'Username or email unavailable')
         except ReferralConflict as exc:raise HTTPException(409,str(exc))
         except ValueError as exc:
             if 'referral' in str(exc).lower():raise HTTPException(422,'Invalid referral code')
-            if 'email' in str(exc).lower():raise HTTPException(422,'Invalid email')
-            raise HTTPException(409,'Username unavailable')
+            if str(exc)=='Invalid email':raise HTTPException(422,'Invalid email')
+            raise HTTPException(409,'Username or email unavailable')  # One answer for both, so neither can be probed.
         store.logout(request.cookies.get(COOKIE,''))
-        response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=43200,path='/')
+        set_session_cookie(response,token,'customer')
         return {'username':payload.username,'csrf':csrf}
 
     @app.get('/api/me/signals')
@@ -747,12 +830,15 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         store=repository(request)
         client=request.client.host if request.client else 'unknown'
         if not store.attempt(client):raise HTTPException(429,'Too many login attempts; retry in one minute')
-        session=store.login(payload.username,payload.password.get_secret_value())
+        try:session=store.login(payload.username,payload.password.get_secret_value(),payload.totp)
+        except LoginLocked as exc:
+            raise HTTPException(429,'Too many failed attempts for this account; try again later',headers={'Retry-After':str(exc.wait)})
+        except TwoFactorRequired:raise HTTPException(401,'Two-factor code required')
         if not session:raise HTTPException(401,'Invalid credentials')
         # Rotation invalidates an already logged-in session for this browser.
         store.logout(request.cookies.get(COOKIE,''))
         token,csrf=session
-        response.set_cookie(COOKIE,token,httponly=True,secure=secure,samesite='strict',max_age=43200,path='/')
+        set_session_cookie(response,token,store.session(token)['role'])
         return {'csrf':csrf}
 
     @app.post('/api/logout')
@@ -763,13 +849,72 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/api/me')
     def me(user=Depends(identity)):
-        return dict(username=user['username'],email=user.get('email'),csrf=user['csrf'],role=user['role'],live_execution_supported=False)
+        return dict(username=user['username'],email=user.get('email'),csrf=user['csrf'],role=user['role'],totp_enabled=user['totp_enabled'],live_execution_supported=False)
 
     @app.put('/api/me/email')
     def change_email(payload:EmailChange,request:Request,user=Depends(mutation)):
+        reauthenticate(request,user,payload.current_password)
         try:return {'email':repository(request).set_email(user['id'],payload.email)}
         except EmailTaken:raise HTTPException(409,'Email unavailable')
         except ValueError:raise HTTPException(422,'Invalid email')
+
+    @app.put('/api/me/password')
+    def change_password(payload:PasswordChange,request:Request,response:Response,user=Depends(mutation)):
+        new=payload.new_password.get_secret_value()
+        if not secrets.compare_digest(new.encode(),payload.new_password_confirmation.get_secret_value().encode()):
+            raise HTTPException(422,'Password confirmation does not match')
+        reauthenticate(request,user,payload.current_password)
+        token,csrf=repository(request).change_password(user['id'],new)
+        set_session_cookie(response,token,user['role'])
+        return {'csrf':csrf}
+
+    @app.post('/api/me/sessions/revoke-others')
+    def revoke_other_sessions(request:Request,user=Depends(mutation)):
+        return {'revoked':repository(request).revoke_others(user['id'],request.cookies.get(COOKIE,''))}
+
+    # Recovery without email: a one-time code goes to the Telegram chat linked to the account.
+    @app.post('/api/password-reset/request',status_code=202)
+    def reset_request(payload:ResetRequest,request:Request):
+        same_origin(request)
+        store=repository(request)
+        client=request.client.host if request.client else 'unknown'
+        if not store.attempt('reset:'+client) or not store.attempt('reset-user:'+payload.username):
+            raise HTTPException(429,'Too many attempts; retry in one minute')
+        portal_security.request_reset(store,payload.username)
+        return {'status':'If the account exists and has Telegram linked, a code was sent there'}
+
+    @app.post('/api/password-reset/confirm')
+    def reset_confirm(payload:ResetConfirm,request:Request):
+        same_origin(request)
+        store=repository(request)
+        client=request.client.host if request.client else 'unknown'
+        if not store.attempt('reset:'+client) or not store.attempt('reset-user:'+payload.username):
+            raise HTTPException(429,'Too many attempts; retry in one minute')
+        new=payload.new_password.get_secret_value()
+        if not secrets.compare_digest(new.encode(),payload.new_password_confirmation.get_secret_value().encode()):
+            raise HTTPException(422,'Password confirmation does not match')
+        if not portal_security.confirm_reset(store,payload.username,payload.code,new):raise HTTPException(403,'Invalid or expired code')
+        return {'status':'password_changed'}
+
+    @app.post('/api/me/totp/setup')
+    def totp_setup(payload:TotpSetup,request:Request,user=Depends(mutation)):
+        reauthenticate(request,user,payload.current_password)
+        try:return portal_security.setup(repository(request),user['id'])
+        except portal_security.SecurityConflict as exc:raise HTTPException(409,str(exc))
+
+    @app.post('/api/me/totp/enable')
+    def totp_enable(payload:TotpEnable,request:Request,user=Depends(mutation)):
+        throttled(request,user)
+        try:codes=portal_security.enable(repository(request),user['id'],payload.code)
+        except portal_security.SecurityConflict as exc:raise HTTPException(409,str(exc))
+        if codes is None:raise HTTPException(403,'Invalid two-factor code')
+        return {'recovery_codes':codes}
+
+    @app.post('/api/me/totp/disable')
+    def totp_disable(payload:TotpDisable,request:Request,user=Depends(mutation)):
+        reauthenticate(request,user,payload.current_password)
+        if not portal_security.disable(repository(request),user['id'],payload.code):raise HTTPException(403,'Invalid two-factor code')
+        return {'status':'disabled'}
 
     @app.get('/api/exchanges',dependencies=[Depends(identity)])
     def exchanges():return {'exchanges':catalog(),'live_execution_supported':False}

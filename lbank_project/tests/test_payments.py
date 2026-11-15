@@ -12,6 +12,7 @@ from portal_server import create_app
 from portal_store import PortalStore
 from pricing_helpers import enable_test_prices
 from db_targets import TARGETS, fresh_store
+from totp_helpers import AUTH, enable_totp, extra
 
 ORIGIN='https://avina.example';PASSWORD='disposable-test-password'
 TRON='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'          # a valid TRON address (the USDT contract, used only as a test target)
@@ -21,7 +22,7 @@ BSC='0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed'
 @pytest.fixture(params=TARGETS)
 def store(request,tmp_path):
     store=fresh_store(request.param,tmp_path)
-    store.create_user('manager',PASSWORD,'m@example.com');store.set_admin('manager')
+    store.create_user('manager',PASSWORD,'m@example.com');store.set_admin('manager');enable_totp(store,'manager')
     store.create_user('alice',PASSWORD,'a@example.com');store.create_user('bob',PASSWORD,'b@example.com')
     enable_test_prices(store)
     yield store
@@ -122,9 +123,30 @@ def test_paid_signals_order_is_queued_for_signing_when_auto_approval_is_on(store
 
 
 class FakeChain:
-    def __init__(self):self.calls=[];self.block=1000;self.logs=[];self.trc20=[];self.stamp=lambda number:int(time.time())
+    """Primary chain data plus an independent second source. By default the second source mirrors the primary one."""
+    def __init__(self):
+        self.calls=[];self.block=1000;self.logs=[];self.trc20=[];self.stamp=lambda number:int(time.time())
+        self.second_down=False;self.second_unaware=set();self.receipts={}
+    def receipt(self,tx):
+        if self.second_down:raise OSError('second source unreachable')
+        if tx in self.second_unaware:return {'result':None}
+        if tx in self.receipts:return {'result':self.receipts[tx]}
+        mine=[l for l in self.logs if l['transactionHash']==tx]
+        if not mine:return {'result':None}
+        return {'result':dict(status='0x1',transactionHash=tx,blockNumber=mine[0]['blockNumber'],
+                              logs=[dict(address=l['address'],topics=l['topics'],data=l['data'],logIndex=l['logIndex'],blockNumber=l['blockNumber']) for l in mine])}
+    def tron_info(self,url):
+        if self.second_down:raise OSError('second source unreachable')
+        txid=url.split('hash=')[1]
+        if txid in self.second_unaware:return {}
+        item=next((t for t in self.trc20 if t['transaction_id']==txid),None)
+        if not item:return {}
+        return dict(confirmed=True,contractRet='SUCCESS',trc20TransferInfo=[dict(contract_address=item['token_info']['address'],to_address=item['to'],amount_str=item['value'])])
     def __call__(self,url,payload=None,headers=None):
         self.calls.append((url,payload))
+        if url.startswith('https://bsc-dataseed.bnbchain.org'):
+            assert payload['method']=='eth_getTransactionReceipt';return self.receipt(payload['params'][0])
+        if url.startswith('https://apilist.tronscanapi.com/api/transaction-info'):return self.tron_info(url)
         if payload is None:return {'data':self.trc20}
         if payload['method']=='eth_blockNumber':return {'result':hex(self.block)}
         if payload['method']=='eth_getBlockByNumber':return {'result':dict(number=payload['params'][0],timestamp=hex(self.stamp(int(payload['params'][0],16))))}
@@ -165,16 +187,16 @@ def test_watcher_reads_confirmed_bsc_logs_and_trc20_transfers(store):
 def test_payment_api_for_customers_and_admins(store):
     with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
         def login(name):
-            r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD))
+            r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,**extra(name)))
             return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':r.json()['csrf']}
         alice,a,_=order(store,'alice')
         h=login('alice')
         assert client.get('/api/me/payment-methods').json()['methods']==[]
         assert client.post(f'/api/me/license/orders/{a}/invoice',headers=h,json=dict(network='tron',token='USDT')).status_code==409
-        assert client.put('/api/admin/payments',headers=h,json=dict(tron_address=TRON)).status_code==403
+        assert client.put('/api/admin/payments',headers=h,json=dict(tron_address=TRON,totp='123456')).status_code==403
         admin=login('manager')
-        assert client.put('/api/admin/payments',headers=admin,json=dict(tron_address='nope')).status_code==422
-        saved=client.put('/api/admin/payments',headers=admin,json=dict(tron_address=TRON,bsc_address=BSC))
+        assert client.put('/api/admin/payments',headers=admin,json=dict(tron_address='nope',totp=AUTH['manager'].code())).status_code==422
+        saved=client.put('/api/admin/payments',headers=admin,json=dict(tron_address=TRON,bsc_address=BSC,totp=AUTH['manager'].code()))
         assert saved.status_code==200 and len(saved.json()['methods'])==3
         h=login('alice')
         assert client.post(f'/api/me/license/orders/{a}/invoice',json=dict(network='tron',token='USDT')).status_code==403  # CSRF
@@ -252,7 +274,7 @@ def test_attach_route_is_admin_only_and_strict(store):
     payments.record_transfer('tron','USDT','tron:short','T',TRON,invoice['amount_micro']-500_000,time.time())
     with TestClient(create_app(store,origin=ORIGIN),base_url=ORIGIN) as client:
         def login(name):
-            r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD))
+            r=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,**extra(name)))
             return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':r.json()['csrf']}
         url='/api/admin/payments/transfers/attach';body=dict(tx_ref='tron:short',order_id=a)
         assert client.post(url,headers=login('alice'),json=body).status_code==403
@@ -262,3 +284,118 @@ def test_attach_route_is_admin_only_and_strict(store):
         assert client.post(url,headers=h,json=dict(body,tx_ref='tron:none')).status_code==404
         assert client.post(url,headers=h,json=body).status_code==200
         assert client.post(url,headers=h,json=body).status_code==409
+
+
+# ---- Second-source confirmation ---------------------------------------------------------------------------------
+
+def bsc_setup(store):
+    configure(store);payments=Payments(store)
+    alice,a,_=order(store,'alice');invoice=payments.create_invoice(alice,a,'bsc','USDT')
+    chain=FakeChain();watcher=Watcher(store,chain);watcher.once()  # first pass sets the cursor
+    return payments,alice,a,invoice,chain,watcher
+
+
+def test_second_source_confirms_a_bsc_transfer_before_it_is_recorded(store):
+    payments,alice,a,invoice,chain,watcher=bsc_setup(store)
+    chain.logs=[log(990,invoice['amount_micro']*10**12,'0xaaa')];chain.block=1020;watcher.once()
+    assert payments.invoice(alice,a)['status']=='paid'
+    assert any(url.startswith('https://bsc-dataseed.bnbchain.org') and p['method']=='eth_getTransactionReceipt' and p['params']==['0xaaa'] for url,p in chain.calls)
+    assert payments.admin_settings()['verify_ok'] is True
+
+
+def test_a_transfer_the_second_source_does_not_confirm_is_retried_until_it_does(store):
+    payments,alice,a,invoice,chain,watcher=bsc_setup(store)
+    chain.logs=[log(990,invoice['amount_micro']*10**12,'0xaaa')];chain.block=1020
+    for refusal in ('unaware','down'):
+        chain.second_unaware={'0xaaa'} if refusal=='unaware' else set();chain.second_down=refusal=='down'
+        watcher.once()
+        assert payments.invoice(alice,a)['status']=='open' and payments.transfers()==[]
+    seen=payments.admin_settings()
+    assert seen['verify_ok'] is False and seen['verify_failures']==2 and seen['verify_failed_at']
+    chain.second_unaware=set();chain.second_down=False
+    watcher.once()  # the cursor stayed before the transfer, so it is read again and now confirmed
+    assert payments.invoice(alice,a)['status']=='paid' and payments.invoice(alice,a)['tx_ref']=='bsc:0xaaa:1'
+    assert payments.admin_settings()['verify_ok'] is True
+
+
+def test_a_forged_primary_log_is_never_recorded(store):
+    payments,alice,a,invoice,chain,watcher=bsc_setup(store)
+    good=log(990,invoice['amount_micro']*10**12,'0xforged')
+    chain.logs=[good];chain.block=1020
+    other='0x'+'0'*24+'2'*40
+    forgeries={'reverted':dict(status='0x0'),'other block':dict(blockNumber=hex(991)),'other receiver':dict(topic2=other),
+               'smaller amount':dict(data=hex(1)),'other token':dict(address=TOKENS[('bsc','USDC')]['contract']),'no logs':dict(logs=[])}
+    for name,change in forgeries.items():
+        entry=dict(address=good['address'],topics=list(good['topics']),data=good['data'],logIndex=good['logIndex'],blockNumber=good['blockNumber'])
+        if 'topic2' in change:entry['topics'][2]=change['topic2']
+        entry.update({k:v for k,v in change.items() if k in entry})
+        chain.receipts['0xforged']=dict(status=change.get('status','0x1'),transactionHash='0xforged',blockNumber=change.get('blockNumber',good['blockNumber']),
+                                        logs=change.get('logs',[entry]))
+        watcher.once()
+        assert payments.invoice(alice,a)['status']=='open' and payments.transfers()==[],name
+    assert payments.admin_settings()['verify_failures']==len(forgeries)
+    # A receipt without a log index, or malformed, is not verification either.
+    chain.receipts['0xforged']=dict(status='0x1',blockNumber=good['blockNumber'],logs=[dict(address=good['address'])])
+    watcher.once();assert payments.transfers()==[]
+
+
+def test_tron_transfers_need_a_confirmed_matching_transaction_on_the_second_source(store):
+    from portal_payments import tron_info_confirms
+    configure(store);payments=Payments(store)
+    alice,a,_=order(store,'alice');invoice=payments.create_invoice(alice,a,'tron','USDT')
+    chain=FakeChain();watcher=Watcher(store,chain)
+    chain.trc20=[dict(transaction_id='t1',block_timestamp=int(time.time()*1000),to=TRON,**{'from':'Tsender'},value=str(invoice['amount_micro']),
+                      token_info=dict(address=TOKENS[('tron','USDT')]['contract'],decimals=6))]
+    chain.second_unaware={'t1'};watcher.once()
+    assert payments.invoice(alice,a)['status']=='open' and payments.transfers()==[] and payments.admin_settings()['verify_ok'] is False
+    chain.second_unaware=set();watcher.once()
+    assert payments.invoice(alice,a)['status']=='paid' and payments.admin_settings()['verify_ok'] is True
+    assert any('/api/transaction-info?hash=t1' in url for url,p in chain.calls)
+    contract=TOKENS[('tron','USDT')]['contract']
+    good=dict(confirmed=True,contractRet='SUCCESS',trc20TransferInfo=[dict(contract_address=contract,to_address=TRON,amount_str='5000')])
+    assert tron_info_confirms(good,contract,TRON,5000)
+    bad=[dict(good,confirmed=False),dict(good,contractRet='REVERT'),{k:v for k,v in good.items() if k!='trc20TransferInfo'},
+         dict(good,trc20TransferInfo='x'),dict(good,trc20TransferInfo=[]),None,[],{},
+         dict(good,trc20TransferInfo=[dict(contract_address='Tother',to_address=TRON,amount_str='5000')]),
+         dict(good,trc20TransferInfo=[dict(contract_address=contract,to_address='Tother',amount_str='5000')]),
+         dict(good,trc20TransferInfo=[dict(contract_address=contract,to_address=TRON,amount_str='4999')]),
+         dict(good,trc20TransferInfo=[dict(contract_address=contract,to_address=TRON,amount_str='five')]),
+         dict(good,trc20TransferInfo=[dict(contract_address=contract,to_address=TRON)])]
+    for info in bad:assert not tron_info_confirms(info,contract,TRON,5000),info
+
+
+def test_auto_approval_only_up_to_the_ceiling_and_new_settings_are_validated(store):
+    manager=uid(store,'manager');payments=Payments(store)
+    saved=payments.save_settings(manager,dict(tron_address=TRON,auto_approve_signals=True))
+    assert saved['auto_approve_max_usd']==500 and saved['bsc_rpc_verify']=='https://bsc-dataseed.bnbchain.org' and saved['tron_verify_url']=='https://apilist.tronscanapi.com'
+    for bad in (dict(bsc_rpc_verify='http://insecure.example'),dict(tron_verify_url='ftp://x'),dict(auto_approve_max_usd=-1),dict(auto_approve_max_usd='abc'),dict(auto_approve_max_usd=True)):
+        with pytest.raises(ValueError):payments.save_settings(manager,dict(tron_address=TRON,**bad))
+    alice,a,price=order(store,'alice','signals');dollars=-(-price//100)  # smallest ceiling that covers the order
+    payments.save_settings(manager,dict(tron_address=TRON,auto_approve_signals=True,auto_approve_max_usd=dollars-1))  # one dollar under the price
+    invoice=payments.create_invoice(alice,a,'tron','USDT')
+    payments.record_transfer('tron','USDT','tron:big','T',TRON,invoice['amount_micro'],time.time())
+    with store.db() as db:assert db.execute('SELECT COUNT(*) AS n FROM license_approvals').fetchone()['n']==0  # waits for a person
+    bob,b,_=order(store,'bob','signals')
+    payments.save_settings(manager,dict(tron_address=TRON,auto_approve_signals=True,auto_approve_max_usd=dollars))
+    invoice=payments.create_invoice(bob,b,'tron','USDT')
+    payments.record_transfer('tron','USDT','tron:ok','T',TRON,invoice['amount_micro'],time.time())
+    with store.db() as db:assert db.execute('SELECT order_id FROM license_approvals').fetchone()['order_id']==b
+
+
+def test_changing_a_receiving_wallet_alerts_every_linked_admin(store):
+    from portal_telegram import short
+    manager=uid(store,'manager');second=store.create_user('second-admin',PASSWORD,'s@example.com');store.set_admin('second-admin')
+    unlinked=store.create_user('third-admin',PASSWORD,'t@example.com');store.set_admin('third-admin')
+    with store.db() as db:
+        for user,chat in ((manager,901),(second,902),(uid(store,'alice'),903)):
+            db.execute('INSERT INTO telegram_links(user_id,chat_id,username,lang,signals,notices,linked) VALUES(?,?,?,?,1,0,?)',(user,chat,'u','en',time.time()))
+    payments=Payments(store)
+    payments.save_settings(manager,dict(tron_address=TRON,bsc_address=BSC))
+    with store.db() as db:db.execute('DELETE FROM telegram_outbox')
+    payments.save_settings(manager,dict(tron_address=TRON,bsc_address=BSC,invoice_minutes=30))  # no wallet change: no alert
+    with store.db() as db:assert db.execute('SELECT COUNT(*) AS n FROM telegram_outbox').fetchone()['n']==0
+    new='0x'+'ab'*20
+    payments.save_settings(manager,dict(tron_address=TRON,bsc_address=new))
+    with store.db() as db:rows=db.execute('SELECT chat_id,text FROM telegram_outbox').fetchall()
+    assert sorted(r['chat_id'] for r in rows)==[901,902]  # both admins even with notices off; neither the customer nor the unlinked admin
+    assert all(short(BSC) in r['text'] and short(new) in r['text'] for r in rows) and short(BSC)==BSC[:6]+'…'+BSC[-4:]

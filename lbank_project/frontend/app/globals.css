@@ -3697,3 +3697,60 @@ html[lang="fa"] .blog-contents ol {
 .referral-preview p {
   margin: 0.25rem 0 0;
 }
+/* Account security: password, devices, two-step login, sign-up honeypot */
+.security-stack {
+  display: flex;
+  flex-direction: column;
+}
+.security-card {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 620px;
+}
+.security-card h3 {
+  margin: 0;
+}
+.security-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.security-card button[type="submit"],
+.security-card > button {
+  align-self: flex-start;
+}
+.recovery-codes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px 14px;
+}
+.recovery-codes code,
+.totp-secret {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.admin-warning-banner {
+  border: 1px solid var(--warning, #b45309);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.admin-warning-banner strong {
+  display: block;
+  margin-bottom: 4px;
+}

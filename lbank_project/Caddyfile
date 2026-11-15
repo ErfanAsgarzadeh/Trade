@@ -10,13 +10,13 @@
 	request_body @blog_upload {
 		max_size 10MB
 	}
+	# Security headers (HSTS, CSP, Permissions-Policy, ...) are set only by the application, so there is one source of truth.
 	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
 	}
-	reverse_proxy portal:8080
+	reverse_proxy portal:8080 {
+		header_down -Server
+	}
 }
 www.{$PORTAL_DOMAIN} {
 	redir https://{$PORTAL_DOMAIN}{uri} permanent

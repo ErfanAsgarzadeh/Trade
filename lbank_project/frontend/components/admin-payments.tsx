@@ -4,6 +4,7 @@ import { ApiClient, ApiError, errorText } from "@/lib/api";
 import { dateTime } from "@/lib/format";
 import { useLang } from "@/lib/lang";
 import { Heading } from "./shared";
+import TotpField from "./totp-field";
 
 interface Settings {
   tron_address: string;
@@ -12,6 +13,12 @@ interface Settings {
   auto_approve_signals: boolean;
   bsc_rpc: string;
   trongrid_url: string;
+  bsc_rpc_verify: string;
+  tron_verify_url: string;
+  auto_approve_max_usd: number;
+  verify_ok: boolean;
+  verify_failures: number;
+  verify_failed_at: number | null;
   methods: { network: string; token: string; label: string }[];
   watcher_seen: number | null;
   checked: { tron: number | null; bsc: number | null };
@@ -106,7 +113,9 @@ export default function AdminPayments({
       bsc_address: "",
       invoice_minutes: 60,
       auto_approve_signals: false,
+      auto_approve_max_usd: 500,
     }),
+    [totp, setTotp] = useState(""),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const load = useCallback(
@@ -123,6 +132,7 @@ export default function AdminPayments({
             bsc_address: d.settings.bsc_address,
             invoice_minutes: d.settings.invoice_minutes,
             auto_approve_signals: d.settings.auto_approve_signals,
+            auto_approve_max_usd: d.settings.auto_approve_max_usd,
           });
         })
         .catch(report),
@@ -152,7 +162,11 @@ export default function AdminPayments({
         ...form,
         bsc_rpc: settings?.bsc_rpc,
         trongrid_url: settings?.trongrid_url,
+        bsc_rpc_verify: settings?.bsc_rpc_verify,
+        tron_verify_url: settings?.tron_verify_url,
+        totp,
       });
+      setTotp("");
       setMessage(t("تنظیمات پرداخت ذخیره شد.", "Payment settings saved."));
       void load();
     } catch (err) {
@@ -251,6 +265,33 @@ export default function AdminPayments({
               "After on-chain confirmation, send signals-only subscriptions for license issuing automatically (in your name). Automated trading always needs a manual exchange-account check.",
             )}
           </label>
+          <label htmlFor="pay-max">
+            {t(
+              "سقف دلاری تأیید خودکار سفارش",
+              "Automatic approval ceiling (USD)",
+            )}
+          </label>
+          <input
+            id="pay-max"
+            type="number"
+            dir="ltr"
+            min={0}
+            max={1000000}
+            value={form.auto_approve_max_usd}
+            onChange={(e) =>
+              setForm((f) => ({
+                ...f,
+                auto_approve_max_usd: Number(e.target.value),
+              }))
+            }
+          />
+          <p className="field-hint">
+            {t(
+              "سفارش پرداخت‌شده‌ای که قیمتش بالاتر از این سقف باشد، برای تأیید دستی می‌ماند.",
+              "A paid order priced above this ceiling waits for your manual approval.",
+            )}
+          </p>
+          <TotpField id="pay-totp" value={totp} onChange={setTotp} />
           <button type="submit" disabled={busy}>
             {t("ذخیرهٔ تنظیمات پرداخت", "Save payment settings")}
           </button>
@@ -258,6 +299,20 @@ export default function AdminPayments({
             {message}
           </p>
         </form>
+        {settings && !settings.verify_ok && (
+          <p id="verify-warning" className="admin-error" role="alert">
+            {t(
+              "تأیید منبع دوم در حال شکست است؛ پرداخت‌های جدید ثبت نمی‌شوند تا منبع دوم همان تراکنش را تأیید کند.",
+              "Second-source verification is failing; new payments are not recorded until the second source confirms the same transaction.",
+            )}{" "}
+            <bdi dir="ltr">
+              {settings.verify_failures}
+              {settings.verify_failed_at
+                ? " · " + dateTime(settings.verify_failed_at, lang)
+                : ""}
+            </bdi>
+          </p>
+        )}
         <div className="admin-overview-services">
           <article>
             <h3>{t("سرویس بررسی پرداخت", "Payment checker")}</h3>

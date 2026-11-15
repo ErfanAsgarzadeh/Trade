@@ -19,13 +19,14 @@ import product_pricing
 import customer_manager
 from capital_plans import PRICES,TERMS
 from pricing_helpers import enable_test_prices
+from totp_helpers import enable_totp,extra
 
 ORIGIN='https://portal.test';PASSWORD='disposable-test-password'
 
 @pytest.fixture
 def setup(tmp_path):
     key=Fernet.generate_key();store=PortalStore(tmp_path/'portal.db',key)
-    admin=store.create_user('manager',PASSWORD);store.set_admin('manager')
+    admin=store.create_user('manager',PASSWORD);store.set_admin('manager');enable_totp(store,'manager')
     alice=store.create_user('alice',PASSWORD);bob=store.create_user('bob',PASSWORD)
     private,public=tmp_path/'issuer.private.pem',tmp_path/'issuer.public.pem';customer_manager.keygen(private,public)
     yield store,admin,alice,bob,private,public,key
@@ -33,7 +34,7 @@ def setup(tmp_path):
 
 
 def login(client,name='manager'):
-    response=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD))
+    response=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,**extra(name)))
     assert response.status_code==200,response.text
     return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':response.json()['csrf']}
 

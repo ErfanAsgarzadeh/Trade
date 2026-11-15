@@ -5,6 +5,7 @@ import re
 from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 import pytest
+from totp_helpers import enable_totp,extra
 
 import portal_blog
 from portal_blog import BlogStore, persian_date, render_body
@@ -18,13 +19,13 @@ BODY='## بخش اول\nمتن با **تأکید** و [پیوند](/blog/other/)
 @pytest.fixture
 def store(tmp_path):
     store=PortalStore(tmp_path/'portal.db',Fernet.generate_key())
-    store.create_user('manager',PASSWORD);store.set_admin('manager');store.create_user('alice',PASSWORD)
+    store.create_user('manager',PASSWORD);store.set_admin('manager');enable_totp(store,'manager');store.create_user('alice',PASSWORD)
     yield store
     store.close()
 
 
 def login(client,name='manager'):
-    response=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD))
+    response=client.post('/api/login',headers={'X-Portal-Request':'1','Origin':ORIGIN},json=dict(username=name,password=PASSWORD,**extra(name)))
     assert response.status_code==200,response.text
     return {'X-Portal-Request':'1','Origin':ORIGIN,'X-CSRF-Token':response.json()['csrf']}
 
