@@ -165,6 +165,11 @@ CREATE INDEX IF NOT EXISTS email_tokens_user ON email_tokens(user_id);
 CREATE TABLE IF NOT EXISTS expiry_reminders(user_id TEXT NOT NULL,license_id TEXT NOT NULL,threshold INTEGER NOT NULL,
  sent REAL NOT NULL,PRIMARY KEY(user_id,license_id,threshold))
 '''
+SCHEMA_V16='''
+CREATE TABLE IF NOT EXISTS forward_snapshots(day TEXT PRIMARY KEY,payload TEXT NOT NULL,created REAL NOT NULL);
+ALTER TABLE blog_posts ADD COLUMN author_name TEXT NOT NULL DEFAULT '';
+ALTER TABLE blog_posts ADD COLUMN author_bio TEXT NOT NULL DEFAULT ''
+'''
 
 
 class PostgresConnection:
@@ -241,8 +246,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12),(13,SCHEMA_V13),(14,SCHEMA_V14),(15,SCHEMA_V15)):
+            if versions-{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12),(13,SCHEMA_V13),(14,SCHEMA_V14),(15,SCHEMA_V15),(16,SCHEMA_V16)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

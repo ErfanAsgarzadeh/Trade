@@ -48,7 +48,11 @@ def frontend_index(directory, filename="index.html"):
 # Search engines index only the public pages. Their canonical links and JSON-LD need the site's real origin, which
 # the static export does not know at build time, so they are added here when a page is served. Blog pages are
 # rendered by portal_blog.py. Persian pages are at the root and English pages under /en/.
-PUBLIC_PAGES = {'/': 'index.html', '/register/': 'register.html', '/en/': 'en.html', '/en/register/': 'en/register.html'}
+PUBLIC_PAGES = {'/': 'index.html', '/register/': 'register.html', '/forward-test/': 'forward-test.html',
+                '/en/': 'en.html', '/en/register/': 'en/register.html', '/en/forward-test/': 'en/forward-test.html'}
+from portal_pages import SERVER_PAGES  # noqa: E402  (server-rendered pages, listed here for the sitemap)
+PRIVATE_PAGES = {'/dashboard/': 'dashboard.html', '/admin/': 'admin.html',
+                 '/en/dashboard/': 'en/dashboard.html', '/en/admin/': 'en/admin.html'}
 SITE_NAME = 'Avina'
 SITE_SUMMARY = {'fa': 'آوینا، ربات معامله‌گر هوشمند ارز دیجیتال و فیوچرز از خانوادهٔ ARTAX.',
                 'en': 'Avina, a smart crypto and futures trading bot from the ARTAX family.'}
@@ -137,20 +141,53 @@ def robots_txt(origin):
             f'Disallow: /en/admin\n\nSitemap: {origin}/sitemap.xml\n')
 
 
-def sitemap_xml(origin, directory, posts=None):
-    """Public pages plus published blog articles; posts maps a language to its articles (dicts with slug and dates)."""
+# Day each page's copy last changed (YYYY-MM-DD). Edit the entry whenever a page's text changes: file times are the build
+# time in Docker, which would tell search engines every page changes at every deploy. Pages not listed use FALLBACK_DATE.
+# Data-driven pages (blog articles, the forward test) pass their own data date instead.
+FALLBACK_DATE = '2026-11-15'
+CONTENT_UPDATED = {'/': '2026-11-15', '/register/': '2026-11-15', '/forward-test/': '2026-11-15', '/pricing/': '2026-11-15',
+                   '/signals/': '2026-11-15', '/auto-trading/': '2026-11-15', '/exchanges/': '2026-11-15',
+                   '/methodology/': '2026-11-15', '/about/': '2026-11-15', '/contact/': '2026-11-15',
+                   '/terms/': '2026-11-15', '/privacy/': '2026-11-15', '/risk/': '2026-11-15'}
+
+
+def _alternates(origin, fa, en):
+    return ''.join(f'<xhtml:link rel="alternate" hreflang="{code}" href="{html.escape(origin + href)}"/>'
+                   for code, href in (('fa', fa), ('en', en), ('x-default', fa)))
+
+
+def sitemap_xml(origin, directory, posts=None, extra=(), skip=(), dates=None):
+    """Public pages plus published blog articles; posts maps a language to its articles (dicts with slug and dates).
+    `extra` lists server-rendered page paths, `skip` paths to leave out (a hidden page), `dates` {path: YYYY-MM-DD} data dates.
+    Every URL that exists in both languages carries xhtml:link alternates for fa, en and x-default."""
     posts = posts or {}
+    dates = dates or {}
     rows = []
-    for path, filename in PUBLIC_PAGES.items():
-        try:day = datetime.fromtimestamp((Path(directory) / filename).stat().st_mtime, timezone.utc).date().isoformat()
-        except OSError:continue
-        rows.append(f'<url><loc>{html.escape(origin + path)}</loc><lastmod>{day}</lastmod></url>')
+    paths = [p for p in PUBLIC_PAGES if p not in skip]
+    available = set()
+    for path in paths:
+        if (Path(directory) / PUBLIC_PAGES[path]).is_file():available.add(path)
+    available |= {p for p in extra if p not in skip}
+    for path in [*PUBLIC_PAGES, *extra]:
+        if path not in available:continue
+        fa = path if page_lang(path) == 'fa' else counterpart(path)
+        en = counterpart(fa)
+        day = dates.get(fa) or CONTENT_UPDATED.get(fa, FALLBACK_DATE)
+        both = fa in available and en in available
+        rows.append(f'<url><loc>{html.escape(origin + path)}</loc><lastmod>{day}</lastmod>'
+                    + (_alternates(origin, fa, en) if both else '') + '</url>')
+    slugs = {lang: {p['slug'] for p in items} for lang, items in posts.items()}
     for lang, items in posts.items():
         base = origin + ('/en/blog/' if lang == 'en' else '/blog/')
         if items:
             newest = max(max(p['updated_on'], p['published_on']) for p in items)
-            rows.append(f'<url><loc>{html.escape(base)}</loc><lastmod>{newest}</lastmod></url>')
+            index = (_alternates(origin, '/blog/', '/en/blog/') if all(posts.get(c) for c in ('fa', 'en')) else '')
+            rows.append(f'<url><loc>{html.escape(base)}</loc><lastmod>{newest}</lastmod>{index}</url>')
         for post in items:
             day = max(post['updated_on'], post['published_on'])
-            rows.append(f'<url><loc>{html.escape(base + post["slug"])}/</loc><lastmod>{day}</lastmod></url>')
-    return '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(rows) + '</urlset>'
+            link = ''
+            if post['slug'] in slugs.get('fa', ()) and post['slug'] in slugs.get('en', ()):
+                link = _alternates(origin, '/blog/' + post['slug'] + '/', '/en/blog/' + post['slug'] + '/')
+            rows.append(f'<url><loc>{html.escape(base + post["slug"])}/</loc><lastmod>{day}</lastmod>{link}</url>')
+    return ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + ''.join(rows) + '</urlset>')

@@ -25,7 +25,7 @@ IMAGE_SRC = re.compile(r'^/blog-media/([a-f0-9]{16,32})\.webp$')
 IMAGE = r'!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)'
 IMAGE_LINE = re.compile('^' + IMAGE + '$')
 INLINE = re.compile(IMAGE + r'|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)')
-LIMITS = dict(slug=80, title=120, description=300, keywords=300, body=60000)
+LIMITS = dict(slug=80, title=120, description=300, keywords=300, body=60000, author_name=80, author_bio=300)
 SEED_DIRECTORY = Path(__file__).with_name('frontend') / 'content' / 'blog'
 SITE_SUMMARY = {'fa': 'آوینا، ربات معامله‌گر هوشمند ارز دیجیتال و فیوچرز از خانوادهٔ ARTAX.',
                 'en': 'Avina, a smart crypto and futures trading bot from the ARTAX family.'}
@@ -240,7 +240,7 @@ def persian_date(day):
 
 def _clean(fields):
     """Validated article fields; ValueError names the first problem."""
-    value = {key: str(fields.get(key) or '').strip() for key in ('slug', 'title', 'description', 'body', 'status', 'published_on')}
+    value = {key: str(fields.get(key) or '').strip() for key in ('slug', 'title', 'description', 'body', 'status', 'published_on', 'author_name', 'author_bio')}
     value['lang'] = str(fields.get('lang') or 'fa')
     keywords = fields.get('keywords') or []
     if isinstance(keywords, str):keywords = re.split(r'[,،]', keywords)
@@ -336,11 +336,12 @@ class BlogStore:
             if value['status'] == 'published' and not published_on:
                 published_on = datetime.fromtimestamp(now, timezone.utc).date().isoformat()
             data = (value['lang'], value['slug'], value['title'], value['description'],
-                    json.dumps(value['keywords'], ensure_ascii=False), value['body'], value['status'], published_on, now)
+                    json.dumps(value['keywords'], ensure_ascii=False), value['body'], value['status'], published_on, value['author_name'],
+                    value['author_bio'], now)
             if post_id is None:
                 post_id = str(uuid.uuid4())
-                db.execute('INSERT INTO blog_posts(lang,slug,title,description,keywords,body,status,published_on,updated,id,created) '
-                           'VALUES(?,?,?,?,?,?,?,?,?,?,?)', data + (post_id, now))
+                db.execute('INSERT INTO blog_posts(lang,slug,title,description,keywords,body,status,published_on,author_name,author_bio,updated,id,created) '
+                           'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', data + (post_id, now))
                 action = 'blog_created'
             else:
                 current = db.execute('SELECT updated FROM blog_posts WHERE id=?', (post_id,)).fetchone()
@@ -348,7 +349,7 @@ class BlogStore:
                 if expected_updated is None or abs(current['updated'] - expected_updated) > 1e-6:
                     raise BlogConflict('Article changed since it was opened; reload it')
                 db.execute('UPDATE blog_posts SET lang=?,slug=?,title=?,description=?,keywords=?,body=?,status=?,published_on=?,'
-                           'updated=? WHERE id=?', data + (post_id,))
+                           'author_name=?,author_bio=?,updated=? WHERE id=?', data + (post_id,))
                 action = 'blog_updated'
             record(db, actor, action, post_id, dict(lang=value['lang'], slug=value['slug'], status=value['status']))
         self._changed()
@@ -495,7 +496,7 @@ def minutes_label(minutes, lang):
 
 TEXT = {
     'fa': dict(home='Avina، صفحهٔ اصلی', nav='ناوبری اصلی', why='چرا آوینا', record='کارنامهٔ پنج‌ساله', plans='پلن‌ها',
-               blog='بلاگ', faq='پرسش‌ها', theme='ظاهر', choose_theme='انتخاب ظاهر', dark='تیره', light='روشن', system='سیستم',
+               blog='بلاگ', forward='فوروارد تست', faq='پرسش‌ها', theme='ظاهر', choose_theme='انتخاب ظاهر', dark='تیره', light='روشن', system='سیستم',
                signin='ورود به پنل', signup='ساخت حساب', skip='رفتن به محتوا', other='English',
                footer='آوینا، ربات معامله‌گر هوشمند از خانوادهٔ ARTAX. معامله در بازارهای مالی ریسک از دست دادن سرمایه دارد و نتایج بک‌تست تضمین‌کنندهٔ بازده آینده نیستند.',
                footer_nav='پیوندهای پایانی', faq_long='پرسش‌های پرتکرار', login='ورود', register='ثبت‌نام', method='روش بک‌تست',
@@ -509,9 +510,9 @@ TEXT = {
                cta_p='بک‌تست پنج‌ساله، دادهٔ روزانه و روش محاسبه را ببینید و اگر قانع شدید، حساب بسازید. سرمایه در حساب صرافی خودتان می‌ماند.',
                cta_record='دیدن کارنامه', cta_signup='ساخت حساب',
                disclaimer='این مقاله آموزشی است و توصیهٔ سرمایه‌گذاری نیست. معامله در بازار فیوچرز ریسک از دست دادن سرمایه دارد.',
-               related='مقاله‌های دیگر', rss='بلاگ آوینا', locale='fa_IR'),
+               related='مقاله‌های دیگر', by='نویسنده', cta_more='بیشتر بدانید', rss='بلاگ آوینا', locale='fa_IR'),
     'en': dict(home='Avina home', nav='Main navigation', why='Why Avina', record='Five-year record', plans='Plans',
-               blog='Blog', faq='FAQ', theme='Theme', choose_theme='Choose theme', dark='Dark', light='Light', system='System',
+               blog='Blog', forward='Forward test', faq='FAQ', theme='Theme', choose_theme='Choose theme', dark='Dark', light='Light', system='System',
                signin='Sign in', signup='Create account', skip='Skip to content', other='فارسی',
                footer='Avina, a smart trading bot from the ARTAX family. Trading financial markets carries the risk of losing capital, and backtest results do not guarantee future returns.',
                footer_nav='Footer links', faq_long='FAQ', login='Sign in', register='Sign up', method='Backtest method',
@@ -525,8 +526,13 @@ TEXT = {
                cta_p='See the five-year backtest, the daily data and the method, and create an account if you are convinced. Your funds stay in your own exchange account.',
                cta_record='See the record', cta_signup='Create account',
                disclaimer='This article is educational and not investment advice. Futures trading carries the risk of losing capital.',
-               related='More articles', rss='Avina Blog', locale='en_US'),
+               related='More articles', by='By', cta_more='Learn more', rss='Avina Blog', locale='en_US'),
 }
+
+
+def _nav(lang, slug):
+    from portal_pages_content import NAMES
+    return NAMES[slug][0 if lang == 'fa' else 1]
 
 
 def _logo(lang):
@@ -541,7 +547,7 @@ def _header(lang, other_href):
     other = 'en' if lang == 'fa' else 'fa'
     return (f'<header class="landing-header">{_logo(lang)}<nav aria-label="{t["nav"]}"><a href="{home}#why">{t["why"]}</a>'
             f'<a href="{home}#backtest">{t["record"]}</a><a href="{home}#products">{t["plans"]}</a>'
-            f'<a href="{blog_path(lang)}">{t["blog"]}</a><a href="{home}#faq">{t["faq"]}</a></nav>'
+            f'<a href="{path(lang, "/forward-test/")}">{t["forward"]}</a><a href="{blog_path(lang)}">{t["blog"]}</a><a href="{home}#faq">{t["faq"]}</a></nav>'
             f'<div class="landing-header-actions"><a class="language-link" href="{_e(other_href)}" hreflang="{other}" lang="{other}">'
             f'{t["other"]}</a><div class="theme-switcher"><label for="blog-appearance">{t["theme"]}</label>'
             f'<select id="blog-appearance" data-legacy-theme-switch aria-label="{t["choose_theme"]}"><option value="dark">{t["dark"]}'
@@ -551,10 +557,13 @@ def _header(lang, other_href):
 
 
 def _footer(lang):
+    from portal_pages_content import NAMES, ORDER
     t = TEXT[lang]
-    method = '/backtest/methodology-en.md' if lang == 'en' else '/backtest/methodology-fa.md'
+    index = 0 if lang == 'fa' else 1
+    links = ''.join(f'<a href="{path(lang, "/" + slug + "/")}">{NAMES[slug][index]}</a>' for slug in ('forward-test', *ORDER) if slug != 'methodology')
+    method = path(lang, '/methodology/')
     return (f'<footer class="landing-footer">{_logo(lang)}<p>{t["footer"]}</p><nav aria-label="{t["footer_nav"]}">'
-            f'<a href="{blog_path(lang)}">{t["blog"]}</a><a href="{path(lang, "/")}#faq">{t["faq_long"]}</a>'
+            f'{links}<a href="{blog_path(lang)}">{t["blog"]}</a><a href="{path(lang, "/")}#faq">{t["faq_long"]}</a>'
             f'<a href="{path(lang, "/dashboard/")}">{t["login"]}</a><a href="{path(lang, "/register/")}">{t["register"]}</a>'
             f'<a href="{method}">{t["method"]}</a></nav></footer>')
 
@@ -629,6 +638,10 @@ def article_page(origin, css, post, related, translations=(), lang='fa', sizes=N
     if related:
         more = (f'<section class="blog-related" aria-labelledby="related-title"><h2 id="related-title">{t["related"]}</h2>'
                 '<div class="blog-cards">' + ''.join(card(item, lang) for item in related) + '</div></section>')
+    author_box = ''
+    if post.get('author_name'):
+        bio = f'<p>{_e(post["author_bio"])}</p>' if post.get('author_bio') else ''
+        author_box = f'<aside class="blog-author" aria-label="{t["by"]}"><strong>{t["by"]} {_e(post["author_name"])}</strong>{bio}</aside>'
     body = (f'<article class="blog-article"><nav class="blog-breadcrumb" aria-label="{t["crumbs"]}"><a href="{path(lang, "/")}">'
             f'{t["brand"]}</a><span aria-hidden="true">/</span><a href="{blog_path(lang)}">{t["blog"]}</a></nav>'
             f'<header class="blog-article-head"><h1>{_e(post["title"])}</h1><p class="blog-lead">{_e(post["description"])}</p>'
@@ -637,14 +650,21 @@ def article_page(origin, css, post, related, translations=(), lang='fa', sizes=N
             f'{contents}<div class="blog-body">{render_body(post["body"], sizes)}</div>'
             f'<aside class="blog-cta" aria-label="{t["cta_label"]}"><h2>{t["cta_h2"]}</h2><p>{t["cta_p"]}</p><div>'
             f'<a class="landing-primary" href="{path(lang, "/")}#backtest">{t["cta_record"]}</a>'
-            f'<a class="landing-secondary" href="{path(lang, "/register/")}">{t["cta_signup"]}</a></div></aside>'
+            f'<a class="landing-secondary" href="{path(lang, "/register/")}">{t["cta_signup"]}</a></div>'
+            f'<p class="blog-cta-links">{t["cta_more"]}: <a href="{path(lang, "/pricing/")}">{_nav(lang, "pricing")}</a> · '
+            f'<a href="{path(lang, "/signals/")}">{_nav(lang, "signals")}</a> · '
+            f'<a href="{path(lang, "/auto-trading/")}">{_nav(lang, "auto-trading")}</a> · '
+            f'<a href="{path(lang, "/exchanges/")}">{_nav(lang, "exchanges")}</a></p></aside>'
+            f'{author_box}'
             f'<p class="blog-disclaimer">{t["disclaimer"]}</p></article>{more}')
     organization = {'@type': 'Organization', '@id': origin + '/#org', 'name': 'Avina', 'url': origin + '/',
                     'logo': origin + '/portal-assets/icon-512.png'}
+    author = ({'@type': 'Person', 'name': post['author_name'], **({'description': post['author_bio']} if post.get('author_bio') else {})}
+              if post.get('author_name') else {'@id': origin + '/#org'})
     article = {'@type': 'BlogPosting', 'headline': post['title'], 'description': post['description'],
                'datePublished': post['published_on'], 'dateModified': max(post['updated_on'], post['published_on']),
                'inLanguage': lang, 'keywords': ', '.join(post['keywords']), 'url': url, 'mainEntityOfPage': url,
-               'image': origin + (share[0] if share else '/portal-assets/og-image.png'), 'author': {'@id': origin + '/#org'},
+               'image': origin + (share[0] if share else '/portal-assets/og-image.png'), 'author': author,
                'publisher': {'@id': origin + '/#org'}}
     crumbs = {'@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': 1, 'name': t['brand'], 'item': origin + path(lang, '/')},

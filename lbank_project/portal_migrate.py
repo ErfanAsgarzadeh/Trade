@@ -22,7 +22,7 @@ TABLES={
  'admin_events':('id','actor_id','action','target','details','at'),
  'license_approvals':('id','order_id','requested_by','payload','payment_ref','state','lease_token','lease_until','attempts','created','updated','error_code'),
  'license_cashflows':('user_id','event_id','amount_usd','at'),
- 'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated','lang'),
+ 'blog_posts':('id','slug','title','description','keywords','body','status','published_on','created','updated','lang','author_name','author_bio'),
  'blog_images':('id','name','width','height','size','data','created'),
  'site_settings':('name','value','updated'),
  'telegram_links':('user_id','chat_id','username','lang','signals','notices','linked'),
@@ -34,6 +34,8 @@ TABLES={
  'referral_credit_uses':('order_id','reward_id','cents'),
 
  'expiry_reminders':('user_id','license_id','threshold','sent'),
+
+ 'forward_snapshots':('day','payload','created'),
  'payment_transfers':('tx_ref','network','token','from_address','to_address','amount_micro','block_time','seen','invoice_id','status'),
 }
 

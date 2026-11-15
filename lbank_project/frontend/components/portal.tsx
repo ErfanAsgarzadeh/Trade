@@ -311,6 +311,34 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                   "Follow your account, signals and subscription in one simple space.",
                 )}
               </p>
+              {registering && (
+                <ul className="register-benefits">
+                  <li>
+                    {t(
+                      "سیگنال‌های سه ربات در پنل و تلگرام",
+                      "Signals from three bots in your panel and on Telegram",
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "سرمایه همیشه در حساب صرافی خودتان می‌ماند",
+                      "Your funds always stay in your own exchange account",
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "اتصال صرافی فقط با کلید فقط‌خواندنی",
+                      "Exchange connection with a read-only key only",
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "نتایج بک‌تست و آزمون پیشرو، بدون وعدهٔ سود",
+                      "Backtest and forward-test results, with no promise of profit",
+                    )}
+                  </li>
+                </ul>
+              )}
               <div className="strategy-tags">
                 <span>{t("شاهین", "Falcon")}</span>
                 <span>{t("موج‌سوار", "Wave Rider")}</span>

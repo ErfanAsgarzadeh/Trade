@@ -10,6 +10,8 @@ import AdminBlog from "./admin-blog";
 import AdminPayments from "./admin-payments";
 import AdminTelegram from "./admin-telegram";
 import AdminReferrals from "./admin-referrals";
+import AdminForward from "./admin-forward";
+import AdminSiteInfo from "./admin-site-info";
 import type { Invoice } from "./payment-panel";
 
 type Report = (error: unknown) => void;
@@ -83,6 +85,9 @@ const LABELS: Record<string, Pair> = {
   completed: ["صادرشده", "Issued"],
 };
 const EVENTS: Record<string, Pair> = {
+  "site_info.update": ["ویرایش اطلاعات سایت", "Site info updated"],
+  "forward_test.hide": ["پنهان‌کردن فوروارد تست", "Forward test hidden"],
+  "forward_test.show": ["نمایش فوروارد تست", "Forward test shown"],
   role_changed: ["تغییر نقش از مسیر سرور", "Role changed on the server"],
   user_disabled: ["تعلیق دسترسی کاربر", "User access suspended"],
   user_enabled: ["فعال‌سازی کاربر", "User enabled"],
@@ -340,6 +345,8 @@ export default function AdminWorkbench({
           {tab === "overview" && (
             <>
               <Health api={api} report={report} />
+              <AdminForward api={api} />
+              <AdminSiteInfo api={api} />
               <div className="stat-grid">
                 {[
                   ["users", t("کل کاربران", "Total users")],

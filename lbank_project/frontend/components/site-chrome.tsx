@@ -38,6 +38,7 @@ export function SiteHeader({
           {t("کارنامهٔ پنج‌ساله", "Five-year record")}
         </a>
         <a href={anchor("products")}>{t("پلن‌ها", "Plans")}</a>
+        <a href={path("/forward-test/")}>{t("فوروارد تست", "Forward test")}</a>
         <a href={path("/blog/")}>{t("بلاگ", "Blog")}</a>
         <a href={anchor("faq")}>{t("پرسش‌ها", "FAQ")}</a>
       </nav>
@@ -55,6 +56,20 @@ export function SiteHeader({
   );
 }
 
+// Same pages, same order as portal_blog._footer so the landing page and server-rendered pages link alike.
+const FOOTER_PAGES: [string, string, string][] = [
+  ["forward-test", "فوروارد تست", "Forward test"],
+  ["pricing", "قیمت‌ها", "Pricing"],
+  ["signals", "سیگنال", "Signals"],
+  ["auto-trading", "معاملهٔ خودکار", "Auto trading"],
+  ["exchanges", "صرافی‌ها", "Exchanges"],
+  ["about", "دربارهٔ ما", "About"],
+  ["contact", "تماس", "Contact"],
+  ["terms", "شرایط استفاده", "Terms"],
+  ["privacy", "حریم خصوصی", "Privacy"],
+  ["risk", "اعلام ریسک", "Risk disclosure"],
+];
+
 export function SiteFooter({ lang = "fa" }: { lang?: Lang }) {
   const t = pick(lang),
     path = (p: string) => localPath(lang, p);
@@ -68,19 +83,16 @@ export function SiteFooter({ lang = "fa" }: { lang?: Lang }) {
         )}
       </p>
       <nav aria-label={t("پیوندهای پایانی", "Footer links")}>
+        {FOOTER_PAGES.map(([slug, fa, en]) => (
+          <a key={slug} href={path("/" + slug + "/")}>
+            {t(fa, en)}
+          </a>
+        ))}
         <a href={path("/blog/")}>{t("بلاگ", "Blog")}</a>
         <a href={path("/") + "#faq"}>{t("پرسش‌های پرتکرار", "FAQ")}</a>
         <a href={path("/dashboard/")}>{t("ورود", "Sign in")}</a>
         <a href={path("/register/")}>{t("ثبت‌نام", "Sign up")}</a>
-        <a
-          href={
-            lang === "en"
-              ? "/backtest/methodology-en.md"
-              : "/backtest/methodology-fa.md"
-          }
-        >
-          {t("روش بک‌تست", "Backtest method")}
-        </a>
+        <a href={path("/methodology/")}>{t("روش بک‌تست", "Backtest method")}</a>
       </nav>
     </footer>
   );

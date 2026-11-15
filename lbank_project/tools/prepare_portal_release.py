@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MODULES=('portal_server.py','portal_store.py','portal_database.py','portal_jobs.py','portal_worker.py',
          'portal_exchanges.py','portal_thetruetrade.py','portal_execution.py','exchanges.py',
          'portal_migrate.py','portal_runtime.py','portal_lbank.py','portal_admin.py','portal_billing.py',
-         'portal_frontend.py','portal_admin_store.py','portal_audit.py','portal_blog.py','portal_payments.py','portal_telegram.py','portal_referrals.py','portal_edge.py','portal_mail.py','portal_watchdog.py','portal_housekeeping.py','portal_security.py','portal_totp.py','product_pricing.py',
+         'portal_frontend.py','portal_admin_store.py','portal_audit.py','portal_blog.py','portal_payments.py','portal_telegram.py','portal_referrals.py','portal_edge.py','portal_forward.py','portal_pages.py','portal_pages_content.py','portal_site.py','portal_mail.py','portal_watchdog.py','portal_housekeeping.py','portal_security.py','portal_totp.py','product_pricing.py',
          'signal_feed.py','capital_plans.py','customer_manager.py','license_access.py',
          'requirements.txt','requirements-portal.txt','requirements-web.txt')
 DOCKERFILE='''FROM python:3.11-slim-bookworm
