@@ -1,7 +1,7 @@
 # Web portal and account-worker image (Dockerfile.portal). ccxt stays because portal_server imports portal_exchanges (exchange
 # metadata) and portal_worker reads accounts through it. No pandas or numpy: no portal module imports them.
 ccxt==4.5.85
-fastapi==0.142.2
+fastapi==0.162.5
 uvicorn==0.54.0
 pydantic==2.13.5
 cryptography==50.0.2
