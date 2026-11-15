@@ -6,7 +6,7 @@ const description =
 export const metadata: Metadata = {
   title,
   description,
-  openGraph: { title, description },
+  openGraph: { title, description, locale: "fa_IR" },
   twitter: { title, description },
 };
 export default function Register() {

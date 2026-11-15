@@ -6,6 +6,7 @@ import BacktestMotion from "./backtest-motion";
 import PublicProducts from "./public-products";
 import { SiteFooter, SiteHeader } from "./site-chrome";
 import LatestPosts from "./latest-posts";
+import ForwardTeaser from "./forward-teaser";
 import RefCapture from "./ref-capture";
 
 const MONTHS: Record<Lang, string[]> = {
@@ -170,10 +171,7 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
     })),
   }).replace(/</g, "\\u003c");
   const pct = (value: number) => percent(value, lang);
-  const methodology =
-    lang === "en"
-      ? "/backtest/methodology-en.md"
-      : "/backtest/methodology-fa.md";
+  const methodology = path("/methodology/");
   return (
     <LangProvider lang={lang}>
       <div className="landing" id="landing-page">
@@ -395,7 +393,7 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                       "Download summary and assumptions",
                     )}
                   </a>
-                  <a href={methodology} download>
+                  <a href={methodology}>
                     {t("روش محاسبه", "Calculation method")}
                   </a>
                 </div>
@@ -496,6 +494,26 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                 </div>
               </div>
             </details>
+          </section>
+          <section id="forward-test" className="landing-section">
+            <div className="landing-section-heading">
+              <div>
+                <span className="eyebrow">FORWARD TEST</span>
+                <h2>
+                  {t(
+                    "فوروارد تست زنده: شبیه‌سازی کاغذی در حال اجرا.",
+                    "Live forward test: paper trading, still running.",
+                  )}
+                </h2>
+              </div>
+              <p>
+                {t(
+                  "سفارش‌های شبیه‌سازی‌شده با قیمت واقعی بازار و بدون پول واقعی؛ هر روز به‌روز می‌شود. این نتیجهٔ زنده نیست و تضمینی برای آینده ندارد.",
+                  "Simulated orders at real market prices with no real money, updated every day. This is not a live result and guarantees nothing about the future.",
+                )}
+              </p>
+            </div>
+            <ForwardTeaser />
           </section>
           <section id="strategies" className="landing-section">
             <div className="landing-section-heading">

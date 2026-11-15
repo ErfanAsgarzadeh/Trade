@@ -3809,3 +3809,218 @@ html[lang="fa"] .blog-contents ol {
   gap: 24px;
   margin-top: 16px;
 }
+
+/* Forward test (paper trading) page and landing section */
+.forward-page main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+.forward-hero h1 {
+  font-size: 34px;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.forward-paper,
+.forward-risk {
+  border: 1px solid var(--premium-accent);
+  border-radius: 14px;
+  padding: 14px 18px;
+  background: var(--panel);
+}
+.forward-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 12px;
+  background: var(--premium-accent);
+  color: var(--background);
+  font-weight: 700;
+  font-size: 13px;
+}
+.forward-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+.forward-tile {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--panel);
+}
+.forward-tile dt,
+.forward-bot dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.forward-tile dd,
+.forward-bot dd {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.forward-bot dd {
+  font-size: 18px;
+}
+.fw-up {
+  color: var(--good);
+}
+.fw-down {
+  color: var(--bad);
+}
+.forward-chart {
+  margin: 0;
+}
+.forward-chart svg,
+.forward-spark svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+}
+.forward-chart figcaption {
+  font-size: 12px;
+  color: var(--muted);
+}
+.fc-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+.fc-base {
+  stroke: var(--muted);
+  stroke-dasharray: 4 4;
+}
+.fc-axis {
+  fill: var(--muted);
+  font-size: 12px;
+}
+.fc-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.fc-line.fc-up,
+.fc-dot.fc-up {
+  stroke: var(--good);
+  fill: none;
+}
+.fc-line.fc-down,
+.fc-dot.fc-down {
+  stroke: var(--bad);
+  fill: none;
+}
+.fc-dot.fc-up {
+  fill: var(--good);
+}
+.fc-dot.fc-down {
+  fill: var(--bad);
+}
+.fc-area {
+  stroke: none;
+  opacity: 0.12;
+}
+.fc-area.fc-up {
+  fill: var(--good);
+}
+.fc-area.fc-down {
+  fill: var(--bad);
+}
+.forward-table-scroll {
+  max-height: 340px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.forward-table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.forward-table-scroll th,
+.forward-table-scroll td {
+  padding: 8px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--border);
+  font-weight: 400;
+}
+.forward-bots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+.forward-bot {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  background: var(--panel);
+}
+.forward-bot dl {
+  margin: 0;
+}
+.forward-bot dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+.forward-collecting {
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+.forward-updated {
+  font-size: 12px;
+  color: var(--muted);
+}
+.forward-teaser {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .forward-teaser {
+    grid-template-columns: 1fr;
+  }
+  .forward-hero h1 {
+    font-size: 26px;
+  }
+}
+.forward-admin div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+}
+.forward-admin dd {
+  margin: 0;
+  font-weight: 700;
+}
+.blog-author {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  padding-top: 12px;
+}
+.blog-cta-links a,
+.page-links a {
+  text-decoration: underline;
+}
+.page-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0;
+  list-style: none;
+}
+.register-benefits {
+  margin: 12px 0;
+  padding-inline-start: 20px;
+}
+/* SVG text anchors follow the text direction; keep chart axis labels left-to-right so they stay inside the plot on Persian pages. */
+.fc-axis {
+  direction: ltr;
+  unicode-bidi: plaintext;
+}

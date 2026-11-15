@@ -5,13 +5,14 @@ import ipaddress
 import json
 import logging
 from pathlib import Path
+import hashlib
 import re
 import secrets
 from urllib.parse import urlsplit
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, Query
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.routing import Match
@@ -26,8 +27,11 @@ from portal_exchanges import catalog,validate_connection,PERMISSION_CHECKS,Unsup
 from portal_billing import Billing, BillingConflict, PaidOrderConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index, localize, page_lang, private_page, public_file, public_page, robots_txt, sitemap_xml
+from portal_frontend import PUBLIC_PAGES, PRIVATE_PAGES, SERVER_PAGES, frontend_index, localize, page_lang, private_page, public_file, public_page, robots_txt, sitemap_xml
 import portal_blog
+import portal_forward
+import portal_pages
+import portal_site
 import portal_mail
 import portal_watchdog
 from portal_edge import TTLCache, TokenBuckets
@@ -40,7 +44,7 @@ from portal_admin_store import AdminStore
 COOKIE='trade_session'
 LOG=logging.getLogger('portal.errors')
 RATE_EXEMPT=('/_next/','/portal-assets/','/blog-media/','/backtest/')   # Static files; /healthz is exempt too.
-RATE_LIMITED_API={'/api/plans','/api/blog/latest','/api/register/token'}   # Public API routes; signed-in polling is not counted.
+RATE_LIMITED_API={'/api/plans','/api/blog/latest','/api/register/token','/api/forward-test'}   # Public API routes; signed-in polling is not counted.
 NOT_PAGES=('/api/','/_next/','/portal-assets/','/backtest/','/blog-media/')
 
 
@@ -192,6 +196,8 @@ class BlogArticle(BaseModel):
     body:str=Field(min_length=1,max_length=60000)
     status:str=Field(pattern=r'^(draft|published)$')
     published_on:str|None=Field(default=None,pattern=r'^\d{4}-\d{2}-\d{2}$')
+    author_name:str=Field(default='',max_length=80)
+    author_bio:str=Field(default='',max_length=300)
     expected_updated:float|None=None
 
 
@@ -224,6 +230,19 @@ class TelegramPreferences(BaseModel):
 class TelegramLink(BaseModel):
     model_config=ConfigDict(extra='forbid')
     lang:str=Field(default='fa',pattern=r'^(fa|en)$')
+
+
+class SiteInfo(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    support_email:str=Field(default='',max_length=120)
+    telegram_id:str=Field(default='',max_length=65)
+    telegram_link:str=Field(default='',max_length=120)
+    other_line:str=Field(default='',max_length=160)
+
+
+class ForwardSwitch(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    hidden:bool
 
 
 class TelegramSettings(BaseModel):
@@ -313,6 +332,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         if hasattr(app.state.store,'database'):
             app.state.store.rekey_settings()  # Site secrets move from the portal key to the settings key once both are present.
             BlogStore(app.state.store).seed()
+        app.state.forward=portal_forward.ForwardTest(app.state.store) if hasattr(app.state.store,'database') else None
         try:yield
         finally:
             if supplied_store is None:app.state.store.close()
@@ -321,9 +341,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=[parsed.hostname])
     frontend=Path(os.getenv('PORTAL_FRONTEND_DIR',str(Path(__file__).with_name('frontend')/'out')))
     public=Path(__file__).with_name('frontend')/'public'
-    page_files={'/':'index.html','/register':'register.html','/register/':'register.html','/admin':'admin.html','/admin/':'admin.html','/dashboard':'dashboard.html','/dashboard/':'dashboard.html',
-                '/en':'en.html','/en/':'en.html','/en/register':'en/register.html','/en/register/':'en/register.html',
-                '/en/admin':'en/admin.html','/en/admin/':'en/admin.html','/en/dashboard':'en/dashboard.html','/en/dashboard/':'en/dashboard.html'}
+    page_files={**PUBLIC_PAGES,**PRIVATE_PAGES,**{p.rstrip('/'):f for p,f in {**PUBLIC_PAGES,**PRIVATE_PAGES}.items() if p!='/'}}
     app.mount('/backtest',StaticFiles(directory=public/'backtest'),name='backtest-evidence')
     app.mount('/portal-assets',StaticFiles(directory=public/'portal-assets'),name='portal-assets')
     app.mount('/_next',StaticFiles(directory=frontend/'_next',check_dir=False),name='next-assets')
@@ -405,6 +423,14 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         hit=pages.get(key,generation)
         return hit if hit is not None else pages.put(key,build(),generation)
 
+    def etagged(request,body,status_code=200):
+        """HTML with a strong ETag from the content hash. The body already differs per language and per page, so the tag
+        does too; a matching If-None-Match gets a bodyless 304 and the middleware still adds the CSP and cache headers."""
+        tag='"'+hashlib.sha256(body.encode()).hexdigest()[:32]+'"'
+        offered=[v.strip() for v in request.headers.get('If-None-Match','').split(',')]
+        if status_code==200 and (tag in offered or '*' in offered):return Response(status_code=304,headers={'ETag':tag})
+        return HTMLResponse(body,status_code=status_code,headers={'ETag':tag})
+
     @app.middleware('http')
     async def rate_limit(request,call_next):
         # Page loads and public API reads only; a browser fetching its own panel data or static files is never counted.
@@ -438,7 +464,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             response=JSONResponse({'detail':'Internal error','request_id':request_id},status_code=500)
         path=request.url.path
         blog_page=path in ('/blog','/en/blog') or path.startswith(('/blog/','/en/blog/'))
-        public=public_file(path) or blog_page and response.status_code==200
+        public=public_file(path) or blog_page and response.status_code==200 or path in SERVER_PAGES
         page=page_files.get(path) or (public[1] if isinstance(public,tuple) else None)
         if response.status_code==404 and (blog_page or response.headers.get('content-type','').startswith('text/html')):page='404.html'
         script_hashes=''
@@ -451,11 +477,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         # An uploaded image never changes under its id; a new upload gets a new id.
         elif path.startswith('/blog-media/') and response.status_code==200:cache='public, max-age=31536000, immutable'
         elif path.startswith('/backtest/') or path in ('/robots.txt','/sitemap.xml','/blog/rss.xml','/en/blog/rss.xml'):cache='public, max-age=3600'
+        elif path=='/api/forward-test' and response.status_code==200:cache='public, max-age=300'
         elif public:cache='no-cache'
         else:
             cache='no-store'
             response.headers['X-Robots-Tag']='noindex, nofollow'
         if response.status_code>=400:cache='no-store'
+        if path.startswith('/backtest/') and path.endswith('.md'):response.headers['X-Robots-Tag']='noindex'
         response.headers.update({'Cache-Control':cache,'X-Content-Type-Options':'nosniff',
                                  'X-Frame-Options':'DENY','Referrer-Policy':'no-referrer',
                                  # Wallet payments use the injected window.ethereum provider, which none of these features touch.
@@ -487,30 +515,39 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         try:return HTMLResponse(localize(frontend_index(frontend,'404.html')[0],lang),status_code=404)
         except OSError:return HTMLResponse('Not found',status_code=404)
 
-    # Public pages in both languages.
-    @app.get('/',response_class=HTMLResponse)
-    @app.get('/en',response_class=HTMLResponse)
-    @app.get('/en/',response_class=HTMLResponse)
-    @app.get('/register',response_class=HTMLResponse)
-    @app.get('/register/',response_class=HTMLResponse)
-    @app.get('/en/register',response_class=HTMLResponse)
-    @app.get('/en/register/',response_class=HTMLResponse)
+    # Public pages in both languages. Every address without its trailing slash is permanently redirected to the canonical one.
     def public_pages(request:Request):
-        try:return HTMLResponse(public_page(frontend,request.url.path,origin))
+        try:return etagged(request,public_page(frontend,request.url.path,origin))
         except OSError:return not_built()
 
+    def canonical_redirect(request:Request):
+        target=request.url.path+'/'
+        if request.url.query:target+='?'+request.url.query
+        return RedirectResponse(target,status_code=308)
+
+    for address in PUBLIC_PAGES:
+        app.add_api_route(address,public_pages,methods=['GET'],response_class=HTMLResponse)
+    def server_page(request:Request):
+        path=request.url.path;slug=portal_pages.slug_of(path);lang=page_lang(path)
+        store=repository(request)
+        def build():
+            plans=product_pricing.catalog(store) if hasattr(store,'database') else None
+            info=portal_site.read(store) if hasattr(store,'database') else {}
+            return portal_pages.build(slug,lang,origin,site_css(),plans,catalog(),info)
+        return etagged(request,cached_page(('page',path),build))
+
+    for address in SERVER_PAGES:
+        app.add_api_route(address,server_page,methods=['GET'],response_class=HTMLResponse)
+    for address in (*PUBLIC_PAGES,*PRIVATE_PAGES,*SERVER_PAGES):
+        if address!='/':app.add_api_route(address.rstrip('/'),canonical_redirect,methods=['GET'],response_class=HTMLResponse)
+
     # Signed-in pages: the client checks the session; the server serves the same shell to everyone.
-    @app.get('/dashboard',response_class=HTMLResponse)
-    @app.get('/dashboard/',response_class=HTMLResponse)
-    @app.get('/admin',response_class=HTMLResponse)
-    @app.get('/admin/',response_class=HTMLResponse)
-    @app.get('/en/dashboard',response_class=HTMLResponse)
-    @app.get('/en/dashboard/',response_class=HTMLResponse)
-    @app.get('/en/admin',response_class=HTMLResponse)
-    @app.get('/en/admin/',response_class=HTMLResponse)
     def private_pages(request:Request):
         try:return HTMLResponse(private_page(frontend,page_files[request.url.path]))
         except OSError:return not_built()
+
+    for address in PRIVATE_PAGES:
+        app.add_api_route(address,private_pages,methods=['GET'],response_class=HTMLResponse)
 
     @app.get('/blog/rss.xml')
     @app.get('/en/blog/rss.xml')
@@ -520,16 +557,20 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         return Response(body,media_type='application/rss+xml; charset=utf-8')
 
     @app.get('/blog',response_class=HTMLResponse)
-    @app.get('/blog/',response_class=HTMLResponse)
     @app.get('/en/blog',response_class=HTMLResponse)
+    def blog_index_redirect(request:Request):return canonical_redirect(request)
+
+    @app.get('/blog/',response_class=HTMLResponse)
     @app.get('/en/blog/',response_class=HTMLResponse)
     def blog_index(request:Request):
         lang='en' if request.url.path.startswith('/en/') else 'fa'
-        return HTMLResponse(cached_page(('index',lang),lambda:portal_blog.index_page(origin,site_css(),blog_posts(request,lang),lang)))
+        return etagged(request,cached_page(('index',lang),lambda:portal_blog.index_page(origin,site_css(),blog_posts(request,lang),lang)))
 
     @app.get('/blog/{slug}',response_class=HTMLResponse)
-    @app.get('/blog/{slug}/',response_class=HTMLResponse)
     @app.get('/en/blog/{slug}',response_class=HTMLResponse)
+    def blog_article_redirect(slug:str,request:Request):return canonical_redirect(request)
+
+    @app.get('/blog/{slug}/',response_class=HTMLResponse)
     @app.get('/en/blog/{slug}/',response_class=HTMLResponse)
     def blog_article(slug:str,request:Request):
         lang='en' if request.url.path.startswith('/en/') else 'fa'
@@ -537,12 +578,12 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         if not hasattr(store,'database'):return not_found(request)
         key=('article',lang,slug);generation=portal_blog.GENERATION[0]
         hit=pages.get(key,generation)
-        if hit is not None:return HTMLResponse(hit)
+        if hit is not None:return etagged(request,hit)
         blog=BlogStore(store);post=blog.article(slug,lang)
         if not post:return not_found(request)   # Unknown addresses are never cached, so random paths cannot fill the cache.
-        related=[item for item in blog_posts(request,lang) if item['slug']!=post['slug']][:2]
+        related=[item for item in blog_posts(request,lang) if item['slug']!=post['slug']][:3]
         sizes=blog.image_sizes(portal_blog.image_ids(post['body']))
-        return HTMLResponse(pages.put(key,portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang,sizes),generation))
+        return etagged(request,pages.put(key,portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang,sizes),generation))
 
     @app.get('/blog-media/{name}')
     def blog_media(name:str,request:Request):
@@ -743,6 +784,38 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def admin_events(request:Request,user=Depends(administrator),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
         return AdminStore(repository(request)).events(offset,limit)
 
+    def forward(request:Request):
+        service=request.app.state.forward
+        if service is None:raise HTTPException(404,'Not available')
+        return service
+
+    @app.get('/api/forward-test')
+    def forward_test(request:Request):
+        service=request.app.state.forward
+        return service.summary() if service else {'available':False}
+
+    @app.get('/api/admin/site-info')
+    def admin_site_info(request:Request,user=Depends(administrator)):
+        return portal_site.read(repository(request))
+
+    @app.put('/api/admin/site-info')
+    def admin_site_info_save(payload:SiteInfo,request:Request,user=Depends(admin_mutation)):
+        try:values=portal_site.save(repository(request),user['id'],payload.model_dump())
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        except ValueError as exc:raise HTTPException(422,str(exc))
+        portal_blog.GENERATION[0]+=1
+        return values
+
+    @app.get('/api/admin/forward-test')
+    def admin_forward_test(request:Request,user=Depends(administrator)):
+        return forward(request).admin_status()
+
+    @app.put('/api/admin/forward-test')
+    def admin_forward_switch(payload:ForwardSwitch,request:Request,user=Depends(admin_mutation)):
+        try:forward(request).set_hidden(user['id'],payload.hidden);portal_blog.GENERATION[0]+=1
+        except PermissionError:raise HTTPException(403,'Administrator required')
+        return forward(request).admin_status()
+
     @app.get('/robots.txt')
     def robots_file():return Response(robots_txt(origin),media_type='text/plain; charset=utf-8')
 
@@ -750,7 +823,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def sitemap(request:Request):
         def build():
             posts={lang:blog_posts(request,lang) for lang in ('fa','en')}
-            return sitemap_xml(origin,frontend,posts)
+            service=request.app.state.forward
+            skip=();dates={}
+            if service is not None:
+                status=service.summary()
+                if service.hidden():skip=('/forward-test/','/en/forward-test/')
+                elif status.get('data_through'):dates={'/forward-test/':status['data_through']}
+            return sitemap_xml(origin,frontend,posts,extra=SERVER_PAGES,skip=skip,dates=dates)
         return Response(cached_page(('sitemap',),build),media_type='application/xml')
 
     @app.get('/manifest.webmanifest')

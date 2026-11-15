@@ -16,6 +16,8 @@ interface Summary {
   title: string;
   description: string;
   keywords: string[];
+  author_name?: string;
+  author_bio?: string;
   status: "draft" | "published";
   published_on: string | null;
   updated: number;
@@ -31,6 +33,8 @@ interface Draft {
   title: string;
   description: string;
   keywords: string;
+  author_name: string;
+  author_bio: string;
   body: string;
   published_on: string;
 }
@@ -287,6 +291,8 @@ function Editor({
             keywords: article.keywords.join(
               article.lang === "en" ? ", " : "، ",
             ),
+            author_name: article.author_name ?? "",
+            author_bio: article.author_bio ?? "",
             body: article.body,
             published_on: article.published_on ?? "",
           }
@@ -296,6 +302,8 @@ function Editor({
             title: "",
             description: "",
             keywords: "",
+            author_name: "",
+            author_bio: "",
             body: "",
             published_on: "",
           },
@@ -426,6 +434,8 @@ function Editor({
         .split(/[,،]/)
         .map((k) => k.trim())
         .filter(Boolean),
+      author_name: draft.author_name.trim(),
+      author_bio: draft.author_bio.trim(),
       body: draft.body,
       status,
       published_on: draft.published_on || null,
@@ -584,6 +594,27 @@ function Editor({
             value={draft.keywords}
             maxLength={300}
             onChange={(e) => set("keywords")(e.target.value)}
+          />
+          <label htmlFor="blog-author">
+            {t("نام نویسنده (اختیاری)", "Author name (optional)")}
+          </label>
+          <input
+            id="blog-author"
+            dir={draft.lang === "en" ? "ltr" : "rtl"}
+            value={draft.author_name}
+            maxLength={80}
+            onChange={(e) => set("author_name")(e.target.value)}
+          />
+          <label htmlFor="blog-author-bio">
+            {t("معرفی کوتاه نویسنده (اختیاری)", "Short author bio (optional)")}
+          </label>
+          <textarea
+            id="blog-author-bio"
+            dir={draft.lang === "en" ? "ltr" : "rtl"}
+            rows={2}
+            value={draft.author_bio}
+            maxLength={300}
+            onChange={(e) => set("author_bio")(e.target.value)}
           />
           <label htmlFor="blog-date">
             {t("تاریخ انتشار (اختیاری)", "Publish date (optional)")}
