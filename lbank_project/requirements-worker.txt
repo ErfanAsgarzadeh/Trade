@@ -1,5 +1,5 @@
 # Payment worker, Telegram worker and license issuer (Dockerfile.worker, Dockerfile.issuer): database, encryption and the
 # standard library only. No exchange library, web framework or data-science packages.
 cryptography==50.0.2
-psycopg[binary]==3.2.6
+psycopg[binary]==3.3.8
 psycopg-pool==3.2.6
