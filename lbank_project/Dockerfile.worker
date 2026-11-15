@@ -1,5 +1,5 @@
 # Payment worker and Telegram worker (also sends e-mail and runs the watchdog). No exchange library and no customer-key access.
-FROM python:3.11-slim-bookworm
+FROM python:3.15-slim-bookworm
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
 COPY requirements-worker.txt ./
