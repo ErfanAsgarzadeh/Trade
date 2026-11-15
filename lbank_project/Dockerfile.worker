@@ -1,0 +1,11 @@
+# Payment worker and Telegram worker (also sends e-mail and runs the watchdog). No exchange library and no customer-key access.
+FROM python:3.11-slim-bookworm
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY requirements-worker.txt ./
+RUN pip install --no-cache-dir -r requirements-worker.txt
+COPY portal_payments.py portal_telegram.py portal_mail.py portal_watchdog.py portal_housekeeping.py portal_store.py portal_database.py portal_audit.py portal_billing.py portal_referrals.py portal_security.py portal_totp.py portal_admin_store.py portal_jobs.py capital_plans.py product_pricing.py license_access.py signal_feed.py ./
+# Not root: fixed uid/gid 10001. Everything is read-only code; the processes write only to the database and /tmp (tmpfs).
+RUN groupadd --system --gid 10001 avina && useradd --system --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin avina
+USER 10001:10001
+CMD ["python", "-u", "portal_telegram.py"]

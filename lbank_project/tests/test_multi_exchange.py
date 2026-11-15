@@ -29,6 +29,9 @@ class FakeClient:
                      unrealizedPnl=10,leverage=3,marginMode='isolated',info={'apiKey':self.params['apiKey']}),
                 dict(symbol='ETH/USDT:USDT',contracts=0)]
     def close(self):self.closed=True
+    # Permission reports of Binance and OKX (read before any balance, never recorded in `calls`).
+    def sapiGetAccountApiRestrictions(self):return dict(enableReading=True,enableWithdrawals=False)
+    def privateGetAccountConfig(self):return dict(code='0',data=[dict(perm='read_only,trade')])
 
 
 @pytest.mark.parametrize('exchange_id,market',[(i,m) for i,p in PROFILES.items() for m in ('spot','futures') if m in p and i not in ('lbank','thetruetrade')])
@@ -102,7 +105,7 @@ def test_two_users_choose_different_exchanges_and_switch_cancels_old_work(tmp_pa
         assert alice.post('/api/me/connection/refresh',headers=ah).status_code==202
         queue=AccountQueue(store);old=queue.claim(interval=0)
         assert old['user_id']==a
-        assert alice.put('/api/me/connection',headers=ah,json={**payload,'exchange_id':'bybit','passphrase':None}).status_code==200
+        assert alice.put('/api/me/connection',headers=ah,json={**payload,'exchange_id':'bybit','passphrase':None,'no_withdrawal_ack':True}).status_code==200
         assert not queue.finish(old,{'balances':['old-okx']},'verified_read_only')
         assert alice.get('/api/me/connection').json()['account'] is None
         assert bob.get('/api/me/connection').json()['exchange_id']=='binance'
@@ -154,7 +157,7 @@ def test_upgrade_from_v2_preserves_old_lbank_credentials_and_offline_migration(t
     store=PortalStore(source,key)
     assert store.connection('alice-id',decrypt=True)['secret']=='old-lbank-secret'
     with store.db() as db:
-        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3,4,5,6,7,8,9,10,11,12,13,14}
+        assert {r['version'] for r in db.execute('SELECT version FROM schema_migrations')}=={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
         assert db.execute("SELECT next_at FROM service_gate WHERE name='account-read:lbank'").fetchone()
         db.execute("UPDATE connections SET exchange_id='bybit' WHERE user_id='alice-id'")
     with pytest.raises(ValueError,match='Legacy'):store.connection('alice-id',decrypt=True)

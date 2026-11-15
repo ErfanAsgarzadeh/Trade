@@ -62,6 +62,7 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
   const [busy, setBusy] = useState(false),
     [billing, setBilling] = useState<BillingSnapshot | null>(null);
   const [refCode, setRefCode] = useState(""),
+    [lookupCode, setLookupCode] = useState(""),
     [refOffer, setRefOffer] = useState<{
       valid: boolean;
       offer?: RefereeOffer | null;
@@ -99,23 +100,27 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
   useEffect(() => {
     if (!registering) return;
     captureRef();
-    setRefCode(storedRef());
+    const stored = storedRef();
+    setRefCode(stored);
+    setLookupCode(stored.trim()); // A code that came from an invite link is checked once, right away.
   }, [registering]);
-  // Show the visitor what the invite code gives them before they sign up.
+  // Show the visitor what the invite code gives them before they sign up. A typed code is looked up once, when the
+  // field loses focus (not on every keystroke, which would use up the server's per-address limit).
   useEffect(() => {
-    const code = refCode.trim();
     setRefOffer(null);
-    if (!registering || code.length < 3) return;
-    const timer = setTimeout(() => {
-      api
-        .request<{ valid: boolean; offer?: RefereeOffer | null }>(
-          "/api/referral/" + encodeURIComponent(code),
-        )
-        .then(setRefOffer)
-        .catch(() => setRefOffer(null));
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [api, refCode, registering]);
+    // Wait for the first session check: its 401 answer would otherwise cancel a lookup that is still in flight.
+    if (!registering || !ready || lookupCode.length < 3) return;
+    let live = true;
+    api
+      .request<{ valid: boolean; offer?: RefereeOffer | null }>(
+        "/api/referral/" + encodeURIComponent(lookupCode),
+      )
+      .then((offer) => live && setRefOffer(offer))
+      .catch(() => live && setRefOffer(null));
+    return () => {
+      live = false;
+    };
+  }, [api, lookupCode, ready, registering]);
   const report = useCallback((error: unknown) => {
     if (!(error instanceof SessionChanged)) setMessage(errorText(error));
   }, []);
@@ -184,6 +189,7 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
               email: data.get("email"),
               website: data.get("website") ?? "",
               form_token: await registrationToken(),
+              lang,
               ...(referral ? { referral_code: referral } : {}),
             }
           : code
@@ -440,7 +446,11 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                         dir="ltr"
                         maxLength={24}
                         value={refCode}
-                        onChange={(e) => setRefCode(e.target.value)}
+                        onChange={(e) => {
+                          setRefCode(e.target.value);
+                          setRefOffer(null);
+                        }}
+                        onBlur={() => setLookupCode(refCode.trim())}
                         aria-describedby="referral-offer"
                       />
                       <p
@@ -678,7 +688,11 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
             <ProfilePanel
               api={api}
               email={user.email ?? null}
-              onEmail={(email) => setUser((u) => (u ? { ...u, email } : u))}
+              emailVerified={Boolean(user.email_verified)}
+              mailEnabled={Boolean(user.mail_enabled)}
+              onEmail={(email) =>
+                setUser((u) => (u ? { ...u, email, email_verified: false } : u))
+              }
               totpEnabled={Boolean(user.totp_enabled)}
               onTotp={(on) =>
                 setUser((u) => (u ? { ...u, totp_enabled: on } : u))

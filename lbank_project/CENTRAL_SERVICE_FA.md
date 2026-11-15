@@ -35,7 +35,8 @@ worker به‌تنهایی gate را دور نمی‌زند. برای ۱۰ هز�
 
 ```bash
 python -m pip install -r requirements-portal.txt
-python portal_setup.py
+python portal_setup.py   # portal.key (کلیدهای مشتریان) و settings.key (رازهای سایت، مثل توکن تلگرام) را جدا می‌سازد
+# مالک و دسترسی رازها، مالکیت runtime و پشتیبان‌گیری: PUBLIC_SITE_FA.md
 export PORTAL_ORIGIN=http://127.0.0.1:8080
 export PORTAL_ALLOW_LOCAL_HTTP=1
 docker compose -f portal-postgres-compose.yml up -d --build

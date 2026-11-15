@@ -49,6 +49,9 @@ def test_admin_workbench_journey_and_mobile_layout(tmp_path, appearance):
             page.goto(origin+'/admin/');page.locator('#username').fill('manager');page.locator('#password').fill('disposable-manager-password');page.locator('#login-form button').click()
             page.wait_for_selector('#totp');page.locator('#totp').fill(AUTH['manager'].code());page.locator('#login-form button').click()
             page.wait_for_selector('#admin-workbench');assert page.locator('#totp-banner').count()==0;page.wait_for_function("()=>document.getElementById('admin-count-users').textContent==='۳'")
+            # The health list sits at the top of the overview: every check listed, all healthy on a fresh site.
+            page.wait_for_function("()=>document.querySelectorAll('#admin-health li').length===9")
+            assert page.locator('#admin-health li.bad').count()==0 and page.locator('#admin-health li.ok').count()==9
             page.screenshot(path=str(screenshots/'admin-overview-desktop.png'),full_page=True)
             page.locator('#admin-tab-pricing').click();page.wait_for_selector('#admin-pricing-signals')
             assert page.locator('#admin-pricing-signals .admin-open-sales').is_disabled()

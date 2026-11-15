@@ -75,6 +75,10 @@ const STATES: Record<string, [string, string]> = {
     "ارتباط موقتاً قطع است؛ بررسی دوباره انجام می‌شود",
     "Temporarily unreachable; retrying",
   ],
+  withdrawal_enabled: [
+    "این کلید مجوز برداشت دارد و رد شد",
+    "This key has withdrawal permission and was refused",
+  ],
   capability_unavailable: [
     "این نوع حساب فعلاً در دسترس نیست",
     "This account type is not available yet",

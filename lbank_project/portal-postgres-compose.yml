@@ -1,8 +1,8 @@
 name: trade-portal-central
-x-runtime: &runtime
-  build:
-    context: .
-    dockerfile: Dockerfile.portal
+# Secrets are mounted from issuer-keys/. The containers run as uid/gid 10001 (not root). Compose (outside Swarm) ignores the
+# uid/gid/mode of a file secret (it prints a warning and keeps the host file's owner and mode), so those host files must be owned
+# by 10001 with chmod 0400; postgres_password is the exception (PostgreSQL reads it as its own user). See PUBLIC_SITE_FA.md.
+x-hardened: &hardened
   restart: unless-stopped
   init: true
   read_only: true
@@ -12,15 +12,33 @@ x-runtime: &runtime
   depends_on:
     db:
       condition: service_healthy
-  environment: &environment
-    PORTAL_KEY_FILE: /run/secrets/portal_key
-    PORTAL_DATABASE_URL_FILE: /run/secrets/portal_database_url
-    PORTAL_DB_POOL_MAX: "8"
-  secrets: [portal_key, portal_database_url]
-  logging:
+  logging: &logging
     options:
       max-size: 10m
       max-file: "3"
+# Web and account worker: the only services that can open customers' exchange API keys (portal_key).
+x-web: &web
+  <<: *hardened
+  build:
+    context: .
+    dockerfile: Dockerfile.portal
+  environment: &web-environment
+    PORTAL_KEY_FILE: /run/secrets/portal_key
+    PORTAL_DATABASE_URL_FILE: /run/secrets/portal_database_url
+    PORTAL_DB_POOL_MAX: "8"
+# Payment worker, Telegram worker and issuer: the database and site-level secrets only (settings_key). No portal_key, no exchange library.
+x-worker: &worker
+  <<: *hardened
+  build:
+    context: .
+    dockerfile: Dockerfile.worker
+  environment: &worker-environment
+    PORTAL_SETTINGS_KEY_FILE: /run/secrets/settings_key
+    PORTAL_DATABASE_URL_FILE: /run/secrets/portal_database_url
+    PORTAL_DB_POOL_MAX: "4"
+  secrets:
+    - settings_key
+    - portal_database_url
 services:
   db:
     image: postgres:17
@@ -36,17 +54,23 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    # No public database port or mount of the encryption key.
+    logging: *logging
+    # No public database port or mount of the encryption keys.
   portal:
-    <<: *runtime
+    <<: *web
     environment:
-      <<: *environment
+      <<: *web-environment
+      PORTAL_SETTINGS_KEY_FILE: /run/secrets/settings_key
       PORTAL_SIGNAL_FEED_DB: ${PORTAL_SIGNAL_FEED_DB:-}
       PORTAL_HOST: 0.0.0.0
       PORTAL_PORT: "8080"
       PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
       PORTAL_ALLOW_LOCAL_HTTP: ${PORTAL_ALLOW_LOCAL_HTTP:-0}
       PORTAL_TRUSTED_PROXY_IPS: ${PORTAL_TRUSTED_PROXY_IPS:-}
+    secrets:
+      - portal_key
+      - settings_key
+      - portal_database_url
     ports: ["127.0.0.1:8080:8080"]
     healthcheck:
       test: [CMD, python, -c, "import os, urllib.request, urllib.parse; host=urllib.parse.urlsplit(os.environ['PORTAL_ORIGIN']).netloc; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8080/healthz', headers={'Host': host}), timeout=3)"]
@@ -54,36 +78,90 @@ services:
       timeout: 5s
       retries: 3
   account-worker:
-    <<: *runtime
+    <<: *web
     command: [python, -u, portal_worker.py]
     environment:
-      <<: *environment
+      <<: *web-environment
       PORTAL_EXCHANGE_READ_INTERVAL: ${PORTAL_EXCHANGE_READ_INTERVAL:-0.25}
       PORTAL_EXCHANGE_READ_INTERVALS: ${PORTAL_EXCHANGE_READ_INTERVALS:-}
+    secrets:
+      - portal_key
+      - portal_database_url
   # Reads confirmed USDT/USDC transfers to the receiving addresses set in the admin panel; holds no keys.
+  # Check the endpoints from the server:  docker compose -f portal-postgres-compose.yml run --rm payment-worker python portal_payments.py --check
   payment-worker:
-    <<: *runtime
+    <<: *worker
     command: [python, -u, portal_payments.py]
     environment:
-      <<: *environment
+      <<: *worker-environment
       PAYMENT_CHECK_SECONDS: ${PAYMENT_CHECK_SECONDS:-20}
-  # Sends signals and account notices to customers who linked Telegram; the bot token is set in the admin panel.
+      HTTPS_PROXY: ${PAYMENT_HTTPS_PROXY:-}
+  # Sends signals and account notices to customers who linked Telegram (the bot token is set in the admin panel), watches the
+  # other services for the owner, sends e-mail (optional: add portal-mail-compose.yml) and cleans old rows once a day.
   telegram-worker:
-    <<: *runtime
+    <<: *worker
     command: [python, -u, portal_telegram.py]
     environment:
-      <<: *environment
+      <<: *worker-environment
       PORTAL_SIGNAL_FEED_DB: ${PORTAL_SIGNAL_FEED_DB:-}
       PORTAL_ORIGIN: ${PORTAL_ORIGIN:-http://127.0.0.1:8080}
       HTTPS_PROXY: ${TELEGRAM_HTTPS_PROXY:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_FROM: ${SMTP_FROM:-}
   # Signs approved licenses. The only service that holds the issuer private key; it has no ports and the web never sees it.
   issuer:
-    <<: *runtime
-    command: [python, -u, portal_issuer.py, --private-key, /run/secrets/license_private]
+    <<: *worker
     build:
       context: .
       dockerfile: Dockerfile.issuer
-    secrets: [portal_key, portal_database_url, license_private]
+    command: [python, -u, portal_issuer.py, --private-key, /run/secrets/license_private]
+    secrets:
+      - settings_key
+      - portal_database_url
+      - license_private
+  # Daily compressed dump of the database into ./runtime/backups (newest 14 kept). This is NOT an off-site backup: copy the
+  # files off the server (see PUBLIC_SITE_FA.md). The directory must be writable by uid 10001: chown 10001:10001 runtime/backups.
+  backup:
+    image: postgres:17
+    user: "10001:10001"
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOME: /tmp
+      BACKUP_KEEP: "14"
+      BACKUP_INTERVAL_SECONDS: "86400"
+    volumes: ["./runtime/backups:/backups"]
+    secrets: [postgres_password]
+    command:
+      - bash
+      - -c
+      - |
+        set -u -o pipefail
+        umask 077
+        export PGPASSWORD="$$(cat /run/secrets/postgres_password)"
+        while true; do
+          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
+          part="/backups/.portal-$$stamp.part"
+          if pg_dump -h db -U trade_portal -d trade_portal --no-owner | gzip -9 > "$$part" && [ -s "$$part" ]; then
+            mv "$$part" "/backups/portal-$$stamp.sql.gz"
+            ls -1t /backups/portal-*.sql.gz | tail -n +$$((BACKUP_KEEP + 1)) | xargs -r rm -f --
+            echo "backup written: portal-$$stamp.sql.gz"
+          else
+            rm -f "$$part"
+            echo "backup FAILED at $$stamp"
+          fi
+          sleep "$$BACKUP_INTERVAL_SECONDS"
+        done
+    logging: *logging
 volumes:
   portal_pgdata:
 secrets:
@@ -93,5 +171,7 @@ secrets:
     file: ./issuer-keys/portal_database_url
   portal_key:
     file: ./issuer-keys/portal.key
+  settings_key:
+    file: ./issuer-keys/settings.key
   license_private:
     file: ./issuer-keys/license.private.pem

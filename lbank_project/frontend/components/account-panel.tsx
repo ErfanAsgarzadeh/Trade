@@ -19,6 +19,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
   const [exchange, setExchange] = useState("thetruetrade"),
     [market, setMarket] = useState("futures"),
     [credentials, setCredentials] = useState(emptyCredentials),
+    [ack, setAck] = useState(false),
     [busy, setBusy] = useState(false);
   const generation = useRef(0);
   const venue = catalog.find((v) => v.id === exchange),
@@ -76,6 +77,7 @@ export default function AccountPanel({ api, report, notify }: Props) {
   }, [connection, refresh, report]);
   function changeExchange(id: string) {
     setCredentials(emptyCredentials);
+    setAck(false);
     setExchange(id);
     const v = catalog.find((v) => v.id === id);
     setMarket(v?.markets.includes("spot") ? "spot" : v?.markets[0] || "");
@@ -92,8 +94,10 @@ export default function AccountPanel({ api, report, notify }: Props) {
         secret: credentials.secret,
         passphrase: credentials.passphrase || null,
         uid: credentials.uid || null,
+        no_withdrawal_ack: !venue?.permission_check && ack,
       });
       setCredentials(emptyCredentials);
+      setAck(false);
       await refresh();
       notify(state("saved_unverified")!);
     } catch (e) {
@@ -237,6 +241,30 @@ export default function AccountPanel({ api, report, notify }: Props) {
                 field("passphrase", "Passphrase", 1, 512)}
               {fields.includes("uid") &&
                 field("uid", t("شناسهٔ حساب", "Account ID"), 1, 128)}
+              {venue?.permission_check ? (
+                <p className="note" id="permission-note">
+                  {t(
+                    "برای این صرافی، آوینا مجوزهای کلید را از خود صرافی می‌خواند و کلیدی را که مجوز برداشت دارد رد می‌کند.",
+                    "For this exchange Avina reads the key's permissions from the exchange and refuses a key that has withdrawal permission.",
+                  )}
+                </p>
+              ) : (
+                <label className="consent" htmlFor="no-withdrawal-ack">
+                  <input
+                    id="no-withdrawal-ack"
+                    type="checkbox"
+                    checked={ack}
+                    required
+                    onChange={(e) => setAck(e.target.checked)}
+                  />
+                  <span>
+                    {t(
+                      "تأیید می‌کنم این کلید مجوز برداشت ندارد و فقط برای معامله یا خواندن حساب محدود شده است. آوینا نمی‌تواند مجوز کلید را در این صرافی بررسی کند.",
+                      "I confirm this key has no withdrawal permission and is restricted to trading or reading. Avina cannot check key permissions at this exchange.",
+                    )}
+                  </span>
+                </label>
+              )}
               <button type="submit">
                 {t("ثبت کلیدهای حساب", "Save account keys")}
               </button>
@@ -262,6 +290,14 @@ export default function AccountPanel({ api, report, notify }: Props) {
                   state("saved_unverified"))
               : t("حسابی ثبت نشده", "No account connected")}
           </h3>
+          {connection?.account?.status === "withdrawal_enabled" && (
+            <p className="warning-text" role="alert" id="withdrawal-refused">
+              {t(
+                "این کلید مجوز برداشت دارد، پس رد شد و از آن استفاده نمی‌شود. کلید را در صرافی حذف کنید، کلید تازه‌ای بدون مجوز برداشت بسازید و دوباره ثبت کنید.",
+                "This key has withdrawal permission, so it was refused and is not used. Delete it at the exchange, create a new key without withdrawal permission and save it again.",
+              )}
+            </p>
+          )}
           <div className="actions">
             <button
               id="refresh-account"

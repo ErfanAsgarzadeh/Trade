@@ -10,18 +10,47 @@
 cd /opt/Trade/lbank_project
 mkdir -p issuer-keys && chmod 700 issuer-keys
 docker compose -f portal-postgres-compose.yml build portal
-docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal python portal_setup.py
-chmod 644 issuer-keys/postgres_password
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal python portal_setup.py
 ```
-PostgreSQL فایل رمز را با کاربر خودش (نه root) می‌خواند، پس آن فایل باید قابل‌خواندن باشد؛ پوشهٔ `issuer-keys` با ۷۰۰ برای بقیهٔ کاربران سرور بسته می‌ماند.
-`portal_setup.py` رمز پایگاه داده، آدرس اتصال و کلید رمزگذاری (`portal.key`) را در `issuer-keys/` می‌سازد و چاپ نمی‌کند.
-از کل پوشهٔ `issuer-keys/` و از دادهٔ پایگاه داده جداگانه پشتیبان بگیرید.
+`portal_setup.py` رمز پایگاه داده، آدرس اتصال و **دو کلید رمزگذاری جدا** را در `issuer-keys/` می‌سازد و چاپ نمی‌کند (فایلی را که از قبل هست هرگز بازنویسی نمی‌کند):
+
+| فایل | چه چیزی را محافظت می‌کند | کدام سرویس‌ها آن را می‌بینند |
+|---|---|---|
+| `portal.key` | کلیدهای API صرافی مشتریان و رازهای هر کاربر (کد دومرحله‌ای) | فقط `portal` و `account-worker` |
+| `settings.key` | رازهای سطح سایت، مثل توکن ربات تلگرام | `portal`، `payment-worker`، `telegram-worker`، `issuer` |
+
+پس `payment-worker`، `telegram-worker` و `issuer` اصلاً `portal.key` را ندارند و حتی با نفوذ به آن‌ها کلید صرافی مشتریان باز نمی‌شود.
+
+### مالکیت و دسترسی فایل‌ها (کانتینرها root نیستند)
+همهٔ کانتینرها با کاربر ثابت `10001:10001` اجرا می‌شوند. Docker Compose خارج از Swarm مالک و دسترسی فایل راز را از روی سرور برمی‌دارد (`uid/gid/mode` در compose نادیده گرفته می‌شود)، پس این‌ها را یک‌بار روی سرور بزنید:
+```bash
+sudo chown 10001:10001 issuer-keys/portal.key issuer-keys/settings.key issuer-keys/portal_database_url \
+     issuer-keys/license.private.pem
+sudo chmod 0400 issuer-keys/portal.key issuer-keys/settings.key issuer-keys/portal_database_url issuer-keys/license.private.pem
+chmod 0444 issuer-keys/postgres_password
+```
+- `postgres_password` را PostgreSQL با کاربر خودش می‌خواند (و سرویس `backup` با ۱۰۰۱)، پس باید قابل‌خواندن باشد (`0444`)؛ پوشهٔ `issuer-keys` با ۷۰۰ برای بقیهٔ کاربران سرور بسته می‌ماند.
+- بعد از `chown`، خواندن آن فایل‌ها روی سرور فقط با `sudo` ممکن است؛ این عمدی است.
+- اگر کانتینری با «Permission denied» روی `/run/secrets/...` بالا نیامد، مالک یا دسترسی همان فایل را بررسی کنید.
+- پوشهٔ پشتیبان‌ها هم باید برای این کاربر قابل‌نوشتن باشد: `mkdir -p runtime/backups && sudo chown 10001:10001 runtime/backups`.
+
+### ارتقا از نسخهٔ قبلی (بدون `settings.key`)
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal python portal_setup.py
+```
+وقتی رازهای پایگاه داده از قبل هست، این دستور فقط `settings.key` را می‌سازد (اگر نبود) و چیز دیگری را تغییر نمی‌دهد. بعد مالک آن را مثل بالا `10001` کنید و `docker compose ... up -d --build` را بزنید. وب (که هر دو کلید را دارد) توکن تلگرام را که با `portal.key` رمز شده بود، هنگام بالا آمدن خودش با `settings.key` دوباره رمز می‌کند. تا آن لحظه `telegram-worker` توکن را نمی‌خواند. اگر وب هنوز این کار را نکرده بود، دستی:
+```bash
+docker compose -f portal-postgres-compose.yml exec portal python portal_admin.py rekey-settings
+```
+(فرمان را هر چند بار بزنید بی‌ضرر است؛ تعداد رازهای دوباره‌رمزشده را چاپ می‌کند.)
+
+> **هشدار مهم: پشتیبان `issuer-keys/` جدا از پشتیبان پایگاه داده.** اگر `portal.key` گم شود، همهٔ کلیدهای API ذخیره‌شدهٔ مشتریان برای همیشه ناخواندنی می‌شوند و باید همه دوباره کلید وارد کنند. `settings.key` گم شود، توکن تلگرام باید دوباره ثبت شود. `license.private.pem` گم شود، لایسنس جدید نمی‌توان صادر کرد. پوشهٔ `issuer-keys/` را (رمزشده) جایی جدا از سرور و جدا از پشتیبان پایگاه داده نگه دارید.
 
 ### یک‌بار: کلید خصوصی صدور لایسنس (Ed25519)
 سرویس `issuer` در `portal-postgres-compose.yml` (و `portal-compose.yml`) سفارش‌های تأییدشده را امضا می‌کند و تنها سرویسی است که کلید خصوصی را می‌بیند. بدون این کلید، سرویس بالا نمی‌آید و تأییدها در صف می‌مانند. کلید را فقط یک‌بار و **پیش از اولین `up -d`** بسازید (دستور، فایل موجود را هرگز بازنویسی نمی‌کند):
 ```bash
 cd /opt/Trade/lbank_project
-docker run --rm -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal \
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/issuer-keys:/app/issuer-keys" trade-portal-central-portal \
   python customer_manager.py keygen \
   --private-key issuer-keys/license.private.pem --public-key issuer-keys/license.public.pem
 ```
@@ -51,10 +80,31 @@ echo '{"main": "paper-live-lbank/shahin.db", "c3": "paper-live-lbank/mojsavar.db
 $C exec portal python portal_admin.py bind-runtime USERNAME /app/owner-runtime
 ```
 
-## پشتیبان پایگاه داده
+## پشتیبان‌گیری خودکار و آزمون بازیابی
+
+سرویس `backup` در `portal-postgres-compose.yml` هر ۲۴ ساعت (و یک‌بار هنگام بالا آمدن) از پایگاه داده `pg_dump` می‌گیرد، فشرده می‌کند و در `runtime/backups/` (کنار پوشهٔ پروژه) می‌گذارد: `portal-20260115T020000Z.sql.gz`. ۱۴ فایل آخر نگه داشته می‌شود. پورتی باز نمی‌کند. پیش از اولین `up`:
 ```bash
-docker compose -f portal-postgres-compose.yml exec -T db pg_dump -U trade_portal trade_portal | gzip > /root/portal-$(date +%Y%m%d).sql.gz
+mkdir -p runtime/backups && sudo chown 10001:10001 runtime/backups && sudo chmod 700 runtime/backups
+docker compose -f portal-postgres-compose.yml logs backup --tail 5   # باید «backup written» ببینید
 ```
+
+> **این پشتیبان خارج از سرور نیست.** اگر دیسک یا خود سرور از بین برود، این فایل‌ها هم می‌روند. حتماً رمزشده به جای دیگری کپی کنید. فایل‌ها بدون رمز نباید از سرور بیرون بروند (حاوی ایمیل و داده‌های مشتریان‌اند). نمونه با `age` (روی سرور cron بگذارید، مثلاً هر شب):
+> ```bash
+> # یک‌بار: age-keygen -o age-key.txt  (فایل age-key.txt را فقط جای امن و جدا نگه دارید؛ روی سرور فقط کلید عمومی age1... لازم است)
+> newest=$(ls -1t /opt/Trade/lbank_project/runtime/backups/portal-*.sql.gz | head -1)
+> age -r age1YOURPUBLICKEY "$newest" > /tmp/portal.sql.gz.age && scp /tmp/portal.sql.gz.age backup@other-host:/backups/ && rm /tmp/portal.sql.gz.age
+> # یا با rclone: age -r age1... "$newest" | rclone rcat remote:avina-backups/$(basename "$newest").age
+> # یا با gpg: gpg --encrypt --recipient you@example.com --output - "$newest" | ssh backup@other-host "cat > /backups/$(basename "$newest").gpg"
+> ```
+> کلید خصوصی `age`/`gpg` را روی همان سرور نگه ندارید.
+
+**آزمون بازیابی (ماهی یک‌بار):** آخرین فایل را در یک پایگاه موقت روی همان سرویس `db` برمی‌گرداند و شمار ردیف‌های `users` و `license_orders` را چاپ می‌کند؛ پایگاه اصلی دست نمی‌خورد و پایگاه موقت پاک می‌شود:
+```bash
+cd /opt/Trade/lbank_project && tools/portal_backup_check.sh portal-postgres-compose.yml runtime/backups
+```
+خروجی باید مثل `users 128` و `license_orders 340` باشد و عدد‌ها با پنل مدیریت هم‌خوان. اگر خطا داد، پشتیبان‌گیری خراب است: همان روز رسیدگی کنید.
+
+بازیابی واقعی (روی سرور تازه یا بعد از خرابی): `gunzip -c portal-DATE.sql.gz | docker compose -f portal-postgres-compose.yml exec -T db psql -U trade_portal -d trade_portal` روی پایگاه خالی، **به‌همراه** همان `issuer-keys/` قبلی.
 
 فروش هر دو محصول تا ثبت قیمت و بازکردن صریح در کارتابل بسته می‌ماند.
 
@@ -99,7 +149,14 @@ docker compose -f portal-postgres-compose.yml exec -T db pg_dump -U trade_portal
 - واریزی که مبلغ یا شبکه‌اش با هیچ فاکتوری جور نباشد در «واریزهای دریافتی» با وضعیت «بدون فاکتور» دیده می‌شود. اگر مشتری از صرافی برداشت کرده و کارمزد از مبلغ کم شده، در همان ردیف کد سفارش مشتری (۸ نویسهٔ اول یا شناسهٔ کامل) را وارد و «وصل به سفارش» را بزنید؛ فاکتور همان شبکه و توکن پرداخت‌شده ثبت می‌شود و مشتری پیام تأیید می‌گیرد. سپس مثل همیشه از کارتابل درخواست‌ها تأیید کنید.
 - سفارش پرداخت‌شده را مشتری نمی‌تواند لغو کند. اگر مدیر سفارش پرداخت‌شده را رد کند، سفارش با نشان «بازپرداخت لازم» می‌ماند؛ بعد از واریز پول به مشتری، شناسهٔ تراکنش بازپرداخت را در همان ردیف ثبت کنید تا «بازپرداخت شد» شود.
 - سفارش پرداخت‌شده (یا کاملاً پرداخت‌شده با اعتبار) حتی بعد از تغییر تعرفه یا بستن فروش با همان قیمت و مدت ثبت‌شده صادر می‌شود.
-- برای خواندن شبکه از سرویس‌های عمومی `api.trongrid.io` و `bsc-rpc.publicnode.com` استفاده می‌شود؛ سرور باید به اینترنت دسترسی داشته باشد.
+- برای خواندن شبکه از سرویس‌های عمومی `api.trongrid.io` و `bsc-rpc.publicnode.com` استفاده می‌شود (و برای تأیید دوم `bsc-dataseed.bnbchain.org` و `apilist.tronscanapi.com`)؛ سرور باید به اینترنت دسترسی داشته باشد. اگر از ایران یا پشت فیلتر هستید، پراکسی HTTPS را در `.env` بگذارید (مثل تلگرام):
+  ```
+  PAYMENT_HTTPS_PROXY=http://proxy-host:port
+  ```
+- **آزمون دسترسی (یک خط):** هر چهار نقطهٔ اصلی و دوم را یک‌بار صدا می‌زند و برای هرکدام `reachable` یا `unreachable` می‌نویسد؛ اگر یکی خراب باشد با کد خروج غیرصفر تمام می‌شود:
+  ```bash
+  docker compose -f portal-postgres-compose.yml run --rm payment-worker python portal_payments.py --check
+  ```
 
 ## ربات تلگرام کاربران
 
@@ -184,3 +241,42 @@ $C exec portal python portal_admin.py reset-totp USERNAME
 - اگر خریدار و دعوت‌کننده از یک آدرس کیف پول پرداخت کرده باشند، پاداش با وضعیت «در بررسی» ثبت می‌شود (قابل استفاده و در موجودی نیست) و مدیر در تب «دعوت و پاداش» آن را «آزادسازی» یا «ابطال» می‌کند.
 - «سقف مجموع تخفیف‌ها» مجموع تخفیف دوست، کوپن و اعتبار روی یک سفارش را به این درصد از قیمت لیست محدود می‌کند. دورهٔ انتظار پیش‌فرض پاداش در الگوها ۷ روز است.
 - کدهای شبیه رسمی (AVINA، ARTAX، ADMIN، SUPPORT و ...) را کاربران نمی‌توانند بگیرند؛ مدیر می‌تواند خودش کمپین با این نام‌ها بسازد. برای پس‌گرفتن کد شخصی یک کاربر، همان کد را در جدول کدها غیرفعال کنید؛ اگر کد فعال دیگری نداشته باشد، کد تصادفی تازه می‌گیرد.
+
+## نظارت و هشدار برای مالک
+
+`telegram-worker` هر دقیقه سلامت سرویس‌ها را می‌سنجد و برای **هر مشکل فقط یک پیام** به تلگرام همهٔ مدیرانی که تلگرامشان را وصل کرده‌اند می‌فرستد (و یک پیام «برطرف شد» وقتی درست شد). مواردی که بررسی می‌شود: پاسخ‌ندادن کارگر پرداخت (۵ دقیقه) وقتی آدرس دریافت تنظیم است، خواندن موفق نشدن TRON یا BSC (۱۵ دقیقه)، شکست تأیید با منبع دوم، پاسخ‌ندادن سرویس صدور لایسنس وقتی تأییدی در صف است، تأیید لایسنسی که بیش از ۱۰ دقیقه در صف یا در حال اجرا مانده، تأیید ناموفق، واریز تازهٔ بدون فاکتور و گیرکردن صف خواندن حساب‌ها. همین فهرست بالای تب «نمای کلی» کارتابل مدیریت هم دیده می‌شود (`GET /api/admin/health`).
+
+> **محدودیت:** این هشدارها از داخل سرور می‌آیند. اگر کل سرور یا Docker یا اینترنت آن بخوابد، `telegram-worker` هم می‌خوابد و پیامی نمی‌آید. برای این حالت یک **پایش بیرونی** بگذارید: در سرویسی مثل UptimeRobot، Better Stack یا Healthchecks یک بررسی HTTPS روی `https://دامنه/healthz` (انتظار: کد ۲۰۰ و متن `{"status":"ok"}`) با فاصلهٔ ۱ تا ۵ دقیقه بسازید و اعلان آن را به ایمیل یا تلگرام خودتان بفرستید. `/healthz` به پایگاه داده هم سر می‌زند و در صورت خرابی ۵۰۳ می‌دهد.
+
+## ایمیل (اختیاری)
+
+بدون تنظیم ایمیل، سایت مثل قبل کار می‌کند و در پنل «ارسال ایمیل فعال نیست» نشان می‌دهد. با تنظیم SMTP این‌ها فعال می‌شوند: پیوند تأیید ایمیل (۲۴ ساعت اعتبار) هنگام ثبت‌نام و تغییر ایمیل با دکمهٔ «ارسال دوبارهٔ پیوند» در پنل، ارسال همان کد ۸ رقمی بازیابی رمز عبور به ایمیلِ **تأییدشده** (کنار تلگرام) و یادآوری پایان اشتراک ۷ روز و ۱ روز قبل (ایمیل تأییدشده و تلگرام وصل‌شده). ایمیل هیچ‌وقت داخل درخواست وب فرستاده نمی‌شود؛ `telegram-worker` از صف می‌فرستد (۵ بار تلاش با فاصلهٔ فزاینده) و رمز SMTP را فقط همان سرویس می‌بیند.
+```bash
+printf '%s' 'SMTP_PASSWORD' > issuer-keys/smtp_password && sudo chown 10001:10001 issuer-keys/smtp_password && sudo chmod 0400 issuer-keys/smtp_password
+# در .env:  SMTP_HOST=smtp.example.com  SMTP_PORT=587  SMTP_USER=avina  SMTP_FROM='Avina <no-reply@example.com>'
+docker compose -f portal-postgres-compose.yml -f portal-mail-compose.yml up -d
+```
+پورت ۴۶۵ با SSL و هر پورت دیگر با STARTTLS وصل می‌شود؛ گواهی سرور بررسی می‌شود. دامنهٔ فرستنده را با SPF و DKIM تنظیم کنید وگرنه نامه‌ها در هرزنامه می‌افتند.
+
+## لاگ دسترسی و خطاها
+
+- Caddy هر درخواست را در یک خط JSON در `runtime/caddy/data/logs/access.log` می‌نویسد (۱۰ فایل ۱۰ مگابایتی، حداکثر ۳۰ روز). بدنهٔ درخواست‌ها ثبت نمی‌شود؛ سرایند `Cookie` و `Authorization` و `Set-Cookie` و توکن پیوند تأیید ایمیل حذف می‌شوند.
+- خطای پیش‌بینی‌نشدهٔ برنامه در لاگ کانتینر یک خط می‌شود: شناسهٔ کوتاه، روش، مسیر، نوع خطا و محل آن (بدون متن خطا و بدون سرایند). همان شناسه در پاسخ ۵۰۰ به کاربر هم هست: `docker compose -f portal-postgres-compose.yml logs portal | grep <id>`.
+- برنامه برای هر آدرس IP حداکثر ۱۲۰ درخواست صفحه یا API عمومی در دقیقه می‌پذیرد (بعدش ۴۲۹ با `Retry-After`)؛ فایل‌های ایستا و `/healthz` شمرده نمی‌شوند. صفحه‌های بلاگ، RSS و sitemap ۳۰ ثانیه در حافظه نگه داشته می‌شوند و با هر ذخیره یا حذف مقاله فوراً تازه می‌شوند.
+
+## نسخهٔ SQLite (`portal-compose.yml`)
+کانتینرها با کاربر `10001` اجرا می‌شوند؛ پیش از `up` پوشهٔ داده و رازها را برایش آماده کنید:
+```bash
+mkdir -p runtime/portal && sudo chown -R 10001:10001 runtime/portal && sudo chmod 700 runtime/portal
+sudo chown 10001:10001 issuer-keys/portal.key issuer-keys/license.private.pem && sudo chmod 0400 issuer-keys/portal.key issuer-keys/license.private.pem
+```
+این نسخه کارگر پرداخت و تلگرام ندارد و تنها یک کلید (`portal.key`) به کار می‌برد.
+
+## ترکیب‌های compose
+همه این‌ها با `docker compose -f ... config -q` بررسی می‌شوند:
+- `-f portal-postgres-compose.yml` (پایه)
+- `-f portal-postgres-compose.yml -f portal-owner-compose.yml`
+- `-f portal-postgres-compose.yml -f portal-owner-compose.yml -f portal-public-compose.yml` (با `PORTAL_DOMAIN`)
+- `... -f portal-mail-compose.yml` (ایمیل اختیاری)
+- `-f portal-compose.yml` و `-f portal-compose.yml -f portal-public-compose.yml` (نسخهٔ SQLite)
+

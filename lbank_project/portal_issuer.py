@@ -11,6 +11,7 @@ import uuid
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from portal_billing import Billing
+import portal_store
 from portal_store import PortalStore
 from portal_database import configured_target
 from portal_audit import record
@@ -57,7 +58,7 @@ def main():
     parser.add_argument('--private-key',type=Path,required=True)
     parser.add_argument('--once',action='store_true')
     args=parser.parse_args()
-    store=PortalStore(configured_target(),Path(os.environ['PORTAL_KEY_FILE']).read_bytes().strip())
+    store=PortalStore(configured_target(),*portal_store.keys_from_env(portal=False))
     try:
         worker=Issuer(store,args.private_key)
         if args.once:worker.once();return

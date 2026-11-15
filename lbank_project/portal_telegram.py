@@ -19,6 +19,8 @@ import urllib.parse
 import urllib.request
 import uuid
 
+from cryptography.fernet import InvalidToken
+
 from portal_audit import record, require_admin
 
 API = 'https://api.telegram.org'
@@ -109,7 +111,11 @@ class Telegram:
     def token(self, db=None):
         def read(db):
             value = self._setting(db, 'token')
-            return self.store.vault.decrypt(value.encode()).decode() if value else ''
+            if not value:return ''
+            try:plain, old = self.store.open_setting(value)
+            except InvalidToken:return ''  # Sealed with a key this process does not hold: the web process re-seals it at start.
+            if old:self.store.rekey_settings(db)  # Only a process holding both keys gets here.
+            return plain
         if db is not None:return read(db)
         with self.store.db() as db:return read(db)
 
@@ -131,7 +137,7 @@ class Telegram:
             self.store.database.begin_write(db, 'telegram')
             require_admin(db, actor)
             before = self._setting(db, 'bot_username'), bool(self._setting(db, 'token'))
-            for name, value in (('token', self.store.vault.encrypt(token.encode()).decode() if token else ''),
+            for name, value in (('token', self.store.seal_setting(token) if token else ''),
                                 ('bot_username', username)):
                 db.execute('INSERT INTO site_settings(name,value,updated) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET '
                            'value=excluded.value,updated=excluded.updated', ('telegram.' + name, value, now))
@@ -314,9 +320,31 @@ class Telegram:
 
 
 class Worker:
-    def __init__(self, store, feed_reader, site='', call=None, poll_seconds=10):
+    def __init__(self, store, feed_reader, site='', call=None, poll_seconds=10, mailer=None):
         self.telegram = Telegram(store, call)
         self.store, self.feed_reader, self.site, self.call, self.poll = store, feed_reader, site, self.telegram.call, poll_seconds
+        self.mailer, self.watched = mailer, 0
+
+    def background(self, now=None, watch_every=60):
+        """Work that does not need the Telegram bot: the owner's watchdog (once a minute), queued e-mail, daily expiry reminders
+        and daily housekeeping. Every step is guarded, so one failing never stops the others; returns the names that ran."""
+        import portal_housekeeping, portal_mail, portal_watchdog
+        if self.mailer is None:
+            try:self.mailer = portal_mail.Mailer.from_env()
+            except OSError:
+                print('SMTP password file could not be read; e-mail stays off.', flush=True);self.mailer = portal_mail.Mailer()
+        clock = time.time() if now is None else now
+        steps = [('mail', lambda: portal_mail.send_pending(self.store, self.mailer, now)),
+                 ('reminders', lambda: portal_mail.queue_expiry_reminders(self.store, self.site or 'http://127.0.0.1:8080', now)),
+                 ('housekeeping', lambda: portal_housekeeping.housekeeping(self.store, now))]
+        if clock - self.watched >= watch_every:
+            steps.insert(0, ('watchdog', lambda: portal_watchdog.run(self.store, now)))
+            self.watched = clock
+        ran = []
+        for name, step in steps:
+            try:step();ran.append(name)
+            except Exception:print(f'Telegram worker step "{name}" failed; retrying later.', flush=True)
+        return ran
 
     def _gate(self, name, value=None):
         with self.store.db() as db:
@@ -348,14 +376,16 @@ def main():
     from portal_database import configured_target
     from portal_store import PortalStore
     from signal_feed import read_feed
-    key = Path(os.environ['PORTAL_KEY_FILE']).read_bytes().strip()
-    store = PortalStore(configured_target(), key)
+    from portal_store import keys_from_env
+    key, settings_key = keys_from_env(portal=False)  # The bot token is a site secret: this worker never needs the customer vault key.
+    store = PortalStore(configured_target(), key, settings_key)
     feed = os.getenv('PORTAL_SIGNAL_FEED_DB', '')
     worker = Worker(store, lambda: read_feed(feed), os.getenv('PORTAL_ORIGIN', ''))
     stop = threading.Event()
     for sig in (signals_module.SIGTERM, signals_module.SIGINT):signals_module.signal(sig, lambda *_: stop.set())
     try:
         while not stop.is_set():
+            worker.background()
             try:
                 if not worker.once():stop.wait(15)
             except TelegramError:

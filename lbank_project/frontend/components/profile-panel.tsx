@@ -9,6 +9,8 @@ import TelegramPanel from "./telegram-panel";
 export default function ProfilePanel({
   api,
   email,
+  emailVerified,
+  mailEnabled,
   onEmail,
   totpEnabled,
   onTotp,
@@ -17,13 +19,15 @@ export default function ProfilePanel({
 }: {
   api: ApiClient;
   email: string | null;
+  emailVerified: boolean;
+  mailEnabled: boolean;
   onEmail: (email: string) => void;
   totpEnabled: boolean;
   onTotp: (enabled: boolean) => void;
   notify: (message: string) => void;
   report: (error: unknown) => void;
 }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const [value, setValue] = useState(email ?? ""),
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false);
@@ -34,7 +38,7 @@ export default function ProfilePanel({
       const result = await api.request<{ email: string }>(
         "/api/me/email",
         "PUT",
-        { email: value, current_password: password },
+        { email: value, current_password: password, lang },
       );
       setPassword("");
       setValue(result.email);
@@ -57,6 +61,36 @@ export default function ProfilePanel({
       setBusy(false);
     }
   }
+  async function resend() {
+    setBusy(true);
+    try {
+      await api.request("/api/me/email/verify", "POST", { lang });
+      notify(
+        t(
+          "پیوند تأیید به ایمیل شما فرستاده می‌شود؛ چند دقیقه صبر کنید.",
+          "A confirmation link is on its way to your email; give it a few minutes.",
+        ),
+      );
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 429)
+        notify(
+          t(
+            "کمی پیش پیوند فرستاده شد؛ یک دقیقه بعد دوباره امتحان کنید.",
+            "A link was just sent; try again in a minute.",
+          ),
+        );
+      else if (error instanceof ApiError && error.status === 409)
+        notify(
+          t(
+            "ایمیل در این سایت فعال نیست یا همین حالا تأیید شده است.",
+            "Email is not enabled on this site, or the address is already confirmed.",
+          ),
+        );
+      else report(error);
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <section id="profile-section" className="panel">
       <Heading
@@ -72,6 +106,35 @@ export default function ProfilePanel({
           {t(
             "هنوز ایمیلی برای حساب شما ثبت نشده است.",
             "Your account has no email yet.",
+          )}
+        </p>
+      )}
+      {email && (
+        <p className="note" id="email-status" role="status">
+          {emailVerified
+            ? t("✅ ایمیل تأیید شده است.", "✅ Your email is confirmed.")
+            : mailEnabled
+              ? t(
+                  "ایمیل هنوز تأیید نشده است. بازیابی رمز با ایمیل فقط برای ایمیل تأییدشده کار می‌کند.",
+                  "Your email is not confirmed yet. Password recovery by email only works for a confirmed address.",
+                )
+              : t(
+                  "ارسال ایمیل در این سایت فعال نیست؛ تأیید ایمیل و اطلاع‌رسانی با ایمیل فعلاً در دسترس نیست.",
+                  "Email sending is not enabled on this site, so email confirmation and email notices are not available.",
+                )}
+          {!emailVerified && mailEnabled && (
+            <>
+              {" "}
+              <button
+                type="button"
+                id="resend-verification"
+                className="text-button"
+                disabled={busy}
+                onClick={resend}
+              >
+                {t("ارسال دوبارهٔ پیوند تأیید", "Resend confirmation link")}
+              </button>
+            </>
           )}
         </p>
       )}

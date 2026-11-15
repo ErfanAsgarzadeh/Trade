@@ -1,0 +1,13 @@
+# Optional e-mail (verification links, password recovery by e-mail, expiry reminders). Add with -f after portal-postgres-compose.yml:
+#   SMTP_HOST=smtp.example.com SMTP_PORT=587 SMTP_USER=avina SMTP_FROM='Avina <no-reply@example.com>' \
+#     docker compose -f portal-postgres-compose.yml -f portal-mail-compose.yml up -d
+# Port 465 uses SSL; any other port uses STARTTLS. Put the SMTP password alone in issuer-keys/smtp_password
+# (chown 10001:10001, chmod 0400). Without this file the site works exactly as before and says e-mail is not enabled.
+services:
+  telegram-worker:
+    environment:
+      SMTP_PASSWORD_FILE: /run/secrets/smtp_password
+    secrets: [smtp_password]
+secrets:
+  smtp_password:
+    file: ./issuer-keys/smtp_password

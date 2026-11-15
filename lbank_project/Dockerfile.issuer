@@ -1,7 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
-COPY requirements.txt requirements-portal.txt ./
-RUN pip install --no-cache-dir -r requirements-portal.txt
-COPY portal_issuer.py portal_billing.py portal_store.py portal_database.py portal_audit.py portal_telegram.py portal_referrals.py portal_security.py portal_totp.py portal_payments.py portal_admin_store.py portal_jobs.py capital_plans.py product_pricing.py license_access.py ./
+COPY requirements-worker.txt ./
+RUN pip install --no-cache-dir -r requirements-worker.txt
+COPY portal_issuer.py portal_payments.py portal_telegram.py portal_mail.py portal_watchdog.py portal_housekeeping.py portal_store.py portal_database.py portal_audit.py portal_billing.py portal_referrals.py portal_security.py portal_totp.py portal_admin_store.py portal_jobs.py capital_plans.py product_pricing.py license_access.py signal_feed.py ./
+# Not root: fixed uid/gid 10001. The signing key is a mounted secret; the SQLite variant writes only to its mounted runtime volume.
+RUN groupadd --system --gid 10001 avina && useradd --system --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin avina
+USER 10001:10001
 CMD ["python", "-u", "portal_issuer.py", "--private-key", "/run/secrets/license_private"]

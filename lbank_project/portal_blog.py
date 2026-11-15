@@ -280,8 +280,14 @@ CONTENT_FIXES = (
 )
 
 
+GENERATION = [0]  # Bumped by every write, so the web process's short page cache never serves a saved or deleted article.
+
+
 class BlogStore:
     def __init__(self, store):self.store = store
+
+    @staticmethod
+    def _changed():GENERATION[0] += 1
 
     # Public reads: published articles only. A future publish date schedules the article for that UTC day.
     def published(self, lang='fa', limit=None):
@@ -345,6 +351,7 @@ class BlogStore:
                            'updated=? WHERE id=?', data + (post_id,))
                 action = 'blog_updated'
             record(db, actor, action, post_id, dict(lang=value['lang'], slug=value['slug'], status=value['status']))
+        self._changed()
         return self.get(post_id)
 
     def delete(self, actor, post_id, expected_updated):
@@ -356,6 +363,7 @@ class BlogStore:
             if abs(current['updated'] - expected_updated) > 1e-6:raise BlogConflict('Article changed since it was opened; reload it')
             db.execute('DELETE FROM blog_posts WHERE id=?', (post_id,))
             record(db, actor, 'blog_deleted', post_id, dict(lang=current['lang'], slug=current['slug']))
+        self._changed()
         return dict(status='deleted')
 
     # Images.
@@ -369,6 +377,7 @@ class BlogStore:
             db.execute('INSERT INTO blog_images(id,name,width,height,size,data,created) VALUES(?,?,?,?,?,?,?)',
                        (image_id, name, width, height, len(data), data, time.time()))
             record(db, actor, 'blog_image_added', image_id, dict(name=name, width=width, height=height, size=len(data)))
+        self._changed()
         return dict(id=image_id, url=f'/blog-media/{image_id}.webp', name=name, width=width, height=height, size=len(data))
 
     def image(self, image_id):
@@ -406,6 +415,7 @@ class BlogStore:
                 if image_id in image_ids(post['body']):raise BlogConflict('Image is used in an article')
             db.execute('DELETE FROM blog_images WHERE id=?', (image_id,))
             record(db, actor, 'blog_image_deleted', image_id)
+        self._changed()
         return dict(status='deleted')
 
     def seed(self, directory=SEED_DIRECTORY):
@@ -434,6 +444,7 @@ class BlogStore:
                     if row and old in row['body']:
                         db.execute('UPDATE blog_posts SET body=? WHERE id=?', (row['body'].replace(old, new), row['id']))
                 db.execute("INSERT INTO service_gate(name,next_at) VALUES('blog:fix:methods',?)", (time.time(),))
+        self._changed()
         return count
 
 
@@ -660,3 +671,13 @@ def rss_xml(origin, posts, lang='fa'):
             f'<title>{_e(TEXT[lang]["rss"])}</title><link>{_e(origin + blog_path(lang))}</link>'
             f'<description>{_e(SITE_SUMMARY[lang])}</description><language>{lang}</language>'
             + ''.join(items) + '</channel></rss>')
+
+
+def notice_page(origin, css, lang, canonical, title, heading, paragraph, link=None):
+    """A small server-rendered page in the blog's layout (no scripts of its own, never indexed), for confirmations."""
+    t = TEXT[lang]
+    action = f'<p><a class="landing-signup" href="{_e(link[0])}">{_e(link[1])}</a></p>' if link else ''
+    body = (f'<section class="blog-hero" aria-labelledby="notice-title"><h1 id="notice-title">{_e(heading)}</h1>'
+            f'<p>{_e(paragraph)}</p>{action}</section>')
+    return _page(origin, css, lang, canonical, title + t['suffix'], paragraph, 'website', '<meta name="robots" content="noindex,nofollow"/>',
+                 body, {}, path('fa' if lang == 'en' else 'en', canonical[3:] if lang == 'en' else canonical))

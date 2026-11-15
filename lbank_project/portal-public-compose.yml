@@ -2,9 +2,10 @@
 #   PORTAL_DOMAIN=example.com docker compose -f portal-postgres-compose.yml -f portal-owner-compose.yml \
 #       -f portal-public-compose.yml up -d --build
 # Caddy obtains and renews the TLS certificate automatically (ports 80 and 443 must reach this server).
+# Access logs (JSON, no cookies or bodies) go to runtime/caddy/data/logs/ and rotate by themselves.
 services:
   caddy:
-    image: caddy:2.8.4
+    image: caddy:2.10
     restart: unless-stopped
     ports: ["80:80", "443:443"]
     environment:
