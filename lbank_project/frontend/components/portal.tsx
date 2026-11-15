@@ -1,7 +1,13 @@
 "use client";
 import ThemeSwitcher from "./theme-switcher";
-import { useCallback, useEffect, useState } from "react";
-import { ApiClient, ApiError, SessionChanged, errorText } from "@/lib/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ApiClient,
+  ApiError,
+  SessionChanged,
+  errorText,
+  needsTwoFactor,
+} from "@/lib/api";
 import type { BillingSnapshot, Me } from "@/lib/types";
 import { licenseLabel, longDate, money } from "@/lib/format";
 import { otherPath, type Lang } from "@/lib/i18n";
@@ -10,6 +16,7 @@ import { BrandLogo } from "./shared";
 import LicensePanel from "./license-panel";
 import AccountPanel from "./account-panel";
 import ProfilePanel from "./profile-panel";
+import PasswordRecovery from "./password-recovery";
 import Robots from "./robots";
 import Pwa from "./pwa";
 import Signals from "./signals";
@@ -60,6 +67,35 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
       offer?: RefereeOffer | null;
     } | null>(null),
     [referrals, setReferrals] = useState(false);
+  // Sign-in: the two-step code field appears once the server asks for it; recovery replaces the form.
+  const [needCode, setNeedCode] = useState(false),
+    [recovering, setRecovering] = useState(false),
+    [typedName, setTypedName] = useState("");
+  // Sign-up bot barrier: a signed timestamp the server only accepts after the form has been open for 3 seconds.
+  const formToken = useRef<{ token: string; at: number } | null>(null);
+  useEffect(() => {
+    if (!registering) return;
+    let live = true;
+    api
+      .request<{ token: string }>("/api/register/token")
+      .then((r) => {
+        if (live) formToken.current = { token: r.token, at: Date.now() };
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [api, registering]);
+  async function registrationToken() {
+    let held = formToken.current;
+    if (!held || Date.now() - held.at > 7000 * 1000) {
+      const r = await api.request<{ token: string }>("/api/register/token");
+      held = formToken.current = { token: r.token, at: Date.now() };
+    }
+    const wait = held.at + 3500 - Date.now();
+    if (wait > 0) await new Promise((done) => setTimeout(done, wait));
+    return held.token;
+  }
   useEffect(() => {
     if (!registering) return;
     captureRef();
@@ -138,6 +174,7 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
       return;
     }
     try {
+      const code = String(data.get("totp") ?? "").trim();
       await api.request(registering ? "/api/register" : "/api/login", "POST", {
         username: data.get("username"),
         password: data.get("password"),
@@ -145,11 +182,16 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
           ? {
               password_confirmation: data.get("password_confirmation"),
               email: data.get("email"),
+              website: data.get("website") ?? "",
+              form_token: await registrationToken(),
               ...(referral ? { referral_code: referral } : {}),
             }
-          : {}),
+          : code
+            ? { totp: code }
+            : {}),
       });
       form.reset();
+      setNeedCode(false);
       const me = await api.request<Me>("/api/me");
       api.csrf = me.csrf;
       if (registering) {
@@ -173,7 +215,15 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
             "Check the details: a lowercase username, a valid email, a password of at least 12 characters and a correct invite code.",
           ),
         );
-      else report(error);
+      else if (!registering && needsTwoFactor(error)) {
+        setNeedCode(true);
+        setMessage(
+          t(
+            "کد ۶ رقمی برنامهٔ احراز هویت (یا یک کد بازیابی) را وارد کنید.",
+            "Enter the 6-digit code from your authenticator app (or a recovery code).",
+          ),
+        );
+      } else report(error);
     } finally {
       setBusy(false);
     }
@@ -290,127 +340,181 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
                       "Sign in to see signals and manage your subscription.",
                     )}
               </p>
-              <form
-                id={registering ? "register-form" : "login-form"}
-                onSubmit={login}
-              >
-                <label htmlFor="username">{t("نام کاربری", "Username")}</label>
-                <input
-                  id="username"
-                  name="username"
-                  dir="ltr"
-                  autoComplete="username"
-                  pattern="[a-z](?:[a-z0-9]|-)+"
-                  aria-describedby="username-help"
-                  minLength={2}
-                  maxLength={40}
-                  placeholder="username"
-                  required
+              {recovering && !registering ? (
+                <PasswordRecovery
+                  api={api}
+                  initialUsername={typedName}
+                  onCancel={() => setRecovering(false)}
+                  onDone={(text) => {
+                    setRecovering(false);
+                    setMessage(text);
+                  }}
                 />
-                <p id="username-help" className="note">
-                  {t(
-                    "نام کاربری انگلیسی با حروف کوچک، عدد و خط تیره؛ حداقل دو کاراکتر.",
-                    "Lowercase letters, numbers and dashes; at least two characters.",
-                  )}
-                </p>
-                {registering && (
-                  <>
-                    <label htmlFor="email">{t("ایمیل", "Email")}</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      dir="ltr"
-                      autoComplete="email"
-                      maxLength={254}
-                      placeholder="you@example.com"
-                      required
-                    />
-                  </>
-                )}
-                <label htmlFor="password">{t("رمز عبور", "Password")}</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  dir="ltr"
-                  autoComplete={
-                    registering ? "new-password" : "current-password"
-                  }
-                  minLength={12}
-                  maxLength={128}
-                  placeholder="••••••••••••"
-                  required
-                />
-                {registering && (
-                  <>
-                    <label htmlFor="password-confirmation">
-                      {t("تکرار رمز عبور", "Confirm password")}
-                    </label>
-                    <input
-                      id="password-confirmation"
-                      name="password_confirmation"
-                      type="password"
-                      dir="ltr"
-                      autoComplete="new-password"
-                      minLength={12}
-                      maxLength={128}
-                      required
-                    />
-                    <label htmlFor="referral-code-input">
-                      {t("کد دعوت (اختیاری)", "Invite code (optional)")}
-                    </label>
-                    <input
-                      id="referral-code-input"
-                      name="referral_code"
-                      dir="ltr"
-                      maxLength={24}
-                      value={refCode}
-                      onChange={(e) => setRefCode(e.target.value)}
-                      aria-describedby="referral-offer"
-                    />
-                    <p
-                      id="referral-offer"
-                      className={
-                        "note" +
-                        (refOffer && !refOffer.valid ? " warning-text" : "")
-                      }
-                      role="status"
-                    >
-                      {refOffer?.valid
-                        ? refOffer.offer && refOffer.offer.type !== "none"
-                          ? t("🎁 با این کد: ", "🎁 With this code: ") +
-                            offerText(refOffer.offer, lang)
-                          : t("کد دعوت معتبر است.", "Valid invite code.")
-                        : refOffer
-                          ? t(
-                              "این کد دعوت معتبر نیست.",
-                              "This invite code is not valid.",
-                            )
-                          : ""}
-                    </p>
-                    <p className="note">
-                      {t(
-                        "رمز عبور حداقل ۱۲ کاراکتر باشد. ثبت‌نام به معنی خرید یا شروع معامله نیست.",
-                        "Use at least 12 characters. Signing up does not buy anything or start trading.",
-                      )}
-                    </p>
-                  </>
-                )}
-                <button
-                  type="submit"
-                  className="full"
-                  disabled={!ready || busy}
+              ) : (
+                <form
+                  id={registering ? "register-form" : "login-form"}
+                  onSubmit={login}
                 >
-                  {!ready
-                    ? t("در حال بررسی نشست…", "Checking session…")
-                    : busy
-                      ? t("در حال ورود…", "Signing in…")
-                      : registering
-                        ? t("ساخت حساب", "Create account")
-                        : t("ورود به پنل", "Sign in")}
-                </button>
-              </form>
+                  <label htmlFor="username">
+                    {t("نام کاربری", "Username")}
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    dir="ltr"
+                    autoComplete="username"
+                    pattern="[a-z](?:[a-z0-9]|-)+"
+                    aria-describedby="username-help"
+                    minLength={2}
+                    maxLength={40}
+                    placeholder="username"
+                    onChange={(e) => setTypedName(e.target.value)}
+                    required
+                  />
+                  <p id="username-help" className="note">
+                    {t(
+                      "نام کاربری انگلیسی با حروف کوچک، عدد و خط تیره؛ حداقل دو کاراکتر.",
+                      "Lowercase letters, numbers and dashes; at least two characters.",
+                    )}
+                  </p>
+                  {registering && (
+                    <input
+                      name="website"
+                      className="hp-field"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      defaultValue=""
+                    />
+                  )}
+                  {registering && (
+                    <>
+                      <label htmlFor="email">{t("ایمیل", "Email")}</label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        dir="ltr"
+                        autoComplete="email"
+                        maxLength={254}
+                        placeholder="you@example.com"
+                        required
+                      />
+                    </>
+                  )}
+                  <label htmlFor="password">{t("رمز عبور", "Password")}</label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    dir="ltr"
+                    autoComplete={
+                      registering ? "new-password" : "current-password"
+                    }
+                    minLength={12}
+                    maxLength={128}
+                    placeholder="••••••••••••"
+                    required
+                  />
+                  {registering && (
+                    <>
+                      <label htmlFor="password-confirmation">
+                        {t("تکرار رمز عبور", "Confirm password")}
+                      </label>
+                      <input
+                        id="password-confirmation"
+                        name="password_confirmation"
+                        type="password"
+                        dir="ltr"
+                        autoComplete="new-password"
+                        minLength={12}
+                        maxLength={128}
+                        required
+                      />
+                      <label htmlFor="referral-code-input">
+                        {t("کد دعوت (اختیاری)", "Invite code (optional)")}
+                      </label>
+                      <input
+                        id="referral-code-input"
+                        name="referral_code"
+                        dir="ltr"
+                        maxLength={24}
+                        value={refCode}
+                        onChange={(e) => setRefCode(e.target.value)}
+                        aria-describedby="referral-offer"
+                      />
+                      <p
+                        id="referral-offer"
+                        className={
+                          "note" +
+                          (refOffer && !refOffer.valid ? " warning-text" : "")
+                        }
+                        role="status"
+                      >
+                        {refOffer?.valid
+                          ? refOffer.offer && refOffer.offer.type !== "none"
+                            ? t("🎁 با این کد: ", "🎁 With this code: ") +
+                              offerText(refOffer.offer, lang)
+                            : t("کد دعوت معتبر است.", "Valid invite code.")
+                          : refOffer
+                            ? t(
+                                "این کد دعوت معتبر نیست.",
+                                "This invite code is not valid.",
+                              )
+                            : ""}
+                      </p>
+                      <p className="note">
+                        {t(
+                          "رمز عبور حداقل ۱۲ کاراکتر باشد. ثبت‌نام به معنی خرید یا شروع معامله نیست.",
+                          "Use at least 12 characters. Signing up does not buy anything or start trading.",
+                        )}
+                      </p>
+                    </>
+                  )}
+                  {needCode && !registering && (
+                    <>
+                      <label htmlFor="totp">
+                        {t("کد ورود دومرحله‌ای", "Two-step login code")}
+                      </label>
+                      <input
+                        id="totp"
+                        name="totp"
+                        dir="ltr"
+                        inputMode="text"
+                        autoComplete="one-time-code"
+                        maxLength={14}
+                        placeholder="123456"
+                        required
+                      />
+                    </>
+                  )}
+                  <button
+                    type="submit"
+                    className="full"
+                    disabled={!ready || busy}
+                  >
+                    {!ready
+                      ? t("در حال بررسی نشست…", "Checking session…")
+                      : busy
+                        ? t("در حال ورود…", "Signing in…")
+                        : registering
+                          ? t("ساخت حساب", "Create account")
+                          : t("ورود به پنل", "Sign in")}
+                  </button>
+                </form>
+              )}
+              {!registering && !recovering && (
+                <p className="note login-foot">
+                  <button
+                    type="button"
+                    id="forgot-password"
+                    className="text-button"
+                    onClick={() => setRecovering(true)}
+                  >
+                    {t("رمز عبور را فراموش کرده‌اید؟", "Forgot your password?")}
+                  </button>
+                </p>
+              )}
               <p className="note login-foot">
                 {registering
                   ? t("از قبل حساب دارید؟ ", "Already have an account? ")
@@ -428,7 +532,11 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
           </section>
         ) : adminMode ? (
           user.role === "admin" ? (
-            <AdminWorkbench api={api} report={report} />
+            <AdminWorkbench
+              api={api}
+              report={report}
+              totpEnabled={Boolean(user.totp_enabled)}
+            />
           ) : (
             <section id="admin-forbidden" className="panel">
               <h1>
@@ -571,6 +679,10 @@ function PortalBody({ initialMode }: { initialMode: Mode }) {
               api={api}
               email={user.email ?? null}
               onEmail={(email) => setUser((u) => (u ? { ...u, email } : u))}
+              totpEnabled={Boolean(user.totp_enabled)}
+              onTotp={(on) =>
+                setUser((u) => (u ? { ...u, totp_enabled: on } : u))
+              }
               notify={setMessage}
               report={report}
             />

@@ -15,6 +15,7 @@ import secrets
 import signal
 import threading
 import time
+import urllib.parse
 import urllib.request
 import uuid
 
@@ -33,7 +34,9 @@ TOKENS = {
 }
 TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 DEFAULTS = dict(tron_address='', bsc_address='', invoice_minutes='60', auto_approver='',
-                bsc_rpc='https://bsc-rpc.publicnode.com', trongrid_url='https://api.trongrid.io')
+                bsc_rpc='https://bsc-rpc.publicnode.com', trongrid_url='https://api.trongrid.io',
+                bsc_rpc_verify='https://bsc-dataseed.bnbchain.org', tron_verify_url='https://apilist.tronscanapi.com',
+                auto_approve_max_usd='500')
 LATE_WINDOW = 24 * 3600        # A payment for an expired invoice is still matched within this window.
 BSC_CONFIRMATIONS = 15
 BSC_MAX_RANGE = 2000          # Blocks per query; endpoints that refuse this get 50-block queries instead.
@@ -133,10 +136,15 @@ class Payments:
         minutes = int(values.get('invoice_minutes') or 60)
         if not 15 <= minutes <= 1440:raise ValueError('Invoice lifetime must be 15..1440 minutes')
         clean['invoice_minutes'] = str(minutes)
-        for key, default in (('bsc_rpc', DEFAULTS['bsc_rpc']), ('trongrid_url', DEFAULTS['trongrid_url'])):
+        for key, default in (('bsc_rpc', DEFAULTS['bsc_rpc']), ('trongrid_url', DEFAULTS['trongrid_url']),
+                             ('bsc_rpc_verify', DEFAULTS['bsc_rpc_verify']), ('tron_verify_url', DEFAULTS['tron_verify_url'])):
             value = str(values.get(key) or default).strip()
             if not re.fullmatch(r'https://[A-Za-z0-9.-]+(:\d+)?(/[A-Za-z0-9._~/-]*)?', value):raise ValueError(key + ' must be https')
             clean[key] = value
+        ceiling = values.get('auto_approve_max_usd', DEFAULTS['auto_approve_max_usd'])
+        if isinstance(ceiling, bool) or not isinstance(ceiling, (int, str)) or not str(ceiling).isdigit() or not 0 <= int(ceiling) <= 1_000_000:
+            raise ValueError('Automatic approval ceiling must be 0..1000000 dollars')
+        clean['auto_approve_max_usd'] = str(int(ceiling))
         clean['auto_approver'] = actor if values.get('auto_approve_signals') else ''
         now = time.time()
         with self.store.db() as db:
@@ -149,6 +157,12 @@ class Payments:
             changed = {k: v for k, v in clean.items() if before.get(k) != v}
             record(db, actor, 'payment_settings_saved', 'payments',
                    {k: (v if k != 'auto_approver' else bool(v)) for k, v in changed.items()})
+            from portal_telegram import notify_admins, short
+            for key, label in (('tron_address', 'TRON'), ('bsc_address', 'BSC')):
+                if key in changed:
+                    old, new = short(before.get(key)), short(clean[key])
+                    notify_admins(db, f'⚠️ آدرس دریافت پرداخت {label} آوینا تغییر کرد: از {old} به {new}. اگر کار شما نبود فوراً بررسی کنید.',
+                                  f'⚠️ The Avina {label} receiving wallet was changed: from {old} to {new}. If this was not you, investigate now.')
         return self.admin_settings()
 
     def admin_settings(self):
@@ -159,6 +173,10 @@ class Payments:
         return dict(tron_address=settings['tron_address'], bsc_address=settings['bsc_address'],
                     invoice_minutes=int(settings['invoice_minutes']), auto_approve_signals=bool(settings['auto_approver']),
                     bsc_rpc=settings['bsc_rpc'], trongrid_url=settings['trongrid_url'], methods=self.methods(settings),
+                    bsc_rpc_verify=settings['bsc_rpc_verify'], tron_verify_url=settings['tron_verify_url'],
+                    auto_approve_max_usd=int(settings['auto_approve_max_usd']),
+                    verify_ok=not gates.get('payments:verify_failures'), verify_failures=int(gates.get('payments:verify_failures') or 0),
+                    verify_failed_at=gates.get('payments:verify_failed_at'),
                     watcher_seen=gates.get('payments:heartbeat'), checked={
                         'tron': gates.get('payments:ok:tron'), 'bsc': gates.get('payments:ok:bsc')})
 
@@ -247,8 +265,11 @@ class Payments:
         paid = amount_text(amount_micro) + ' ' + token
         notify(db, invoice['user_id'], f'✅ پرداخت {paid} شما روی شبکه تأیید شد. سفارش برای فعال‌سازی ثبت شد.',
                f'✅ Your payment of {paid} is confirmed on-chain. Your order is queued for activation.')
-        order = db.execute('SELECT product FROM license_orders WHERE id=?', (invoice['order_id'],)).fetchone()
-        return order, self.settings(db)['auto_approver']
+        order = db.execute('SELECT product,price_cents FROM license_orders WHERE id=?', (invoice['order_id'],)).fetchone()
+        settings = self.settings(db)
+        # Above the ceiling a paid order waits for a person to approve it.
+        approver = settings['auto_approver'] if int(order['price_cents']) <= int(settings['auto_approve_max_usd']) * 100 else ''
+        return order, approver
 
     def _auto_approve(self, order, approver, order_id, tx_ref):
         if order['product'] == 'signals' and approver:
@@ -328,6 +349,38 @@ def fetch_json(url, payload=None, headers=None, timeout=15):
         return json.loads(response.read(2_000_000))
 
 
+def bsc_receipt_confirms(receipt, log):
+    """True only when the verify node's receipt shows the same transfer: status 0x1, same block, and a receipt log with the same
+    token contract, the same topics and the same data (and the same log index when the receipt states one)."""
+    try:
+        if not isinstance(receipt, dict) or receipt.get('status') != '0x1':return False
+        if str(receipt.get('transactionHash', log['transactionHash'])).lower() != str(log['transactionHash']).lower():return False
+        if int(receipt['blockNumber'], 16) != int(log['blockNumber'], 16):return False
+        topics = [str(t).lower() for t in log['topics']]
+        for item in receipt['logs']:
+            if (str(item['address']).lower() == str(log['address']).lower() and [str(t).lower() for t in item['topics']] == topics
+                    and int(item['data'], 16) == int(log['data'], 16) and len(topics) == 3
+                    and int(item.get('logIndex', log['logIndex']), 16) == int(log['logIndex'], 16)
+                    and int(item.get('blockNumber', receipt['blockNumber']), 16) == int(log['blockNumber'], 16)):
+                return True
+    except (KeyError, TypeError, ValueError, AttributeError):return False
+    return False
+
+
+def tron_info_confirms(info, contract, receiver, amount):
+    """True only for a confirmed, successful transaction that carries this TRC20 transfer.
+    Assumed Tronscan /api/transaction-info shape (not guaranteed, so anything else counts as NOT verified):
+    {"confirmed": true, "contractRet": "SUCCESS",
+     "trc20TransferInfo": [{"contract_address": "T...", "to_address": "T...", "amount_str": "<integer in token base units>"}]}"""
+    try:
+        if not isinstance(info, dict) or info.get('confirmed') is not True or info.get('contractRet') != 'SUCCESS':return False
+        transfers = info.get('trc20TransferInfo')
+        if not isinstance(transfers, list):return False
+        return any(isinstance(t, dict) and t.get('contract_address') == contract and t.get('to_address') == receiver
+                   and str(t.get('amount_str', '')).isdigit() and int(t['amount_str']) == int(amount) for t in transfers)
+    except (TypeError, ValueError):return False
+
+
 class Watcher:
     """Polls confirmed incoming transfers to the configured addresses and records them."""
 
@@ -373,19 +426,43 @@ class Watcher:
                 stamps[number] = int(block['timestamp'], 16)
             return stamps[number]
 
-        found = 0
+        entries = []
         for (network, token), info in TOKENS.items():
             if network != 'bsc':continue
             for log in logs(info['contract'], cursor + 1, end):
                 if log.get('removed') or log['address'].lower() != info['contract'].lower():continue
-                value = int(log['data'], 16)
-                micro = value // 10 ** 12 if value % 10 ** 12 == 0 else None  # 18 decimals; exact amounts only.
-                sender = '0x' + log['topics'][1][-40:]
-                ref = f'bsc:{log["transactionHash"]}:{int(log["logIndex"], 16)}'
-                self.payments.record_transfer(network, token, ref, sender, address, micro, block_time(int(log['blockNumber'], 16)))
-                found += 1
-        self._gate(key, end)
+                entries.append((int(log['blockNumber'], 16), int(log['logIndex'], 16), token, log))
+        found, stop = 0, end
+        for number, _, token, log in sorted(entries, key=lambda e: e[:3]):
+            # A second, independent node must show the same transfer before the invoice is marked paid.
+            ref = f'bsc:{log["transactionHash"]}:{int(log["logIndex"], 16)}'
+            if not self._known(ref) and not self._second_source(lambda: bsc_receipt_confirms(self._rpc(settings['bsc_rpc_verify'], 'eth_getTransactionReceipt',
+                                                                             [log['transactionHash']]), log)):
+                stop = number - 1  # Retried from this block on the next pass.
+                break
+            value = int(log['data'], 16)
+            micro = value // 10 ** 12 if value % 10 ** 12 == 0 else None  # 18 decimals; exact amounts only.
+            sender = '0x' + log['topics'][1][-40:]
+            self.payments.record_transfer('bsc', token, ref, sender, address, micro, block_time(number))
+            found += 1
+        self._gate(key, stop)
+        if stop == end and entries:self._verify_state(True)
         return found
+
+    def _known(self, ref):
+        with self.store.db() as db:return bool(db.execute('SELECT 1 FROM payment_transfers WHERE tx_ref=?', (ref,)).fetchone())
+
+    def _second_source(self, check):
+        """Run one verification; any error or disagreement counts as not verified and is remembered for the admin warning."""
+        try:ok = bool(check())
+        except Exception:ok = False
+        if not ok:self._verify_state(False)
+        return ok
+
+    def _verify_state(self, ok):
+        failures = int(self._gate('payments:verify_failures') or 0)
+        self._gate('payments:verify_failures', 0 if ok else failures + 1)
+        if not ok:self._gate('payments:verify_failed_at', time.time())
 
     def _rpc(self, url, method, params):
         reply = self.fetch(url, dict(jsonrpc='2.0', id=1, method=method, params=params))
@@ -406,10 +483,16 @@ class Watcher:
             if (item.get('type', 'Transfer') != 'Transfer' or item.get('to') != address
                     or item.get('token_info', {}).get('address') != info['contract']):continue
             value = int(item['value'])
+            txid = urllib.parse.quote(str(item['transaction_id']), safe='')
+            if not self._known('tron:' + item['transaction_id']) and not self._second_source(lambda: tron_info_confirms(self.fetch(f'{settings["tron_verify_url"]}/api/transaction-info?hash={txid}'),
+                                                                   info['contract'], address, value)):
+                break  # Not recorded and the cursor stays before it: retried on the next pass.
             ref = 'tron:' + item['transaction_id']
             self.payments.record_transfer('tron', 'USDT', ref, item.get('from', ''), address, value, item['block_timestamp'] / 1000)
             cursor = max(cursor, int(item['block_timestamp']))
             found += 1
+        else:
+            if found:self._verify_state(True)
         self._gate(key, cursor)
         return found
 

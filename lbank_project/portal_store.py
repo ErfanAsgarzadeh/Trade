@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import secrets
 import sqlite3
+import threading
 import time
 import uuid
 from contextlib import contextmanager
@@ -15,11 +16,56 @@ from cryptography.fernet import Fernet
 from portal_database import PortalDatabase
 
 
-def password_hash(password, salt=None):
-    salt = salt or secrets.token_hex(16)
-    digest = hashlib.scrypt(password.encode(), salt=bytes.fromhex(salt), n=16384, r=8, p=1).hex()
-    return salt + ':' + digest
+SCRYPT_R=8
+SCRYPT_P=1
+LEGACY_LOG_N=14              # Hashes stored as 'salt:digest' were made with n=16384.
+HASHING=threading.BoundedSemaphore(max(1,int(os.getenv('PORTAL_HASH_CONCURRENCY','4'))))  # n=2**17 needs ~128 MB per hash.
+SESSION_SECONDS={'customer':43200,'admin':7200}
+LOGIN_FAILURES=5
+LOGIN_WINDOW=900
+LOGIN_MAX_LOCK=900
+FORM_MIN_AGE=3
+FORM_MAX_AGE=7200
 
+
+def scrypt_log_n():
+    """log2 of the scrypt cost for NEW hashes. PORTAL_SCRYPT_LOG_N exists so the test suite can create many users quickly."""
+    try:value=int(os.getenv('PORTAL_SCRYPT_LOG_N','17'))
+    except ValueError:value=17
+    return min(20,max(10,value))
+
+
+def _scrypt(password,salt,log_n):
+    n=2**log_n
+    with HASHING:
+        return hashlib.scrypt(password.encode(),salt=bytes.fromhex(salt),n=n,r=SCRYPT_R,p=SCRYPT_P,maxmem=192*n*SCRYPT_R).hex()
+
+
+def password_hash(password,salt=None,log_n=None):
+    """'scrypt:<log2 n>:<r>:<p>:<salt>:<digest>'. Older hashes are 'salt:digest' with n=16384 and still verify."""
+    salt=salt or secrets.token_hex(16);log_n=log_n or scrypt_log_n()
+    return f'scrypt:{log_n}:{SCRYPT_R}:{SCRYPT_P}:{salt}:{_scrypt(password,salt,log_n)}'
+
+
+def verify_password(password,stored):
+    """(matches, needs_rehash): a correct password on an older or cheaper hash should be re-hashed at the current cost."""
+    parts=stored.split(':')
+    if len(parts)==2:log_n,salt,digest=LEGACY_LOG_N,parts[0],parts[1]
+    elif len(parts)==6 and parts[0]=='scrypt' and parts[2:4]==[str(SCRYPT_R),str(SCRYPT_P)]:log_n,salt,digest=int(parts[1]),parts[4],parts[5]
+    else:raise ValueError('Unknown password hash format')
+    ok=hmac.compare_digest(_scrypt(password,salt,log_n),digest)
+    return ok,ok and log_n<scrypt_log_n()
+
+
+class LoginLocked(Exception):
+    """Too many failures for this username; `wait` seconds remain."""
+
+    def __init__(self,wait):
+        super().__init__('Login locked');self.wait=wait
+
+
+class TwoFactorRequired(Exception):
+    """The password was right but the account needs a valid two-step code."""
 
 
 EMAIL=re.compile(r'^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,24}$')
@@ -38,6 +84,7 @@ def normal_email(value):
 class PortalStore:
     def __init__(self, path, key):
         self.vault = Fernet(key)
+        self.token_key=hmac.new(bytes(key),b'avina-form-token',hashlib.sha256).digest()
         self.database=PortalDatabase(path)
         self.path=self.database.path
         # Equal work for absent usernames; no fast account-enumeration path.
@@ -68,7 +115,7 @@ class PortalStore:
                 raise EmailTaken('Email unavailable')
             db.execute('INSERT INTO users(id,username,password,email) VALUES(?,?,?,?)',(user,username,hashed,email))
             db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
-                       (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+43200))
+                       (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+SESSION_SECONDS['customer']))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'registered',time.time()))
             if referral_code:
                 from portal_referrals import Referrals
@@ -101,19 +148,101 @@ class PortalStore:
                        (client,now))
             return True
 
-    def login(self, username, password):
+    # ---- Per-username login limiter (shared through the database, so it holds across processes) -----------------
+    def lock_wait(self,username):
+        """Seconds until this username may try again (0 when free). Unknown usernames are treated identically."""
+        with self.db() as db:
+            row=db.execute('SELECT locked_until FROM login_limits WHERE username=?',(username,)).fetchone()
+            now=self.database.clock(db)
+            return int(row['locked_until']-now)+1 if row and row['locked_until']>now else 0
+
+    def login_failed(self,username):
+        """Five failures within 15 minutes lock the username for 1, 2, 4, 8, then at most 15 minutes."""
+        with self.db() as db:
+            self.database.begin_write(db,'userlimit:'+username)
+            now=self.database.clock(db)
+            db.execute('DELETE FROM login_limits WHERE updated<? AND locked_until<?',(now-86400,now))
+            row=db.execute('SELECT * FROM login_limits WHERE username=?',(username,)).fetchone()
+            if not row:failures,start,strikes,locked=1,now,0,0
+            else:
+                strikes=row['strikes'] if now-row['updated']<3600 else 0
+                if now-row['window_start']>LOGIN_WINDOW:failures,start=1,now
+                else:failures,start=row['failures']+1,row['window_start']
+                locked=row['locked_until']
+            if failures>=LOGIN_FAILURES:
+                strikes+=1;locked=now+min(LOGIN_MAX_LOCK,60*2**(strikes-1));failures,start=0,now
+            db.execute('INSERT INTO login_limits(username,failures,window_start,strikes,locked_until,updated) VALUES(?,?,?,?,?,?) '
+                       'ON CONFLICT(username) DO UPDATE SET failures=excluded.failures,window_start=excluded.window_start,'
+                       'strikes=excluded.strikes,locked_until=excluded.locked_until,updated=excluded.updated',
+                       (username,failures,start,strikes,locked,now))
+
+    def login_ok(self,username):
+        with self.db() as db:db.execute('DELETE FROM login_limits WHERE username=?',(username,))
+
+    def _open_session(self,db,user,role):
+        token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
+        db.execute('DELETE FROM sessions WHERE expires<=?',(time.time(),))
+        db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
+                   (hashlib.sha256(token.encode()).hexdigest(),user,csrf,time.time()+SESSION_SECONDS.get(role,SESSION_SECONDS['customer'])))
+        return token,csrf
+
+    def login(self, username, password, totp=None):
+        """(token, csrf), None for bad credentials. Raises LoginLocked, or TwoFactorRequired once the password is right
+        but the two-step code is missing or wrong. Every failure counts against the username, whether or not it exists."""
+        from portal_security import accept_login_code
+        wait=self.lock_wait(username)
+        if wait:raise LoginLocked(wait)
+        result=None;needs_code=False
         with self.db() as db:
             user=db.execute('SELECT * FROM users WHERE username=?',(username,)).fetchone()
-            stored=user['password'] if user else self.dummy_password
-            salt=stored.split(':')[0]
-            if not hmac.compare_digest(password_hash(password,salt),stored) or not user or user['disabled']:
-                return None
-            token=secrets.token_urlsafe(32);csrf=secrets.token_urlsafe(32)
-            db.execute('DELETE FROM sessions WHERE expires<=?',(time.time(),))
-            db.execute('INSERT INTO sessions VALUES(?,?,?,?)',
-                       (hashlib.sha256(token.encode()).hexdigest(),user['id'],csrf,time.time()+43200))
-            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user['id'],'login',time.time()))
-            return token,csrf
+            ok,rehash=verify_password(password,user['password'] if user else self.dummy_password)
+            if ok and user and not user['disabled']:
+                if rehash:db.execute('UPDATE users SET password=? WHERE id=?',(password_hash(password),user['id']))
+                needs_code=bool(user['totp_secret'])
+                if not needs_code or (totp and accept_login_code(self,db,user,totp)):
+                    result=self._open_session(db,user['id'],user['role'])
+                    db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user['id'],'login',time.time()))
+        if result:
+            self.login_ok(username);return result
+        self.login_failed(username)
+        if needs_code:raise TwoFactorRequired()
+        return None
+
+    def password_matches(self,user,password):
+        with self.db() as db:
+            row=db.execute('SELECT password FROM users WHERE id=?',(user,)).fetchone()
+        return bool(row) and verify_password(password,row['password'])[0]
+
+    def change_password(self,user,password):
+        """Set the password, end every session of this user and open a fresh one."""
+        hashed=password_hash(password)
+        with self.db() as db:
+            role=db.execute('SELECT role FROM users WHERE id=?',(user,)).fetchone()['role']
+            db.execute('UPDATE users SET password=? WHERE id=?',(hashed,user))
+            db.execute('DELETE FROM sessions WHERE user_id=?',(user,))
+            from portal_audit import record
+            from portal_telegram import notify
+            record(db,user,'password_changed',user)
+            notify(db,user,'رمز عبور حساب آوینای شما تغییر کرد و همهٔ دستگاه‌ها خارج شدند. اگر کار شما نبود فوراً با پشتیبانی تماس بگیرید.',
+                   'Your Avina password was changed and every device was signed out. If this was not you, contact support immediately.',force=True)
+            return self._open_session(db,user,role)
+
+    def revoke_others(self,user,token):
+        with self.db() as db:
+            return db.execute('DELETE FROM sessions WHERE user_id=? AND token_hash!=?',
+                              (user,hashlib.sha256(token.encode()).hexdigest())).rowcount
+
+    # ---- Sign-up form token: proves the form was open for a while without any third party -----------------------
+    def form_token(self,now=None):
+        stamp=str(int(time.time() if now is None else now))
+        return stamp+'.'+hmac.new(self.token_key,('register:'+stamp).encode(),hashlib.sha256).hexdigest()
+
+    def form_token_valid(self,token,now=None):
+        try:
+            stamp,mac=str(token or '').split('.',1);age=(time.time() if now is None else now)-int(stamp)
+        except ValueError:return False
+        expected=hmac.new(self.token_key,('register:'+stamp).encode(),hashlib.sha256).hexdigest()
+        return hmac.compare_digest(mac,expected) and FORM_MIN_AGE<=age<=FORM_MAX_AGE
 
     def set_email(self,user,email):
         email=normal_email(email)
@@ -127,10 +256,10 @@ class PortalStore:
 
     def session(self, token):
         with self.db() as db:
-            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,users.email,sessions.csrf FROM sessions '
+            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,users.email,(users.totp_secret IS NOT NULL) AS totp_enabled,sessions.csrf FROM sessions '
                            'JOIN users ON users.id=sessions.user_id WHERE token_hash=? AND expires>? AND disabled=0',
                            (hashlib.sha256(token.encode()).hexdigest(),time.time())).fetchone()
-            return dict(row) if row else None
+            return dict(row,totp_enabled=bool(row['totp_enabled'])) if row else None
 
     def logout(self, token):
         with self.db() as db:

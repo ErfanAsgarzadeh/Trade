@@ -111,6 +111,25 @@ const EVENTS: Record<string, Pair> = {
   referral_code_saved: ["ذخیرهٔ کد دعوت", "Referral code saved"],
   referral_reward_granted: ["ثبت پاداش دستی", "Manual reward granted"],
   referral_reward_voided: ["ابطال پاداش", "Reward voided"],
+  referral_reward_released: [
+    "آزادسازی پاداش در بررسی",
+    "Reward released from review",
+  ],
+  password_changed: ["تغییر رمز عبور", "Password changed"],
+  password_reset: [
+    "بازیابی رمز عبور با تلگرام",
+    "Password recovered through Telegram",
+  ],
+  totp_enabled: ["فعال‌سازی ورود دومرحله‌ای", "Two-step login turned on"],
+  totp_disabled: ["خاموش‌کردن ورود دومرحله‌ای", "Two-step login turned off"],
+  totp_reset: [
+    "حذف ورود دومرحله‌ای توسط اپراتور",
+    "Two-step login removed by the operator",
+  ],
+  recovery_code_used: [
+    "استفاده از کد بازیابی دومرحله‌ای",
+    "Two-step recovery code used",
+  ],
 };
 const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
   table[key]?.[lang === "en" ? 1 : 0];
@@ -161,9 +180,11 @@ function Pager({
 export default function AdminWorkbench({
   api,
   report,
+  totpEnabled = true,
 }: {
   api: ApiClient;
   report: Report;
+  totpEnabled?: boolean;
 }) {
   const { lang, t, faNumber } = useFormat();
   const [tab, setTab] = useState<(typeof tabs)[number][0]>("overview"),
@@ -207,6 +228,26 @@ export default function AdminWorkbench({
           {t("بازگشت به پنل مشتری", "Back to customer panel")}
         </a>
       </section>
+      {!totpEnabled && (
+        <div id="totp-banner" className="admin-warning-banner" role="alert">
+          <strong>
+            {t("ورود دومرحله‌ای فعال نیست", "Two-step login is not on")}
+          </strong>
+          {t(
+            "تا وقتی ورود دومرحله‌ای را فعال نکرده‌اید، هر تغییر مدیریتی رد می‌شود. از بخش «اطلاعات کاربری» در پنل خودتان فعالش کنید.",
+            "Every admin change is refused until you turn on two-step login. Enable it in the profile section of your own panel.",
+          )}{" "}
+          <a
+            href={
+              lang === "en"
+                ? "/en/dashboard/#profile-section"
+                : "/dashboard/#profile-section"
+            }
+          >
+            {t("رفتن به اطلاعات کاربری", "Go to profile")}
+          </a>
+        </div>
+      )}
       <div className="admin-layout">
         <nav
           className="admin-nav"

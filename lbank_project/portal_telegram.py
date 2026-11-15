@@ -58,12 +58,25 @@ def call(token, method, params=None, timeout=15):
 def text(lang, fa, en):return en if lang == 'en' else fa
 
 
-def notify(db, user_id, fa, en):
-    """Queue an account notice for a linked user who wants notices. Call inside the caller's transaction."""
+def notify(db, user_id, fa, en, force=False):
+    """Queue an account notice for a linked user who wants notices (`force`: security messages ignore that preference).
+    Call inside the caller's transaction."""
     link = db.execute('SELECT chat_id,lang,notices FROM telegram_links WHERE user_id=?', (user_id,)).fetchone()
-    if link and link['notices']:
+    if link and (link['notices'] or force):
         db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created) VALUES(?,?,?,?)',
                    (str(uuid.uuid4()), link['chat_id'], text(link['lang'], fa, en), time.time()))
+
+
+def notify_admins(db, fa, en):
+    """Security alert to every enabled administrator who linked Telegram, regardless of notice preferences."""
+    for row in db.execute("SELECT u.id FROM users u JOIN telegram_links l ON l.user_id=u.id WHERE u.role='admin' AND u.disabled=0").fetchall():
+        notify(db, row['id'], fa, en, force=True)
+
+
+def short(address):
+    """First 6 and last 4 characters of a wallet address, for alerts."""
+    address = str(address or '')
+    return address[:6] + '…' + address[-4:] if len(address) > 12 else (address or '-')
 
 
 def signal_text(item, lang):
@@ -117,11 +130,19 @@ class Telegram:
         with self.store.db() as db:
             self.store.database.begin_write(db, 'telegram')
             require_admin(db, actor)
+            before = self._setting(db, 'bot_username'), bool(self._setting(db, 'token'))
             for name, value in (('token', self.store.vault.encrypt(token.encode()).decode() if token else ''),
                                 ('bot_username', username)):
                 db.execute('INSERT INTO site_settings(name,value,updated) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET '
                            'value=excluded.value,updated=excluded.updated', ('telegram.' + name, value, now))
             record(db, actor, 'telegram_configured' if token else 'telegram_removed', 'telegram', dict(bot=username))
+            old = before[0] or ('-' if not before[1] else '?')
+            if token:
+                notify_admins(db, f'⚠️ توکن ربات تلگرام آوینا تغییر کرد (ربات قبلی: {old}، ربات جدید: {username}). اگر کار شما نبود فوراً بررسی کنید.',
+                              f'⚠️ The Avina Telegram bot token was changed (old bot: {old}, new bot: {username}). If this was not you, investigate now.')
+            elif before[1]:
+                notify_admins(db, f'⚠️ توکن ربات تلگرام آوینا حذف شد (ربات قبلی: {old}).',
+                              f'⚠️ The Avina Telegram bot token was removed (old bot: {old}).')
         return self.status()
 
     def status(self):
@@ -179,7 +200,7 @@ class Telegram:
         with self.store.db() as db:
             self.store.database.begin_write(db, 'telegram')
             require_admin(db, actor)
-            chats = db.execute('SELECT chat_id FROM telegram_links WHERE notices=1').fetchall()
+            chats = db.execute('SELECT l.chat_id FROM telegram_links l JOIN users u ON u.id=l.user_id WHERE l.notices=1 AND u.disabled=0').fetchall()
             for row in chats:
                 db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created) VALUES(?,?,?,?)',
                            (str(uuid.uuid4()), row['chat_id'], message, now))
@@ -245,6 +266,7 @@ class Telegram:
         with self.store.db() as db:
             self.store.database.begin_write(db, 'telegram')
             links = db.execute('SELECT l.user_id,l.chat_id,l.lang,l.linked,c.document FROM telegram_links l '
+                               'JOIN users u ON u.id=l.user_id AND u.disabled=0 '
                                'LEFT JOIN capital_licenses c ON c.user_id=l.user_id WHERE l.signals=1').fetchall()
             for link in links:
                 if not public_license(link['document'], now).get('signals_allowed'):continue
@@ -254,7 +276,7 @@ class Telegram:
                     if db.execute('SELECT 1 FROM telegram_signal_sent WHERE user_id=? AND signal_key=?',
                                   (link['user_id'], key)).fetchone():continue
                     db.execute('INSERT INTO telegram_signal_sent(user_id,signal_key,sent) VALUES(?,?,?)', (link['user_id'], key, now))
-                    db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created) VALUES(?,?,?,?)',
+                    db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created,protected) VALUES(?,?,?,?,1)',
                                (str(uuid.uuid4()), link['chat_id'], signal_text(item, link['lang']), now))
                     queued += 1
         return queued
@@ -262,11 +284,13 @@ class Telegram:
     def send_outbox(self, token, limit=50):
         sent = 0
         with self.store.db() as db:
-            rows = db.execute('SELECT id,chat_id,text,attempts FROM telegram_outbox WHERE sent IS NULL AND attempts<5 '
+            rows = db.execute('SELECT id,chat_id,text,attempts,protected FROM telegram_outbox WHERE sent IS NULL AND attempts<5 '
                               'ORDER BY created LIMIT ?', (limit,)).fetchall()
         for row in rows:
             try:
-                self.call(token, 'sendMessage', dict(chat_id=row['chat_id'], text=row['text'], disable_web_page_preview='true'))
+                params = dict(chat_id=row['chat_id'], text=row['text'], disable_web_page_preview='true')
+                if row['protected']:params['protect_content'] = 'true'  # Signals cannot be forwarded or saved from the chat.
+                self.call(token, 'sendMessage', params)
                 with self.store.db() as db:db.execute('UPDATE telegram_outbox SET sent=? WHERE id=?', (time.time(), row['id']))
                 sent += 1
             except TelegramError as exc:

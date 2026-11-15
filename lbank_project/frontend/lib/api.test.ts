@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ApiClient, ApiError, SessionChanged } from "./api";
+import { ApiClient, ApiError, SessionChanged, needsTwoFactor } from "./api";
 
 test("same-origin cookies and CSRF accompany mutations; no client auth storage", async () => {
   let captured: RequestInit | undefined;
@@ -52,4 +52,31 @@ test("session expiry clears CSRF, aborts other work and notifies the UI", async 
   );
   assert.equal(client.csrf, "");
   assert.equal(notified, true);
+});
+
+test("the server's detail text selects the message for two-step login and password answers", () => {
+  const detail = new ApiError(403, "Two-factor setup required");
+  assert.equal(detail.status, 403);
+  assert.equal(detail.detail, "Two-factor setup required");
+  assert.match(detail.message, /ورود دومرحله‌ای/);
+  assert.notEqual(detail.message, new ApiError(403).message);
+  assert.equal(
+    new ApiError(403, "something else").message,
+    new ApiError(403).message,
+  );
+});
+
+test("a login answer asking for the code is told apart from wrong credentials", async () => {
+  const client = new ApiClient(async () =>
+    Response.json({ detail: "Two-factor code required" }, { status: 401 }),
+  );
+  await assert.rejects(client.request("/api/login", "POST", {}), (error) => {
+    assert.ok(error instanceof ApiError);
+    assert.equal(needsTwoFactor(error), true);
+    assert.equal(
+      needsTwoFactor(new ApiError(401, "Invalid credentials")),
+      false,
+    );
+    return true;
+  });
 });

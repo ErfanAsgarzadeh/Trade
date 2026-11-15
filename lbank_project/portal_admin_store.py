@@ -51,7 +51,15 @@ class AdminStore:
             if not user:raise LookupError('User not found')
             if user_id==actor or user['role']=='admin':raise BillingConflict('Admin accounts are managed by the operator CLI')
             db.execute('UPDATE users SET disabled=? WHERE id=?',(int(disabled),user_id))
-            if disabled:db.execute('DELETE FROM sessions WHERE user_id=?',(user_id,))
+            if disabled:
+                db.execute('DELETE FROM sessions WHERE user_id=?',(user_id,))
+                # A disabled customer gets nothing more from the bot: drop the link and anything still queued for its chat.
+                link=db.execute('SELECT chat_id FROM telegram_links WHERE user_id=?',(user_id,)).fetchone()
+                if link:
+                    db.execute('DELETE FROM telegram_outbox WHERE chat_id=? AND sent IS NULL',(link['chat_id'],))
+                    db.execute('DELETE FROM telegram_links WHERE user_id=?',(user_id,))
+                db.execute('DELETE FROM telegram_link_codes WHERE user_id=?',(user_id,))
+                db.execute('DELETE FROM password_resets WHERE user_id=?',(user_id,))
             record(db,actor,'user_disabled' if disabled else 'user_enabled',user_id)
         return dict(status='disabled' if disabled else 'enabled')
 

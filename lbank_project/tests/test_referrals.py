@@ -16,6 +16,7 @@ from portal_server import create_app
 from portal_store import PortalStore
 from pricing_helpers import enable_test_prices
 from db_targets import TARGETS, fresh_store
+from totp_helpers import AUTH, enable_totp, extra, signup_token
 
 ORIGIN = 'https://avina.example'
 PASSWORD = 'disposable-test-password'
@@ -30,7 +31,7 @@ def program(referee=None, referrer=None):
 @pytest.fixture(params=TARGETS)
 def setup(request, tmp_path):
     store = fresh_store(request.param, tmp_path)
-    admin = store.create_user('manager', PASSWORD, 'm@example.com');store.set_admin('manager')
+    admin = store.create_user('manager', PASSWORD, 'm@example.com');store.set_admin('manager');enable_totp(store, 'manager')
     alice = store.create_user('alice', PASSWORD, 'a@example.com')
     enable_test_prices(store)
     referrals = Referrals(store)
@@ -182,7 +183,7 @@ def test_referral_api_for_visitors_customers_and_admins(setup):
     store, referrals, admin, alice = setup
     with TestClient(create_app(store, origin=ORIGIN), base_url=ORIGIN) as client:
         def login(name):
-            r = client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username=name, password=PASSWORD))
+            r = client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username=name, password=PASSWORD, **extra(name)))
             return {'X-Portal-Request': '1', 'Origin': ORIGIN, 'X-CSRF-Token': r.json()['csrf']}
         a = login('manager')
         config = program(dict(type='percent', value=15), dict(type='credit', value=10))
@@ -194,7 +195,7 @@ def test_referral_api_for_visitors_customers_and_admins(setup):
         assert client.put('/api/admin/referrals/codes/INFLUENCER', headers=a, json=dict(code='INFLUENCER', label='YouTube', max_uses=5)).status_code == 200
         assert client.get('/api/referral/influencer').json()['offer']['value'] == 15
         assert client.get('/api/referral/nope').json() == {'valid': False}
-        signup = dict(username='bob', password=PASSWORD, password_confirmation=PASSWORD, email='bob@example.com')
+        signup = dict(username='bob', password=PASSWORD, password_confirmation=PASSWORD, email='bob@example.com', form_token=signup_token(store))
         headers = {'X-Portal-Request': '1', 'Origin': ORIGIN}
         assert client.post('/api/register', headers=headers, json=dict(signup, referral_code='WRONG')).status_code == 422
         assert client.post('/api/register', headers=headers, json=dict(signup, referral_code='influencer')).status_code == 201
@@ -206,10 +207,159 @@ def test_referral_api_for_visitors_customers_and_admins(setup):
         quote = client.post('/api/me/license/quote', headers=b, json=dict(cap_usd=10000, months=1, product='signals')).json()
         assert quote['discounts'][0]['kind'] == 'referee' and quote['price_cents'] < quote['list_price_cents']
         assert client.get('/api/admin/referrals').status_code == 403
-        assert client.post('/api/admin/referrals/rewards', headers=b, json=dict(username='bob', kind='credit', value=5)).status_code == 403
+        assert client.post('/api/admin/referrals/rewards', headers=b, json=dict(username='bob', kind='credit', value=5, totp='123456')).status_code == 403
         a = login('manager')
         overview = client.get('/api/admin/referrals').json()
         assert overview['totals']['referrals'] == 1 and overview['codes'][0]['code'] == 'INFLUENCER' and overview['codes'][0]['owner'] == 'alice'
-        assert client.post('/api/admin/referrals/rewards', headers=a, json=dict(username='nobody', kind='credit', value=5)).status_code == 422
-        assert client.post('/api/admin/referrals/rewards', headers=a, json=dict(username='bob', kind='coupon', value=30)).status_code == 201
+        assert client.post('/api/admin/referrals/rewards', headers=a, json=dict(username='nobody', kind='credit', value=5, totp=AUTH['manager'].code())).status_code == 422
+        assert client.post('/api/admin/referrals/rewards', headers=a, json=dict(username='bob', kind='coupon', value=30, totp=AUTH['manager'].code())).status_code == 201
         assert client.put('/api/admin/referrals/settings', headers=a, json=dict(enabled=False, attach_days=3, credit_max_percent=50)).json()['credit_max_percent'] == 50
+
+
+# ---- Reserved codes, taking a code back, self-invite review and the discount ceiling ----------------------------------
+
+def test_customers_cannot_claim_reserved_codes_but_admin_campaign_codes_may_use_them(setup):
+    store, referrals, admin, alice = setup
+    for name in ('avina', 'ARTAX', 'Admin', 'support', 'OFFICIAL', 'staff', 'TEAM', 'help', 'VIP', 'free', 'BONUS', 'gift', 'nowruz', 'YALDA',
+                 'AVINA-VIP', 'avina2026', 'ARTAX-FANS', 'artaxx'):
+        with pytest.raises(ValueError, match='reserved'):referrals.set_code(alice, name)
+    assert referrals.set_code(alice, 'my-own-code') == dict(code='MY-OWN-CODE')
+    assert referrals.set_code(alice, 'avatar') == dict(code='AVATAR')  # similar, not reserved
+    assert referrals.save_code(admin, 'AVINA', None, None, 'official campaign') == dict(code='AVINA')
+    assert referrals.save_code(admin, 'NOWRUZ', None, None, 'holiday') == dict(code='NOWRUZ')
+    with TestClient(create_app(store, origin=ORIGIN), base_url=ORIGIN) as client:
+        h = {'X-Portal-Request': '1', 'Origin': ORIGIN, 'X-CSRF-Token': client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username='alice', password=PASSWORD)).json()['csrf']}
+        assert client.put('/api/me/referral/code', headers=h, json=dict(code='STAFF')).status_code == 422
+
+
+def test_an_admin_can_take_back_a_personal_code_and_the_owner_gets_a_new_random_one(setup):
+    store, referrals, admin, alice = setup
+    referrals.save_program(admin, None, 'Main', program(dict(type='percent', value=10)), True, True)
+    old = referrals.account(alice)['code']
+    referrals.set_code(alice, 'ALICE-VIP-X')
+    custom = referrals.account(alice)['code']
+    assert custom == 'ALICE-VIP-X' and referrals.lookup(custom)['valid']
+    with TestClient(create_app(store, origin=ORIGIN), base_url=ORIGIN) as client:
+        r = client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username='manager', password=PASSWORD, **extra('manager')))
+        a = {'X-Portal-Request': '1', 'Origin': ORIGIN, 'X-CSRF-Token': r.json()['csrf']}
+        taken = client.put('/api/admin/referrals/codes/' + custom, headers=a, json=dict(code=custom, active=False, label='abuse'))
+        assert taken.status_code == 200
+        assert client.put('/api/admin/referrals/codes/NOPE-CODE', headers=a, json=dict(code='NOPE-CODE', active=False)).status_code == 404
+    assert referrals.lookup(custom) == dict(valid=False)
+    fresh = referrals.account(alice)['code']
+    assert fresh not in (custom, old) or fresh == old  # an earlier active personal code may be reused, never the one taken back
+    assert fresh != custom and referrals.lookup(fresh)['valid']
+    with store.db() as db:
+        referrals.save_code(admin, old, None, None, '', 0, False, False)
+        referrals.save_code(admin, fresh, None, None, '', 0, False, False)
+        assert db.execute("SELECT COUNT(*) AS n FROM referral_codes WHERE user_id=? AND personal=1 AND active=1", (alice,)).fetchone()['n'] == 0
+    third = referrals.account(alice)['code']
+    assert len(third) == 8 and third not in (custom, old, fresh) and referrals.lookup(third)['valid']
+
+
+def pay_and_buy(store, referrals, admin, user, sender, product='signals'):
+    """Buy through a real invoice paid on-chain from `sender`, then approve the order."""
+    payments = Payments(store)
+    if not payments.methods():payments.save_settings(admin, dict(tron_address='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'))
+    billing = Billing(store)
+    quote = billing.quote(user, 10000, 1, product=product)
+    oid = billing.order(user, 10000, 1, 'subscription', str(uuid.uuid4()), quote['price_cents'], product=product)['id']
+    invoice = payments.create_invoice(user, oid, 'tron', 'USDT')
+    ref = 'tron:' + uuid.uuid4().hex
+    assert payments.record_transfer('tron', 'USDT', ref, sender, 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', invoice['amount_micro'], time.time())
+    billing.approve(oid, KEYS / 'k', payment_ref=ref)
+    with store.db() as db:db.execute('DELETE FROM capital_licenses WHERE user_id=?', (user,))
+    return oid
+
+
+def test_a_reward_for_a_purchase_paid_from_the_inviters_own_wallet_waits_for_review(setup):
+    store, referrals, admin, alice = setup
+    referrals.save_program(admin, None, 'Credit', program(referrer=dict(type='credit', value=20, trigger='every')), True, True)
+    code = referrals.account(alice)['code']
+    bob, carol = join(store, referrals, 'bob', code), join(store, referrals, 'carol', code)
+    pay_and_buy(store, referrals, admin, alice, 'TAliceWallet')  # the inviter has paid from this wallet
+    pay_and_buy(store, referrals, admin, carol, 'TCarolOwnWallet')  # a genuine friend, another wallet: usable at once
+    assert referrals.account(alice)['balance_cents'] == 2000
+    oid = pay_and_buy(store, referrals, admin, bob, 'taliceWALLET')  # same wallet, other letter case
+    account = referrals.account(alice)
+    assert account['balance_cents'] == 2000 and account['pending_cents'] == 0 and account['stats']['earned_cents'] == 2000
+    assert sorted(r['state'] for r in account['rewards']) == ['available', 'review']
+    review = next(r for r in account['rewards'] if r['state'] == 'review')
+    with store.db() as db:
+        assert db.execute('SELECT held,status FROM referral_rewards WHERE id=?', (review['id'],)).fetchone()['held'] == 1
+        assert db.execute("SELECT COUNT(*) AS n FROM telegram_outbox").fetchone()['n'] == 0
+    overview = referrals.admin_overview()
+    assert next(r for r in overview['rewards'] if r['id'] == review['id'])['state'] == 'review' and overview['totals']['credit_cents'] == 2000
+    assert overview['totals']['outstanding_cents'] == 2000
+    quote = Billing(store).quote(alice, 10000, 1, product='signals')
+    assert quote['discounts'] == [dict(kind='credit', cents=2000, percent=None)]  # the held reward is not spendable
+    with pytest.raises(PermissionError):referrals.release_held(alice, review['id'])
+    with pytest.raises(LookupError):referrals.release_held(admin, 'no-such-reward')
+    referrals.release_held(admin, review['id'])
+    assert referrals.account(alice)['balance_cents'] == 4000 and next(r for r in referrals.account(alice)['rewards'] if r['id'] == review['id'])['state'] == 'available'
+    with pytest.raises(LookupError):referrals.release_held(admin, review['id'])  # already released
+    with store.db() as db:
+        assert db.execute("SELECT 1 FROM admin_events WHERE action='referral_reward_released' AND target=?", (review['id'],)).fetchone()
+        assert db.execute("SELECT COUNT(*) AS n FROM telegram_outbox").fetchone()['n'] == 0  # no Telegram linked in this test
+    # Voiding also works on a held reward.
+    dave = join(store, referrals, 'dave', code)
+    pay_and_buy(store, referrals, admin, dave, 'TAliceWallet')
+    held = next(r for r in referrals.account(alice)['rewards'] if r['state'] == 'review')
+    referrals.void(admin, held['id'])
+    assert next(r for r in referrals.account(alice)['rewards'] if r['id'] == held['id'])['state'] == 'void' and referrals.account(alice)['balance_cents'] == 4000
+
+
+def test_review_and_release_routes(setup):
+    store, referrals, admin, alice = setup
+    referrals.save_program(admin, None, 'Credit', program(referrer=dict(type='credit', value=20, trigger='every')), True, True)
+    bob = join(store, referrals, 'bob', referrals.account(alice)['code'])
+    pay_and_buy(store, referrals, admin, alice, 'TSame');pay_and_buy(store, referrals, admin, bob, 'TSame')
+    rid = next(r['id'] for r in referrals.account(alice)['rewards'] if r['state'] == 'review')
+    with TestClient(create_app(store, origin=ORIGIN), base_url=ORIGIN) as client:
+        def login(name):
+            r = client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username=name, password=PASSWORD, **extra(name)))
+            return {'X-Portal-Request': '1', 'Origin': ORIGIN, 'X-CSRF-Token': r.json()['csrf']}
+        assert client.post(f'/api/admin/referrals/rewards/{rid}/release', headers=login('alice')).status_code == 403
+        a = login('manager')
+        assert [r['state'] for r in client.get('/api/admin/referrals').json()['rewards'] if r['id'] == rid] == ['review']
+        assert client.post('/api/admin/referrals/rewards/nope/release', headers=a).status_code == 404
+        assert client.post(f'/api/admin/referrals/rewards/{rid}/release', headers=a).json() == {'status': 'released'}
+        assert client.post(f'/api/admin/referrals/rewards/{rid}/release', headers=a).status_code == 404
+
+
+def test_all_discounts_together_stay_within_the_global_ceiling(setup):
+    store, referrals, admin, alice = setup
+    with store.db() as db:assert referrals.settings(db)['max_discount_percent'] == 100  # default: no extra limit
+    referrals.save_program(admin, None, 'Big', program(dict(type='percent', value=40, purchases=0), dict(type='credit', value=100, trigger='every')), True, True)
+    code = referrals.account(alice)['code'];bob = join(store, referrals, 'bob', code)
+    list_price = Billing(store).quote(bob, 10000, 1, product='signals')['list_price_cents']
+    assert Billing(store).quote(bob, 10000, 1, product='signals')['discounts'] == [dict(kind='referee', cents=list_price * 40 // 100, percent=40.0)]
+    for bad in (-1, 101, True, 'x'):
+        with pytest.raises(ValueError):referrals.save_settings(admin, dict(enabled=True, attach_days=7, credit_max_percent=100, max_discount_percent=bad))
+    assert referrals.save_settings(admin, dict(enabled=True, attach_days=7, credit_max_percent=100, max_discount_percent=25))['max_discount_percent'] == 25
+    quote = Billing(store).quote(bob, 10000, 1, product='signals')
+    assert [d['cents'] for d in quote['discounts']] == [list_price * 25 // 100] and quote['price_cents'] == list_price - list_price * 25 // 100
+    # Referee discount, coupon and credit combined: 25% of the list price at most, the order of application unchanged.
+    referrals.grant(admin, 'bob', 'coupon', 10);referrals.grant(admin, 'bob', 'credit', 1000)
+    for ceiling, expected in ((100, [list_price * 40 // 100, (list_price - list_price * 40 // 100) // 10]), (30, [list_price * 30 // 100]), (0, [])):
+        referrals.save_settings(admin, dict(enabled=True, attach_days=7, credit_max_percent=100, max_discount_percent=ceiling))
+        quote = Billing(store).quote(bob, 10000, 1, product='signals')
+        spent = sum(d['cents'] for d in quote['discounts'])
+        assert spent <= list_price * ceiling // 100 and quote['price_cents'] == list_price - spent
+        if ceiling != 100:assert [d['cents'] for d in quote['discounts']] == expected
+        else:assert [d['cents'] for d in quote['discounts']][:2] == expected
+    # An order placed under the ceiling reserves only what it uses; the rest stays available.
+    referrals.save_settings(admin, dict(enabled=True, attach_days=7, credit_max_percent=100, max_discount_percent=30))
+    Billing(store).order(bob, 10000, 1, 'subscription', 'k-ceiling', Billing(store).quote(bob, 10000, 1, product='signals')['price_cents'], product='signals')
+    with store.db() as db:
+        assert db.execute("SELECT COALESCE(SUM(remaining),0) AS n FROM referral_rewards WHERE user_id=? AND kind='credit'", (uid(store, 'bob'),)).fetchone()['n'] == 100000
+    with TestClient(create_app(store, origin=ORIGIN), base_url=ORIGIN) as client:
+        r = client.post('/api/login', headers={'X-Portal-Request': '1', 'Origin': ORIGIN}, json=dict(username='manager', password=PASSWORD, **extra('manager')))
+        a = {'X-Portal-Request': '1', 'Origin': ORIGIN, 'X-CSRF-Token': r.json()['csrf']}
+        assert client.put('/api/admin/referrals/settings', headers=a, json=dict(enabled=True, attach_days=3, credit_max_percent=50, max_discount_percent=40)).json()['max_discount_percent'] == 40
+        assert client.put('/api/admin/referrals/settings', headers=a, json=dict(enabled=True, attach_days=3, credit_max_percent=50, max_discount_percent=101)).status_code == 422
+        assert client.put('/api/admin/referrals/settings', headers=a, json=dict(enabled=True, attach_days=3, credit_max_percent=50)).json()['max_discount_percent'] == 100
+
+
+def uid(store, name):
+    with store.db() as db:return db.execute('SELECT id FROM users WHERE username=?', (name,)).fetchone()['id']

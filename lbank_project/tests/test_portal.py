@@ -91,8 +91,8 @@ def test_auth_csrf_logout_expired_sessions_and_host(store):
 def test_shared_login_throttle_and_disabled_user(store):
     app=create_app(store,origin=ORIGIN,secure=True)
     with TestClient(app,base_url=ORIGIN) as c:
-        for _ in range(10):
-            r=c.post('/api/login',headers={'X-Portal-Request':'1'},json=dict(username='missing',password=PASSWORD))
+        for i in range(10):  # Different names: the per-username lock (tested separately) must not hide the per-IP limit.
+            r=c.post('/api/login',headers={'X-Portal-Request':'1'},json=dict(username=f'missing{i}',password=PASSWORD))
             assert r.status_code==401
         assert c.post('/api/login',headers={'X-Portal-Request':'1'},json=dict(username='alice',password=PASSWORD)).status_code==429
     # Another process/app shares the limiter database.

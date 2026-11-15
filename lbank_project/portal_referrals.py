@@ -17,7 +17,10 @@ import uuid
 CODE = re.compile(r'^[A-Z0-9][A-Z0-9-]{2,23}$')
 ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
 PRODUCTS = ('autotrade', 'signals')
-DEFAULT_SETTINGS = dict(enabled=False, attach_days=7, credit_max_percent=100)
+DEFAULT_SETTINGS = dict(enabled=False, attach_days=7, credit_max_percent=100, max_discount_percent=100)
+# Names that look official; customers cannot claim them (administrators may still create such campaign codes).
+RESERVED = {'AVINA', 'ARTAX', 'ADMIN', 'SUPPORT', 'OFFICIAL', 'STAFF', 'TEAM', 'HELP', 'VIP', 'FREE', 'BONUS', 'GIFT', 'NOWRUZ', 'YALDA'}
+RESERVED_PREFIXES = ('AVINA', 'ARTAX')
 DAY = 86400
 
 
@@ -133,6 +136,7 @@ class Referrals:
 
     def set_code(self, user, value):
         code = clean_code(value)
+        if code in RESERVED or code.startswith(RESERVED_PREFIXES):raise ValueError('This code is reserved')
         if len(code) < 4:raise ValueError('Invalid referral code')
         with self.store.db() as db:
             self.store.database.begin_write(db, 'referral-codes')
@@ -196,7 +200,7 @@ class Referrals:
 
     # ---------- pricing ----------
     def _available(self, db, user, kind, now):
-        return db.execute("SELECT * FROM referral_rewards WHERE user_id=? AND kind=? AND status='active' AND remaining>0 "
+        return db.execute("SELECT * FROM referral_rewards WHERE user_id=? AND kind=? AND status='active' AND held=0 AND remaining>0 "
                           'AND available_at<=? AND (expires IS NULL OR expires>?) ORDER BY expires IS NULL,expires,created',
                           (user, kind, now, now)).fetchall()
 
@@ -206,6 +210,7 @@ class Referrals:
         lines = []
         settings = self.settings(db)
         if not settings['enabled'] or total <= 0:return total, lines
+        budget = total * int(settings['max_discount_percent']) // 100  # All discounts together stay within this share of the list price.
         referral = db.execute('SELECT * FROM referrals WHERE user_id=?', (user,)).fetchone()
         program = self.program_for(db, referral, now) if referral else None
         offer = program['config']['referee'] if program else None
@@ -215,21 +220,21 @@ class Referrals:
                               (user,)).fetchone()['n']
             if not offer['purchases'] or used < offer['purchases']:
                 off = total * Decimal(str(offer['value'])) / 100 if offer['type'] == 'percent' else Decimal(cents(offer['value']))
-                off = min(remaining, int(off.to_integral_value(rounding=ROUND_FLOOR)))
+                off = min(remaining, budget, int(off.to_integral_value(rounding=ROUND_FLOOR)))
                 if off > 0:
-                    remaining -= off
+                    remaining -= off;budget -= off
                     lines.append(dict(kind='referee', cents=off, percent=offer['value'] if offer['type'] == 'percent' else None))
         coupons = self._available(db, user, 'coupon', now)
         if coupons and remaining > 0:
             best = max(coupons, key=lambda r: r['value'])
-            off = min(remaining, remaining * best['value'] // 10000)
+            off = min(remaining, budget, remaining * best['value'] // 10000)
             if off > 0:
-                remaining -= off
+                remaining -= off;budget -= off
                 lines.append(dict(kind='coupon', cents=off, percent=best['value'] / 100))
                 if reserve_order:
                     db.execute('UPDATE referral_rewards SET remaining=0 WHERE id=?', (best['id'],))
                     db.execute('INSERT INTO referral_credit_uses(order_id,reward_id,cents) VALUES(?,?,?)', (reserve_order, best['id'], off))
-        limit = min(remaining, total * int(settings['credit_max_percent']) // 100)
+        limit = min(remaining, budget, total * int(settings['credit_max_percent']) // 100)
         used = 0
         for row in self._available(db, user, 'credit', now):
             if used >= limit:break
@@ -285,10 +290,26 @@ class Referrals:
         if amount <= 0:return None
         available = now + rule['hold_days'] * DAY
         rid = str(uuid.uuid4())
-        db.execute('INSERT INTO referral_rewards(id,user_id,kind,value,remaining,source,referee_id,order_id,program_id,status,created,available_at,expires) '
-                   "VALUES(?,?,?,?,?,'referral',?,?,?,'active',?,?,?)",
+        # A reward for a purchase paid from the inviter's own wallet waits for an administrator.
+        held = int(self._paid_from_same_wallet(db, referrer, order['id']))
+        db.execute('INSERT INTO referral_rewards(id,user_id,kind,value,remaining,source,referee_id,order_id,program_id,status,created,available_at,expires,held) '
+                   "VALUES(?,?,?,?,?,'referral',?,?,?,'active',?,?,?,?)",
                    (rid, referrer, kind, amount, amount if kind == 'credit' else 1, order['user_id'], order['id'], program['id'], now, available,
-                    available + rule['expiry_days'] * DAY if rule['expiry_days'] else None))
+                    available + rule['expiry_days'] * DAY if rule['expiry_days'] else None, held))
+        if held:return rid
+        self._notify_reward(db, referrer, kind, amount)
+        return rid
+
+    @staticmethod
+    def _paid_from_same_wallet(db, referrer, order_id):
+        """True when the sender address of this order's paid transfer is also a sender of any paid transfer of the referrer."""
+        senders = lambda where, arg: {str(r['from_address']).strip().lower() for r in db.execute(
+            'SELECT t.from_address FROM payment_invoices i JOIN payment_transfers t ON t.tx_ref=i.tx_ref '
+            "WHERE i.status='paid' AND " + where, (arg,)).fetchall()} - {''}
+        return bool(senders('i.order_id=?', order_id) & senders('i.user_id=?', referrer))
+
+    @staticmethod
+    def _notify_reward(db, referrer, kind, amount):
         from portal_telegram import notify
         if kind == 'credit':
             fa, en = f'{amount / 100:.2f} دلار اعتبار خرید', f'${amount / 100:.2f} of purchase credit'
@@ -296,7 +317,6 @@ class Referrals:
             fa, en = f'کوپن {amount / 100:g}٪ تخفیف', f'a {amount / 100:g}% discount coupon'
         notify(db, referrer, f'🎁 یکی از دوستانی که دعوت کرده بودید خرید کرد و {fa} گرفتید.',
                f'🎁 A friend you invited made a purchase, and you earned {en}.')
-        return rid
 
     def _rewards(self, db, user, now, limit=30):
         rows = db.execute('SELECT r.*,u.username AS referee FROM referral_rewards r LEFT JOIN users u ON u.id=r.referee_id '
@@ -308,6 +328,7 @@ class Referrals:
     @staticmethod
     def _state(row, now):
         if row['status'] == 'void':return 'void'
+        if row['held']:return 'review'
         if row['remaining'] <= 0:return 'used'
         if row['expires'] is not None and row['expires'] <= now:return 'expired'
         return 'pending' if row['available_at'] > now else 'available'
@@ -328,11 +349,11 @@ class Referrals:
             signups = db.execute('SELECT COUNT(*) AS n FROM referrals WHERE referrer_id=?', (user,)).fetchone()['n']
             paying = db.execute("SELECT COUNT(DISTINCT r.user_id) AS n FROM referrals r JOIN license_orders o ON o.user_id=r.user_id "
                                 "WHERE r.referrer_id=? AND o.status='approved'", (user,)).fetchone()['n']
-            earned = db.execute("SELECT COALESCE(SUM(value),0) AS n FROM referral_rewards WHERE user_id=? AND kind='credit' AND status='active'",
+            earned = db.execute("SELECT COALESCE(SUM(value),0) AS n FROM referral_rewards WHERE user_id=? AND kind='credit' AND status='active' AND held=0",
                                 (user,)).fetchone()['n']
             balance = sum(r['remaining'] for r in self._available(db, user, 'credit', now))
             pending = db.execute("SELECT COALESCE(SUM(remaining),0) AS n FROM referral_rewards WHERE user_id=? AND kind='credit' "
-                                 "AND status='active' AND available_at>?", (user, now)).fetchone()['n']
+                                 "AND status='active' AND held=0 AND available_at>?", (user, now)).fetchone()['n']
             coupons = [dict(percent=r['value'] / 100, expires=r['expires']) for r in self._available(db, user, 'coupon', now)]
             rewards = self._rewards(db, user, now)
             can_attach = self._can_attach(db, user, now)
@@ -354,7 +375,8 @@ class Referrals:
         from portal_audit import record
         settings = dict(enabled=bool(values.get('enabled')),
                         attach_days=_integer(values.get('attach_days', 7), 0, 365, 'days to add a code'),
-                        credit_max_percent=_integer(values.get('credit_max_percent', 100), 0, 100, 'credit share'))
+                        credit_max_percent=_integer(values.get('credit_max_percent', 100), 0, 100, 'credit share'),
+                        max_discount_percent=_integer(values.get('max_discount_percent', 100), 0, 100, 'maximum discount share'))
 
         def run(db):
             db.execute('INSERT INTO site_settings(name,value,updated) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET value=excluded.value,updated=excluded.updated',
@@ -452,6 +474,18 @@ class Referrals:
             return dict(id=rid)
         return self._write(actor, run)
 
+    def release_held(self, actor, rid):
+        """Admin: make a reward held for review usable."""
+        from portal_audit import record
+
+        def run(db):
+            row = db.execute("SELECT user_id,kind,value FROM referral_rewards WHERE id=? AND status='active' AND held=1", (rid,)).fetchone()
+            if not row or db.execute('UPDATE referral_rewards SET held=0 WHERE id=? AND held=1', (rid,)).rowcount != 1:raise LookupError('Reward not found')
+            record(db, actor, 'referral_reward_released', rid)
+            self._notify_reward(db, row['user_id'], row['kind'], row['value'])
+            return dict(status='released')
+        return self._write(actor, run)
+
     def void(self, actor, rid):
         from portal_audit import record
 
@@ -484,7 +518,7 @@ class Referrals:
             top = [dict(r) for r in db.execute(
                 'SELECT u.username,COUNT(*) AS signups,'
                 "(SELECT COUNT(DISTINCT o.user_id) FROM referrals x JOIN license_orders o ON o.user_id=x.user_id WHERE x.referrer_id=r.referrer_id AND o.status='approved') AS paying,"
-                "(SELECT COALESCE(SUM(value),0) FROM referral_rewards w WHERE w.user_id=r.referrer_id AND w.kind='credit' AND w.status='active') AS credit_cents "
+                "(SELECT COALESCE(SUM(value),0) FROM referral_rewards w WHERE w.user_id=r.referrer_id AND w.kind='credit' AND w.status='active' AND w.held=0) AS credit_cents "
                 'FROM referrals r JOIN users u ON u.id=r.referrer_id GROUP BY r.referrer_id,u.username ORDER BY signups DESC LIMIT 20').fetchall()]
             recent = [dict(id=r['id'], username=r['username'], kind=r['kind'], value=r['value'], source=r['source'], note=r['note'],
                            referee=r['referee'], created=r['created'], state=self._state(r, now)) for r in db.execute(
@@ -494,7 +528,7 @@ class Referrals:
                 referrals=db.execute('SELECT COUNT(*) AS n FROM referrals').fetchone()['n'],
                 paying=db.execute("SELECT COUNT(DISTINCT r.user_id) AS n FROM referrals r JOIN license_orders o ON o.user_id=r.user_id WHERE o.status='approved'").fetchone()['n'],
                 discount_cents=int(db.execute("SELECT COALESCE(SUM(list_price_cents-price_cents),0) AS n FROM license_orders WHERE status='approved' AND list_price_cents IS NOT NULL").fetchone()['n']),
-                credit_cents=int(db.execute("SELECT COALESCE(SUM(value),0) AS n FROM referral_rewards WHERE kind='credit' AND status='active'").fetchone()['n']),
-                outstanding_cents=int(db.execute("SELECT COALESCE(SUM(remaining),0) AS n FROM referral_rewards WHERE kind='credit' AND status='active' AND (expires IS NULL OR expires>?)", (now,)).fetchone()['n']))
+                credit_cents=int(db.execute("SELECT COALESCE(SUM(value),0) AS n FROM referral_rewards WHERE kind='credit' AND status='active' AND held=0").fetchone()['n']),
+                outstanding_cents=int(db.execute("SELECT COALESCE(SUM(remaining),0) AS n FROM referral_rewards WHERE kind='credit' AND status='active' AND held=0 AND (expires IS NULL OR expires>?)", (now,)).fetchone()['n']))
         for row in top:row['credit_cents'] = int(row['credit_cents'])
         return dict(settings=settings, programs=programs, codes=codes, top=top, rewards=recent, totals=totals)
