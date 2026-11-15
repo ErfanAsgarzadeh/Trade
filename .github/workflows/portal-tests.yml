@@ -20,7 +20,7 @@ jobs:
           --health-cmd "pg_isready -U portal_test -d portal_test"
           --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: lbank_project
       - uses: actions/setup-python@v5
