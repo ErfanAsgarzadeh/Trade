@@ -127,12 +127,17 @@ class Referrals:
         row = db.execute('SELECT code FROM referral_codes WHERE user_id=? AND personal=1 AND active=1 '
                          'ORDER BY created DESC LIMIT 1', (user,)).fetchone()
         if row:return row['code']
+        self._lock(db)
         for _ in range(20):
             code = ''.join(secrets.choice(ALPHABET) for _ in range(8))
-            if not db.execute('SELECT 1 FROM referral_codes WHERE code=?', (code,)).fetchone():
-                db.execute('INSERT INTO referral_codes(code,user_id,personal,created) VALUES(?,?,1,?)', (code, user, time.time()))
-                return code
+            # A random code that already exists is simply drawn again.
+            if db.execute('INSERT INTO referral_codes(code,user_id,personal,created) VALUES(?,?,1,?) ON CONFLICT(code) DO NOTHING',
+                          (code, user, time.time())).rowcount == 1:return code
         raise ReferralConflict('Could not create a code; try again')
+
+    def _lock(self, db):
+        """Every write to referral_codes (insert, uses, max_uses) shares this lock, taken after the caller's own lock."""
+        self.store.database.also_lock(db, 'referral-codes')
 
     def set_code(self, user, value):
         code = clean_code(value)
@@ -145,7 +150,8 @@ class Referrals:
             if db.execute('SELECT COUNT(*) AS n FROM referral_codes WHERE user_id=? AND personal=1', (user,)).fetchone()['n'] >= 5:
                 raise ReferralConflict('You can change your code at most 4 times')
             # Earlier codes keep working, so links already shared are never broken.
-            db.execute('INSERT INTO referral_codes(code,user_id,personal,created) VALUES(?,?,1,?)', (code, user, time.time()))
+            if db.execute('INSERT INTO referral_codes(code,user_id,personal,created) VALUES(?,?,1,?) ON CONFLICT(code) DO NOTHING',
+                          (code, user, time.time())).rowcount != 1:raise ReferralConflict('This code is taken')
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)', (user, 'referral_code_changed', time.time()))
         return dict(code=code)
 
@@ -161,6 +167,7 @@ class Referrals:
         """Record who invited `user`. Call inside the caller's write transaction."""
         now = time.time() if now is None else now
         if not self.settings(db)['enabled']:raise ReferralConflict('Referrals are not active')
+        self._lock(db)  # max_uses is checked and uses incremented under one lock, whichever flow got us here.
         row = self._usable_code(db, clean_code(value), now)
         if row['user_id'] == user:raise ReferralConflict('You cannot use your own code')
         if db.execute('SELECT 1 FROM referrals WHERE user_id=?', (user,)).fetchone():raise ReferralConflict('A referral code is already applied')
@@ -435,11 +442,13 @@ class Referrals:
                 user = row['id']
             if program_id and not db.execute('SELECT 1 FROM referral_programs WHERE id=?', (program_id,)).fetchone():
                 raise ValueError('Unknown program')
+            self._lock(db)
             exists = db.execute('SELECT * FROM referral_codes WHERE code=?', (code,)).fetchone()
             if create:
                 if exists:raise ReferralConflict('This code is taken')
-                db.execute('INSERT INTO referral_codes(code,user_id,program_id,label,active,max_uses,personal,created) VALUES(?,?,?,?,?,?,0,?)',
-                           (code, user, program_id or None, label, int(bool(active)), max_uses, time.time()))
+                if db.execute('INSERT INTO referral_codes(code,user_id,program_id,label,active,max_uses,personal,created) VALUES(?,?,?,?,?,?,0,?) '
+                              'ON CONFLICT(code) DO NOTHING', (code, user, program_id or None, label, int(bool(active)), max_uses, time.time())).rowcount != 1:
+                    raise ReferralConflict('This code is taken')
             else:
                 if not exists:raise LookupError('Code not found')
                 db.execute('UPDATE referral_codes SET program_id=?,label=?,active=?,max_uses=? WHERE code=?',

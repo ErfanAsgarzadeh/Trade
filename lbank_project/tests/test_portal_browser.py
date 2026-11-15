@@ -97,6 +97,7 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path, appearance):
             cached=page.evaluate("caches.keys().then(async keys=>Promise.all(keys.map(async key=>(await caches.open(key)).keys().then(reqs=>reqs.map(r=>new URL(r.url).pathname)))))")
             assert all(path in ('/portal-assets/offline.html','/portal-assets/titanium.css','/portal-assets/appearance.js') for paths in cached for path in paths)
             page.locator('#exchange-id').select_option('okx')
+            assert page.locator('#permission-note').count()==1 and page.locator('#no-withdrawal-ack').count()==0   # OKX reports key permissions itself.
             page.locator('#credential-api_key').fill('old-test-key')
             page.locator('#api-secret').fill('old-test-secret')
             page.locator('#credential-passphrase').fill('old-test-passphrase')
@@ -106,6 +107,12 @@ def test_portal_desktop_mobile_and_subscription_journey(tmp_path, appearance):
             assert page.locator('#credential-passphrase').count()==0
             page.locator('#credential-api_key').fill('browser-test-key')
             page.locator('#api-secret').fill('browser-test-secret')
+            # LBank cannot report key permissions: the customer must tick the confirmation before the form submits.
+            assert page.locator('#no-withdrawal-ack').count()==1 and not page.locator('#no-withdrawal-ack').is_checked()
+            assert page.locator('#no-withdrawal-ack').evaluate('e=>e.required')
+            page.locator('#connection-form button').click()
+            assert 'ثبت شدند' not in page.locator('#connection-status').inner_text()
+            page.locator('#no-withdrawal-ack').check()
             page.locator('#connection-form button').click()
             page.wait_for_function("()=>document.getElementById('connection-status').textContent.includes('ثبت شدند')")
             assert page.locator('#credential-api_key').input_value()==''

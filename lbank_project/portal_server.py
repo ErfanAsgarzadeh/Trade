@@ -2,6 +2,8 @@
 from contextlib import asynccontextmanager
 import os
 import ipaddress
+import json
+import logging
 from pathlib import Path
 import re
 import secrets
@@ -12,19 +14,23 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.routing import Match
 from fastapi.staticfiles import StaticFiles
 
-from portal_store import EmailTaken, LoginLocked, PortalStore, SESSION_SECONDS, TwoFactorRequired
+from portal_store import normal_email as portal_store_email, EmailTaken, LoginLocked, PortalStore, SESSION_SECONDS, TwoFactorRequired
 import portal_security
 from portal_database import configured_target
 from portal_jobs import AccountQueue,MissingConnection,RefreshLimited,QueueFull
 from portal_runtime import robots
-from portal_exchanges import catalog,validate_connection,UnsupportedAccount
+from portal_exchanges import catalog,validate_connection,PERMISSION_CHECKS,UnsupportedAccount
 from portal_billing import Billing, BillingConflict, PaidOrderConflict
 import product_pricing
 from signal_feed import read_feed
-from portal_frontend import frontend_index, private_page, public_file, public_page, robots_txt, sitemap_xml
+from portal_frontend import frontend_index, localize, page_lang, private_page, public_file, public_page, robots_txt, sitemap_xml
 import portal_blog
+import portal_mail
+import portal_watchdog
+from portal_edge import TTLCache, TokenBuckets
 from portal_payments import PaymentConflict, Payments
 from portal_telegram import Telegram, TelegramError
 from portal_referrals import ReferralConflict, Referrals
@@ -32,6 +38,17 @@ from portal_blog import BlogConflict, BlogStore
 from portal_admin_store import AdminStore
 
 COOKIE='trade_session'
+LOG=logging.getLogger('portal.errors')
+RATE_EXEMPT=('/_next/','/portal-assets/','/blog-media/','/backtest/')   # Static files; /healthz is exempt too.
+RATE_LIMITED_API={'/api/plans','/api/blog/latest','/api/register/token'}   # Public API routes; signed-in polling is not counted.
+NOT_PAGES=('/api/','/_next/','/portal-assets/','/backtest/','/blog-media/')
+
+
+def error_location(error):
+    """'file.py:line in function' of the innermost frame: where it failed, never what the message said."""
+    trace=error.__traceback__
+    while trace and trace.tb_next:trace=trace.tb_next
+    return f'{Path(trace.tb_frame.f_code.co_filename).name}:{trace.tb_lineno} in {trace.tb_frame.f_code.co_name}' if trace else 'unknown'
 
 
 def trusted_proxies(value):
@@ -56,6 +73,7 @@ class Registration(Credentials):
     password_confirmation:SecretStr=Field(min_length=12,max_length=128)
     email:str=Field(min_length=6,max_length=254)
     referral_code:str|None=Field(default=None,max_length=24)
+    lang:str=Field(default='fa',pattern=r'^(fa|en)$')   # Language of the verification e-mail.
     website:str=Field(default='',max_length=200)      # Honeypot: people never see this field, so it must stay empty.
     form_token:str=Field(default='',max_length=100)   # Signed timestamp from GET /api/register/token.
 
@@ -63,7 +81,13 @@ class Registration(Credentials):
 class EmailChange(BaseModel):
     model_config=ConfigDict(extra='forbid')
     email:str=Field(min_length=6,max_length=254)
+    lang:str=Field(default='fa',pattern=r'^(fa|en)$')
     current_password:SecretStr=Field(min_length=1,max_length=128)
+
+
+class VerifyResend(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    lang:str=Field(default='fa',pattern=r'^(fa|en)$')
 
 
 class PasswordChange(BaseModel):
@@ -106,6 +130,7 @@ class Connection(BaseModel):
     exchange_id:str=Field(default='lbank',min_length=2,max_length=40,pattern=r'^[a-z0-9]+$')
     passphrase:SecretStr|None=Field(default=None,max_length=512)
     uid:SecretStr|None=Field(default=None,max_length=128)
+    no_withdrawal_ack:bool=False   # The customer confirms the key cannot withdraw, where the exchange will not tell us.
 
 
 class LicenseQuote(BaseModel):
@@ -281,10 +306,13 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @asynccontextmanager
     async def lifespan(app):
         if supplied_store is None:
-            key=Path(os.environ['PORTAL_KEY_FILE']).read_bytes().strip()
-            app.state.store=PortalStore(configured_target(),key)
+            from portal_store import keys_from_env
+            key,settings_key=keys_from_env()
+            app.state.store=PortalStore(configured_target(),key,settings_key)
         else:app.state.store=supplied_store
-        if hasattr(app.state.store,'database'):BlogStore(app.state.store).seed()
+        if hasattr(app.state.store,'database'):
+            app.state.store.rekey_settings()  # Site secrets move from the portal key to the settings key once both are present.
+            BlogStore(app.state.store).seed()
         try:yield
         finally:
             if supplied_store is None:app.state.store.close()
@@ -327,6 +355,16 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         if not user['totp_enabled']:raise HTTPException(403,'Two-factor setup required')
         return user
 
+    def queue_verification(store,user,email,lang,by_username=True):
+        """Queue the verification link (a database row; the worker sends it). Never allowed to break the request."""
+        try:
+            with store.db() as db:
+                if by_username:
+                    row=db.execute('SELECT id FROM users WHERE username=?',(user,)).fetchone()
+                    user=row['id'] if row else None
+                if user:portal_mail.request_verification(db,user,portal_store_email(email),origin,lang)
+        except Exception:pass
+
     def throttled(request,user):
         """Codes and passwords are only checked at a bounded rate per account."""
         if not repository(request).attempt('reauth:'+user['id']):raise HTTPException(429,'Too many attempts; retry in one minute')
@@ -358,6 +396,25 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         try:return portal_blog.stylesheets(frontend_index(frontend)[0])
         except OSError:return []
 
+    buckets=TokenBuckets(int(os.getenv('PORTAL_RATE_LIMIT_PER_MINUTE','120')))
+    pages=TTLCache(30)
+
+    def cached_page(key,build):
+        """Blog pages are rendered at most once per 30 seconds per path and language, and again right after any blog write."""
+        generation=portal_blog.GENERATION[0]
+        hit=pages.get(key,generation)
+        return hit if hit is not None else pages.put(key,build(),generation)
+
+    @app.middleware('http')
+    async def rate_limit(request,call_next):
+        # Page loads and public API reads only; a browser fetching its own panel data or static files is never counted.
+        path=request.url.path
+        if (request.method in ('GET','HEAD') and path!='/healthz' and not path.startswith(RATE_EXEMPT)
+                and (not path.startswith('/api/') or path in RATE_LIMITED_API)):
+            wait=buckets.take(request.client.host if request.client else 'unknown')
+            if wait:return JSONResponse({'detail':'Too many requests; slow down'},status_code=429,headers={'Retry-After':str(wait)})
+        return await call_next(request)
+
     @app.middleware('http')
     async def headers(request,call_next):
         # Protect key/password uploads before JSON validation. Reject ambiguous streaming bodies.
@@ -372,12 +429,18 @@ def create_app(store=None,reader=None,origin=None,secure=None):
                 return JSONResponse({'detail':'Request too large'},status_code=413)
             body=await request.body()
             if len(body)>limit:return JSONResponse({'detail':'Request too large'},status_code=413)
-        response=await call_next(request)
+        try:response=await call_next(request)
+        except Exception as error:
+            # One line: request id, method, path, exception type and where it failed. No bodies, headers or exception text.
+            request_id=secrets.token_hex(4)
+            LOG.error('unhandled error id=%s method=%s path=%s type=%s at=%s',request_id,request.method,
+                      json.dumps(request.url.path[:200]),type(error).__name__,error_location(error))
+            response=JSONResponse({'detail':'Internal error','request_id':request_id},status_code=500)
         path=request.url.path
         blog_page=path in ('/blog','/en/blog') or path.startswith(('/blog/','/en/blog/'))
         public=public_file(path) or blog_page and response.status_code==200
         page=page_files.get(path) or (public[1] if isinstance(public,tuple) else None)
-        if response.status_code==404 and blog_page:page='404.html'
+        if response.status_code==404 and (blog_page or response.headers.get('content-type','').startswith('text/html')):page='404.html'
         script_hashes=''
         if page:
             try:script_hashes=frontend_index(frontend,page)[1]
@@ -419,8 +482,9 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def not_built():
         return HTMLResponse('Next.js frontend is not built. Run npm ci and npm run build in lbank_project/frontend.',status_code=503)
 
-    def not_found():
-        try:return HTMLResponse(frontend_index(frontend,'404.html')[0],status_code=404)
+    def not_found(request=None):
+        lang=page_lang(request.url.path) if request else 'fa'
+        try:return HTMLResponse(localize(frontend_index(frontend,'404.html')[0],lang),status_code=404)
         except OSError:return HTMLResponse('Not found',status_code=404)
 
     # Public pages in both languages.
@@ -452,7 +516,8 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/en/blog/rss.xml')
     def blog_feed(request:Request):
         lang='en' if request.url.path.startswith('/en/') else 'fa'
-        return Response(portal_blog.rss_xml(origin,blog_posts(request,lang),lang),media_type='application/rss+xml; charset=utf-8')
+        body=cached_page(('rss',lang),lambda:portal_blog.rss_xml(origin,blog_posts(request,lang),lang))
+        return Response(body,media_type='application/rss+xml; charset=utf-8')
 
     @app.get('/blog',response_class=HTMLResponse)
     @app.get('/blog/',response_class=HTMLResponse)
@@ -460,7 +525,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/en/blog/',response_class=HTMLResponse)
     def blog_index(request:Request):
         lang='en' if request.url.path.startswith('/en/') else 'fa'
-        return HTMLResponse(portal_blog.index_page(origin,site_css(),blog_posts(request,lang),lang))
+        return HTMLResponse(cached_page(('index',lang),lambda:portal_blog.index_page(origin,site_css(),blog_posts(request,lang),lang)))
 
     @app.get('/blog/{slug}',response_class=HTMLResponse)
     @app.get('/blog/{slug}/',response_class=HTMLResponse)
@@ -469,12 +534,15 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def blog_article(slug:str,request:Request):
         lang='en' if request.url.path.startswith('/en/') else 'fa'
         store=repository(request)
-        if not hasattr(store,'database'):return not_found()
+        if not hasattr(store,'database'):return not_found(request)
+        key=('article',lang,slug);generation=portal_blog.GENERATION[0]
+        hit=pages.get(key,generation)
+        if hit is not None:return HTMLResponse(hit)
         blog=BlogStore(store);post=blog.article(slug,lang)
-        if not post:return not_found()
+        if not post:return not_found(request)   # Unknown addresses are never cached, so random paths cannot fill the cache.
         related=[item for item in blog_posts(request,lang) if item['slug']!=post['slug']][:2]
         sizes=blog.image_sizes(portal_blog.image_ids(post['body']))
-        return HTMLResponse(portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang,sizes))
+        return HTMLResponse(pages.put(key,portal_blog.article_page(origin,site_css(),post,related,blog.translations(slug),lang,sizes),generation))
 
     @app.get('/blog-media/{name}')
     def blog_media(name:str,request:Request):
@@ -493,6 +561,10 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/api/admin/overview')
     def admin_overview(request:Request,user=Depends(administrator)):
         return AdminStore(repository(request)).overview()
+
+    @app.get('/api/admin/health')
+    def admin_health(request:Request,user=Depends(administrator)):
+        return [{k:v for k,v in item.items() if k!='fingerprint'} for item in portal_watchdog.health(repository(request))]
 
     @app.get('/api/admin/users')
     def admin_users(request:Request,user=Depends(administrator),search:str=Query(default='',max_length=80),offset:int=Query(default=0,ge=0),limit:int=Query(default=30,ge=1,le=100)):
@@ -676,8 +748,10 @@ def create_app(store=None,reader=None,origin=None,secure=None):
 
     @app.get('/sitemap.xml')
     def sitemap(request:Request):
-        posts={lang:blog_posts(request,lang) for lang in ('fa','en')}
-        return Response(sitemap_xml(origin,frontend,posts),media_type='application/xml')
+        def build():
+            posts={lang:blog_posts(request,lang) for lang in ('fa','en')}
+            return sitemap_xml(origin,frontend,posts)
+        return Response(cached_page(('sitemap',),build),media_type='application/xml')
 
     @app.get('/manifest.webmanifest')
     def manifest():
@@ -713,7 +787,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     def referral_lookup(code:str,request:Request):
         if len(code)>24:raise HTTPException(404,'Unknown code')
         client=request.client.host if request.client else 'unknown'
-        if not repository(request).attempt('referral:'+client):raise HTTPException(429,'Too many lookups')
+        if not repository(request).attempt('referral-lookup:'+client,limit=30):raise HTTPException(429,'Too many lookups')
         return Referrals(repository(request)).lookup(code)
 
     @app.get('/api/me/referral')
@@ -816,6 +890,7 @@ def create_app(store=None,reader=None,origin=None,secure=None):
             raise HTTPException(409,'Username or email unavailable')  # One answer for both, so neither can be probed.
         store.logout(request.cookies.get(COOKIE,''))
         set_session_cookie(response,token,'customer')
+        queue_verification(store,payload.username,payload.email,payload.lang)
         return {'username':payload.username,'csrf':csrf}
 
     @app.get('/api/me/signals')
@@ -848,15 +923,29 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         return {'status':'logged_out'}
 
     @app.get('/api/me')
-    def me(user=Depends(identity)):
-        return dict(username=user['username'],email=user.get('email'),csrf=user['csrf'],role=user['role'],totp_enabled=user['totp_enabled'],live_execution_supported=False)
+    def me(request:Request,user=Depends(identity)):
+        with repository(request).db() as db:mail_on=portal_mail.enabled(db)
+        return dict(username=user['username'],email=user.get('email'),email_verified=user['email_verified'],mail_enabled=mail_on,
+                    csrf=user['csrf'],role=user['role'],totp_enabled=user['totp_enabled'],live_execution_supported=False)
 
     @app.put('/api/me/email')
     def change_email(payload:EmailChange,request:Request,user=Depends(mutation)):
         reauthenticate(request,user,payload.current_password)
-        try:return {'email':repository(request).set_email(user['id'],payload.email)}
+        try:email=repository(request).set_email(user['id'],payload.email)
         except EmailTaken:raise HTTPException(409,'Email unavailable')
         except ValueError:raise HTTPException(422,'Invalid email')
+        if email!=user.get('email'):queue_verification(repository(request),user['id'],email,payload.lang,False)
+        return {'email':email}
+
+    @app.post('/api/me/email/verify',status_code=202)
+    def resend_verification(payload:VerifyResend,request:Request,user=Depends(mutation)):
+        store=repository(request)
+        if not store.attempt('verify-resend:'+user['id'],limit=5):raise HTTPException(429,'Too many requests; retry in one minute')
+        try:queued=portal_mail.resend_verification(store,user['id'],origin,payload.lang)
+        except LookupError:raise HTTPException(409,'Nothing to verify')
+        except portal_mail.Cooldown:raise HTTPException(429,'A link was just sent; wait a minute',headers={'Retry-After':'60'})
+        if not queued:raise HTTPException(409,'Email is not enabled on this site')
+        return {'status':'queued'}
 
     @app.put('/api/me/password')
     def change_password(payload:PasswordChange,request:Request,response:Response,user=Depends(mutation)):
@@ -929,8 +1018,11 @@ def create_app(store=None,reader=None,origin=None,secure=None):
         uid=payload.uid.get_secret_value() if payload.uid else ''
         try:validate_connection(payload.exchange_id,payload.market,payload.api_key.get_secret_value(),payload.secret.get_secret_value(),phrase,uid)
         except UnsupportedAccount:raise HTTPException(422,'Exchange, market or required credentials are not supported')
+        if payload.exchange_id not in PERMISSION_CHECKS and not payload.no_withdrawal_ack:
+            raise HTTPException(422,'Confirm that this key has no withdrawal permission')
         repository(request).save_connection(user['id'],payload.market,
-                                            payload.api_key.get_secret_value(),payload.secret.get_secret_value(),payload.exchange_id,phrase,uid)
+                                            payload.api_key.get_secret_value(),payload.secret.get_secret_value(),payload.exchange_id,phrase,uid,
+                                            payload.no_withdrawal_ack and payload.exchange_id not in PERMISSION_CHECKS)
         return {'status':'saved_unverified','exchange_id':payload.exchange_id,'market':payload.market}
 
     @app.delete('/api/me/connection')
@@ -955,6 +1047,32 @@ def create_app(store=None,reader=None,origin=None,secure=None):
     @app.get('/api/me/robots')
     def robot_status(user=Depends(identity)):
         return {'robots':robots(user['runtime'],user['username']),'live_execution_supported':False}
+
+    @app.get('/verify-email',response_class=HTMLResponse)
+    @app.get('/en/verify-email',response_class=HTMLResponse)
+    def verify_email(request:Request,token:str=Query(default='',max_length=100)):
+        lang=page_lang(request.url.path)
+        done=portal_mail.verify(repository(request),token)
+        fa=lang=='fa'
+        page=portal_blog.notice_page(
+            origin,site_css(),lang,('/en' if lang=='en' else '')+'/verify-email',
+            ('ایمیل تأیید شد' if fa else 'Email confirmed') if done else ('پیوند نامعتبر است' if fa else 'Link not valid'),
+            ('ایمیل شما تأیید شد' if fa else 'Your email is confirmed') if done else ('این پیوند معتبر نیست' if fa else 'This link is not valid'),
+            ('ایمیل حساب آوینای شما تأیید شد.' if fa else 'The email address of your Avina account is confirmed.') if done else
+            ('پیوند منقضی شده یا قبلاً استفاده شده است. از پنل خود پیوند تازه‌ای بخواهید.' if fa else 'The link has expired or was already used. Ask for a new one in your panel.'),
+            (('/en' if lang=='en' else '')+'/dashboard/','Dashboard' if not fa else 'ورود به پنل'))
+        return HTMLResponse(page,status_code=200 if done else 400)
+
+    # Any other address a browser might open gets the site's own 404 page. API and static paths keep their JSON/plain answers.
+    @app.api_route('/{unknown:path}',methods=['GET','POST','PUT','PATCH','DELETE'],response_class=HTMLResponse,include_in_schema=False)
+    def unknown_page(unknown:str,request:Request):
+        path=request.url.path
+        for route in app.router.routes:
+            # A real route that only lacks this method keeps answering 405, as before.
+            if route.matches(request.scope)[0]==Match.PARTIAL and route.endpoint is not unknown_page:
+                raise HTTPException(405,'Method Not Allowed',headers={'Allow':', '.join(sorted(route.methods))})
+        if request.method!='GET' or path=='/api' or path.startswith(NOT_PAGES):raise HTTPException(404,'Not Found')
+        return not_found(request)
 
     return app
 

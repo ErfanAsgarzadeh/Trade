@@ -11,6 +11,8 @@ export interface Me {
   role: "customer" | "admin";
   username: string;
   email?: string | null;
+  email_verified?: boolean;
+  mail_enabled?: boolean;
   csrf: string;
   totp_enabled?: boolean;
   live_execution_supported: boolean;
@@ -68,6 +70,8 @@ export interface Exchange {
   name: string;
   markets: string[];
   required_fields: Record<string, string[]>;
+  // True when the exchange reports a key's permissions, so the site can refuse a key that may withdraw.
+  permission_check?: boolean;
 }
 export type Cell = string | number | null | undefined;
 export interface Connection {

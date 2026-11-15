@@ -12,7 +12,7 @@ import time
 import uuid
 from contextlib import contextmanager
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 from portal_database import PortalDatabase
 
 
@@ -81,10 +81,39 @@ def normal_email(value):
     if len(email)>254 or not EMAIL.match(email):raise ValueError('Invalid email')
     return email
 
+SECRET_SETTINGS=('telegram.token',)  # site_settings rows holding secrets: sealed with the settings key, never the customer vault key.
+
+
+class NoVault:
+    """Stand-in for the customer vault in processes that were given only the settings key."""
+    def encrypt(self,data):raise PermissionError('This process has no customer encryption key')
+    decrypt=encrypt
+
+
+def read_key(variable):
+    path=os.getenv(variable)
+    return Path(path).read_bytes().strip() if path else None
+
+
+def keys_from_env(portal=True):
+    """(portal key, settings key) from PORTAL_KEY_FILE / PORTAL_SETTINGS_KEY_FILE. `portal=False` is for services that never touch customer
+    credentials: they may run with the settings key alone. Without a settings key the portal key serves both purposes."""
+    key,settings=read_key('PORTAL_KEY_FILE'),read_key('PORTAL_SETTINGS_KEY_FILE')
+    if key is None and (portal or settings is None):raise KeyError('PORTAL_KEY_FILE')
+    return key,settings
+
+
 class PortalStore:
-    def __init__(self, path, key):
-        self.vault = Fernet(key)
-        self.token_key=hmac.new(bytes(key),b'avina-form-token',hashlib.sha256).digest()
+    def __init__(self, path, key=None, settings_key=None):
+        """`key` protects customers' exchange credentials and per-user secrets (the vault); `settings_key` protects site-level
+        secrets such as the Telegram bot token. Without a settings key the portal key does both. Without a portal key
+        (workers that only need site settings) the vault refuses to decrypt anything."""
+        if not key and not settings_key:raise ValueError('An encryption key is required')
+        self.vault = Fernet(key) if key else NoVault()
+        self._settings=Fernet(settings_key or key)
+        # Site secrets sealed before the settings key existed are still readable with the portal key.
+        self._legacy=Fernet(key) if key and settings_key and settings_key!=key else None
+        self.token_key=hmac.new(bytes(key or settings_key),b'avina-form-token',hashlib.sha256).digest()
         self.database=PortalDatabase(path)
         self.path=self.database.path
         # Equal work for absent usernames; no fast account-enumeration path.
@@ -92,6 +121,32 @@ class PortalStore:
 
     def db(self):
         return self.database.db()
+
+    # ---- Site-level secrets (settings key) ----------------------------------------------------------------------
+    def seal_setting(self,value):
+        return self._settings.encrypt(value.encode()).decode()
+
+    def open_setting(self,value):
+        """(plaintext, sealed_with_old_key). InvalidToken when neither key opens it."""
+        try:return self._settings.decrypt(value.encode()).decode(),False
+        except InvalidToken:
+            if not self._legacy:raise
+            return self._legacy.decrypt(value.encode()).decode(),True
+
+    def rekey_settings(self,db=None):
+        """Re-seal site secrets still under the portal key with the settings key. Needs both keys; returns how many changed."""
+        if not self._legacy:return 0
+        if db is None:
+            with self.db() as db:return self.rekey_settings(db)
+        changed=0
+        for name in SECRET_SETTINGS:
+            row=db.execute('SELECT value FROM site_settings WHERE name=?',(name,)).fetchone()
+            if not row or not row['value']:continue
+            try:plain,old=self.open_setting(row['value'])
+            except InvalidToken:continue
+            if old:
+                db.execute('UPDATE site_settings SET value=? WHERE name=?',(self.seal_setting(plain),name));changed+=1
+        return changed
 
     def close(self):self.database.close()
 
@@ -136,14 +191,14 @@ class PortalStore:
             db.execute('DELETE FROM sessions WHERE user_id=?',(user['id'],))
             record(db,None,'role_changed',user['id'],dict(role=role,source='operator_cli'))
 
-    def attempt(self, client):
+    def attempt(self, client, limit=10):
         """Shared across processes. Count all logins before expensive password hashing."""
         with self.db() as db:
             self.database.begin_write(db,'login:'+client)
             now=self.database.clock(db)
             db.execute('DELETE FROM attempts WHERE start < ?', (now-60,))
             row=db.execute('SELECT count FROM attempts WHERE client=?',(client,)).fetchone()
-            if row and row['count'] >= 10:return False
+            if row and row['count'] >= limit:return False
             db.execute('INSERT INTO attempts VALUES(?,?,1) ON CONFLICT(client) DO UPDATE SET count=attempts.count+1',
                        (client,now))
             return True
@@ -250,22 +305,23 @@ class PortalStore:
             self.database.begin_write(db,'register')
             other=db.execute('SELECT id FROM users WHERE email=?',(email,)).fetchone()
             if other and other['id']!=user:raise EmailTaken('Email unavailable')
-            db.execute('UPDATE users SET email=? WHERE id=?',(email,user))
+            # A different address is unverified again; submitting the same one leaves the flag alone.
+            db.execute('UPDATE users SET email_verified=CASE WHEN email=? THEN email_verified ELSE 0 END,email=? WHERE id=?',(email,email,user))
             db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'email_changed',time.time()))
         return email
 
     def session(self, token):
         with self.db() as db:
-            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,users.email,(users.totp_secret IS NOT NULL) AS totp_enabled,sessions.csrf FROM sessions '
+            row=db.execute('SELECT users.id,users.username,users.runtime,users.role,users.email,users.email_verified,(users.totp_secret IS NOT NULL) AS totp_enabled,sessions.csrf FROM sessions '
                            'JOIN users ON users.id=sessions.user_id WHERE token_hash=? AND expires>? AND disabled=0',
                            (hashlib.sha256(token.encode()).hexdigest(),time.time())).fetchone()
-            return dict(row,totp_enabled=bool(row['totp_enabled'])) if row else None
+            return dict(row,totp_enabled=bool(row['totp_enabled']),email_verified=bool(row['email_verified'])) if row else None
 
     def logout(self, token):
         with self.db() as db:
             db.execute('DELETE FROM sessions WHERE token_hash=?',(hashlib.sha256(token.encode()).hexdigest(),))
 
-    def save_connection(self, user, market, api_key, secret,exchange_id='lbank',passphrase='',uid=''):
+    def save_connection(self, user, market, api_key, secret,exchange_id='lbank',passphrase='',uid='',no_withdrawal_ack=False):
         revision=str(uuid.uuid4())
         document=json.dumps(dict(owner=user,exchange_id=exchange_id,market=market,
                                  api_key=api_key,secret=secret,passphrase=passphrase,uid=uid)).encode()
@@ -277,7 +333,8 @@ class PortalStore:
                        (user,encrypted,market,revision,time.time(),exchange_id))
             db.execute('DELETE FROM account_cache WHERE user_id=?',(user,))
             db.execute('DELETE FROM account_jobs WHERE user_id=?',(user,))
-            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'connection_saved',time.time()))
+            # The customer's confirmation that the key has no withdrawal permission is kept with the audit event.
+            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'connection_saved'+(':no_withdrawal_ack' if no_withdrawal_ack else ''),time.time()))
 
     def connection(self, user, decrypt=False):
         with self.db() as db:
@@ -293,6 +350,18 @@ class PortalStore:
             elif row['exchange_id']!='lbank':raise ValueError('Legacy credentials belong to LBank')
             result.update(payload)
         return result
+
+    def wipe_connection(self, user, revision):
+        """Replace a refused key (withdrawal permission) by an empty credential record. The connection stays so the customer sees why."""
+        with self.db() as db:
+            self.database.begin_write(db,'account:'+user)
+            row=db.execute('SELECT exchange_id,market FROM connections WHERE user_id=? AND revision=?',(user,revision)).fetchone()
+            if not row:return False
+            blank=self.vault.encrypt(json.dumps(dict(owner=user,exchange_id=row['exchange_id'],market=row['market'],
+                                                    api_key='',secret='',passphrase='',uid='')).encode())
+            db.execute('UPDATE connections SET encrypted=? WHERE user_id=? AND revision=?',(blank,user,revision))
+            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'connection_refused_withdrawal',time.time()))
+            return True
 
     def disconnect(self, user):
         with self.db() as db:

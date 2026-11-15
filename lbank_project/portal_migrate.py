@@ -8,7 +8,7 @@ from portal_store import PortalStore
 
 
 TABLES={
- 'users':('id','username','password','disabled','runtime','role','email','totp_secret','totp_pending','totp_last_step','totp_recovery'),
+ 'users':('id','username','password','disabled','runtime','role','email','totp_secret','totp_pending','totp_last_step','totp_recovery','email_verified'),
  'sessions':('token_hash','user_id','csrf','expires'),
  'connections':('user_id','encrypted','market','revision','updated','exchange_id'),
  'account_cache':('user_id','revision','snapshot','checked','status'),
@@ -32,6 +32,8 @@ TABLES={
  'referrals':('user_id','referrer_id','code','program_id','created'),
  'referral_rewards':('id','user_id','kind','value','remaining','source','referee_id','order_id','program_id','note','status','created','available_at','expires','held'),
  'referral_credit_uses':('order_id','reward_id','cents'),
+
+ 'expiry_reminders':('user_id','license_id','threshold','sent'),
  'payment_transfers':('tx_ref','network','token','from_address','to_address','amount_micro','block_time','seen','invoice_id','status'),
 }
 
@@ -61,7 +63,7 @@ def migrate_sqlite(source,target,key):
                 select_fields=fields
                 if table=='users':
                     present={r['name'] for r in src.execute('PRAGMA table_info(users)')}
-                    select_fields=','.join(c if c in present else {'role':"'customer' AS role",'email':'NULL AS email','totp_secret':'NULL AS totp_secret','totp_pending':'NULL AS totp_pending','totp_last_step':'0 AS totp_last_step','totp_recovery':'NULL AS totp_recovery'}[c] for c in columns)
+                    select_fields=','.join(c if c in present else {'role':"'customer' AS role",'email':'NULL AS email','totp_secret':'NULL AS totp_secret','totp_pending':'NULL AS totp_pending','totp_last_step':'0 AS totp_last_step','totp_recovery':'NULL AS totp_recovery','email_verified':'0 AS email_verified'}[c] for c in columns)
                 if table=='referral_rewards' and 'held' not in {r['name'] for r in src.execute('PRAGMA table_info(referral_rewards)')}:
                     select_fields=','.join(columns[:-1])+',0 AS held'
                 if table=='blog_posts' and 'lang' not in {r['name'] for r in src.execute('PRAGMA table_info(blog_posts)')}:

@@ -20,9 +20,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db',default=None,help='Local SQLite path; PostgreSQL URL preferably supplied via secret file')
     parser.add_argument('--key-file',type=Path,default=Path(os.getenv('PORTAL_KEY_FILE','issuer-keys/portal.key')))
+    parser.add_argument('--settings-key-file',type=Path,default=Path(os.getenv('PORTAL_SETTINGS_KEY_FILE','issuer-keys/settings.key')))
     sub=parser.add_subparsers(dest='action',required=True)
     sub.add_parser('init')
     sub.add_parser('queue-status')
+    sub.add_parser('rekey-settings')  # Re-seal site secrets (Telegram bot token) from the portal key to the settings key.
     sub.add_parser('license-orders')
     prices=sub.add_parser('configure-pricing');prices.add_argument('product',choices=product_pricing.PRODUCTS)
     prices.add_argument('--file',type=Path,required=True);prices.add_argument('--enable-sales',action='store_true')
@@ -44,6 +46,7 @@ def main():
         command=sub.add_parser(name);command.add_argument('username')
         if name=='bind-runtime':command.add_argument('runtime',type=Path)
     args=parser.parse_args()
+    settings_key=lambda:args.settings_key_file.read_bytes().strip() if args.settings_key_file.is_file() else None
     target=args.db or configured_target()
     store=None
     try:
@@ -59,12 +62,16 @@ def main():
                             raise ValueError('Existing users; restore the existing encryption key')
                 finally:probe.close()
             private_write(args.key_file,Fernet.generate_key()+b'\n')
-            store=PortalStore(target,args.key_file.read_bytes().strip())
+            if not args.settings_key_file.exists():private_write(args.settings_key_file,Fernet.generate_key()+b'\n')
+            store=PortalStore(target,args.key_file.read_bytes().strip(),settings_key())
             print('Portal initialized. Back up the database and encryption key separately.');return
         if args.action=='migrate-database':
             from portal_migrate import migrate_sqlite
             print(migrate_sqlite(args.source,target,args.key_file.read_bytes().strip()));return
-        store=PortalStore(target,args.key_file.read_bytes().strip())
+        store=PortalStore(target,args.key_file.read_bytes().strip(),settings_key())
+        if args.action=='rekey-settings':
+            if not args.settings_key_file.is_file():raise ValueError('Settings key file missing; run portal_setup.py first')
+            print(f'Site secrets re-encrypted with the settings key: {store.rekey_settings()}');return
         if args.action=='queue-status':print(AccountQueue(store).summary());return
         if args.action=='configure-pricing':
             print(json.dumps(product_pricing.configure(store,args.product,json.loads(args.file.read_text()),args.enable_sales),ensure_ascii=False));return

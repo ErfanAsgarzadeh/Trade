@@ -154,6 +154,17 @@ CREATE TABLE IF NOT EXISTS password_resets(user_id TEXT PRIMARY KEY REFERENCES u
 ALTER TABLE telegram_outbox ADD COLUMN protected INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE referral_rewards ADD COLUMN held INTEGER NOT NULL DEFAULT 0
 '''
+SCHEMA_V15='''
+ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0;
+CREATE TABLE IF NOT EXISTS mail_outbox(id TEXT PRIMARY KEY,to_address TEXT NOT NULL,subject TEXT NOT NULL,body TEXT NOT NULL,
+ created REAL NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_at REAL NOT NULL DEFAULT 0,sent REAL);
+CREATE INDEX IF NOT EXISTS mail_outbox_pending ON mail_outbox(sent,next_at);
+CREATE TABLE IF NOT EXISTS email_tokens(token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),
+ email TEXT NOT NULL,created REAL NOT NULL,expires REAL NOT NULL);
+CREATE INDEX IF NOT EXISTS email_tokens_user ON email_tokens(user_id);
+CREATE TABLE IF NOT EXISTS expiry_reminders(user_id TEXT NOT NULL,license_id TEXT NOT NULL,threshold INTEGER NOT NULL,
+ sent REAL NOT NULL,PRIMARY KEY(user_id,license_id,threshold))
+'''
 
 
 class PostgresConnection:
@@ -207,10 +218,18 @@ class PortalDatabase:
             finally:connection.close()
 
     def begin_write(self,db,scope):
-        if self.postgres:
-            lock=int.from_bytes(hashlib.sha256(scope.encode()).digest()[:8],'big',signed=True)
-            db.execute('SELECT pg_advisory_xact_lock(?)',(lock,))
+        if self.postgres:self._advisory(db,scope)
         else:db.execute('BEGIN IMMEDIATE')
+
+    def also_lock(self,db,scope):
+        """Take one more named lock inside a write transaction that begin_write already opened. Always take the narrow shared
+        lock ('referral-codes') LAST, after the caller's own lock, so two writers can never wait on each other.
+        SQLite's single write lock already covers everything."""
+        if self.postgres:self._advisory(db,scope)
+
+    def _advisory(self,db,scope):
+        lock=int.from_bytes(hashlib.sha256(scope.encode()).digest()[:8],'big',signed=True)
+        db.execute('SELECT pg_advisory_xact_lock(?)',(lock,))
 
     def clock(self,db):
         if self.postgres:return float(db.execute('SELECT EXTRACT(EPOCH FROM clock_timestamp()) AS now').fetchone()['now'])
@@ -222,8 +241,8 @@ class PortalDatabase:
             self.begin_write(db,'portal-schema')
             db.execute('CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY)')
             versions={row['version'] for row in db.execute('SELECT version FROM schema_migrations').fetchall()}
-            if versions-{1,2,3,4,5,6,7,8,9,10,11,12,13,14}:raise ValueError('Portal schema newer than this application')
-            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12),(13,SCHEMA_V13),(14,SCHEMA_V14)):
+            if versions-{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}:raise ValueError('Portal schema newer than this application')
+            for version,script in ((1,SCHEMA_V1),(2,SCHEMA_V2),(3,SCHEMA_V3),(4,SCHEMA_V4),(5,SCHEMA_V5),(6,SCHEMA_V6),(7,SCHEMA_V7),(8,SCHEMA_V8),(9,SCHEMA_V9),(10,SCHEMA_V10),(11,SCHEMA_V11),(12,SCHEMA_V12),(13,SCHEMA_V13),(14,SCHEMA_V14),(15,SCHEMA_V15)):
                 if version in versions:continue
                 if self.postgres:
                     script=script.replace(' BLOB ',' BYTEA ').replace(' REAL',' DOUBLE PRECISION')

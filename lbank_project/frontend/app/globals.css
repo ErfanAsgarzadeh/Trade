@@ -1520,6 +1520,38 @@ dialog::backdrop {
 .admin-content .stat-card {
   padding: 20px;
 }
+.admin-health {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px 16px;
+}
+.admin-health li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: baseline;
+  padding: 8px 10px;
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.admin-health li small {
+  grid-column: 2;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.admin-health li.ok > span[aria-hidden] {
+  color: var(--accent);
+}
+.admin-health li.bad {
+  border-color: var(--warning-border);
+}
+.admin-health li.bad > span[aria-hidden] {
+  color: var(--warning);
+}
 .admin-overview-services {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -3753,4 +3785,27 @@ html[lang="fa"] .blog-contents ol {
 .admin-warning-banner strong {
   display: block;
   margin-bottom: 4px;
+}
+.not-found {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  text-align: center;
+}
+.not-found h1,
+.not-found h2 {
+  margin: 8px 0 0;
+}
+.not-found p {
+  margin: 0;
+  color: var(--muted);
+}
+.not-found-links {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
 }

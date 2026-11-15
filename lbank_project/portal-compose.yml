@@ -1,4 +1,7 @@
 name: trade-portal
+# SQLite variant. The containers run as uid/gid 10001 (not root): the shared database folder must belong to that user
+# (mkdir -p runtime/portal && chown 10001:10001 runtime/portal; chmod 700) and the secret files in issuer-keys/ must be readable by it
+# (chown 10001:10001, chmod 0400). Compose ignores a file secret's uid/gid/mode outside Swarm, so the host permissions are what counts.
 services:
   account-worker:
     build:

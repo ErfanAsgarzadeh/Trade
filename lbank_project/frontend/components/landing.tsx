@@ -74,8 +74,8 @@ function content(lang: Lang) {
         "Connect your own exchange account",
       ),
       text: t(
-        "کلید API را بدون دسترسی برداشت بسازید و در پنل ثبت کنید. پول از حساب صرافی شما خارج نمی‌شود.",
-        "Create an API key without withdrawal permission and add it in your panel. Your funds never leave your exchange account.",
+        "کلید API را خودتان بدون مجوز برداشت بسازید و در پنل ثبت کنید. آوینا هرگز مجوز برداشت نمی‌خواهد و سرمایه در حساب صرافی شما می‌ماند.",
+        "Create an API key yourself without withdrawal permission and add it in your panel. Avina never asks for withdrawal permission, and your funds stay in your exchange account.",
       ),
     },
     {
@@ -107,8 +107,8 @@ function content(lang: Lang) {
         "Do I have to deposit money with Avina?",
       ),
       a: t(
-        "نه. سرمایه در حساب صرافی خودتان می‌ماند. آوینا فقط با کلید API معامله می‌کند و این کلید باید بدون دسترسی برداشت ساخته شود.",
-        "No. Your capital stays in your own exchange account. Avina trades only through an API key, which must be created without withdrawal permission.",
+        "نه. سرمایه در حساب صرافی خودتان می‌ماند. آوینا فقط با کلید API معامله می‌کند. شما باید کلید را بدون مجوز برداشت بسازید؛ آوینا هرگز مجوز برداشت نمی‌خواهد.",
+        "No. Your capital stays in your own exchange account. Avina trades only through an API key. You must create that key without withdrawal permission; Avina never asks for it.",
       ),
     },
     {
@@ -298,8 +298,8 @@ export default function Landing({ lang = "fa" }: { lang?: Lang }) {
                     "Funds stay in your account",
                   ),
                   text: t(
-                    "آوینا به حساب صرافی شما وصل می‌شود و فقط معامله می‌کند. هیچ واریزی به ما لازم نیست و کلید API شما بدون دسترسی برداشت ثبت می‌شود.",
-                    "Avina connects to your exchange account and only trades. You never deposit with us, and your API key is registered without withdrawal permission.",
+                    "آوینا به حساب صرافی شما وصل می‌شود و فقط معامله می‌کند. هیچ واریزی به ما لازم نیست. کلید API را شما بدون مجوز برداشت می‌سازید و آوینا هرگز مجوز برداشت نمی‌خواهد.",
+                    "Avina connects to your exchange account and only trades. You never deposit with us. You create the API key without withdrawal permission, and Avina never asks for it.",
                   ),
                 },
                 {

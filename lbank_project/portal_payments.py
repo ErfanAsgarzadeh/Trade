@@ -509,12 +509,59 @@ class Watcher:
                 print(f'Payment check for {network} failed; retrying.', flush=True)
 
 
+def check_endpoints(settings, fetch=fetch_json, probe=None):
+    """Call every endpoint the watcher depends on once. [(label, url, reachable)]. A node counts as reachable when it answers the same
+    kind of request the watcher makes; the second-source explorer only has to answer at all (an HTTP error below 500 is an answer)."""
+    import urllib.error
+    contract = TOKENS[('tron', 'USDT')]['contract']
+    zero = '0' * 64
+
+    def rpc(url):
+        return lambda: 'result' in fetch(url, dict(jsonrpc='2.0', id=1, method='eth_blockNumber', params=[]))
+
+    def answers(url):
+        def go():
+            try:fetch(url);return True
+            except urllib.error.HTTPError as exc:return exc.code < 500
+        return go
+    plan = [('BSC primary RPC', settings['bsc_rpc'], rpc(settings['bsc_rpc'])),
+            ('BSC second-source RPC', settings['bsc_rpc_verify'], rpc(settings['bsc_rpc_verify'])),
+            ('TronGrid primary', settings['trongrid_url'],
+             lambda: 'data' in fetch(f'{settings["trongrid_url"]}/v1/accounts/{contract}/transactions/trc20?only_confirmed=true&limit=1')),
+            ('TRON second-source explorer', settings['tron_verify_url'], answers(f'{settings["tron_verify_url"]}/api/transaction-info?hash={zero}'))]
+    out = []
+    for label, url, call in plan:
+        try:ok = bool(call())
+        except Exception:ok = False
+        out.append((label, url, ok))
+    return out
+
+
+def check_main(fetch=fetch_json, out=print):
+    """`python portal_payments.py --check`: reachable/unreachable per endpoint; exit status 1 when any fails."""
+    settings = dict(DEFAULTS)
+    try:
+        from portal_database import configured_target
+        from portal_store import PortalStore, keys_from_env
+        store = PortalStore(configured_target(), *keys_from_env(portal=False))
+        try:settings = Payments(store).settings()
+        finally:store.close()
+    except Exception:out('Database not reachable; checking the default endpoints.')
+    results = check_endpoints(settings, fetch)
+    for label, url, ok in results:out(f'{"reachable  " if ok else "unreachable"}  {label}: {url}')
+    return 0 if all(ok for _, _, ok in results) else 1
+
+
 def main():
+    import sys
+    if os.getenv('PAYMENT_HTTPS_PROXY') and not os.getenv('HTTPS_PROXY'):os.environ['HTTPS_PROXY'] = os.environ['PAYMENT_HTTPS_PROXY']
+    if '--check' in sys.argv[1:]:raise SystemExit(check_main())
     from pathlib import Path
     from portal_database import configured_target
     from portal_store import PortalStore
-    key = Path(os.environ['PORTAL_KEY_FILE']).read_bytes().strip()
-    store = PortalStore(configured_target(), key)
+    from portal_store import keys_from_env
+    key, settings_key = keys_from_env(portal=False)  # Only the database is needed here; no customer credentials are ever read.
+    store = PortalStore(configured_target(), key, settings_key)
     interval = float(os.getenv('PAYMENT_CHECK_SECONDS', '20'))
     stop = threading.Event()
     for sig in (signal.SIGTERM, signal.SIGINT):signal.signal(sig, lambda *_: stop.set())

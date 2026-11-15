@@ -7,6 +7,7 @@ import secrets
 import time
 import uuid
 
+import portal_mail
 import portal_totp
 from portal_audit import record
 
@@ -113,19 +114,23 @@ def request_reset(store, username, now=None):
     now = time.time() if now is None else now
     with store.db() as db:
         store.database.begin_write(db, 'password-reset')
-        user = db.execute('SELECT id,disabled FROM users WHERE username=?', (username,)).fetchone()
+        user = db.execute('SELECT id,disabled,email,email_verified FROM users WHERE username=?', (username,)).fetchone()
         link = db.execute('SELECT chat_id,lang FROM telegram_links WHERE user_id=?', (user['id'],)).fetchone() if user else None
-        if not user or user['disabled'] or not link:return
+        by_mail = bool(user and user['email'] and user['email_verified'] and portal_mail.enabled(db, now))
+        if not user or user['disabled'] or not (link or by_mail):return
         earlier = db.execute('SELECT created FROM password_resets WHERE user_id=?', (user['id'],)).fetchone()
         if earlier and now - earlier['created'] < RESET_COOLDOWN:return
         code = f'{secrets.randbelow(10 ** 8):08d}'
         db.execute('DELETE FROM password_resets WHERE user_id=?', (user['id'],))
         db.execute('INSERT INTO password_resets(user_id,code_hash,expires,attempts,created) VALUES(?,?,?,0,?)',
                    (user['id'], _reset_digest(store, user['id'], code), now + RESET_LIFETIME, now))
-        db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created) VALUES(?,?,?,?)',
-                   (str(uuid.uuid4()), link['chat_id'], text(
-                       link['lang'], f'کد بازیابی رمز عبور آوینا: {code}\nاین کد ۱۰ دقیقه معتبر است. اگر شما درخواست نکرده‌اید، آن را نادیده بگیرید و به کسی ندهید.',
-                       f'Your Avina password recovery code: {code}\nIt is valid for 10 minutes. If you did not ask for it, ignore this message and tell no one.'), now))
+        if link:
+            db.execute('INSERT INTO telegram_outbox(id,chat_id,text,created) VALUES(?,?,?,?)',
+                       (str(uuid.uuid4()), link['chat_id'], text(
+                           link['lang'], f'کد بازیابی رمز عبور آوینا: {code}\nاین کد ۱۰ دقیقه معتبر است. اگر شما درخواست نکرده‌اید، آن را نادیده بگیرید و به کسی ندهید.',
+                           f'Your Avina password recovery code: {code}\nIt is valid for 10 minutes. If you did not ask for it, ignore this message and tell no one.'), now))
+        if by_mail:   # The same code, to the verified address; the web request only queues it.
+            portal_mail.queue(db, user['email'], *portal_mail.render('reset', link['lang'] if link else 'fa', code=code), now=now)
 
 
 def confirm_reset(store, username, code, password, now=None):

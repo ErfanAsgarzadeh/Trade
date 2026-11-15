@@ -46,7 +46,7 @@ def test_two_users_private_accounts_and_encryption(store):
     with TestClient(app,base_url=ORIGIN) as alice,TestClient(app,base_url=ORIGIN) as bob:
         ah=login(alice,'alice');bh=login(bob,'bob')
         for client,headers,name in ((alice,ah,'alice'),(bob,bh,'bob')):
-            r=client.put('/api/me/connection',headers=headers,json=dict(market='spot',api_key=name+'-api-key',secret=name+'-secret-value'))
+            r=client.put('/api/me/connection',headers=headers,json=dict(market='spot',api_key=name+'-api-key',secret=name+'-secret-value',no_withdrawal_ack=True))
             assert r.status_code==200
             assert client.post('/api/me/connection/refresh',headers=headers).status_code==202
             assert AccountWorker(store,reader,interval=0).once()
@@ -57,7 +57,7 @@ def test_two_users_private_accounts_and_encryption(store):
         # Neither query parameters nor alternate owner routes can select another tenant.
         assert alice.get('/api/me/connection?user_id=bob').json()['account']['snapshot']['balances'][0]['free']==100
         assert alice.get('/api/users/bob/connection').status_code==404
-        assert alice.put('/api/me/connection',headers=ah,json=dict(market='spot',api_key='new-alice-key',secret='new-secret-value',user_id='bob')).status_code==422
+        assert alice.put('/api/me/connection',headers=ah,json=dict(market='spot',api_key='new-alice-key',secret='new-secret-value',user_id='bob',no_withdrawal_ack=True)).status_code==422
         assert alice.delete('/api/me/connection',headers=ah).status_code==200
         assert not alice.get('/api/me/connection').json()['configured']
         assert bob.get('/api/me/connection').json()['configured']
@@ -127,7 +127,7 @@ def test_futures_not_routed_to_spot_and_sdk_exception_redacted(store):
     with TestClient(create_app(store,origin=ORIGIN,secure=True),base_url=ORIGIN) as c:
         h=login(c,'alice')
         for market,secret,state in [('futures','alice-secret-value','futures_not_validated'),('spot','bad-secret-value','verification_failed')]:
-            c.put('/api/me/connection',headers=h,json=dict(market=market,api_key='alice-api-key',secret=secret))
+            c.put('/api/me/connection',headers=h,json=dict(market=market,api_key='alice-api-key',secret=secret,no_withdrawal_ack=True))
             r=c.post('/api/me/connection/refresh',headers=h)
             assert r.status_code==202
             assert AccountWorker(store,reader,interval=0).once()

@@ -68,7 +68,7 @@ def test_ttt_account_queue_is_owner_scoped_and_never_enables_trading(tmp_path):
             assert client.get('/api/me/execution-readiness').status_code==401
             auth=client.post('/api/login',headers={'X-Portal-Request':'1'},json={'username':'alice','password':'disposable-test-password'}).json()
             headers={'X-Portal-Request':'1','X-CSRF-Token':auth['csrf']}
-            assert client.put('/api/me/connection',headers=headers,json={'exchange_id':'thetruetrade','market':'futures','api_key':'alice-key','secret':'alice-secret'}).status_code==200
+            assert client.put('/api/me/connection',headers=headers,json={'exchange_id':'thetruetrade','market':'futures','api_key':'alice-key','secret':'alice-secret','no_withdrawal_ack':True}).status_code==200
             assert client.post('/api/me/connection/refresh',headers=headers).status_code==202
             assert AccountWorker(store,MultiExchangeReader(ttt_factory=lambda k,s:CustomerReader(k,s,opener))).once()
             account=client.get('/api/me/connection').json()

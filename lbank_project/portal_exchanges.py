@@ -8,6 +8,30 @@ from portal_lbank import LBankAccountReader,FuturesNotValidated
 
 
 class UnsupportedAccount(Exception):pass
+class WithdrawalEnabled(Exception):
+    """The exchange itself reports that this API key may withdraw funds. Such a key is refused."""
+
+
+# Only exchanges whose API reports the calling key's own permissions are checked, and only through endpoints ccxt already lists:
+#  - Binance: GET /sapi/v1/account/apiRestrictions (ccxt sapiGetAccountApiRestrictions) -> {"enableWithdrawals": bool, ...}
+#  - OKX:     GET /api/v5/account/config (ccxt privateGetAccountConfig) -> {"data":[{"perm":"read_only,withdraw,trade",...}]}
+# For every other venue the portal cannot read key permissions, and the customer must confirm in the form that the key has none.
+PERMISSION_CHECKS=('binance','okx')
+
+
+def withdrawal_enabled(exchange_id,client):
+    """True/False from the exchange's own permission report. ValueError when the answer is not in the documented shape
+    (never treated as "no withdrawal")."""
+    if exchange_id=='binance':
+        reply=client.sapiGetAccountApiRestrictions()
+        if not isinstance(reply,dict) or not isinstance(reply.get('enableWithdrawals'),bool):raise ValueError('Permission report unreadable')
+        return reply['enableWithdrawals']
+    if exchange_id=='okx':
+        data=(client.privateGetAccountConfig() or {}).get('data')
+        if not isinstance(data,list) or len(data)!=1 or not isinstance(data[0],dict) or not isinstance(data[0].get('perm'),str):
+            raise ValueError('Permission report unreadable')
+        return 'withdraw' in {p.strip() for p in data[0]['perm'].split(',')}
+    raise UnsupportedAccount('Permissions cannot be read for this exchange')
 
 
 def route(client,params,position_params=None,scope='spot wallet'):
@@ -83,7 +107,8 @@ def _catalog():
             except UnsupportedAccount:continue
             markets.append(market);fields[market]=list(required_fields(r['client']))
         rows.append(dict(id=exchange_id,name=entry['name'],markets=markets,pending_markets=entry.get('pending',[]),
-                         required_fields=fields,live_execution_supported=False,validation='adapter_only_not_live_verified'))
+                         required_fields=fields,live_execution_supported=False,validation='adapter_only_not_live_verified',
+                         permission_check=exchange_id in PERMISSION_CHECKS))
     return rows
 
 
@@ -148,6 +173,13 @@ class MultiExchangeReader:
         factory=self.factory or (lambda name,p:getattr(ccxt,name)(p))
         exchange=factory(r['client'],params)
         try:
+            if exchange_id in PERMISSION_CHECKS:
+                # A key that can withdraw is refused before any balance is read or kept. Binance's permission call lives on the spot client.
+                checker=exchange if exchange_id=='okx' or r['client']=='binance' else factory('binance',params)
+                try:
+                    if withdrawal_enabled(exchange_id,checker):raise WithdrawalEnabled()
+                finally:
+                    if checker is not exchange and getattr(checker,'close',None):checker.close()
             if exchange.has.get('fetchBalance') is not True:raise UnsupportedAccount('Balance capability changed')
             if market=='futures' and exchange.has.get('fetchPositions') is not True:
                 raise UnsupportedAccount('Position capability changed')

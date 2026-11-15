@@ -156,7 +156,7 @@ def test_http_enqueues_without_exchange_io_and_worker_finishes_separately(store)
         r=client.post('/api/login',headers={'X-Portal-Request':'1'},json={'username':'alice','password':'long-test-password'})
         assert r.status_code==200
         headers={'X-Portal-Request':'1','X-CSRF-Token':r.json()['csrf']}
-        assert client.put('/api/me/connection',headers=headers,json={'market':'spot','api_key':'alice-api-key','secret':'alice-secret'}).status_code==200
+        assert client.put('/api/me/connection',headers=headers,json={'market':'spot','api_key':'alice-api-key','secret':'alice-secret','no_withdrawal_ack':True}).status_code==200
         assert client.post('/api/me/connection/refresh',headers=headers).status_code==202
         assert client.post('/api/me/connection/refresh',headers=headers).json()['already_pending'] is True
         assert reader.calls==0 and client.get('/api/me/connection').json()['account']['status']=='queued'

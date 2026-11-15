@@ -10,6 +10,26 @@
 	request_body @blog_upload {
 		max_size 10MB
 	}
+	# Access log: one JSON line per request, rotated by Caddy (10 MB per file, 10 files, 30 days). Caddy never logs request bodies.
+	# Cookies, the Authorization header and Set-Cookie are removed, and so is the one-time token in e-mail confirmation links.
+	log {
+		output file /data/logs/access.log {
+			roll_size 10MB
+			roll_keep 10
+			roll_keep_for 720h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>headers>Cookie delete
+				request>headers>Authorization delete
+				resp_headers>Set-Cookie delete
+				request>uri query {
+					replace token REDACTED
+				}
+			}
+		}
+	}
 	# Security headers (HSTS, CSP, Permissions-Policy, ...) are set only by the application, so there is one source of truth.
 	header {
 		-Server

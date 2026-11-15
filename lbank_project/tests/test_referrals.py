@@ -363,3 +363,54 @@ def test_all_discounts_together_stay_within_the_global_ceiling(setup):
 
 def uid(store, name):
     with store.db() as db:return db.execute('SELECT id FROM users WHERE username=?', (name,)).fetchone()['id']
+
+
+def test_every_referral_code_write_takes_the_shared_lock_last_and_collisions_retry(setup, monkeypatch):
+    store, referrals, admin, alice = setup
+    events = []
+    real_begin, real_also = store.database.begin_write, store.database.also_lock
+    monkeypatch.setattr(store.database, 'begin_write', lambda db, scope: (events.append(('begin', scope)), real_begin(db, scope))[1])
+    monkeypatch.setattr(store.database, 'also_lock', lambda db, scope: (events.append(('also', scope)), real_also(db, scope))[1])
+    # A personal code that collides with an existing one is drawn again instead of failing.
+    import portal_referrals
+    with store.db() as db:db.execute("INSERT INTO referral_codes(code,personal,created) VALUES('AAAAAAAA',0,1)")
+    draws = iter('A' * 8 + 'B' * 8)
+    monkeypatch.setattr(portal_referrals.secrets, 'choice', lambda alphabet: next(draws))
+    assert referrals.account(alice)['code'] == 'BBBBBBBB'
+    assert events[0] == ('begin', 'billing:' + alice) and events[-1] == ('also', 'referral-codes')
+    monkeypatch.undo()
+    events.clear()
+    monkeypatch.setattr(store.database, 'begin_write', lambda db, scope: (events.append(('begin', scope)), real_begin(db, scope))[1])
+    monkeypatch.setattr(store.database, 'also_lock', lambda db, scope: (events.append(('also', scope)), real_also(db, scope))[1])
+    referrals.save_code(admin, 'SPRING', None, None, 'x', 1, True, True)
+    assert events == [('begin', 'admin-authority'), ('also', 'referral-codes')]
+    events.clear()
+    bob = store.create_user('bobby', PASSWORD, 'bobby@example.com')
+    referrals.attach_later(bob, 'SPRING')
+    assert events[:2] == [('begin', 'billing:' + bob), ('also', 'referral-codes')]
+    events.clear()
+    carol = store.create_user('carol', PASSWORD, 'carol@example.com')
+    with pytest.raises(ReferralConflict):referrals.attach_later(carol, 'SPRING')   # max_uses=1 was consumed above
+    with store.db() as db:assert db.execute("SELECT uses FROM referral_codes WHERE code='SPRING'").fetchone()['uses'] == 1
+    events.clear()
+    referrals.set_code(alice, 'mycode')
+    assert events == [('begin', 'referral-codes')]
+    with pytest.raises(ReferralConflict):referrals.set_code(bob, 'mycode')
+    with pytest.raises(ReferralConflict):referrals.save_code(admin, 'MYCODE', None, None, '', 0, True, True)
+
+
+def test_concurrent_attaches_never_exceed_max_uses(setup):
+    store, referrals, admin, alice = setup
+    if not store.database.postgres:pytest.skip('Threads over one SQLite file only prove the same thing more slowly')
+    import threading
+    referrals.save_code(admin, 'LIMITED', None, None, '', 2, True, True)
+    users = [store.create_user('racer%d' % i, PASSWORD, 'racer%d@example.com' % i) for i in range(6)]
+    results = []
+
+    def go(user):
+        try:referrals.attach_later(user, 'LIMITED');results.append('ok')
+        except ReferralConflict:results.append('limit')
+    threads = [threading.Thread(target=go, args=(u,)) for u in users]
+    [t.start() for t in threads];[t.join() for t in threads]
+    assert results.count('ok') == 2
+    with store.db() as db:assert db.execute("SELECT uses FROM referral_codes WHERE code='LIMITED'").fetchone()['uses'] == 2

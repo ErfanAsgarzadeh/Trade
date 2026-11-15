@@ -6,14 +6,18 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
-COPY requirements.txt requirements-portal.txt ./
-RUN pip install --no-cache-dir -r requirements-portal.txt
-COPY portal_thetruetrade.py exchanges.py portal_execution.py portal_server.py portal_store.py portal_database.py portal_jobs.py portal_worker.py portal_exchanges.py portal_migrate.py portal_runtime.py portal_lbank.py portal_admin.py portal_billing.py portal_frontend.py portal_admin_store.py portal_audit.py portal_blog.py portal_payments.py portal_telegram.py portal_referrals.py portal_security.py portal_totp.py portal_setup.py product_pricing.py signal_feed.py capital_plans.py customer_manager.py license_access.py ./
+COPY requirements-web.txt ./
+RUN pip install --no-cache-dir -r requirements-web.txt
+COPY portal_thetruetrade.py exchanges.py portal_execution.py portal_server.py portal_store.py portal_database.py portal_jobs.py portal_worker.py portal_exchanges.py portal_migrate.py portal_runtime.py portal_lbank.py portal_admin.py portal_billing.py portal_frontend.py portal_admin_store.py portal_audit.py portal_blog.py portal_payments.py portal_telegram.py portal_referrals.py portal_security.py portal_totp.py portal_edge.py portal_mail.py portal_watchdog.py portal_housekeeping.py portal_setup.py product_pricing.py signal_feed.py capital_plans.py customer_manager.py license_access.py ./
 COPY --from=frontend /web/out ./frontend/out
 COPY --from=frontend /web/public ./frontend/public
 # Launch articles: imported into the database once on first start, then managed in the admin panel.
 COPY frontend/content/blog ./frontend/content/blog
+# Not root: fixed uid/gid 10001. Code and the frontend build are root-owned and world-readable; the processes write only to
+# /tmp (tmpfs) and, in the SQLite variant, the mounted runtime volume.
+RUN groupadd --system --gid 10001 avina && useradd --system --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin avina
+USER 10001:10001
 CMD ["python", "-u", "portal_server.py"]

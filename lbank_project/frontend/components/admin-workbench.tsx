@@ -131,6 +131,77 @@ const EVENTS: Record<string, Pair> = {
     "Two-step recovery code used",
   ],
 };
+interface HealthItem {
+  key: string;
+  ok: boolean;
+  detail: string;
+  since: number | null;
+}
+const HEALTH: Record<string, Pair> = {
+  payment_worker: ["کارگر پرداخت", "Payment worker"],
+  payment_check_tron: ["خواندن پرداخت TRON", "TRON payment reading"],
+  payment_check_bsc: ["خواندن پرداخت BSC", "BSC payment reading"],
+  payment_verify: ["تأیید با منبع دوم", "Second-source verification"],
+  issuer_heartbeat: ["سرویس صدور لایسنس", "License issuer"],
+  approval_stuck: ["تأییدهای معطل", "Slow approvals"],
+  approval_failed: ["صدور ناموفق", "Failed approvals"],
+  unmatched_transfer: ["واریز بدون فاکتور", "Unmatched transfers"],
+  account_queue: ["صف خواندن حساب‌ها", "Account read queue"],
+};
+function Health({ api, report }: { api: ApiClient; report: Report }) {
+  const { lang, t } = useFormat();
+  const [items, setItems] = useState<HealthItem[] | null>(null);
+  useEffect(() => {
+    let current = true;
+    api
+      .request<HealthItem[]>("/api/admin/health")
+      .then((value) => {
+        if (current) setItems(value);
+      })
+      .catch((e) => {
+        if (current) report(e);
+      });
+    return () => {
+      current = false;
+    };
+  }, [api, report]);
+  const bad = items?.filter((i) => !i.ok).length ?? 0;
+  return (
+    <section className="panel" id="admin-health" aria-live="polite">
+      <Heading
+        eyebrow="HEALTH"
+        title={t("سلامت سامانه", "System health")}
+        description={
+          items
+            ? bad
+              ? t(
+                  `${bad} مورد نیازمند توجه است. هشدار تلگرام برای مدیران متصل ارسال می‌شود.`,
+                  `${bad} item(s) need attention. Linked admins get a Telegram alert.`,
+                )
+              : t("همه چیز عادی است.", "Everything looks normal.")
+            : t("در حال بررسی…", "Checking…")
+        }
+      />
+      <ul className="admin-health">
+        {(items || []).map((item) => (
+          <li key={item.key} className={item.ok ? "ok" : "bad"}>
+            <span aria-hidden="true">{item.ok ? "●" : "▲"}</span>
+            <strong>{label(HEALTH, item.key, lang) || item.key}</strong>
+            <span className="sr-only">
+              {item.ok ? t("سالم", "OK") : t("مشکل", "Problem")}
+            </span>
+            <small dir="ltr">
+              {item.detail}
+              {!item.ok && item.since
+                ? " · " + t("از ", "since ") + dateTime(item.since, lang)
+                : ""}
+            </small>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 const label = (table: Record<string, Pair>, key: string, lang: Lang) =>
   table[key]?.[lang === "en" ? 1 : 0];
 function useFormat() {
@@ -268,6 +339,7 @@ export default function AdminWorkbench({
         <div className="admin-content">
           {tab === "overview" && (
             <>
+              <Health api={api} report={report} />
               <div className="stat-grid">
                 {[
                   ["users", t("کل کاربران", "Total users")],

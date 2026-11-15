@@ -9,7 +9,7 @@ from cryptography.fernet import InvalidToken
 from portal_database import configured_target
 from portal_jobs import AccountQueue
 from portal_lbank import FuturesNotValidated
-from portal_exchanges import MultiExchangeReader,UnsupportedAccount,PROFILES
+from portal_exchanges import MultiExchangeReader,UnsupportedAccount,WithdrawalEnabled,PROFILES
 import json
 import math
 from portal_store import PortalStore
@@ -31,13 +31,17 @@ class AccountWorker:
             return True
         if not connection or connection['revision']!=job['revision']:return True
         snapshot=None;status='verified_read_only';retry=False
+        if not connection.get('api_key'):  # Credentials were wiped when the key was refused for having withdrawal permission.
+            self.queue.finish(job,None,'withdrawal_enabled');return True
         try:snapshot=self.reader.snapshot(connection)
+        except WithdrawalEnabled:status='withdrawal_enabled'
         except FuturesNotValidated:status='futures_not_validated'
         except UnsupportedAccount:status='capability_unavailable'
         except (ccxt.NetworkError,ccxt.RateLimitExceeded):status='verification_failed';retry=True
         except Exception:status='verification_failed'
         # Database failures propagate to the process retry loop. They are not exchange/auth failures.
-        self.queue.finish(job,snapshot,status,retry=retry)
+        finished=self.queue.finish(job,snapshot,status,retry=retry)
+        if finished and status=='withdrawal_enabled':self.store.wipe_connection(job['user_id'],job['revision'])
         return True
 
 
