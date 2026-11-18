@@ -11,7 +11,7 @@
 <section id="setup"><div class="panel">
 <div class="brand"><img id="brand-preview" src="/publication/assets/avina-mark.png" alt="AVINA"><div><h1>استودیوی لایو آوینا</h1><p style="margin:4px 0">صفحهٔ زنده برای OBS، اشتراک صفحه و ضبط ویدئو</p></div></div>
 <form id="connect-form"><label for="pin">PIN فعلی پنل مدیریت</label><input id="pin" type="password" autocomplete="off" placeholder="PIN فقط در حافظهٔ همین صفحه می‌ماند">
-<div class="grid"><div><label for="mode">منبع</label><select id="mode"><option value="paper">Paper · معاملات آزمایشی</option><option value="real">Real · TheTrueTrade</option></select></div>
+<div class="grid"><div><label for="mode">منبع</label><select id="mode"><option value="paper">معاملات شبیه‌سازی‌شده</option><option value="real">Real · TheTrueTrade</option></select></div>
 <div><label for="scope">معاملات نمایشی</label><select id="scope"><option value="open">پوزیشن‌های باز</option><option value="all">باز و خروج‌های ثبت‌شده</option><option value="closed">خروج‌های ثبت‌شده</option></select></div>
 <div><label for="bot">موتور</label><select id="bot"><option value="all">همهٔ موتورها</option><option value="main">شاهین</option><option value="c3">موج‌سوار</option><option value="pa">ققنوس</option></select></div>
 <div><label for="format">قالب پخش</label><select id="format"><option value="wide">افقی 1920 × 1080</option><option value="portrait">عمودی 1080 × 1920</option></select></div>
@@ -27,13 +27,14 @@
 <details><summary>راه‌اندازی در OBS و مبنای اعداد</summary><p>در OBS یک Browser Source با نشانی همین صفحه و ابعاد 1920×1080 بساز. با Interact وارد شو و تنظیمات را ببند. برای لایو عمودی، ابعاد Source و قالب را 1080×1920 کن. PIN در URL یا فایل ذخیره نمی‌شود؛ پس از Reload دوباره وارد شو.</p><p>این صفحه فقط خروجی داده را نمایش می‌دهد. درصد پوزیشن تغییر قیمت بدون اهرم است. سود حساب، کل حساب در زمان snapshot است. کندل باز از تیک قیمت ساخته نمی‌شود؛ خط قیمت جاری جداست. خروج جزئی با معاملهٔ کامل یکی نیست. ضبط WebM صامت و حداکثر هر بخش ۱۰ دقیقه یا ۲۵۶ مگابایت است؛ برای صدا و ارسال به پلتفرم لایو از OBS استفاده کن.</p><p>در Real، فقط داده‌ای که API صرافی گزارش کند نمایش داده می‌شود. سود خالص بسته، تاریخچهٔ cash flow و کندل هم‌منبع ممکن است در نسخهٔ فعلی در دسترس نباشند.</p><pre id="notes"></pre></details>
 <p><a href="/publication">کارت‌های تصویری</a> · <a href="/">پنل اصلی</a></p></div></section>
 <script src="/publication/assets/trade_broadcast_svg.js"></script>
+<script src="/publication/assets/trade_brand.js"></script>
 <script>
 'use strict';
 (() => {
 const $=id=>document.getElementById(id),canvas=$('stage'),recordContext=canvas.getContext('2d');let ctx=recordContext,domDirty=true,lastStale=true;
 const C={bg:'#100424',panel:'#1a0b30',line:'#3c2554',muted:'#c1afd6',white:'#f8f6ff',gold:'#ffd36b',violet:'#a767ff',profit:'#5be3b5',loss:'#ff7d9c'};
 let auth='',snapshot=null,selected='',error='',lastReceived=0,timer=null,flight=null,revision=0,rotationAt=0,recording=null,recordStopping=false,recordStream=null,tickerCache={rows:null,text:'',span:0},raf=0,drawAt=0;
-let logo=new Image();logo.src='/publication/assets/avina-mark.png';
+let customLogo=false,logo=new Image();logo.src='/publication/assets/avina-mark.png';
 const tr=(fa,en)=>$('language').value==='fa'?fa:en;
 const numeric=(v,n=2)=>v===null||v===undefined||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('en-US',{minimumFractionDigits:n,maximumFractionDigits:n});
 const price=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumSignificantDigits:8});
@@ -49,7 +50,7 @@ function stale(){return !snapshot||snapshot.source_ok===false||!lastReceived||Da
 function screenData(){return stale()?null:snapshot}
 function errorText(){if(!auth)return tr('برای شروع به منبع متصل شو','Connect to the trading source');if(error)return error;if(snapshot?.source_ok===false)return tr('منبع در دسترس نیست؛ اعداد قابل اتکا نیستند','Source unavailable; valuations withheld');return tr('داده تازه نیست؛ منتظر اتصال مجدد','Data is stale; waiting to reconnect')}
 function money(v){return numeric(v)+' USDT'}
-function status(t){const bad=stale(),test=snapshot&&!snapshot.publishable,mode=$('mode').value==='real'?'REAL':'PAPER';if(bad)return {label:auth?'DATA OFFLINE':'NOT CONNECTED',color:C.loss};if(test)return {label:'TEST DATA · '+mode,color:C.gold};return {label:'LIVE FEED · '+mode,color:C.profit}}
+function status(t){const bad=stale(),test=snapshot&&!snapshot.publishable,mode=$('mode').value==='real'?'REAL':'SIMULATED';if(bad)return {label:auth?'DATA OFFLINE':'NOT CONNECTED',color:C.loss};if(test)return {label:'TEST DATA · '+mode,color:C.gold};return {label:'LIVE FEED · '+mode,color:C.profit}}
 function chart(r,bars,x,y,w,h,t) {
  panel(x,y,w,h);text(tr('کندل‌های بسته‌شده','COMPLETED CANDLES')+' · '+(r?.timeframe||'4h'),x+24,y+38,20,C.muted);text((r?.mode||$('mode').value)==='real'?'TheTrueTrade':'USDT FUTURES',x+w-24,y+38,18,C.muted,'right');
  if(!r||!bars?.length){text(tr('کندل هم‌منبع در دسترس نیست','Matching source candles unavailable'),x+w/2,y+h/2,26,C.muted,'center');return}
@@ -89,17 +90,17 @@ function table(rows,x,y,w,h){panel(x,y,w,h);text(tr('پوزیشن‌ها و خر
 function ribbon(rows,y,w,t){if(!$('ticker').checked||!rows.length)return;ctx.save();ctx.beginPath();ctx.rect(0,y,w,56);ctx.clip();ctx.fillStyle='#21103b';ctx.fillRect(0,y,w,56);if(tickerCache.rows!==rows){const items=rows.map(r=>r.symbol+'  '+r.side.toUpperCase()+'  '+percent(r.price_move_pct)+'  •  '+r.status.toUpperCase()+'     /     ');ctx.font='21px Lato, sans-serif';const full=items.join('');tickerCache={rows,text:full,span:ctx.measureText(full).width+100}}const full=tickerCache.text,span=tickerCache.span,offset=(t*.035)%span;for(let x=-offset;x<w;x+=span)text(full,x,y+36,21,C.muted);ctx.restore()}
 function draw(t=0){const portrait=$('format').value==='portrait',W=portrait?1080:1920,H=portrait?1920:1080;if(canvas.width!==W||canvas.height!==H){canvas.width=W;canvas.height=H}ctx.clearRect(0,0,W,H);ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);const g=ctx.createRadialGradient(W*.78,30,0,W*.78,30,W*.8);g.addColorStop(0,'#2e0f50');g.addColorStop(1,'#100424');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
  const data=screenData(),r=data?.trade,a=data?.account,rows=data?.records||[],state=status(t);const x=48;
- if(logo.complete&&logo.naturalWidth){const s=Math.min(108/logo.width,70/logo.height);ctx.drawImage(logo,x,34,logo.width*s,logo.height*s)}text('AVINA',x+128,85,45,C.gold);text('by ARTAX',x+310,83,22,C.muted);
+ if(logo.complete&&logo.naturalWidth){const s=Math.min((customLogo?320:108)/logo.width,(customLogo?86:70)/logo.height);ctx.drawImage(logo,x,34,logo.width*s,logo.height*s)}if(!customLogo){text('AVINA',x+128,85,45,C.gold);text('by ARTAX',x+310,83,22,C.muted)}
  ctx.fillStyle=state.color;ctx.globalAlpha=stale()?1:.7+.3*Math.sin(t/500)**2;ctx.beginPath();ctx.arc(W-353,66,6,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;text(state.label,W-330,74,20,state.color);line(48,120,W-96);
  if(!data){text(errorText(),W/2,H*.48,portrait?33:42,C.loss,'center');text(tr('هیچ عدد قدیمی به‌عنوان نتیجهٔ زنده نشان داده نمی‌شود','Stale values are withheld until the feed recovers'),W/2,H*.48+65,portrait?23:27,C.muted,'center');}
  else if(portrait){
-  text(r?.symbol||tr('بدون پوزیشن باز','NO OPEN POSITION'),x,196,46);text(r?r.side.toUpperCase():'',W-48,195,29,r?.side==='long'?C.profit:C.loss,'right');text(r?.strategy||'AVINA',x,237,25,C.muted);
+  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن باز','NO OPEN POSITION'),x,196,46);text(r?r.side.toUpperCase():'',W-48,195,29,r?.side==='long'?C.profit:C.loss,'right');text(r?.strategy||'AVINA',x,237,25,C.muted);
   metric(x,287,560,tr('تغییر قیمت در جهت پوزیشن · بدون اهرم','DIRECTIONAL PRICE MOVE · UNLEVERAGED'),percent(r?.price_move_pct),signColor(r?.price_move_pct));
   if($('amounts').checked)metric(685,287,345,tr('سود و زیان پوزیشن · USDT','POSITION P&L · USDT'),numeric(r?.pnl_usd),signColor(r?.pnl_usd),r?.mode==='real'?tr('شناور · هزینه‌ها تأیید نشده','FLOATING · FEES/FUNDING UNVERIFIED'):(r?.pnl_basis||'USDT'));
   chart(r,data.candles,48,416,984,650,t);positionFields(r,60,1104,960);account(a,48,1231,984,280);table(rows,48,1535,984,190);
   fitText(data.candle_note||'',48,1783,984,17,C.muted);
  }else{
-  text(r?.symbol||tr('بدون پوزیشن در این نما','NO POSITION IN THIS VIEW'),x,190,47);text(r?.strategy||'AVINA',x,234,24,C.muted);text(r?r.side.toUpperCase():'',1258,190,30,r?.side==='long'?C.profit:C.loss,'right');
+  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن در این نما','NO POSITION IN THIS VIEW'),x,190,47);text(r?.strategy||'AVINA',x,234,24,C.muted);text(r?r.side.toUpperCase():'',1258,190,30,r?.side==='long'?C.profit:C.loss,'right');
   metric(x,285,700,tr('تغییر قیمت در جهت پوزیشن · بدون اهرم','DIRECTIONAL PRICE MOVE · UNLEVERAGED'),percent(r?.price_move_pct),signColor(r?.price_move_pct));
   if($('amounts').checked)metric(910,285,365,tr('سود و زیان پوزیشن · USDT','POSITION P&L · USDT'),numeric(r?.pnl_usd),signColor(r?.pnl_usd),r?.mode==='real'?tr('شناور · هزینه‌ها تأیید نشده','FLOATING · FEES/FUNDING UNVERIFIED'):(r?.pnl_basis||'USDT'));
   chart(r,data.candles,48,409,1230,448,t);positionFields(r,64,893,1200);account(a,1306,158,566,291);table(rows,1306,475,566,350);
@@ -148,23 +149,9 @@ window.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(
 setInterval(()=>{if(auth&&snapshot&&$('rotation').value!=='0'&&Date.now()>=rotationAt&&snapshot.records?.length>1&&!flight)choose(1);if(auth&&lastReceived&&stale())$('status-reader').textContent=tr('داده تازه نیست','Data stale')},1000);
 window.addEventListener('pagehide',()=>{revision++;auth='';snapshot=null;selected='';lastReceived=0;error='';clearTimeout(timer);flight?.abort();flight=null;stopRecording();recordStream?.getTracks().forEach(t=>t.stop());cancelAnimationFrame(raf);$('pin').value='';$('notes').textContent='';$('trade').replaceChildren();$('record').disabled=true;showSetup(true);renderDisplay(performance.now())});window.addEventListener('pageshow',e=>{if(e.persisted){showSetup(true);cancelAnimationFrame(raf);animate(performance.now())}});
 $('connect-form').addEventListener('change',()=>{domDirty=true});logo.onload=()=>{domDirty=true};
-$('broadcast-logo').onchange=()=>{
- const file=$('broadcast-logo').files[0];
- if(!file)return;
- if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>8*1024*1024){
-   showMessage('یک تصویر PNG، JPG یا WebP تا ۸ مگابایت انتخاب کن.');return;
- }
- const url=URL.createObjectURL(file);
- const replacement=new Image();
- replacement.onload=()=>{
-   if(logo.src.startsWith('blob:'))URL.revokeObjectURL(logo.src);
-   logo=replacement;
-   $('brand-preview').src=url;
-   domDirty=true;
- };
- replacement.onerror=()=>{URL.revokeObjectURL(url);showMessage('تصویر لوگو قابل خواندن نیست.')};
- replacement.src=url;
-};
+window.AvinaTradeBrand?.bind($('broadcast-logo'),$('brand-preview'),(image,isCustom)=>{
+ logo=image;customLogo=isCustom;domDirty=true;
+},showMessage);
 resetRotation();document.fonts.ready.then(()=>{domDirty=true});animate(0);
 })();
 </script></html>

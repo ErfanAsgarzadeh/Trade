@@ -124,8 +124,8 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @application.get('/publication/assets/{name}')
     def publication_asset(name: str):
         from fastapi.responses import FileResponse
-        if name == 'trade_broadcast_svg.js':
-            return FileResponse(Path(__file__).parent / 'trade_broadcast_svg.js', media_type='text/javascript')
+        if name in {'trade_broadcast_svg.js', 'trade_brand.js'}:
+            return FileResponse(Path(__file__).parent / name, media_type='text/javascript')
         if name not in {'avina-mark.png', 'vazirmatn-arabic.woff2', 'lato-400.woff2', 'lato-700.woff2'}:
             raise HTTPException(404, 'Asset not found')
         return FileResponse(Path(__file__).parent / 'frontend' / 'public' / 'portal-assets' / name)
