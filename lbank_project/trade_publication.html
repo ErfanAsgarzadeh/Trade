@@ -67,8 +67,7 @@ function tradeStats(r,x,y,w,wide=false) {
  text(detail.join('  ·  '),x,y+(wide?28:33),wide?18:24,palette.muted,{maxWidth:w});
  const metricY=y+(wide?93:123);
  text(signed(r.price_move_pct,'%'),x,metricY,wide?51:74,color(r.price_move_pct),{weight:700,maxWidth:wide?w:w*.56});
- const moveLabel = r.mode==='paper' ? 'PRACTICE TRADE · UNLEVERAGED MOVE' : 'PRICE MOVE · UNLEVERAGED';
- text(moveLabel,x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:wide?w:w*.61});
+ text('PRICE MOVE · UNLEVERAGED',x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:wide?w:w*.61});
  if($('amounts').checked && r.pnl_usd!=null) {
    const pnlY=wide?metricY+77:metricY;
    const pnlX=wide?x:x+w;
@@ -78,11 +77,10 @@ function tradeStats(r,x,y,w,wide=false) {
    text(label,pnlX,pnlY+(wide?24:32),wide?16:21,palette.muted,{align,maxWidth:wide?w:w*.45});
  }
 }
-function accountStats(a,r,x,y,w,h,wide=false) {
+function accountStats(a,x,y,w,h,wide=false) {
  box(x,y,w,h,'#211238');
  const left=x+22,right=x+w-22;
- const title=r.mode==='paper'?'PRACTICE ACCOUNT':'REAL ACCOUNT';
- text(title,left,y+(wide?27:37),wide?16:22,palette.muted,{weight:700,maxWidth:w-44});
+ text('ACCOUNT SUMMARY',left,y+(wide?27:37),wide?16:22,palette.muted,{weight:700,maxWidth:w-44});
  if(!$('amounts').checked && a.return_pct==null){text('Account return unavailable',left,y+72,wide?17:23,palette.muted,{maxWidth:w-44});return}
  if(a.return_pct!=null) {
    const align=wide?'left':'right';
@@ -181,21 +179,20 @@ function draw(){
    const chartW=766,sideX=x+chartW+26,sideW=inner-chartW-26;
    chart(r,bars,x,115,chartW,450,true);
    tradeStats(r,sideX,149,sideW,true);
-   accountStats(a,r,sideX,382,sideW,183,true);
+   accountStats(a,sideX,382,sideW,183,true);
  }else{
    tradeStats(r,x,top+(story?220:177),inner);
    const chartY=top+(story?422:365), chartH=story?810:610;
    chart(r,bars,x,chartY,inner,chartH);
-   accountStats(a,r,x,chartY+chartH+31,inner,story?185:155);
+   accountStats(a,x,chartY+chartH+31,inner,story?185:155);
  }
- const qualification = r.mode==='paper' ? 'Practice results. No real funds were traded.' : 'Exchange-reported figures where available.';
  const footerY=story?h-190:h-(wide?48:55);
  const hasCoverageGap=/STALE|GAPS/i.test(current.candle_note||'');
  if(hasCoverageGap) text('MARKET DATA COVERAGE GAP',x,footerY-52,wide?15:19,palette.gold,{weight:700});
  line(x,footerY-34,w-x,footerY-34);
  text(date(current.generated_at),x,footerY,wide?16:20,palette.muted);
- text('@avina_trade',w-x,footerY,wide?17:23,palette.gold,{weight:700,align:'right'});
- text(qualification,x,footerY+27,wide?15:18,palette.muted,{maxWidth:inner*.55});
+ const signature = r.mode==='paper' ? 'Practice account (no real funds)  ·  @avina_trade' : '@avina_trade';
+ text(signature,w-x,footerY,wide?17:23,palette.gold,{weight:700,align:'right',maxWidth:inner*.65});
  text('Past results do not predict future returns.',w-x,footerY+27,wide?15:18,palette.muted,{align:'right',maxWidth:inner*.43});
 }
 async function api(path){const res=await fetch(path,{headers:{'X-Bot-Pin':$('pin').value}});if(!res.ok)throw new Error(res.status===401?'PIN نادرست است.':'خواندن داده ممکن نشد؛ دوباره تلاش کنید.');return res.json()}
