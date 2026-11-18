@@ -119,3 +119,42 @@ def test_initial_stop_is_distinct_from_current_and_uses_recorded_risk():
     assert (main['initial_stop'], main['stop']) == (91, 101)
     assert pub.record('c3', 'closed', dict(long_trade, id=1))['initial_stop'] is None
     assert pub.record('c3', 'open', dict(long_trade, risk_usd=None))['initial_stop'] is None
+
+
+def test_shared_logo_preserves_exact_bytes_and_requires_pin(tmp_path, monkeypatch):
+    import asyncio
+    from pathlib import Path
+    from fastapi import HTTPException, Request
+
+    monkeypatch.setenv('BOT_PIN', 'test')
+    monkeypatch.setenv('RISK_DIR', str(tmp_path))
+    logo = (Path(__file__).parents[1] / 'frontend/public/portal-assets/avina-mark.png').read_bytes()
+    app = create_app()
+    download = next(route for route in app.routes if route.path == '/publication/brand-image')
+    upload = next(route for route in app.routes if route.path == '/api/publication/brand-image')
+    auth = upload.dependant.dependencies[0].call
+
+    def request(body):
+        async def receive():
+            return {'type': 'http.request', 'body': body}
+        return Request({'type': 'http', 'headers': [(b'content-type', b'image/png')]}, receive=receive)
+
+    with pytest.raises(HTTPException) as exc:
+        download.endpoint()
+    assert exc.value.status_code == 404
+
+    async def verify():
+        with pytest.raises(HTTPException) as exc:
+            await auth(request(logo), '')
+        assert exc.value.status_code == 401
+        await auth(request(logo), 'test')
+        assert await upload.endpoint(request(logo)) == {'updated': True}
+        assert download.endpoint().body == logo
+        assert download.endpoint().media_type == 'image/png'
+
+        with pytest.raises(HTTPException) as exc:
+            await upload.endpoint(request(b'<svg/>'))
+        assert exc.value.status_code == 415
+        assert download.endpoint().body == logo
+
+    asyncio.run(verify())

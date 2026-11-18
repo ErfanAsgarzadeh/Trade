@@ -10,7 +10,8 @@
 <label for="format">اندازهٔ خروجی</label><select id="format"><option value="1350">پست اینستاگرام · ۴:۵</option><option value="1920">استوری اینستاگرام · ۹:۱۶</option><option value="675">پست X · ۱۶:۹</option></select>
 <label for="card-type">محتوای خروجی</label><select id="card-type"><option value="performance">عملکرد معامله و حساب</option><option value="market">نمودار بازار و سطوح قیمت</option></select>
 <div class="checks"><label><input type="checkbox" id="amounts" checked>نمایش مبلغ سود و موجودی حساب</label></div>
-<label for="logo">تصویر لوگو (در همین مرورگر ذخیره می‌شود)</label><input id="logo" type="file" accept="image/png,image/jpeg,image/webp">
+<label for="logo">فایل لوگو</label><input id="logo" type="file" accept="image/png,image/jpeg,image/webp">
+<button id="save-shared-logo" type="button" class="secondary">استفاده از این لوگو در همهٔ نماها</button>
 <button id="download" disabled>دانلود تصویر PNG</button><button id="refresh" class="secondary" disabled>به‌روزرسانی از منبع</button><div id="message" role="status" aria-live="polite"></div>
 <details style="margin-top:20px"><summary>داده و مبنای محاسبه</summary><pre id="evidence"></pre></details>
 </aside><div class="preview-wrap"><canvas id="preview" width="1080" height="1350" aria-label="پیش‌نمایش کارت معامله"></canvas><p class="note">درصد معامله، تغییر قیمت در جهت پوزیشن و بدون اهرم است. سود دلاری شبیه‌سازی شامل هزینه‌های مدل است. بازده حساب مربوط به زمان تهیهٔ کارت و کل حساب است. خروج جزئی به‌عنوان معاملهٔ کامل معرفی نمی‌شود.</p><p class="note">این بخش لینک عمومی نمی‌سازد. فقط فایل تصویری انتخاب‌شده برای انتشار از مرورگر دانلود می‌شود.</p></div></main>
@@ -208,9 +209,18 @@ async function select(){$('evidence').textContent='';const id=$('trade').value,s
 $('login').onsubmit=e=>{e.preventDefault();load()};$('refresh').onclick=load;$('mode').onchange=load;$('search').oninput=()=>{if(!busy)choices()};$('trade').onchange=select;$('format').onchange=draw;$('amounts').onchange=draw;
 $('card-type').onchange=()=>{$('amounts').disabled=marketOnly();draw();$('download').disabled=!canExport()||busy};
 for(const [id,offset] of [['prev',-1],['next',1]])$(id).onclick=()=>{const sel=$('trade');sel.selectedIndex=(sel.selectedIndex+offset+sel.options.length)%sel.options.length;select()};
-window.AvinaTradeBrand?.bind($('logo'),$('brand-preview'),(image,isCustom)=>{
+const brandControl=window.AvinaTradeBrand?.bind($('logo'),$('brand-preview'),(image,isCustom)=>{
  logo=image;customLogo=isCustom;draw();
 },message=>{$('message').textContent=message});
+$('save-shared-logo').onclick=async()=>{
+ const button=$('save-shared-logo');
+ button.disabled=true;
+ try{
+   await brandControl.saveShared($('pin').value);
+   $('message').textContent='لوگوی مشترک پنل، کارت‌ها و لایو به‌روز شد.';
+ }catch(error){$('message').textContent=error.message}
+ finally{button.disabled=false}
+};
 $('download').onclick=async()=>{if(!canExport()||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);if(!canExport()||busy)return;draw();const kind=marketOnly()?'market':current.trade.mode==='paper'?'practice':'real';const symbol=ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-');canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+symbol+'-'+kind+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
 logo.onload=draw;document.fonts.ready.then(draw);draw();
 </script></html>

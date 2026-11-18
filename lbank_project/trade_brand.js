@@ -2,6 +2,7 @@
   'use strict';
 
   const original = '/publication/assets/avina-mark.png';
+  const shared = '/publication/brand-image';
   const maxSize = 8 * 1024 * 1024;
   const accepted = ['image/png', 'image/jpeg', 'image/webp'];
 
@@ -24,9 +25,12 @@
     let activeUrl;
     let revision = 0;
 
-    function load(blob) {
+    function load(blob, useShared = false) {
       const request = ++revision;
-      const url = blob ? URL.createObjectURL(blob) : original;
+      let url;
+      if (useShared) url = shared + '?v=' + Date.now();
+      else if (blob) url = URL.createObjectURL(blob);
+      else url = original;
       return new Promise((resolve, reject) => {
         const image = new Image();
         image.onload = () => {
@@ -38,7 +42,7 @@
           if (activeUrl) URL.revokeObjectURL(activeUrl);
           activeUrl = blob ? url : null;
           preview.src = url;
-          onImage(image, Boolean(blob));
+          onImage(image, Boolean(blob) || useShared);
           resolve(true);
         };
         image.onerror = () => {
@@ -49,11 +53,41 @@
       });
     }
 
-    load().catch(() => {});
-    if (window.indexedDB) {
-      withStore('readonly', store => store.get('logo'))
-        .then(blob => { if (blob && revision === 1) return load(blob); })
-        .catch(() => {});
+    load(null, true).catch(async () => {
+      if (revision !== 1) return;
+      let fallbackRevision = revision;
+      if (window.indexedDB) {
+        try {
+          const blob = await withStore('readonly', store => store.get('logo'));
+          if (revision !== 1) return;
+          if (blob) {
+            fallbackRevision = revision + 1;
+            await load(blob);
+            return;
+          }
+        } catch {}
+      }
+      if (revision === fallbackRevision) await load().catch(() => {});
+    });
+
+    async function saveShared(pin) {
+      const file = input.files[0];
+      if (!file) throw Error('اول فایل لوگو را انتخاب کن.');
+      if (!pin) throw Error('PIN پنل مدیریت را وارد کن.');
+      if (!accepted.includes(file.type) || file.size > maxSize) {
+        throw Error('یک تصویر PNG، JPG یا WebP تا ۸ مگابایت انتخاب کن.');
+      }
+      // Verify the browser can decode the selected image before replacing the shared file.
+      if (!await load(file)) throw Error('انتخاب لوگو تغییر کرد. دوباره تلاش کن.');
+      const response = await fetch('/api/publication/brand-image', {
+        method: 'PUT',
+        headers: {'X-Bot-Pin': pin, 'Content-Type': file.type},
+        body: file,
+      });
+      if (!response.ok) {
+        throw Error(response.status === 401 ? 'PIN پنل نادرست است.' : 'ثبت لوگو روی سرور انجام نشد.');
+      }
+      await load(null, true);
     }
 
     input.onchange = async () => {
@@ -75,6 +109,7 @@
         onMessage('لوگو برای این صفحه فعال شد.');
       } catch (error) { onMessage(error.message); }
     };
+    return {saveShared};
   }
 
   window.AvinaTradeBrand = {bind};

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from typing import Literal
 import secrets
+import tempfile
 import time
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Response, Request
@@ -24,6 +25,18 @@ from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        file_lock, net_pnl, position_margin, position_leverage)
 
 LOG = logging.getLogger("dashboard")
+
+MAX_BRAND_IMAGE = 8 * 1024 * 1024
+
+
+def brand_image_type(data: bytes) -> str | None:
+    if data.startswith(b"\x89PNG\r\n\x1a\n") and data[12:16] == b"IHDR":
+        return "image/png"
+    if data.startswith(b"\xff\xd8\xff") and data.endswith(b"\xff\xd9"):
+        return "image/jpeg"
+    if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 class CloseRequest(BaseModel):
@@ -120,6 +133,49 @@ def create_app(engine: Engine | None = None) -> FastAPI:
                               bot: Literal['all', 'main', 'c3', 'pa'] = 'all',
                               scope: Literal['open', 'closed', 'all'] = 'open'):
         return broadcast_feed.get(mode=mode, trade_id=trade_id, bot_filter=bot, scope=scope)
+
+    def brand_file():
+        runtime = os.environ.get('RISK_DIR')
+        folder = Path(runtime) if runtime else runtime_folder()
+        return folder / 'avina-brand-image'
+
+    @application.get('/publication/brand-image')
+    def publication_brand_image():
+        try:
+            with brand_file().open('rb') as handle:
+                data = handle.read(MAX_BRAND_IMAGE + 1)
+        except OSError:
+            raise HTTPException(404, 'Brand image unavailable') from None
+        image_type = brand_image_type(data)
+        if image_type is None or len(data) > MAX_BRAND_IMAGE:
+            raise HTTPException(404, 'Brand image unavailable')
+        return Response(content=data, media_type=image_type)
+
+    @application.put('/api/publication/brand-image', dependencies=[Depends(authorized)])
+    async def replace_publication_brand_image(request: Request):
+        data = bytearray()
+        async for chunk in request.stream():
+            if len(data) + len(chunk) > MAX_BRAND_IMAGE:
+                raise HTTPException(413, 'Image exceeds 8 MB')
+            data.extend(chunk)
+        image_type = brand_image_type(data)
+        if image_type is None or image_type != request.headers.get('content-type'):
+            raise HTTPException(415, 'Expected a PNG, JPEG, or WebP image')
+
+        target = brand_file()
+        temporary = None
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(dir=target.parent, delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(data)
+            temporary.replace(target)
+        except OSError:
+            raise HTTPException(503, 'Brand image could not be saved') from None
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+        return {'updated': True}
 
     @application.get('/publication/assets/{name}')
     def publication_asset(name: str):
@@ -640,7 +696,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 @media(max-width:450px){.fields,.kpis{grid-template-columns:minmax(0,1fr);}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 </style></head><body><main>
-<header><div class="brand"><img class="logo" src="/publication/assets/avina-mark.png" alt="AVINA" style="object-fit:contain"><div><h1>AVINA Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
+<header><div class="brand"><img class="logo" src="/publication/brand-image" alt="AVINA" onerror="this.onerror=null;this.src='/publication/assets/avina-mark.png'" style="width:105px;height:70px;object-fit:contain;background:none;box-shadow:none"><div><h1>AVINA Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
 <div class="gap"><div class="theme-switcher"><label for="terminal-appearance">Appearance</label><select id="terminal-appearance" data-legacy-theme-switch><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></div><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span>
 <input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
 <a href="/broadcast" target="_blank" rel="noopener" style="display:inline-block;margin:12px;color:var(--primary)">AVINA · پخش زنده / Broadcast ↗</a><a href="/publication" target="_blank" rel="noopener" style="display:inline-block;margin:12px 0;color:var(--primary)">AVINA · انتشار معاملات / Publication studio ↗</a><nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
