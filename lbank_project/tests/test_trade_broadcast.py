@@ -104,3 +104,18 @@ def test_leverage_uses_matching_open_position_record(tmp_path):
     assert 'isolated_leverage' not in exits[0]
     assert pub.recorded_leverage(0) is None
     assert pub.recorded_leverage('4') == 4
+
+
+def test_initial_stop_is_distinct_from_current_and_uses_recorded_risk():
+    long_trade = dict(symbol='BTC', side='long', entry=100, qty=2, risk_usd=20, stop=102)
+    row = pub.record('c3', 'open', long_trade)
+    assert (row['initial_stop'], row['stop']) == (90, 102)
+
+    partial = pub.record('c3', 'open', dict(long_trade, qty=1, risk_usd=10))
+    assert partial['initial_stop'] == 90
+    row = pub.record('pa', 'open', dict(long_trade, side='short', stop=98))
+    assert (row['initial_stop'], row['stop']) == (110, 98)
+    main = pub.record('main', 'open', dict(long_trade, entry_price=100, initial_sl=91, active_sl=101))
+    assert (main['initial_stop'], main['stop']) == (91, 101)
+    assert pub.record('c3', 'closed', dict(long_trade, id=1))['initial_stop'] is None
+    assert pub.record('c3', 'open', dict(long_trade, risk_usd=None))['initial_stop'] is None

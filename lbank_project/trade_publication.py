@@ -77,6 +77,26 @@ def recorded_leverage(value):
     return multiplier if multiplier is not None and multiplier >= 1 else None
 
 
+def stop_price(value):
+    price = finite(value)
+    return price if price is not None and price > 0 else None
+
+
+def initial_stop(bot, kind, raw, entry):
+    if bot == 'main':
+        return stop_price(raw.get('initial_sl'))
+    if kind != 'open' or entry is None:
+        return None
+    qty, risk = finite(raw.get('qty')), finite(raw.get('risk_usd'))
+    side = raw.get('side')
+    if qty is None or risk is None or qty <= 0 or risk <= 0 or side not in ('long', 'short'):
+        return None
+    # The sleeves store qty * initial stop distance. C3 scales qty and risk
+    # together on partial exits, preserving the original distance per unit.
+    distance = risk / qty
+    return stop_price(entry - distance if side == 'long' else entry + distance)
+
+
 def record(bot, kind, raw):
     main = bot == 'main'
     entry = finite(raw.get('entry_price' if main else 'entry'))
@@ -85,7 +105,8 @@ def record(bot, kind, raw):
     return dict(id=f"{bot}:{kind}:{raw['id'] if kind == 'closed' else raw['symbol']}",
                 mode='paper', bot=bot, strategy=NAMES[bot], symbol=raw['symbol'], side=raw['side'],
                 status=kind, leverage=recorded_leverage(raw.get('isolated_leverage')), entry=entry, exit=finite(raw.get('exit_price' if main else 'exit')),
-                opened_at=opened, closed_at=closed, stop=finite(raw.get('active_sl' if main else 'stop')),
+                opened_at=opened, closed_at=closed, initial_stop=initial_stop(bot, kind, raw, entry),
+                stop=stop_price(raw.get('active_sl' if main else 'stop')),
                 target=finite(raw.get('hard_tp_price') or raw.get('tp1_price')),
                 timeframe=raw.get('timeframe', '4h'), pnl_usd=finite(raw.get('pnl_usd' if main else 'pnl')),
                 pnl_basis='net modeled costs' if kind == 'closed' else 'unrealized, modeled exit costs',
@@ -200,9 +221,11 @@ def real_snapshot():
             pnl = sum(pnls) if pnls and all(v is not None for v in pnls) else None
             leverages = {recorded_leverage(p.get('leverage')) for p in source_rows}
             leverage = next(iter(leverages)) if len(leverages) == 1 else None
+            stops = {stop_price(p.get('stopLoss')) for p in source_rows}
+            current_stop = next(iter(stops)) if len(stops) == 1 else None
             empty['records'].append(dict(id='real:open:'+symbol, mode='real', bot='exchange', strategy='TheTrueTrade',
                 symbol=symbol, side=pos.side, status='open', leverage=leverage, entry=finite(pos.entry), exit=None,
-                opened_at=None, closed_at=None, stop=None, target=None, timeframe='4h', pnl_usd=pnl,
+                opened_at=None, closed_at=None, initial_stop=None, stop=current_stop, target=None, timeframe='4h', pnl_usd=pnl,
                 pnl_basis='Exchange-reported floating P&L; fee/funding coverage unknown' if pnl is not None else 'Exchange net P&L unavailable',
                 reason='', price_move_pct=price_move(pos.entry, mark, pos.side), current_price=mark,
                 valuation_at=source_started_at, quote_time_basis='Mark price from the active-position response; exchange tick time unavailable.'))

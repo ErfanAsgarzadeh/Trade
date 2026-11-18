@@ -55,17 +55,19 @@ function chart(r,bars,x,y,w,h,t) {
  panel(x,y,w,h);text(tr('کندل‌های بسته‌شده','COMPLETED CANDLES')+' · '+(r?.timeframe||'4h'),x+24,y+38,20,C.muted);text((r?.mode||$('mode').value)==='real'?'TheTrueTrade':'USDT FUTURES',x+w-24,y+38,18,C.muted,'right');
  if(!r||!bars?.length){text(tr('کندل هم‌منبع در دسترس نیست','Matching source candles unavailable'),x+w/2,y+h/2,26,C.muted,'center');return}
  const problem=/STALE|GAPS/i.exec(snapshot?.candle_note||'');if(problem)text('CANDLES '+problem[0].toUpperCase(),x+w/2,y+59,17,C.gold,'center');const lx=x+25,rx=x+w-203,top=y+80,bottom=y+h-58;
- const refs=[['ENTRY',r.entry,C.gold],['STOP',r.stop,C.loss],['TARGET',r.target,C.violet],['EXIT',r.exit,C.white],['QUOTE',r.current_price,C.profit]].filter(row=>row[1]>0);
+ const stopLabel=r.status==='closed'?'LAST STOP':'CURRENT STOP';
+ const refs=[['ENTRY',r.entry,C.gold],['INITIAL STOP',r.initial_stop,'#c7afff'],[stopLabel,r.stop,C.loss],['TARGET',r.target,C.violet],['EXIT',r.exit,C.white],['QUOTE',r.current_price,C.profit]].filter(row=>row[1]>0);
  let lo=Math.min(...bars.map(b=>b[3]),...refs.map(r=>r[1])),hi=Math.max(...bars.map(b=>b[2]),...refs.map(r=>r[1]));const padding=(hi-lo)*.12||hi*.01;lo-=padding;hi+=padding;
  const py=p=>bottom-(p-lo)/(hi-lo)*(bottom-top),step=(rx-lx)/bars.length,px=i=>lx+(i+.5)*step;
  for(let i=0;i<5;i++){const v=lo+(hi-lo)*i/4,yv=py(v);line(lx,yv,rx-lx,'#352044');text(price(v),rx-8,yv-5,15,C.muted,'right')}
  bars.forEach((b,i)=>{const color=b[4]>=b[1]?C.profit:C.loss;ctx.strokeStyle=color;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(px(i),py(b[2]));ctx.lineTo(px(i),py(b[3]));ctx.stroke();ctx.fillStyle=color;ctx.fillRect(px(i)-Math.max(1,step*.3),Math.min(py(b[1]),py(b[4])),Math.max(2,step*.6),Math.max(1,Math.abs(py(b[1])-py(b[4]))))});
  const focused = [];
  for (const [label,value,color] of refs) {
-   const emphasized = label === 'ENTRY' || label === 'STOP';
+   const isStop = label.endsWith('STOP');
+   const emphasized = label === 'ENTRY' || isStop;
    const levelY = py(value);
    ctx.strokeStyle=color;ctx.lineWidth=emphasized?3:1;
-   ctx.setLineDash(label==='STOP'?[10,5]:emphasized?[]:[4,6]);
+   ctx.setLineDash(label==='INITIAL STOP'?[3,6]:isStop?[12,5]:emphasized?[]:[4,6]);
    ctx.beginPath();ctx.moveTo(lx,levelY);ctx.lineTo(rx,levelY);ctx.stroke();ctx.setLineDash([]);
    if (emphasized) focused.push({label,value,color,levelY});
    else text(label,lx+8,levelY-9,18,color);
@@ -77,7 +79,8 @@ function chart(r,bars,x,y,w,h,t) {
    previous=tagY;
    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(rx,levelY);ctx.lineTo(rx+12,tagY);ctx.stroke();
    ctx.fillStyle=color;ctx.fillRect(rx+12,tagY-15,x+w-rx-24,30);
-   const name=label==='ENTRY'?tr('ورود','ENTRY'):tr('استاپ','STOP');
+   const names={'ENTRY':'ورود','INITIAL STOP':'استاپ اولیه','CURRENT STOP':'استاپ فعلی','LAST STOP':'آخرین استاپ'};
+   const name=tr(names[label],label);
    fitText(name+'  '+price(value),rx+20,tagY+6,x+w-rx-40,17,C.bg);
  });
  for(const [time,label] of [[r.opened_at,'ENTRY'],[r.closed_at,'EXIT']]){if(!time||time*1000<bars[0][0]||time*1000>bars.at(-1)[0])continue;let i=bars.findIndex(b=>b[0]>time*1000);i=i<0?bars.length-1:Math.max(0,i-1);const xx=px(i);ctx.fillStyle=C.gold;ctx.beginPath();ctx.moveTo(xx,bottom+3);ctx.lineTo(xx-6,bottom+14);ctx.lineTo(xx+6,bottom+14);ctx.fill();text(label==='ENTRY'?tr('زمان ورود','ENTRY TIME'):tr('زمان خروج','EXIT TIME'),xx,top+16,16,C.gold,'center')}
@@ -90,7 +93,17 @@ function strategyLabel(trade) {
 }
 
 function metric(x,y,w,title,value,color=C.white,sub=''){text(title,x,y,19,C.muted);fitText(value,x,y+51,w,43,color);if(sub)fitText(sub,x,y+83,w,17,C.muted)}
-function positionFields(r,x,y,w){const fields=[[tr('ورود','ENTRY'),r?.entry],[r?.status==='closed'?tr('خروج','EXIT'):tr('قیمت جاری','CURRENT'),r?.exit??r?.current_price],[tr('حد ضرر','STOP'),r?.stop]];fields.forEach(([label,v],i)=>{let xx=x+i*w/3;metric(xx,y,w/3-20,label,numeric(v,v<1?6:3),C.white)})}
+function positionFields(r,x,y,w){
+ const closed = r?.status==='closed';
+ const fields = [
+   [tr('ورود','ENTRY'),r?.entry,C.gold],
+   [closed?tr('خروج','EXIT'):tr('قیمت جاری','CURRENT'),r?.exit??r?.current_price,C.white],
+   [tr('استاپ اولیه','INITIAL STOP'),r?.initial_stop,'#c7afff'],
+   [closed?tr('آخرین استاپ','LAST STOP'):tr('استاپ فعلی','CURRENT STOP'),r?.stop,C.loss],
+ ];
+ const width=w/fields.length;
+ fields.forEach(([label,value,color],i)=>metric(x+i*width,y,width-15,label,price(value),value==null?C.muted:color));
+}
 function account(a,x,y,w,h){panel(x,y,w,h);text(tr('کل حساب · اکنون','WHOLE ACCOUNT · NOW'),x+25,y+36,20,C.muted);text(percent(a?.return_pct),x+w-25,y+93,50,signColor(a?.return_pct),'right');if($('amounts').checked){text(tr('موجودی','EQUITY'),x+25,y+80,18,C.muted);text(money(a?.equity_usd),x+25,y+119,30);text(tr('سود و زیان حساب','ACCOUNT P&L'),x+25,y+165,18,C.muted);text(money(a?.pnl_usd),x+25,y+207,31,signColor(a?.pnl_usd))}else{text(tr('مبلغ حساب پنهان است','Account amounts hidden'),x+25,y+159,21,C.muted)}fitText(a?.basis||tr('محاسبهٔ حساب در دسترس نیست','Account valuation unavailable'),x+25,y+h-23,w-50,16,C.muted)}
 function table(rows,x,y,w,h){panel(x,y,w,h);text(tr('پوزیشن‌ها و خروج‌های انتخاب‌شده','SELECTED POSITIONS & EXITS'),x+23,y+34,19,C.muted);const capacity=Math.max(1,Math.floor((h-80)/49)),view=rows.slice(0,capacity);if(!view.length)text(tr('پوزیشنی در این نما نیست','No positions in this view'),x+23,y+90,23,C.muted);view.forEach((r,i)=>{let yy=y+78+i*49;fitText(r.symbol,x+23,yy,w*.45,20);text(r.side.toUpperCase(),x+w*.53,yy,17,r.side==='long'?C.profit:C.loss);text(percent(r.price_move_pct),x+w-23,yy,24,signColor(r.price_move_pct),'right')});if(rows.length>capacity)text('+'+(rows.length-capacity)+' '+tr('مورد دیگر در گردش خودکار','more in rotation'),x+23,y+h-20,17,C.muted)}
 function ribbon(rows,y,w,t){if(!$('ticker').checked||!rows.length)return;ctx.save();ctx.beginPath();ctx.rect(0,y,w,56);ctx.clip();ctx.fillStyle='#21103b';ctx.fillRect(0,y,w,56);if(tickerCache.rows!==rows){const items=rows.map(r=>r.symbol+'  '+r.side.toUpperCase()+'  '+percent(r.price_move_pct)+'  •  '+r.status.toUpperCase()+'     /     ');ctx.font='21px Lato, sans-serif';const full=items.join('');tickerCache={rows,text:full,span:ctx.measureText(full).width+100}}const full=tickerCache.text,span=tickerCache.span,offset=(t*.035)%span;for(let x=-offset;x<w;x+=span)text(full,x,y+36,21,C.muted);ctx.restore()}

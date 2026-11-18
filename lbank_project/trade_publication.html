@@ -104,12 +104,13 @@ function chart(r,bars,x,y,w,h,wide=false,reference=false) {
    text('Candles unavailable',x+w/2,y+h/2,wide?24:30,palette.muted,{align:'center'});
    return;
  }
- const axisWidth=wide?101:117, tagWidth=wide?154:176;
+ const axisWidth=wide?101:117, tagWidth=wide?178:200;
  const left=x+axisWidth,right=x+w-tagWidth-12,top=y+57,bottom=y+h-55;
- // Only an active stop and confirmed prices belong on promotional charts.
+ // Draw recorded levels and skip unavailable prices.
  const levels=[
    {label:reference?'REFERENCE':'ENTRY',value:r.entry,fill:palette.gold},
-   {label:'STOP',value:r.stop,fill:palette.red},
+   {label:'INITIAL STOP',value:r.initial_stop,fill:'#c7afff'},
+   {label:r.status==='closed'?'LAST STOP':'CURRENT STOP',value:r.stop,fill:palette.red},
    {label:r.status==='open'?'CURRENT':'EXIT',value:reference?null:r.exit??r.current_price,fill:palette.white},
  ].filter(level=>Number.isFinite(level.value)&&level.value>0);
  let lo=Math.min(...bars.map(b=>b[3]),...levels.map(level=>level.value));
@@ -134,9 +135,11 @@ function chart(r,bars,x,y,w,h,wide=false,reference=false) {
    const tagY=Math.min(bottom-14-gap*(levels.length-1-index),Math.max(top+14,valueY,last+gap));
    last=tagY;
    const isReference=label==='ENTRY'||label==='REFERENCE';
-   line(left,valueY,right,valueY,fill,isReference?2.6:1.8,label==='STOP'?[10,5]:isReference?[]:[2,6]);
+   const isStop=label.endsWith('STOP');
+   const dash=label==='INITIAL STOP'?[3,6]:isStop?[12,5]:isReference?[]:[2,6];
+   line(left,valueY,right,valueY,fill,isReference?2.6:1.8,dash);
    line(right,valueY,right+12,tagY,fill,1.6);
-   const primary=isReference||label==='STOP';
+   const primary=isReference||isStop;
    box(right+12,tagY-15,tagWidth-12,30,primary?fill:'#342449',6);
    text(label+'  '+price(value),right+20,tagY+6,wide?16:18,primary?palette.bg:palette.white,{weight:700,maxWidth:tagWidth-28});
  });
