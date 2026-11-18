@@ -143,7 +143,7 @@ def paper_snapshot(engine):
                    as_of=time.time())
     mode = getattr(engine.data, 'mode', 'unknown')
     return dict(records=sorted(records, key=lambda r: r['closed_at'] or float('inf'), reverse=True),
-                account=account, warnings=warnings, data_mode=mode,
+                account=account, warnings=warnings, data_mode='futures-market-data' if mode == 'csv-lbank' else mode,
                 publishable=mode == 'csv-lbank', generated_at=time.time(), source_started_at=source_started_at,
                 notice='Each closed card is one recorded exit; partial exits are not grouped into a complete trade.')
 
@@ -239,11 +239,11 @@ def candles_for(engine, trade):
             if ts/1000 + seconds > end:
                 continue
             checked[ts] = values
-        selected = [checked[k] for k in sorted(checked)][-180:]
+        selected = [checked[k] for k in sorted(checked)][-36:]
         if not selected:
             return [], 'No completed verified candles cover this period.'
         age = end - (selected[-1][0]/1000 + seconds)
-        note = 'LBank USDT futures • completed candles • UTC'
+        note = 'USDT futures • completed candles • UTC'
         if any(b[0] - a[0] != seconds * 1000 for a, b in zip(selected, selected[1:])):
             note += ' • GAPS IN CANDLE SOURCE'
         if trade['bot'] == 'main' and trade['status'] == 'closed':

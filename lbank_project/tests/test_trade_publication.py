@@ -134,7 +134,7 @@ def test_official_receipt_and_checksum(publication,tmp_path,monkeypatch):
     official.publish(tmp_path,'BTC/USDT:USDT',bars,now)
     r=pub.record('c3','closed',dict(id=1,symbol='BTC/USDT:USDT',side='long',entry=100,exit=110,closed=now,pnl=9))
     result,note=pub.candles_for(engine,r)
-    assert len(result)==180
+    assert len(result)==36
     path,_=official.paths(tmp_path,'BTC/USDT:USDT')
     path.write_text(path.read_text().replace('111','112'))
     assert pub.candles_for(engine,r)[0]==[]

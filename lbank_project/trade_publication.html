@@ -1,6 +1,6 @@
 <!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AVINA · استودیوی انتشار معاملات</title>
 <style>
-@font-face{font-family:Vazir;src:url('/publication/assets/vazirmatn-arabic.woff2')}@font-face{font-family:Lato;src:url('/publication/assets/lato-400.woff2')}*{box-sizing:border-box}body{margin:0;background:#100424;color:#f8f6ff;font-family:Vazir,Arial}header{padding:24px 5%;border-bottom:1px solid #372349;display:flex;align-items:center;justify-content:space-between;gap:20px}header img{width:72px}h1{font-size:23px;margin:0}p{line-height:1.9;color:#c1afd6;margin:8px 0}a{color:#ffd36b}.layout{display:grid;grid-template-columns:350px 1fr;gap:32px;max-width:1400px;padding:30px;margin:auto}aside{background:#1a0c30;border:1px solid #39234e;border-radius:18px;padding:24px;align-self:start}label{display:block;font-size:13px;color:#c1afd6;margin:16px 0 7px}input,select,button{font:inherit;border:1px solid #57416d;border-radius:9px;padding:11px;background:#150927;color:#f8f6ff;width:100%}button{cursor:pointer;margin-top:12px;background:#5b16c7;border-color:#a767ff}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:transparent}.fieldrow{display:flex;gap:8px}.fieldrow>*{min-width:0}.checks label{display:flex;gap:10px;align-items:center}.checks input{width:auto}#message{white-space:pre-line;font-size:13px;color:#ffd36b;margin-top:16px}#preview{width:100%;max-width:670px;height:auto;display:block;margin:auto;border:1px solid #39234e;border-radius:8px}.preview-wrap{min-width:0}.note{max-width:670px;margin:16px auto;font-size:13px}#counter{font-size:12px}summary{cursor:pointer;color:#ffd36b}#evidence{white-space:pre-wrap;direction:ltr;text-align:left;font:12px monospace;overflow:auto;max-height:260px}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #ffd36b;outline-offset:3px}@media(max-width:850px){.layout{grid-template-columns:1fr;padding:16px;gap:20px}header{padding:16px}h1{font-size:18px}aside{padding:18px}}
+@font-face{font-family:Vazir;src:url('/publication/assets/vazirmatn-arabic.woff2')}@font-face{font-family:Lato;src:url('/publication/assets/lato-400.woff2');font-weight:400}@font-face{font-family:Lato;src:url('/publication/assets/lato-700.woff2');font-weight:700}*{box-sizing:border-box}body{margin:0;background:#100424;color:#f8f6ff;font-family:Vazir,Arial}header{padding:24px 5%;border-bottom:1px solid #372349;display:flex;align-items:center;justify-content:space-between;gap:20px}header img{width:72px}h1{font-size:23px;margin:0}p{line-height:1.9;color:#c1afd6;margin:8px 0}a{color:#ffd36b}.layout{display:grid;grid-template-columns:350px 1fr;gap:32px;max-width:1400px;padding:30px;margin:auto}aside{background:#1a0c30;border:1px solid #39234e;border-radius:18px;padding:24px;align-self:start}label{display:block;font-size:13px;color:#c1afd6;margin:16px 0 7px}input,select,button{font:inherit;border:1px solid #57416d;border-radius:9px;padding:11px;background:#150927;color:#f8f6ff;width:100%}button{cursor:pointer;margin-top:12px;background:#5b16c7;border-color:#a767ff}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:transparent}.fieldrow{display:flex;gap:8px}.fieldrow>*{min-width:0}.checks label{display:flex;gap:10px;align-items:center}.checks input{width:auto}#message{white-space:pre-line;font-size:13px;color:#ffd36b;margin-top:16px}#preview{width:100%;max-width:670px;height:auto;display:block;margin:auto;border:1px solid #39234e;border-radius:8px}.preview-wrap{min-width:0}.note{max-width:670px;margin:16px auto;font-size:13px}#counter{font-size:12px}summary{cursor:pointer;color:#ffd36b}#evidence{white-space:pre-wrap;direction:ltr;text-align:left;font:12px monospace;overflow:auto;max-height:260px}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #ffd36b;outline-offset:3px}@media(max-width:850px){.layout{grid-template-columns:1fr;padding:16px;gap:20px}header{padding:16px}h1{font-size:18px}aside{padding:18px}}
 </style>
 <header><div><h1>استودیوی انتشار معاملات</h1><p>کندل، پوزیشن و نتیجهٔ حساب در یک کارت قابل انتشار</p></div><img src="/publication/assets/avina-mark.png" alt="AVINA"><a href="/broadcast">پخش زنده ↗</a><a href="/">بازگشت به پنل</a></header>
 <main class="layout"><aside><form id="login"><label for="pin">PIN پنل مدیریت</label><input id="pin" type="password" autocomplete="off" required><button>خواندن معاملات</button></form>
@@ -17,12 +17,13 @@
 'use strict';
 const $=s=>document.getElementById(s),canvas=$('preview'),ctx=canvas.getContext('2d');let rows=[],current=null,busy=false,logo=new Image(),generation=0;logo.src='/publication/assets/avina-mark.png';
 const num=(v,n=2)=>v===null||v===undefined?'Unavailable':Number(v).toLocaleString('en-US',{maximumFractionDigits:n,minimumFractionDigits:n});
+const price=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumSignificantDigits:8});
 const pct=v=>v===null||v===undefined?'Unavailable':(v>=0?'+':'')+num(v)+'%';
 const date=t=>t?new Date(t*1000).toISOString().replace('T',' ').slice(0,16)+' UTC':'Not recorded';
 const color=v=>v===null||v===undefined?'#c1afd6':v<0?'#ff7d9c':'#5be3b5';
-function text(s,x,y,size=26,col='#f8f6ff',align='left'){ctx.direction='ltr';ctx.font=`${size}px Lato, Arial`;ctx.textAlign=align;ctx.fillStyle=col;ctx.fillText(String(s),x,y)}
+function text(s,x,y,size=26,col='#f8f6ff',align='left'){ctx.direction='ltr';ctx.font=`${size>=38?'700':'400'} ${size}px Lato, Arial`;ctx.textAlign=align;ctx.fillStyle=col;ctx.fillText(String(s),x,y)}
 function rule(y){ctx.strokeStyle='#3b2453';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(64,y);ctx.lineTo(1016,y);ctx.stroke()}
-function lines(s,x,y,max=940,size=20){ctx.font=`${size}px Lato, Arial`;let row='';for(const w of s.split(' ')){if(ctx.measureText(row+w).width>max){text(row,x,y,size,'#c1afd6');y+=29;row=''}row+=w+' '}text(row,x,y,size,'#c1afd6');return y+29}
+function lines(s,x,y,max=940,size=20){ctx.font=`${size>=38?'700':'400'} ${size}px Lato, Arial`;let row='';for(const w of s.split(' ')){if(ctx.measureText(row+w).width>max){text(row,x,y,size,'#c1afd6');y+=29;row=''}row+=w+' '}text(row,x,y,size,'#c1afd6');return y+29}
 function draw(){
  const h=Number($('format').value);canvas.height=h;ctx.fillStyle='#100424';ctx.fillRect(0,0,1080,h);const gradient=ctx.createRadialGradient(820,150,0,820,150,1000);gradient.addColorStop(0,'#2a0e4a');gradient.addColorStop(1,'#100424');ctx.fillStyle=gradient;ctx.fillRect(0,0,1080,h);
  if(logo.complete&&logo.naturalWidth){const scale=Math.min(145/logo.width,95/logo.height);ctx.drawImage(logo,64,52,logo.width*scale,logo.height*scale)}
@@ -46,15 +47,33 @@ function draw(){
 }
 function chart(r,bars,top,height){
  ctx.fillStyle='#18092f';ctx.fillRect(64,top,952,height);if(!bars.length){text('Candles unavailable',540,top+height/2-20,30,'#c1afd6','center');text(r.mode==='real'?'Matching exchange evidence required':'Verified futures data required',540,top+height/2+25,21,'#c1afd6','center');return}
- const left=82,right=875,up=top+45,down=top+height-48;
+ const left=82,right=817,up=top+45,down=top+height-48;
  const levels=[['ENTRY',r.entry,'#ffd36b'],['STOP',r.stop,'#ff7d9c'],['TARGET',r.target,'#a767ff'],[r.status==='open'?'CURRENT':'EXIT',r.exit??r.current_price,'#f8f6ff']].filter(x=>x[1]>0);
  let lo=Math.min(...bars.map(b=>b[3]),...levels.map(x=>x[1])),hi=Math.max(...bars.map(b=>b[2]),...levels.map(x=>x[1]));let pad=(hi-lo)*.12||hi*.01;lo-=pad;hi+=pad;
  const py=v=>down-(v-lo)/(hi-lo)*(down-up),step=(right-left)/bars.length,px=i=>left+(i+.5)*step;
- for(let i=0;i<5;i++){let v=lo+(hi-lo)*i/4,y=py(v);ctx.strokeStyle='#352044';ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();text(num(v,v<1?5:2),1000,y+6,16,'#c1afd6','right')}
+ for(let i=0;i<5;i++){let v=lo+(hi-lo)*i/4,y=py(v);ctx.strokeStyle='#352044';ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();text(price(v),right-8,y-5,15,'#c1afd6','right')}
  bars.forEach((b,i)=>{let c=b[4]>=b[1]?'#5be3b5':'#ff7d9c';ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(px(i),py(b[2]));ctx.lineTo(px(i),py(b[3]));ctx.stroke();ctx.fillStyle=c;ctx.fillRect(px(i)-Math.max(1,step*.32),Math.min(py(b[1]),py(b[4])),Math.max(2,step*.64),Math.max(1,Math.abs(py(b[1])-py(b[4]))))});
- for(const [label,v,c]of levels){ctx.strokeStyle=c;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(left,py(v));ctx.lineTo(right,py(v));ctx.stroke();ctx.setLineDash([]);text(label,left+8,py(v)-7,15,c)}
- for(const [time,label,c]of [[r.opened_at,'ENTRY','#ffd36b'],[r.closed_at,'EXIT','#f8f6ff']]){if(!time||time*1000<bars[0][0]||time*1000>bars.at(-1)[0]+({ '1h':3600000,'4h':14400000 }[r.timeframe]||0))continue;let i=bars.findIndex(b=>b[0]>time*1000);i=i<0?bars.length-1:Math.max(0,i-1);const x=px(i);ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x,down+4);ctx.lineTo(x-7,down+17);ctx.lineTo(x+7,down+17);ctx.fill();text(label,x,up+12,14,c,'center')}
- text('LBank USDT FUTURES · '+r.timeframe+' · COMPLETED CANDLES',82,top+25,17,'#c1afd6');text(new Date(bars[0][0]).toISOString().slice(0,10),82,top+height-10,15,'#c1afd6');text(new Date(bars.at(-1)[0]).toISOString().slice(0,10)+' UTC',1000,top+height-10,15,'#c1afd6','right');
+ const focused = [];
+ for (const [label,value,color] of levels) {
+   const emphasized = label==='ENTRY'||label==='STOP';
+   const levelY=py(value);
+   ctx.strokeStyle=color;ctx.lineWidth=emphasized?3:1;
+   ctx.setLineDash(label==='STOP'?[10,5]:emphasized?[]:[4,6]);
+   ctx.beginPath();ctx.moveTo(left,levelY);ctx.lineTo(right,levelY);ctx.stroke();ctx.setLineDash([]);
+   if(emphasized)focused.push({label,value,color,levelY});
+   else text(label,left+8,levelY-8,17,color);
+ }
+ focused.sort((a,b)=>a.levelY-b.levelY);
+ let previous=up-34;
+ focused.forEach(({label,value,color,levelY},i)=>{
+   const tagY=Math.min(down-15-34*(focused.length-1-i),Math.max(up+15,levelY,previous+34));
+   previous=tagY;
+   ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(right,levelY);ctx.lineTo(right+12,tagY);ctx.stroke();
+   ctx.fillStyle=color;ctx.fillRect(right+12,tagY-15,1000-right-12,30);
+   text(label+'  '+price(value),right+20,tagY+6,17,'#100424');
+ });
+ for(const [time,label,c]of [[r.opened_at,'ENTRY','#ffd36b'],[r.closed_at,'EXIT','#f8f6ff']]){if(!time||time*1000<bars[0][0]||time*1000>bars.at(-1)[0]+({ '1h':3600000,'4h':14400000 }[r.timeframe]||0))continue;let i=bars.findIndex(b=>b[0]>time*1000);i=i<0?bars.length-1:Math.max(0,i-1);const x=px(i);ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x,down+4);ctx.lineTo(x-7,down+17);ctx.lineTo(x+7,down+17);ctx.fill();text(label+' TIME',x,up+16,16,c,'center')}
+ text('USDT FUTURES · '+r.timeframe+' · COMPLETED CANDLES',82,top+25,17,'#c1afd6');text(new Date(bars[0][0]).toISOString().slice(0,10),82,top+height-10,15,'#c1afd6');text(new Date(bars.at(-1)[0]).toISOString().slice(0,10)+' UTC',1000,top+height-10,15,'#c1afd6','right');
 }
 async function api(path){const res=await fetch(path,{headers:{'X-Bot-Pin':$('pin').value}});if(!res.ok)throw new Error(res.status===401?'PIN نادرست است.':'خواندن داده ممکن نشد؛ دوباره تلاش کنید.');return res.json()}
 function lock(on){busy=on;$('mode').disabled=on;$('search').disabled=on;for(const id of ['download','refresh','prev','next','trade'])$(id).disabled=on||!rows.length;}

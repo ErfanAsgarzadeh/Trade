@@ -7,6 +7,6 @@ COPY lbank_bot.py strategy_archetypes.py dashboard_server.py config.json c3_slee
 COPY license_access.py capital_plans.py signal_feed.py deployment_security.py customer_entrypoint.py ./
 COPY lbank_official_candles.py trade_publication.py trade_publication.html trade_broadcast.html trade_broadcast_svg.js portal_thetruetrade.py ./
 COPY frontend/public/portal-assets/titanium.css frontend/public/portal-assets/appearance.js ./frontend/public/portal-assets/
-COPY frontend/public/portal-assets/avina-mark.png frontend/public/portal-assets/lato-400.woff2 frontend/public/portal-assets/vazirmatn-arabic.woff2 ./frontend/public/portal-assets/
+COPY frontend/public/portal-assets/avina-mark.png frontend/public/portal-assets/lato-400.woff2 frontend/public/portal-assets/lato-700.woff2 frontend/public/portal-assets/vazirmatn-arabic.woff2 ./frontend/public/portal-assets/
 RUN mkdir -p /app/runtime
 CMD ["python", "-u", "lbank_bot.py"]
