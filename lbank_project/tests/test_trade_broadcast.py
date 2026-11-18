@@ -1,0 +1,88 @@
+"""Read-only broadcasting: scope, caching, authorization and consistent close snapshots."""
+import sqlite3
+import time
+from fastapi.testclient import TestClient
+import pytest
+import trade_publication as pub
+from dashboard_server import create_app
+from test_system import cfg, system, setup_position
+
+
+def data():
+    rows=[]
+    for bot,kind,n in [('main','open',1),('c3','open',2),('pa','closed',3)]:
+        rows.append(pub.record(bot,kind,dict(id=n,symbol='BTC/USDT:USDT',side='long',entry=100,entry_price=100,
+            exit=110,exit_price=110,pnl=10,pnl_usd=10,closed=10,closed_at=10)))
+    return dict(records=rows,account={'equity_usd':10010,'return_pct':.1,'pnl_usd':10},warnings=[],notice='',
+        data_mode='csv-lbank',publishable=True,generated_at=time.time())
+
+
+@pytest.fixture
+def feed(monkeypatch):
+    calls=[];clock=[0.]
+    def read(engine):calls.append(1);return data()
+    monkeypatch.setattr(pub,'paper_snapshot',read)
+    monkeypatch.setattr(pub,'candles_for',lambda engine,r:([[1000,1,2,1,2,1]],'Source candles'))
+    return pub.BroadcastFeed(lambda:object(),clock=lambda:clock[0]),calls,clock
+
+
+def test_scope_selection_cache_and_copy(feed):
+    f,calls,clock=feed;r=f.get();assert len(r['records'])==2 and r['trade']['status']=='open'
+    assert r['poll_after_seconds']>=5 and r['source_ok'];started=r['source_started_at']
+    r['records'][0]['symbol']='client mutation'
+    r=f.get(trade_id='pa:closed:3',scope='all')
+    assert r['trade']['id']=='pa:closed:3' and len(r['records'])==3
+    assert r['records'][0]['symbol']=='BTC/USDT:USDT' and r['source_started_at']==started
+    assert calls==[1] and f.get(bot_filter='pa')['trade'] is None
+    assert f.get(bot_filter='pa',scope='closed')['trade']['bot']=='pa'
+    clock[0]=6;f.get();assert calls==[1,1]
+
+
+def test_failure_discards_prior_values(feed,monkeypatch):
+    f,_,clock=feed;assert f.get()['account']['pnl_usd']==10
+    def broken(engine):raise RuntimeError('SECRET upstream response')
+    monkeypatch.setattr(pub,'paper_snapshot',broken);clock[0]=6;r=f.get()
+    assert r['records']==[] and r['trade'] is None and not r['source_ok']
+    assert r['account']['pnl_usd'] is None and 'SECRET' not in str(r)
+
+
+def test_bounded_candle_cache_and_demo_label(feed):
+    f,_,_=feed
+    for i in range(50):
+        s=data();s['records'][0]['id']=f'main:open:{i}';f._snapshots['paper']=(100,s);f.get()
+    assert len(f._candles)==32
+    s=data();s.update(publishable=False,data_mode='demo');f._snapshots['paper']=(100,s)
+    assert not f.get()['source_ok']
+
+
+def test_auth_validation_and_get_only(system,monkeypatch):
+    monkeypatch.setenv('BOT_PIN','test');monkeypatch.setattr(pub,'paper_snapshot',lambda engine:data())
+    monkeypatch.setattr(pub,'candles_for',lambda engine,r:([],'Not available'))
+    with TestClient(create_app(system)) as client:
+        assert client.get('/broadcast').status_code==200
+        assert client.get('/api/publication/broadcast').status_code==401
+        h={'X-Bot-Pin':'test'}
+        for query in ['mode=demo','bot=unknown','scope=profits']:
+            assert client.get('/api/publication/broadcast?'+query,headers=h).status_code==422
+        r=client.get('/api/publication/broadcast?scope=closed&bot=pa',headers=h)
+        assert r.json()['trade']['bot']=='pa' and r.headers['cache-control']=='no-store'
+        assert client.post('/api/publication/broadcast',headers=h).status_code==405
+
+
+def test_same_transaction_prevents_double_count_during_close(system,monkeypatch):
+    setup_position(system,state='INITIAL');path=system.db.path;connect=sqlite3.connect;changed=[]
+    class Connection:
+        def __init__(self,c):object.__setattr__(self,'connection',c)
+        def __setattr__(self,k,v):setattr(self.connection,k,v)
+        def execute(self,sql,*args):
+            cursor=self.connection.execute(sql,*args)
+            if sql=='SELECT * FROM positions' and not changed:
+                with connect(path) as db:
+                    db.execute('DELETE FROM positions')
+                    db.execute('INSERT INTO trade_history(symbol,side,pnl_usd,closed_at,qty,entry_price,exit_price,reason) VALUES(?,?,?,?,?,?,?,?)',('BTC/USDT:USDT','long',10,1000,2,100,110,'close'))
+                changed.append(1)
+            return cursor
+        def close(self):self.connection.close()
+    monkeypatch.setattr(pub.sqlite3,'connect',lambda *a,**kw:Connection(connect(*a,**kw)))
+    positions,trades=pub.read_paper_tables(path,'trade_history');assert len(positions)==1 and trades==[]
+    positions,trades=pub.read_paper_tables(path,'trade_history');assert positions==[] and len(trades)==1

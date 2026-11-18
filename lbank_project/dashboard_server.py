@@ -7,6 +7,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Literal
 import secrets
 import time
 
@@ -66,6 +67,9 @@ def create_app(engine: Engine | None = None) -> FastAPI:
 
     application = FastAPI(title="LBank Ichimoku Paper Dashboard", lifespan=lifespan)
     throttle = LoginThrottle()
+    import trade_publication
+    broadcast_feed = trade_publication.BroadcastFeed(lambda: application.state.engine)
+    application.state.broadcast_feed = broadcast_feed
 
     async def authorized(request: Request, x_bot_pin: str = Header(default="")):
         client = request.client.host if request.client else 'unknown'
@@ -100,6 +104,53 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @application.get("/", response_class=HTMLResponse)
     def home():
         return HTML
+
+    # Private publication studio: GET-only source reads; no order or configuration changes.
+    @application.get('/publication', response_class=HTMLResponse)
+    def publication_page():
+        return (Path(__file__).parent / 'trade_publication.html').read_text()
+
+    @application.get('/broadcast', response_class=HTMLResponse)
+    def broadcast_page():
+        return (Path(__file__).parent / 'trade_broadcast.html').read_text()
+
+    @application.get('/api/publication/broadcast', dependencies=[Depends(authorized)])
+    def publication_broadcast(mode: Literal['paper', 'real'] = 'paper',
+                              trade_id: str | None = None,
+                              bot: Literal['all', 'main', 'c3', 'pa'] = 'all',
+                              scope: Literal['open', 'closed', 'all'] = 'open'):
+        return broadcast_feed.get(mode=mode, trade_id=trade_id, bot_filter=bot, scope=scope)
+
+    @application.get('/publication/assets/{name}')
+    def publication_asset(name: str):
+        from fastapi.responses import FileResponse
+        if name == 'trade_broadcast_svg.js':
+            return FileResponse(Path(__file__).parent / 'trade_broadcast_svg.js', media_type='text/javascript')
+        if name not in {'avina-mark.png', 'vazirmatn-arabic.woff2', 'lato-400.woff2'}:
+            raise HTTPException(404, 'Asset not found')
+        return FileResponse(Path(__file__).parent / 'frontend' / 'public' / 'portal-assets' / name)
+
+    def publication_snapshot(mode):
+        import trade_publication as pub
+        if mode == 'paper':
+            return pub.paper_snapshot(bot())
+        if mode == 'real':
+            return pub.real_snapshot()
+        raise HTTPException(422, 'mode must be paper or real')
+
+    @application.get('/api/publication/trades', dependencies=[Depends(authorized)])
+    def publication_trades(mode: str = 'paper'):
+        return publication_snapshot(mode)
+
+    @application.get('/api/publication/trade', dependencies=[Depends(authorized)])
+    def publication_trade(trade_id: str, mode: str = 'paper'):
+        import trade_publication as pub
+        snapshot = publication_snapshot(mode)
+        trade = next((r for r in snapshot.pop('records') if r['id'] == trade_id), None)
+        if trade is None:
+            raise HTTPException(404, 'Recorded trade not found')
+        candles, note = pub.candles_for(bot(), trade)
+        return dict(snapshot, trade=trade, candles=candles, candle_note=note)
 
     @application.get('/healthz')
     def health():
@@ -588,7 +639,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
 <div class="gap"><div class="theme-switcher"><label for="terminal-appearance">Appearance</label><select id="terminal-appearance" data-legacy-theme-switch><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></div><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span>
 <input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
-<nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
+<a href="/broadcast" target="_blank" rel="noopener" style="display:inline-block;margin:12px;color:var(--primary)">AVINA · پخش زنده / Broadcast ↗</a><a href="/publication" target="_blank" rel="noopener" style="display:inline-block;margin:12px 0;color:var(--primary)">AVINA · انتشار معاملات / Publication studio ↗</a><nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
 <div id="message" role="status" aria-live="polite"></div>
 
 <section class="pane" data-pane="overview">
