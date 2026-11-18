@@ -67,7 +67,7 @@ function tradeStats(r,x,y,w,wide=false) {
  text(detail.join('  ·  '),x,y+(wide?28:33),wide?18:24,palette.muted,{maxWidth:w});
  const metricY=y+(wide?93:123);
  text(signed(r.price_move_pct,'%'),x,metricY,wide?51:74,color(r.price_move_pct),{weight:700,maxWidth:wide?w:w*.56});
- const moveLabel = r.mode==='paper' ? 'SIMULATED PRICE MOVE · UNLEVERAGED' : 'PRICE MOVE · UNLEVERAGED';
+ const moveLabel = r.mode==='paper' ? 'PRACTICE TRADE · UNLEVERAGED MOVE' : 'PRICE MOVE · UNLEVERAGED';
  text(moveLabel,x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:wide?w:w*.61});
  if($('amounts').checked && r.pnl_usd!=null) {
    const pnlY=wide?metricY+77:metricY;
@@ -81,7 +81,7 @@ function tradeStats(r,x,y,w,wide=false) {
 function accountStats(a,r,x,y,w,h,wide=false) {
  box(x,y,w,h,'#211238');
  const left=x+22,right=x+w-22;
- const title=r.mode==='paper'?'SIMULATED ACCOUNT':'REAL ACCOUNT';
+ const title=r.mode==='paper'?'PRACTICE ACCOUNT':'REAL ACCOUNT';
  text(title,left,y+(wide?27:37),wide?16:22,palette.muted,{weight:700,maxWidth:w-44});
  if(!$('amounts').checked && a.return_pct==null){text('Account return unavailable',left,y+72,wide?17:23,palette.muted,{maxWidth:w-44});return}
  if(a.return_pct!=null) {
@@ -188,7 +188,7 @@ function draw(){
    chart(r,bars,x,chartY,inner,chartH);
    accountStats(a,r,x,chartY+chartH+31,inner,story?185:155);
  }
- const qualification = r.mode==='paper' ? 'Simulated results use modeled fills and costs.' : 'Exchange-reported figures where available.';
+ const qualification = r.mode==='paper' ? 'Practice results. No real funds were traded.' : 'Exchange-reported figures where available.';
  const footerY=story?h-190:h-(wide?48:55);
  const hasCoverageGap=/STALE|GAPS/i.test(current.candle_note||'');
  if(hasCoverageGap) text('MARKET DATA COVERAGE GAP',x,footerY-52,wide?15:19,palette.gold,{weight:700});
@@ -211,6 +211,6 @@ for(const [id,offset] of [['prev',-1],['next',1]])$(id).onclick=()=>{const sel=$
 window.AvinaTradeBrand?.bind($('logo'),$('brand-preview'),(image,isCustom)=>{
  logo=image;customLogo=isCustom;draw();
 },message=>{$('message').textContent=message});
-$('download').onclick=async()=>{if(!canExport()||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);if(!canExport()||busy)return;draw();const kind=marketOnly()?'market':current.trade.mode==='paper'?'simulated':'real';const symbol=ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-');canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+symbol+'-'+kind+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
+$('download').onclick=async()=>{if(!canExport()||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);if(!canExport()||busy)return;draw();const kind=marketOnly()?'market':current.trade.mode==='paper'?'practice':'real';const symbol=ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-');canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+symbol+'-'+kind+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
 logo.onload=draw;document.fonts.ready.then(draw);draw();
 </script></html>

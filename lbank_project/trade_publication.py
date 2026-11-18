@@ -210,7 +210,7 @@ def real_snapshot():
         empty['publishable'] = True
         empty['generated_at'] = time.time()
     except Exception:
-        empty['warnings'] = ['Real account read failed; no cached, simulated or paper result is shown.']
+        empty['warnings'] = ['Real account data could not be read.']
     return empty
 
 

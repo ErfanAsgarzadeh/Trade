@@ -50,7 +50,7 @@ function stale(){return !snapshot||snapshot.source_ok===false||!lastReceived||Da
 function screenData(){return stale()?null:snapshot}
 function errorText(){if(!auth)return tr('برای شروع به منبع متصل شو','Connect to the trading source');if(error)return error;if(snapshot?.source_ok===false)return tr('منبع در دسترس نیست؛ اعداد قابل اتکا نیستند','Source unavailable; valuations withheld');return tr('داده تازه نیست؛ منتظر اتصال مجدد','Data is stale; waiting to reconnect')}
 function money(v){return numeric(v)+' USDT'}
-function status(t){const bad=stale(),test=snapshot&&!snapshot.publishable,mode=$('mode').value==='real'?'REAL':'SIMULATED';if(bad)return {label:auth?'DATA OFFLINE':'NOT CONNECTED',color:C.loss};if(test)return {label:'TEST DATA · '+mode,color:C.gold};return {label:'LIVE FEED · '+mode,color:C.profit}}
+function status(t){const bad=stale(),test=snapshot&&!snapshot.publishable,mode=$('mode').value==='real'?'REAL':'PRACTICE';if(bad)return {label:auth?'DATA OFFLINE':'NOT CONNECTED',color:C.loss};if(test)return {label:'TEST DATA · '+mode,color:C.gold};return {label:'LIVE FEED · '+mode,color:C.profit}}
 function chart(r,bars,x,y,w,h,t) {
  panel(x,y,w,h);text(tr('کندل‌های بسته‌شده','COMPLETED CANDLES')+' · '+(r?.timeframe||'4h'),x+24,y+38,20,C.muted);text((r?.mode||$('mode').value)==='real'?'TheTrueTrade':'USDT FUTURES',x+w-24,y+38,18,C.muted,'right');
  if(!r||!bars?.length){text(tr('کندل هم‌منبع در دسترس نیست','Matching source candles unavailable'),x+w/2,y+h/2,26,C.muted,'center');return}

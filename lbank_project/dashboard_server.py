@@ -687,7 +687,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <section class="pane" data-pane="settings">
 <section class="panel"><div class="row"><h2>Trading account</h2><span class="badge ok" id="acct_mode"><span class="dot"></span>PAPER</span></div>
 <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
-<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live futures prices with estimated fees. No real money is used.</p></section>
+<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Modeled fills at live futures prices with estimated fees. No real money is used.</p></section>
 <section class="panel"><div class="row"><h3>🔒 Direct live futures</h3><span class="pill bad">Locked</span></div>
 <p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (configured through the server environment)</p>
 <div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test market connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
@@ -695,7 +695,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <section class="panel" id="live_panel"><div class="row"><div><h2>Live execution (exchange mirror)</h2><p class="small">The bots keep trading on paper; the mirror copies their NEW positions, stops, partial exits and exits to a real exchange account, sized by account equity. Positions open before switching on are not copied. Only positions opened by the mirror are ever touched.</p></div><span class="badge" id="lv_badge">—</span></div>
 <div class="fields" style="margin-top:14px">
 <label class="field">Exchange<select id="lv_exchange"><option value="thetruetrade">TheTrueTrade</option><option value="binance">Binance USDT-M</option></select></label>
-<label class="field">Mode<select id="lv_mode"><option value="off">Off</option><option value="dry">Dry run (simulated orders, real prices)</option><option value="live">LIVE (real orders)</option></select></label>
+<label class="field">Mode<select id="lv_mode"><option value="off">Off</option><option value="dry">Dry run (test orders, real prices)</option><option value="live">LIVE (real orders)</option></select></label>
 <label class="field">Size factor (1 = same % risk as paper)<input id="lv_size" type="number" min="0.01" max="3" step="0.01"></label>
 <label class="field">Leverage<input id="lv_lev" type="number" min="1" max="20" step="1"></label>
 <label class="field">Max position size (USD notional)<input id="lv_cap" type="number" min="1" step="1"></label>
