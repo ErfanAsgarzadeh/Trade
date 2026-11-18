@@ -83,6 +83,12 @@ function chart(r,bars,x,y,w,h,t) {
  for(const [time,label] of [[r.opened_at,'ENTRY'],[r.closed_at,'EXIT']]){if(!time||time*1000<bars[0][0]||time*1000>bars.at(-1)[0])continue;let i=bars.findIndex(b=>b[0]>time*1000);i=i<0?bars.length-1:Math.max(0,i-1);const xx=px(i);ctx.fillStyle=C.gold;ctx.beginPath();ctx.moveTo(xx,bottom+3);ctx.lineTo(xx-6,bottom+14);ctx.lineTo(xx+6,bottom+14);ctx.fill();text(label==='ENTRY'?tr('زمان ورود','ENTRY TIME'):tr('زمان خروج','EXIT TIME'),xx,top+16,16,C.gold,'center')}
  text(new Date(bars[0][0]).toISOString().slice(0,10),lx,y+h-20,17,C.muted);text(new Date(bars.at(-1)[0]).toISOString().slice(0,16).replace('T',' ')+' UTC',x+w-20,y+h-20,17,C.muted,'right');
 }
+function strategyLabel(trade) {
+ if(!trade)return 'AVINA';
+ if(trade.leverage==null)return trade.strategy;
+ return trade.strategy+'  ·  '+trade.leverage+'× '+tr('اهرم','LEVERAGE');
+}
+
 function metric(x,y,w,title,value,color=C.white,sub=''){text(title,x,y,19,C.muted);fitText(value,x,y+51,w,43,color);if(sub)fitText(sub,x,y+83,w,17,C.muted)}
 function positionFields(r,x,y,w){const fields=[[tr('ورود','ENTRY'),r?.entry],[r?.status==='closed'?tr('خروج','EXIT'):tr('قیمت جاری','CURRENT'),r?.exit??r?.current_price],[tr('حد ضرر','STOP'),r?.stop]];fields.forEach(([label,v],i)=>{let xx=x+i*w/3;metric(xx,y,w/3-20,label,numeric(v,v<1?6:3),C.white)})}
 function account(a,x,y,w,h){panel(x,y,w,h);text(tr('کل حساب · اکنون','WHOLE ACCOUNT · NOW'),x+25,y+36,20,C.muted);text(percent(a?.return_pct),x+w-25,y+93,50,signColor(a?.return_pct),'right');if($('amounts').checked){text(tr('موجودی','EQUITY'),x+25,y+80,18,C.muted);text(money(a?.equity_usd),x+25,y+119,30);text(tr('سود و زیان حساب','ACCOUNT P&L'),x+25,y+165,18,C.muted);text(money(a?.pnl_usd),x+25,y+207,31,signColor(a?.pnl_usd))}else{text(tr('مبلغ حساب پنهان است','Account amounts hidden'),x+25,y+159,21,C.muted)}fitText(a?.basis||tr('محاسبهٔ حساب در دسترس نیست','Account valuation unavailable'),x+25,y+h-23,w-50,16,C.muted)}
@@ -94,13 +100,13 @@ function draw(t=0){const portrait=$('format').value==='portrait',W=portrait?1080
  ctx.fillStyle=state.color;ctx.globalAlpha=stale()?1:.7+.3*Math.sin(t/500)**2;ctx.beginPath();ctx.arc(W-353,66,6,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;text(state.label,W-330,74,20,state.color);line(48,120,W-96);
  if(!data){text(errorText(),W/2,H*.48,portrait?33:42,C.loss,'center');text(tr('هیچ عدد قدیمی به‌عنوان نتیجهٔ زنده نشان داده نمی‌شود','Stale values are withheld until the feed recovers'),W/2,H*.48+65,portrait?23:27,C.muted,'center');}
  else if(portrait){
-  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن باز','NO OPEN POSITION'),x,196,46);text(r?r.side.toUpperCase():'',W-48,195,29,r?.side==='long'?C.profit:C.loss,'right');text(r?.strategy||'AVINA',x,237,25,C.muted);
+  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن باز','NO OPEN POSITION'),x,196,46);text(r?r.side.toUpperCase():'',W-48,195,29,r?.side==='long'?C.profit:C.loss,'right');text(strategyLabel(r),x,237,25,C.muted);
   metric(x,287,560,tr('تغییر قیمت در جهت پوزیشن · بدون اهرم','DIRECTIONAL PRICE MOVE · UNLEVERAGED'),percent(r?.price_move_pct),signColor(r?.price_move_pct));
   if($('amounts').checked)metric(685,287,345,tr('سود و زیان پوزیشن · USDT','POSITION P&L · USDT'),numeric(r?.pnl_usd),signColor(r?.pnl_usd),r?.mode==='real'?tr('شناور · هزینه‌ها تأیید نشده','FLOATING · FEES/FUNDING UNVERIFIED'):(r?.pnl_basis||'USDT'));
   chart(r,data.candles,48,416,984,650,t);positionFields(r,60,1104,960);account(a,48,1231,984,280);table(rows,48,1535,984,190);
   fitText(data.candle_note||'',48,1783,984,17,C.muted);
  }else{
-  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن در این نما','NO POSITION IN THIS VIEW'),x,190,47);text(r?.strategy||'AVINA',x,234,24,C.muted);text(r?r.side.toUpperCase():'',1258,190,30,r?.side==='long'?C.profit:C.loss,'right');
+  text(r?.symbol?.replace(/:USDT$/i,'')||tr('بدون پوزیشن در این نما','NO POSITION IN THIS VIEW'),x,190,47);text(strategyLabel(r),x,234,24,C.muted);text(r?r.side.toUpperCase():'',1258,190,30,r?.side==='long'?C.profit:C.loss,'right');
   metric(x,285,700,tr('تغییر قیمت در جهت پوزیشن · بدون اهرم','DIRECTIONAL PRICE MOVE · UNLEVERAGED'),percent(r?.price_move_pct),signColor(r?.price_move_pct));
   if($('amounts').checked)metric(910,285,365,tr('سود و زیان پوزیشن · USDT','POSITION P&L · USDT'),numeric(r?.pnl_usd),signColor(r?.pnl_usd),r?.mode==='real'?tr('شناور · هزینه‌ها تأیید نشده','FLOATING · FEES/FUNDING UNVERIFIED'):(r?.pnl_basis||'USDT'));
   chart(r,data.candles,48,409,1230,448,t);positionFields(r,64,893,1200);account(a,1306,158,566,291);table(rows,1306,475,566,350);

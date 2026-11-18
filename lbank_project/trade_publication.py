@@ -50,7 +50,15 @@ def read_paper_tables(path, history_table):
         connection.row_factory = sqlite3.Row
         connection.execute('PRAGMA query_only=ON')
         connection.execute('BEGIN')
-        positions = [dict(r) for r in connection.execute('SELECT * FROM positions')]
+        positions_sql = 'SELECT * FROM positions'
+        if history_table == 'trades' and connection.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='position_margin'"
+        ).fetchone():
+            positions_sql = (
+                'SELECT p.*, m.isolated_leverage FROM positions p LEFT JOIN position_margin m '
+                'ON p.symbol=m.symbol AND p.opened=m.opened'
+            )
+        positions = [dict(r) for r in connection.execute(positions_sql)]
         trades = [dict(r) for r in connection.execute('SELECT * FROM ' + history_table)]
         return positions, trades
     finally:
@@ -64,6 +72,11 @@ def price_move(entry, price, side):
     return (price / entry - 1) * (1 if side == 'long' else -1) * 100
 
 
+def recorded_leverage(value):
+    multiplier = finite(value)
+    return multiplier if multiplier is not None and multiplier >= 1 else None
+
+
 def record(bot, kind, raw):
     main = bot == 'main'
     entry = finite(raw.get('entry_price' if main else 'entry'))
@@ -71,7 +84,7 @@ def record(bot, kind, raw):
     opened = finite(raw.get('opened'))  # main history does not retain entry execution timestamps
     return dict(id=f"{bot}:{kind}:{raw['id'] if kind == 'closed' else raw['symbol']}",
                 mode='paper', bot=bot, strategy=NAMES[bot], symbol=raw['symbol'], side=raw['side'],
-                status=kind, entry=entry, exit=finite(raw.get('exit_price' if main else 'exit')),
+                status=kind, leverage=recorded_leverage(raw.get('isolated_leverage')), entry=entry, exit=finite(raw.get('exit_price' if main else 'exit')),
                 opened_at=opened, closed_at=closed, stop=finite(raw.get('active_sl' if main else 'stop')),
                 target=finite(raw.get('hard_tp_price') or raw.get('tp1_price')),
                 timeframe=raw.get('timeframe', '4h'), pnl_usd=finite(raw.get('pnl_usd' if main else 'pnl')),
@@ -185,8 +198,10 @@ def real_snapshot():
                     math.isclose(v, marks[0], rel_tol=1e-9) for v in marks) else None)
             pnls = [finite(p.get('unrealizedPnL')) for p in source_rows]
             pnl = sum(pnls) if pnls and all(v is not None for v in pnls) else None
+            leverages = {recorded_leverage(p.get('leverage')) for p in source_rows}
+            leverage = next(iter(leverages)) if len(leverages) == 1 else None
             empty['records'].append(dict(id='real:open:'+symbol, mode='real', bot='exchange', strategy='TheTrueTrade',
-                symbol=symbol, side=pos.side, status='open', entry=finite(pos.entry), exit=None,
+                symbol=symbol, side=pos.side, status='open', leverage=leverage, entry=finite(pos.entry), exit=None,
                 opened_at=None, closed_at=None, stop=None, target=None, timeframe='4h', pnl_usd=pnl,
                 pnl_basis='Exchange-reported floating P&L; fee/funding coverage unknown' if pnl is not None else 'Exchange net P&L unavailable',
                 reason='', price_move_pct=price_move(pos.entry, mark, pos.side), current_price=mark,

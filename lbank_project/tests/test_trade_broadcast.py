@@ -86,3 +86,21 @@ def test_same_transaction_prevents_double_count_during_close(system,monkeypatch)
     monkeypatch.setattr(pub.sqlite3,'connect',lambda *a,**kw:Connection(connect(*a,**kw)))
     positions,trades=pub.read_paper_tables(path,'trade_history');assert len(positions)==1 and trades==[]
     positions,trades=pub.read_paper_tables(path,'trade_history');assert positions==[] and len(trades)==1
+
+
+def test_leverage_uses_matching_open_position_record(tmp_path):
+    path = tmp_path / 'sleeve.sqlite'
+    with sqlite3.connect(path) as db:
+        db.executescript("""
+            CREATE TABLE positions(symbol TEXT, opened REAL);
+            CREATE TABLE position_margin(symbol TEXT, opened REAL, isolated_leverage INTEGER);
+            CREATE TABLE trades(id INTEGER);
+            INSERT INTO positions VALUES ('BTC', 20), ('ETH', 21);
+            INSERT INTO position_margin VALUES ('BTC', 20, 3), ('ETH', 19, 5);
+            INSERT INTO trades VALUES (1);
+        """)
+    positions, exits = pub.read_paper_tables(path, 'trades')
+    assert {p['symbol']: p['isolated_leverage'] for p in positions} == {'BTC': 3, 'ETH': None}
+    assert 'isolated_leverage' not in exits[0]
+    assert pub.recorded_leverage(0) is None
+    assert pub.recorded_leverage('4') == 4

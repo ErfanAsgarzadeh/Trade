@@ -8,6 +8,7 @@
 <label for="search">جست‌وجو در همهٔ معاملات</label><input id="search" placeholder="نماد، موتور یا جهت معامله">
 <label for="trade">معامله / خروج ثبت‌شده</label><select id="trade" disabled><option>ابتدا وارد شوید</option></select><p id="counter"></p><div class="fieldrow"><button id="prev" class="secondary" disabled>قبلی</button><button id="next" class="secondary" disabled>بعدی</button></div>
 <label for="format">اندازهٔ خروجی</label><select id="format"><option value="1350">پست اینستاگرام · ۴:۵</option><option value="1920">استوری اینستاگرام · ۹:۱۶</option><option value="675">پست X · ۱۶:۹</option></select>
+<label for="card-type">محتوای خروجی</label><select id="card-type"><option value="performance">عملکرد معامله و حساب</option><option value="market">نمودار بازار و سطوح قیمت</option></select>
 <div class="checks"><label><input type="checkbox" id="amounts" checked>نمایش مبلغ سود و موجودی حساب</label></div>
 <label for="logo">تصویر لوگو (در همین مرورگر ذخیره می‌شود)</label><input id="logo" type="file" accept="image/png,image/jpeg,image/webp">
 <button id="download" disabled>دانلود تصویر PNG</button><button id="refresh" class="secondary" disabled>به‌روزرسانی از منبع</button><div id="message" role="status" aria-live="polite"></div>
@@ -28,6 +29,8 @@ const price = value => {
 };
 const date = stamp => stamp ? new Date(stamp*1000).toISOString().replace('T',' ').slice(0,16)+' UTC' : '';
 const shortDate = stamp => new Date(stamp).toISOString().slice(5,10).replace('-','/');
+const marketOnly = () => $('card-type').value === 'market';
+const leverage = r => r.leverage == null ? '' : r.leverage+'×';
 const ticker = symbol => symbol.replace(/:USDT$/i,'');
 const color = value => value == null ? palette.muted : value < 0 ? palette.red : palette.mint;
 
@@ -56,17 +59,16 @@ function brand(x,y,height=88) {
    text('by ARTAX',x+129,y+64,18,palette.muted);
  }
 }
-function disclosure(r) {
- if(!current.publishable) return 'TEST DATA  ·  INTERNAL PREVIEW';
- return r.mode==='paper' ? 'SIMULATED TRADING' : 'REAL ACCOUNT';
-}
 function tradeStats(r,x,y,w,wide=false) {
  text(ticker(r.symbol),x,y,wide?36:48,palette.white,{weight:700,maxWidth:w});
  const status=r.status==='open'?'OPEN POSITION':'RECORDED EXIT';
- text(r.side.toUpperCase()+'  ·  '+status+'  ·  '+r.strategy,x,y+(wide?28:33),wide?18:24,palette.muted,{maxWidth:w});
+ const detail = [r.side.toUpperCase(), status, r.strategy];
+ if(leverage(r)) detail.push(leverage(r)+' LEVERAGE');
+ text(detail.join('  ·  '),x,y+(wide?28:33),wide?18:24,palette.muted,{maxWidth:w});
  const metricY=y+(wide?93:123);
  text(signed(r.price_move_pct,'%'),x,metricY,wide?51:74,color(r.price_move_pct),{weight:700,maxWidth:wide?w:w*.56});
- text('PRICE MOVE · UNLEVERAGED',x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:w});
+ const moveLabel = r.mode==='paper' ? 'SIMULATED PRICE MOVE · UNLEVERAGED' : 'PRICE MOVE · UNLEVERAGED';
+ text(moveLabel,x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:wide?w:w*.61});
  if($('amounts').checked && r.pnl_usd!=null) {
    const pnlY=wide?metricY+77:metricY;
    const pnlX=wide?x:x+w;
@@ -96,7 +98,7 @@ function accountStats(a,r,x,y,w,h,wide=false) {
    if(a.pnl_usd==null && a.equity_usd==null && a.return_pct==null)text('Account metrics unavailable',left,lineY,wide?17:23,palette.muted,{maxWidth:w-44});
  }
 }
-function chart(r,bars,x,y,w,h,wide=false) {
+function chart(r,bars,x,y,w,h,wide=false,reference=false) {
  box(x,y,w,h,'#180a31');
  const subtitle = 'USDT FUTURES  /  '+r.timeframe.toUpperCase()+'  /  CLOSED CANDLES';
  text(subtitle,x+18,y+31,wide?17:21,palette.muted);
@@ -108,9 +110,9 @@ function chart(r,bars,x,y,w,h,wide=false) {
  const left=x+axisWidth,right=x+w-tagWidth-12,top=y+57,bottom=y+h-55;
  // Only an active stop and confirmed prices belong on promotional charts.
  const levels=[
-   {label:'ENTRY',value:r.entry,fill:palette.gold},
+   {label:reference?'REFERENCE':'ENTRY',value:r.entry,fill:palette.gold},
    {label:'STOP',value:r.stop,fill:palette.red},
-   {label:r.status==='open'?'CURRENT':'EXIT',value:r.exit??r.current_price,fill:palette.white},
+   {label:r.status==='open'?'CURRENT':'EXIT',value:reference?null:r.exit??r.current_price,fill:palette.white},
  ].filter(level=>Number.isFinite(level.value)&&level.value>0);
  let lo=Math.min(...bars.map(b=>b[3]),...levels.map(level=>level.value));
  let hi=Math.max(...bars.map(b=>b[2]),...levels.map(level=>level.value));
@@ -133,15 +135,28 @@ function chart(r,bars,x,y,w,h,wide=false) {
    const valueY=py(value), gap=36;
    const tagY=Math.min(bottom-14-gap*(levels.length-1-index),Math.max(top+14,valueY,last+gap));
    last=tagY;
-   line(left,valueY,right,valueY,fill,label==='ENTRY'?2.6:1.8,label==='STOP'?[10,5]:label==='ENTRY'?[]:[2,6]);
+   const isReference=label==='ENTRY'||label==='REFERENCE';
+   line(left,valueY,right,valueY,fill,isReference?2.6:1.8,label==='STOP'?[10,5]:isReference?[]:[2,6]);
    line(right,valueY,right+12,tagY,fill,1.6);
-   const primary=label==='ENTRY'||label==='STOP';
+   const primary=isReference||label==='STOP';
    box(right+12,tagY-15,tagWidth-12,30,primary?fill:'#342449',6);
    text(label+'  '+price(value),right+20,tagY+6,wide?16:18,primary?palette.bg:palette.white,{weight:700,maxWidth:tagWidth-28});
  });
  text(shortDate(bars[0][0]),left,y+h-20,wide?15:18,palette.muted);
  text(shortDate(bars.at(-1)[0])+' UTC',right,y+h-20,wide?15:18,palette.muted,{align:'right'});
 }
+function marketCard(r,bars,x,top,w,h,wide,story) {
+ const inner=w-2*x;
+ text(ticker(r.symbol),x,top+(wide?105:211),wide?38:54,palette.white,{weight:700,maxWidth:inner*.6});
+ if(leverage(r)) text('LEVERAGE SETTING  '+leverage(r),w-x,top+(wide?105:211),wide?18:23,palette.gold,{align:'right',weight:700,maxWidth:inner*.4});
+ const chartY=top+(wide?126:247);
+ const footerY=h-(story?190:wide?42:58);
+ chart(r,bars,x,chartY,inner,footerY-chartY-51,wide,true);
+ text('MARKET CHART  ·  REFERENCE LEVELS',x,footerY,wide?17:22,palette.muted,{maxWidth:inner*.7});
+ text('@avina_trade',w-x,footerY,wide?18:22,palette.gold,{weight:700,align:'right'});
+ if(/STALE|GAPS/i.test(current.candle_note||'')) text('MARKET DATA COVERAGE GAP',x,footerY+25,wide?15:18,palette.gold);
+}
+
 function draw(){
  const h=Number($('format').value),wide=h===675,story=h===1920,w=wide?1200:1080;
  canvas.width=w;canvas.height=h;
@@ -156,7 +171,11 @@ function draw(){
    return;
  }
  const {trade:r,account:a}=current;
- text(disclosure(r),w-x,top+(wide?37:52),wide?19:24,palette.gold,{align:'right',weight:700});
+ if(marketOnly() && current.publishable){marketCard(r,current.candles,x,top,w,h,wide,story);return}
+ if(!current.publishable || r.mode==='real') {
+   const label = current.publishable ? 'REAL ACCOUNT' : 'TEST DATA  ·  INTERNAL PREVIEW';
+   text(label,w-x,top+(wide?37:52),wide?19:24,palette.gold,{align:'right',weight:700});
+ }
  const bars=current.candles;
  if(wide) {
    const chartW=766,sideX=x+chartW+26,sideW=inner-chartW-26;
@@ -184,12 +203,14 @@ function lock(on){busy=on;$('mode').disabled=on;$('search').disabled=on;for(cons
 function filtered(){const q=$('search').value.toLowerCase();return rows.filter(r=>[r.symbol,r.strategy,r.side,r.status].join(' ').toLowerCase().includes(q))}
 function choices(){const list=filtered();$('trade').replaceChildren();for(const r of list){const op=document.createElement('option');op.value=r.id;op.textContent=[ticker(r.symbol),r.strategy,r.side,r.status,date(r.closed_at||r.opened_at)].filter(Boolean).join(' · ');$('trade').append(op)}$('counter').textContent=list.length+' مورد از '+rows.length+' رکورد';lock(false);if(list.length)select();else{current=null;draw();$('download').disabled=true;$('message').textContent='رکوردی در این منبع یا جست‌وجو موجود نیست.'}}
 async function load(){generation++;rows=[];$('evidence').textContent='';current=null;draw();$('message').textContent='در حال خواندن منبع…';lock(true);try{const data=await api('/api/publication/trades?mode='+$('mode').value);rows=data.records;$('message').textContent=[data.notice,...data.warnings].join('\n');choices()}catch(e){rows=[];current=null;draw();$('trade').replaceChildren();$('message').textContent=e.message;lock(false)}}
-async function select(){$('evidence').textContent='';const id=$('trade').value,seq=++generation;current=null;draw();lock(true);try{const d=await api('/api/publication/trade?mode='+$('mode').value+'&trade_id='+encodeURIComponent(id));if(seq!==generation)return;current=d;draw();$('evidence').textContent=JSON.stringify(d,null,2);$('message').textContent=[d.notice,...d.warnings,d.candle_note].join('\n');lock(false);$('download').disabled=!d.publishable}catch(e){if(seq!==generation)return;$('message').textContent=e.message;lock(false);$('download').disabled=true}}
+function canExport(){return Boolean(current?.publishable && (!marketOnly() || current.candles.length));}
+async function select(){$('evidence').textContent='';const id=$('trade').value,seq=++generation;current=null;draw();lock(true);try{const d=await api('/api/publication/trade?mode='+$('mode').value+'&trade_id='+encodeURIComponent(id));if(seq!==generation)return;current=d;draw();$('evidence').textContent=JSON.stringify(d,null,2);$('message').textContent=[d.notice,...d.warnings,d.candle_note].join('\n');lock(false);$('download').disabled=!canExport()}catch(e){if(seq!==generation)return;$('message').textContent=e.message;lock(false);$('download').disabled=true}}
 $('login').onsubmit=e=>{e.preventDefault();load()};$('refresh').onclick=load;$('mode').onchange=load;$('search').oninput=()=>{if(!busy)choices()};$('trade').onchange=select;$('format').onchange=draw;$('amounts').onchange=draw;
+$('card-type').onchange=()=>{$('amounts').disabled=marketOnly();draw();$('download').disabled=!canExport()||busy};
 for(const [id,offset] of [['prev',-1],['next',1]])$(id).onclick=()=>{const sel=$('trade');sel.selectedIndex=(sel.selectedIndex+offset+sel.options.length)%sel.options.length;select()};
 window.AvinaTradeBrand?.bind($('logo'),$('brand-preview'),(image,isCustom)=>{
  logo=image;customLogo=isCustom;draw();
 },message=>{$('message').textContent=message});
-$('download').onclick=async()=>{if(!current?.publishable||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);draw();canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-')+'-'+(current.trade.mode==='paper'?'simulated':'real')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
+$('download').onclick=async()=>{if(!canExport()||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);if(!canExport()||busy)return;draw();const kind=marketOnly()?'market':current.trade.mode==='paper'?'simulated':'real';const symbol=ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-');canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+symbol+'-'+kind+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
 logo.onload=draw;document.fonts.ready.then(draw);draw();
 </script></html>
