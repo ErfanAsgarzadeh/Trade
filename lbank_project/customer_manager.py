@@ -23,7 +23,11 @@ import license_access
 HERE = Path(__file__).resolve().parent
 CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
 APP_FILES = ('frontend/public/portal-assets/titanium.css', 'frontend/public/portal-assets/appearance.js',
+             'frontend/public/portal-assets/avina-mark.png', 'frontend/public/portal-assets/lato-400.woff2',
+             'frontend/public/portal-assets/lato-700.woff2', 'frontend/public/portal-assets/vazirmatn-arabic.woff2',
              'lbank_bot.py', 'lbank_indicators.py', 'sleeve_runtime.py', 'strategy_archetypes.py', 'dashboard_server.py',
+             'trade_publication.py', 'trade_publication.html', 'trade_broadcast.html',
+             'trade_broadcast_svg.js', 'trade_brand.js', 'portal_thetruetrade.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
              'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py', 'signal_feed.py',
              'lbank_official_candles.py',

@@ -55,6 +55,9 @@ def test_customer_bootstrap_isolated_and_export_allowlist(tmp_path,issuer,custom
     with zipfile.ZipFile(archive) as z:
         names=set(z.namelist())
         assert 'secrets/dashboard_pin' in names and 'license/license_public.pem' in names
+        assert {'app/trade_publication.py', 'app/trade_publication.html', 'app/trade_broadcast.html',
+                'app/trade_broadcast_svg.js', 'app/trade_brand.js', 'app/portal_thetruetrade.py',
+                'app/frontend/public/portal-assets/avina-mark.png'} <= names
         assert not any('private' in n or n.endswith('.db') or n.endswith('accidental-secret.txt') for n in names)
         assert z.testzip() is None
     with pytest.raises(FileExistsError):M.export(tmp_path/'customers','alice',archive)
