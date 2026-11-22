@@ -104,7 +104,7 @@ def test_images_run_as_the_fixed_non_root_user_and_use_pinned_bases(dockerfile):
     assert re.findall(r'^FROM (\S+)', text, re.M)[-1] == 'python:3.11-slim-bookworm'
     assert 'COPY --chown' not in text and 'chmod' not in text      # Code stays root-owned and read-only for the process.
     assert text.index('USER 10001') > text.rindex('COPY ') and text.index('USER 10001') > text.index('pip install')
-    assert 'node:24-bookworm-slim' in (ROOT / 'Dockerfile.portal').read_text()
+    assert 'node:26-bookworm-slim' in (ROOT / 'Dockerfile.portal').read_text()
     assert re.search(r'^FROM python:3\.11-slim-bookworm AS customer$', (ROOT / 'Dockerfile').read_text(), re.M)
 
 
