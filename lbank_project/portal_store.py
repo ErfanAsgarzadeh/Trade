@@ -352,16 +352,21 @@ class PortalStore:
         return result
 
     def wipe_connection(self, user, revision):
-        """Replace a refused key (withdrawal permission) by an empty credential record. The connection stays so the customer sees why."""
+        """Clear the refused credentials only if the account revision still matches."""
         with self.db() as db:
-            self.database.begin_write(db,'account:'+user)
-            row=db.execute('SELECT exchange_id,market FROM connections WHERE user_id=? AND revision=?',(user,revision)).fetchone()
-            if not row:return False
-            blank=self.vault.encrypt(json.dumps(dict(owner=user,exchange_id=row['exchange_id'],market=row['market'],
-                                                    api_key='',secret='',passphrase='',uid='')).encode())
-            db.execute('UPDATE connections SET encrypted=? WHERE user_id=? AND revision=?',(blank,user,revision))
-            db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'connection_refused_withdrawal',time.time()))
-            return True
+            self.database.begin_write(db, 'account:' + user)
+            return self.wipe_connection_in_transaction(db, user, revision)
+
+    def wipe_connection_in_transaction(self, db, user, revision):
+        """Caller holds the owner's write lock until the job and credential changes commit."""
+        row=db.execute('SELECT exchange_id,market FROM connections WHERE user_id=? AND revision=?',(user,revision)).fetchone()
+        if not row:return False
+        blank=self.vault.encrypt(json.dumps(dict(owner=user,exchange_id=row['exchange_id'],market=row['market'],
+                                                api_key='',secret='',passphrase='',uid='')).encode())
+        db.execute('UPDATE connections SET encrypted=? WHERE user_id=? AND revision=?',(blank,user,revision))
+        db.execute('INSERT INTO audit(user_id,event,at) VALUES(?,?,?)',(user,'connection_refused_withdrawal',time.time()))
+        return True
+
 
     def disconnect(self, user):
         with self.db() as db:

@@ -5,7 +5,8 @@ import time
 
 def readiness(connection,entitlement,now=None):
     now=time.time() if now is None else now
-    account=(connection or {}).get('account') or {}
+    connection = connection or {}
+    account = connection.get('account') or {}
     snapshot=account.get('snapshot') or {}
     checked=account.get('checked_at')
     fresh=(isinstance(checked,(float,int)) and not isinstance(checked,bool)

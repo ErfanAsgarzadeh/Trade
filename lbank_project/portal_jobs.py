@@ -67,7 +67,7 @@ class AccountQueue:
             db.execute("UPDATE account_cache SET status='refreshing' WHERE user_id=? AND revision=?",(row['user_id'],row['revision']))
             return dict(row,lease_token=token,lease_until=until,attempts=row['attempts']+1,state='running')
 
-    def finish(self,job,snapshot,status,retry=False):
+    def finish(self,job,snapshot,status,retry=False,*,wipe_refused_key=False):
         owner=job['user_id']
         with self.store.db() as db:
             self.store.database.begin_write(db,'account:'+owner)
@@ -78,6 +78,10 @@ class AccountQueue:
             if (not row or row['disabled'] or row['state']!='running' or row['lease_token']!=job['lease_token']
                 or row['revision']!=job['revision'] or row['current_revision']!=job['revision'] or row['lease_until']<=now):
                 return False
+            if wipe_refused_key:
+                if status != 'withdrawal_enabled' or retry:
+                    raise ValueError('Credential removal requires a terminal withdrawal refusal')
+                self.store.wipe_connection_in_transaction(db, owner, job['revision'])
             retry=retry and row['attempts']<self.max_attempts
             next_run=now+min(300,30*2**(row['attempts']-1)) if retry else now
             state='queued' if retry else 'done' if status=='verified_read_only' else 'failed'

@@ -23,13 +23,14 @@ import license_access
 HERE = Path(__file__).resolve().parent
 CUSTOMER_ID = re.compile(r'^[a-z][a-z0-9-]{1,39}$')
 APP_FILES = ('frontend/public/portal-assets/titanium.css', 'frontend/public/portal-assets/appearance.js',
-             'lbank_bot.py', 'strategy_archetypes.py', 'dashboard_server.py',
+             'lbank_bot.py', 'lbank_indicators.py', 'sleeve_runtime.py', 'strategy_archetypes.py', 'dashboard_server.py',
              'c3_sleeve.py', 'pa_sleeve.py', 'shared_paper_account.py',
              'lbank_candles.py', 'fetch_funding.py', 'license_access.py', 'capital_plans.py', 'signal_feed.py',
              'lbank_official_candles.py',
              'deployment_security.py', 'customer_entrypoint.py', 'requirements.txt',
              'Dockerfile', 'config.json', 'c3_config.json', 'pa_config.json',
-             'momentum.py', 'performance.py', 'lbank_account.py', 'exchanges.py', 'live_mirror.py')
+             'momentum.py', 'performance.py', 'lbank_account.py', 'exchanges.py', 'live_mirror.py',
+             'live_risk.py', 'ttt_live_readiness.py')
 
 
 def validate_id(customer: str):

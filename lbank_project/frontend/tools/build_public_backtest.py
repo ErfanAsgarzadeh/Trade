@@ -25,7 +25,7 @@ def build(source):
     raw_hash=hashlib.sha256(Path(source).read_bytes()).hexdigest()
     previous=ROOT/'public/backtest/five-year-summary.json'
     known={ORIGINAL_SHA}
-    if previous.exists():known.add(json.loads(previous.read_text())['provenance']['public_csv_sha256'])
+    if previous.exists():known.add(json.loads(previous.read_text(encoding='utf-8'))['provenance']['public_csv_sha256'])
     if raw_hash not in known:raise ValueError('Unreviewed replay input; review provenance before updating this public snapshot')
     rows=[]
     with Path(source).open(newline='') as stream:
@@ -65,7 +65,7 @@ def build(source):
                                 market_data='Binance USDⓈ-M futures; modeled execution, not a live LBank account',
                                 curve='Daily close equity; log scale',drawdown='Worst minute-close drawdown, including initial seed'))
     encoded=json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
-    (ROOT/'public/backtest/five-year-summary.json').write_text(encoded)
+    (ROOT/'public/backtest/five-year-summary.json').write_bytes(encoded.encode('utf-8'))
     print(json.dumps({k:result[k] for k in ('days','initial','final','return_pct','max_minute_dd_pct')}))
 
 

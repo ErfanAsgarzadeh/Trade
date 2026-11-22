@@ -11,14 +11,35 @@ class Element {
  addEventListener(name,fn){this.events[name]=fn;}
  append(item){this.children.push(item);}
  replaceChildren(){this.children=[];}
+ closest(){return this.parentSection ??= new Element();}
+ classList = {
+  add: name => {this.className = [this.className,name].filter(Boolean).join(' ');},
+  toggle: (name,on) => {
+   const classes = new Set((this.className || '').split(' ').filter(Boolean));
+   if(on)classes.add(name);else classes.delete(name);
+   this.className = [...classes].join(' ');
+  },
+ };
 }
 const ids = new Map([...html.matchAll(/id="([^"]+)"/g)].map(m=>[m[1],new Element()]));
 const config = JSON.parse(fs.readFileSync(path.join(__dirname,'..','config.json'),'utf8'));
+const readConfig = file => JSON.parse(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
+const emptySleeve = {enabled:true, recent_trades:[], positions:[], pending_orders:[],
+ equity_usd:10000, unrealized_pnl_usd:0, daily_realized_pnl:0, daily_trades_count:0,
+ open_positions_count:0, trades_total:0};
+const otherEndpoints = {
+ '/api/c3/config':readConfig('c3_config.json'), '/api/pa/config':readConfig('pa_config.json'),
+ '/api/c3/status':emptySleeve, '/api/pa/status':emptySleeve,
+ '/api/account':{keys:{configured:false},live_available:false},
+ '/api/performance':{all:{trades:0,win_rate:null},seed:10000,drawdown_now:0,drawdown_max:0,
+  snapshots:[],realized_curve:[],bots:{},daily:{},monthly:{},recent:[]},
+ '/api/live':{config:{mode:'off',exchange:'lbank'},keys:{},log:[]},
+};
 let serverConfig = structuredClone(config), version='"v1"', calls=[];
 const status = {strategy_mode:'MTF',dry_run_mode:true,data_mode:'demo',auto_trade_enabled:true,
  total_unrealized_pnl:5,daily_realized_pnl:-3,daily_trades_count:2,open_positions_count:1,
  max_open_positions:3,price_errors:[],runtime:{watchdog_at:Date.now()/1000},
- engaged_margin_usd:1200,allowed_margin_usd:6000,engaged_margin_pct:12,
+ equity_usd:10000,shared_account_enabled:true,engaged_margin_usd:1200,allowed_margin_usd:6000,engaged_margin_pct:12,
  allowed_margin_pct:60,margin_budget_utilization_pct:20,reserved_pending_margin_usd:100,
  positions:[{symbol:'BTC/USDT:USDT',side:'long',entry_price:100,trigger_price:100,live_price:105,
  active_sl:90,tp1_price:115,state:'STATE_INITIAL',current_r:.5,unrealized_pnl_usd:5}]};
@@ -31,10 +52,12 @@ async function fakeFetch(url,options){
  else if(url==='/api/status'){data=status;}
  else if(url==='/api/positions/close-all'){data={results:[],errors:[],remaining_positions:0};serverConfig.bot_control.auto_trade_enabled=false;}
  else if(url==='/api/positions/close'){data={result:'closed'};}
+ else if(Object.hasOwn(otherEndpoints,url)){data=otherEndpoints[url];}
  else throw Error('Unexpected endpoint '+url);
  return {ok:true,json:async()=>structuredClone(data),headers:{get:()=>version}};
 }
-const context = vm.createContext({document:{getElementById:id=>ids.get(id),createElement:()=>new Element()},
+const context = vm.createContext({document:{activeElement:null,querySelectorAll:()=>[],
+ getElementById:id=>ids.get(id),createElement:()=>new Element()},
  fetch:fakeFetch,confirm:()=>true,setInterval:()=>0,Date,Number,JSON,Error});
 vm.runInContext(javascript,context,{timeout:2000});
 (async()=>{
@@ -42,7 +65,10 @@ vm.runInContext(javascript,context,{timeout:2000});
  assert.equal(ids.get('save').disabled,false);
  assert.match(ids.get('mode').textContent,/DRY-RUN.*demo/);
  assert.equal(ids.get('positions').children.length,1);
- assert.equal(ids.get('engaged').value,60);
+ assert.equal(ids.get('engaged').value,config.risk_and_exit.engaged_capital_pct*100);
+ assert.equal(ids.get('acct_keys').textContent,'not configured');
+ assert.match(ids.get('lv_badge').textContent,/OFF/);
+ assert.equal(ids.get('monthly').children.length,1);
  assert.match(ids.get('margin').textContent,/1,200.*6,000/);
  assert.equal(vm.runInContext("target({exit_scheme:'PURE_KIJUN',tp1_price:120,hard_tp_price:0})",context),null);
  assert.equal(vm.runInContext("target({exit_scheme:'HARD_TARGET',tp1_price:120,hard_tp_price:140})",context),140);
@@ -69,6 +95,6 @@ vm.runInContext(javascript,context,{timeout:2000});
  assert(calls.some(([url])=>url==='/api/positions/close-all'));
  status.total_unrealized_pnl=null;status.positions=[];await vm.runInContext('refresh()',context);
  assert.equal(ids.get('unrealized').textContent,'—');
- assert.equal(ids.get('positions').children[0].children[0].colSpan,10);
+ assert.equal(ids.get('positions').children[0].children[0].colSpan,11);
  console.log('PASS: UI connect, render, config sync, ETag save, panic, missing PnL');
 })().catch(error=>{console.error(error);process.exitCode=1;});

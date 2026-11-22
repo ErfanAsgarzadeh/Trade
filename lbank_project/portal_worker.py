@@ -40,8 +40,7 @@ class AccountWorker:
         except (ccxt.NetworkError,ccxt.RateLimitExceeded):status='verification_failed';retry=True
         except Exception:status='verification_failed'
         # Database failures propagate to the process retry loop. They are not exchange/auth failures.
-        finished=self.queue.finish(job,snapshot,status,retry=retry)
-        if finished and status=='withdrawal_enabled':self.store.wipe_connection(job['user_id'],job['revision'])
+        self.queue.finish(job, snapshot, status, retry=retry, wipe_refused_key=status=='withdrawal_enabled')
         return True
 
 

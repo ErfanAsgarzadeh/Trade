@@ -5,6 +5,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
+import math
 from pathlib import Path
 import secrets
 import tempfile
@@ -35,7 +36,7 @@ async def probe(users,requests,concurrency,drain,mix_exchanges=False,mix_markets
                 venue=venues[i%len(venues)]
                 market='futures' if mix_markets and i%2 and 'futures' in PROFILES[venue] else 'spot'
                 clients.append((owner,token,i,venue,market));distribution[venue+':'+market]+=1
-                db.execute('INSERT INTO users VALUES(?,?,?,0,NULL)',(owner,'tenant-'+str(i),store.dummy_password))
+                db.execute('INSERT INTO users(id,username,password) VALUES(?,?,?)',(owner,'tenant-'+str(i),store.dummy_password))
                 db.execute('INSERT INTO sessions VALUES(?,?,?,?)',(hashlib.sha256(token.encode()).hexdigest(),owner,'synthetic-csrf',now+86400))
                 encrypted=store.vault.encrypt(json.dumps(dict(owner=owner,exchange_id=venue,market=market,api_key='synthetic-'+str(i),secret='synthetic-not-a-real-key',passphrase='synthetic-passphrase')).encode())
                 db.execute('INSERT INTO connections(user_id,encrypted,market,revision,updated,exchange_id) VALUES(?,?,?,?,?,?)',(owner,encrypted,market,revision,now,venue))
@@ -59,23 +60,28 @@ async def probe(users,requests,concurrency,drain,mix_exchanges=False,mix_markets
         latencies=[];codes=Counter();leaks=0;verified_reads=0
         async with app.router.lifespan_context(app):
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='https://portal.test') as client:
-                semaphore=asyncio.Semaphore(concurrency)
+                stride = 7919
+                while math.gcd(stride, users) != 1:
+                    stride += 1
                 async def read(i):
                     nonlocal leaks,verified_reads
-                    # Spread samples across all 10k tenants, rather than only the first accounts.
-                    index=(i*7919)%users;_,token,expected,venue,market=clients[index]
-                    async with semaphore:
-                        stamp=time.perf_counter()
-                        response=await client.get('/api/me/connection',headers={'Cookie':'trade_session='+token})
-                        latencies.append((time.perf_counter()-stamp)*1000);codes[response.status_code]+=1
-                        if response.status_code==200:
-                            view=response.json();snap=view['account']['snapshot']
-                            if view['exchange_id']!=venue or view['market']!=market:leaks+=1
-                            if snap:
-                                verified_reads+=1
-                                if snap['balances'][0]['free']!=expected or snap['exchange_id']!=venue or snap['market']!=market:leaks+=1
+                    # A coprime stride visits every account once before repeating.
+                    index=(i*stride)%users;_,token,expected,venue,market=clients[index]
+                    stamp=time.perf_counter()
+                    response=await client.get('/api/me/connection',headers={'Cookie':'trade_session='+token})
+                    latencies.append((time.perf_counter()-stamp)*1000);codes[response.status_code]+=1
+                    if response.status_code==200:
+                        view=response.json();snap=view['account']['snapshot']
+                        if view['exchange_id']!=venue or view['market']!=market:leaks+=1
+                        if snap:
+                            verified_reads+=1
+                            if snap['balances'][0]['free']!=expected or snap['exchange_id']!=venue or snap['market']!=market:leaks+=1
                 start=time.perf_counter()
-                await asyncio.gather(*(read(i) for i in range(requests)))
+                pending = iter(range(requests))
+                async def run_reader():
+                    for index in pending:
+                        await read(index)
+                await asyncio.gather(*(run_reader() for _ in range(min(concurrency, requests))))
                 http_seconds=time.perf_counter()-start
         summary=AccountQueue(store).summary();done=summary['states'].get('done',0);failed=summary['states'].get('failed',0)
         result=dict(profile='synthetic SQLite / in-process ASGI; NOT live trading or production capacity certification',
@@ -107,7 +113,8 @@ def main():
     args.output.parent.mkdir(parents=True,exist_ok=True)
     with args.output.open('x') as out:json.dump(result,out,indent=2)
     print(json.dumps(result,indent=2))
-    if (result['owner_mismatches'] or result['http_status_codes'].get(200,0)!=args.requests
+    missing_reads = args.drain == args.users and result['verified_account_reads'] != args.requests
+    if (missing_reads or result['owner_mismatches'] or result['http_status_codes'].get(200,0)!=args.requests
         or result['synthetic_jobs_failed'] or result['synthetic_jobs_completed']!=args.drain):raise SystemExit(1)
 
 

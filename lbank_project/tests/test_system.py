@@ -648,3 +648,33 @@ def test_compose_shared_directory_and_local_bind():
         assert services['lbank-bot']['environment'][field] == services['lbank-dashboard']['environment'][field]
     assert services['lbank-candles']['environment']['LBANK_OFFICIAL_CANDLES'] == services['lbank-bot']['environment']['LBANK_OFFICIAL_CANDLES']
     assert services["lbank-dashboard"]["ports"] == ["127.0.0.1:8000:8000"]
+
+def test_repeated_activation_does_not_log_or_remove_an_open_fill(system, monkeypatch):
+    pending = setup_position(system)
+    fills = []
+    monkeypatch.setattr(system, '_record_fill', lambda *args: fills.append(args))
+    assert system._activate(dict(pending), 100)
+    opened = system.db.position(pending['symbol'])
+    assert not system._activate(dict(pending), 100)
+    system.data.minimum = 1e12
+    assert not system._activate(dict(pending), 100)
+    assert system.db.position(pending['symbol']) == opened
+    assert len(fills) == 1
+
+
+@pytest.mark.parametrize('invalid_price', [float('nan'), float('inf'), 0, -1])
+def test_activation_waits_for_a_valid_price(system, invalid_price):
+    pending = setup_position(system)
+    assert not system._activate(pending, invalid_price)
+    assert system.db.position(pending['symbol'])['state'] == lb.PENDING
+
+
+def test_stale_signal_cannot_replace_or_cancel_a_newer_pending_entry(system):
+    stale = setup_position(system)
+    with system.db.connect() as db:
+        db.execute('UPDATE positions SET signal_ts=? WHERE symbol=?', (3600000, stale['symbol']))
+    current = system.db.position(stale['symbol'])
+    assert not system._activate(dict(stale), 100)
+    system.data.minimum = 1e12
+    assert not system._activate(dict(stale), 100)
+    assert system.db.position(stale['symbol']) == current

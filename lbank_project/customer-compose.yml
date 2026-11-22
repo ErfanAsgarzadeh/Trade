@@ -12,7 +12,9 @@ x-environment: &environment
   PAPER_DATA_MODE: ${PAPER_DATA_MODE:-demo}
 
 x-service: &service
-  build: ./app
+  build:
+    context: ./app
+    target: customer
   restart: unless-stopped
   init: true
   read_only: true

@@ -33,7 +33,9 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+from lbank_indicators import true_range
 import signal_feed
+from sleeve_runtime import run_sleeve_loop
 import c3_sleeve as c3
 
 LOG=logging.getLogger('pa_sleeve');H4=c3.H4;NAME='Ghoghnous';OLD_RISK=.0015   # first shipped defaults: 2R target, no range filter, 0.15%
@@ -78,8 +80,8 @@ def features(rows:list,now:float,c:dict)->pd.DataFrame:
         df['close']=df.close.ffill()
         for k in ('open','high','low'):df[k]=df[k].fillna(df.close)
         df['volume']=df.volume.fillna(0.);df=df.rename_axis('timestamp').reset_index()
-    tr=pd.concat([df.high-df.low,(df.high-df.close.shift()).abs(),(df.low-df.close.shift()).abs()],axis=1).max(axis=1)
-    df['atr']=tr.ewm(alpha=1/c['atr_period'],adjust=False).mean();return df
+    df['atr'] = true_range(df).ewm(alpha=1 / c['atr_period'], adjust=False).mean()
+    return df
 
 def vol_rank(df:pd.DataFrame,window:int)->float:
     """Share of the previous `window` candles whose ATR/close is below the last candle's (pa2_confluence.prank)."""
@@ -280,20 +282,10 @@ def paths()->tuple[Path,Store]:
 
 def in_bot()->bool:return os.getenv('PA_IN_BOT','1')!='0'
 
-def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
-    """Scan each closed 4h candle once; between scans the watchdog fills/cancels orders and checks stops/targets."""
-    last=None
-    while not (stop and stop.is_set()):
-        try:
-            try:sl.c=load(cfg)
-            except Exception:LOG.exception('Ghoghnous config unreadable; keeping previous settings')
-            now=time.time();boundary=int(now)//H4*H4
-            if now>=boundary+3 and boundary!=last:
-                if sl.scan(now):last=boundary
-            else:sl.watchdog(now)
-        except Exception:LOG.exception('Ghoghnous cycle failed; will retry')
-        if once:break
-        (stop.wait if stop else time.sleep)(sl.c['check_interval_seconds'])
+def loop(sl: Sleeve, cfg: Path, stop=None, once=False):
+    """Scan each closed 4h candle and run the watchdog between scans."""
+    run_sleeve_loop(sl, cfg, load, LOG, 'Ghoghnous', stop=stop, once=once)
+
 
 def start_in_bot(engine,stop):
     import threading

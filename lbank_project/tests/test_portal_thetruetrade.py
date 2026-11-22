@@ -93,3 +93,9 @@ def test_even_licensed_verified_accounts_cannot_bypass_missing_executor(age,expe
     assert 'PROTECTED_LIVE_EXECUTION_NOT_VALIDATED' in state['blockers']
     assert readiness(connection,dict(product='signals',entries_allowed=False),now=1000)['status']=='signals_only'
     with pytest.raises(UnsupportedAccount):profile('thetruetrade','spot')
+
+
+def test_missing_connection_has_a_blocked_readiness_state():
+    state = readiness(None, {'product': 'autotrade', 'entries_allowed': True})
+    assert state['status'] == 'connection_required'
+    assert state['trading_enabled'] is False

@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 import pytest
 
+from db_targets import TARGETS, fresh_store
 from portal_exchanges import MultiExchangeReader, WithdrawalEnabled, catalog, withdrawal_enabled, UnsupportedAccount
 from portal_jobs import AccountQueue
 from portal_server import create_app
@@ -126,3 +127,31 @@ def test_form_requires_the_acknowledgement_where_permissions_cannot_be_read_and_
             events = [x['event'] for x in db.execute("SELECT event FROM audit WHERE event LIKE 'connection_saved%' ORDER BY id").fetchall()]
         assert events == ['connection_saved:no_withdrawal_ack', 'connection_saved']
     finally:store.close()
+
+
+@pytest.mark.parametrize('backend', TARGETS)
+def test_refusal_rolls_back_the_key_and_job_together(backend, tmp_path, monkeypatch):
+    store = fresh_store(backend, tmp_path)
+    try:
+        owner = store.create_user('alice', PASSWORD)
+        store.save_connection(owner, 'spot', 'fixture-key', 'fixture-secret', 'binance')
+        queue = AccountQueue(store)
+        queue.enqueue(owner)
+        job = queue.claim(interval=0)
+        wipe = store.wipe_connection_in_transaction
+
+        def interrupted(*args):
+            wipe(*args)
+            raise RuntimeError('test interruption')
+
+        with monkeypatch.context() as patch:
+            patch.setattr(store, 'wipe_connection_in_transaction', interrupted)
+            with pytest.raises(RuntimeError, match='test interruption'):
+                queue.finish(job, None, 'withdrawal_enabled', wipe_refused_key=True)
+        assert store.connection(owner, decrypt=True)['api_key'] == 'fixture-key'
+        assert store.cache(owner)['status'] == 'refreshing'
+        assert queue.finish(job, None, 'withdrawal_enabled', wipe_refused_key=True)
+        assert store.connection(owner, decrypt=True)['api_key'] == ''
+        assert store.cache(owner)['status'] == 'withdrawal_enabled'
+    finally:
+        store.close()

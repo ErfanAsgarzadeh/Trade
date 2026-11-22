@@ -25,10 +25,13 @@ from pathlib import Path
 import numpy as np,pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import lbank_bot as bot
+from lbank_indicators import true_range
 import momentum
 import signal_feed
+from sleeve_runtime import FOUR_HOUR_SECONDS, run_sleeve_loop
 
-LOG=logging.getLogger('c3_sleeve');H4=4*3600
+LOG=logging.getLogger('c3_sleeve')
+H4 = FOUR_HOUR_SECONDS
 DEFAULTS=dict(enabled=True,dry_run_mode=True,timeframe='4h',paper_capital=10000.,risk_per_trade_pct=.0025,max_notional_pct=.4,max_open_positions=0,
     round_trip_fee=.0012,sizing_slippage_pct=.0004,isolated_leverage=5,ema_fast=50,ema_slow=200,rsi_period=14,rsi_long=40.,rsi_short=60.,atr_period=14,
     stop_atr=2.,trail_atr=4.5,min_stop_pct=.004,skip_weekend=True,candle_fetch_limit=1000,check_interval_seconds=15,confirm_bars=0,symbols=[],
@@ -63,8 +66,8 @@ def features(rows:list,now:float,c:dict)->pd.DataFrame:
     df['ema_f']=cl.ewm(span=c['ema_fast'],adjust=False).mean();df['ema_s']=cl.ewm(span=c['ema_slow'],adjust=False).mean()
     d=cl.diff().fillna(0.);g=d.clip(lower=0).ewm(alpha=1/c['rsi_period'],adjust=False).mean();l=(-d.clip(upper=0)).ewm(alpha=1/c['rsi_period'],adjust=False).mean()
     df['rsi']=100-100/(1+g/l.where(l!=0,1e-12))
-    tr=pd.concat([df.high-df.low,(df.high-cl.shift()).abs(),(df.low-cl.shift()).abs()],axis=1).max(axis=1)
-    df['atr']=tr.ewm(alpha=1/c['atr_period'],adjust=False).mean();return df
+    df['atr'] = true_range(df).ewm(alpha=1 / c['atr_period'], adjust=False).mean()
+    return df
 
 def weekday_close(ts_ms:int)->bool:return pd.Timestamp(int(ts_ms)+H4*1000,unit='ms').weekday()<5
 
@@ -295,20 +298,10 @@ def paths()->tuple[Path,Store]:
     if cfg.resolve()!=(here/'c3_config.json').resolve():prepare_config(cfg,here/'c3_config.json')
     return cfg,Store(Path(os.getenv('C3_DB',here/'data/c3_sleeve.db')))
 
-def loop(sl:Sleeve,cfg:Path,stop=None,once=False):
-    """Scan each closed 4h candle once, run the stop watchdog in between; stop = threading.Event (or None)."""
-    last=None
-    while not (stop and stop.is_set()):
-        try:
-            try:sl.c=load(cfg)   # dashboard edits apply within one cycle; an invalid file keeps the previous settings
-            except Exception:LOG.exception('Mojsavar config unreadable; keeping previous settings')
-            now=time.time();boundary=int(now)//H4*H4
-            if now>=boundary+3 and boundary!=last:
-                if sl.scan(now):last=boundary
-            else:sl.watchdog(now)
-        except Exception:LOG.exception('Mojsavar cycle failed; will retry')
-        if once:break
-        (stop.wait if stop else time.sleep)(sl.c['check_interval_seconds'])
+def loop(sl: Sleeve, cfg: Path, stop=None, once=False):
+    """Scan each closed 4h candle and run the watchdog between scans."""
+    run_sleeve_loop(sl, cfg, load, LOG, 'Mojsavar', stop=stop, once=once)
+
 
 def start_in_bot(engine,stop):
     """Called by lbank_bot.run(): C3 in its own thread, own market-data client, sized on the bot's paper equity."""
