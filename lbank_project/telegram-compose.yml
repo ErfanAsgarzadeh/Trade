@@ -1,0 +1,31 @@
+# Separate Compose project: contains no trading engine, dashboard, or migrations.
+services:
+  telegram:
+    build:
+      context: .
+      dockerfile: Dockerfile.telegram
+    restart: unless-stopped
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 64
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?Set TELEGRAM_BOT_TOKEN}
+      TELEGRAM_ALLOWED_USER_IDS: ${TELEGRAM_ALLOWED_USER_IDS:?Set TELEGRAM_ALLOWED_USER_IDS}
+      BOT_DB: /reports/lbank_ichimoku_bot.db
+      C3_DB: /reports/c3_sleeve.db
+      PA_DB: /reports/pa_sleeve.db
+    volumes:
+      - type: bind
+        source: ${TELEGRAM_RUNTIME_DIR:-./runtime}
+        target: /reports
+        read_only: true
+        bind:
+          create_host_path: false
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"

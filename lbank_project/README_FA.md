@@ -476,3 +476,6 @@ docker compose up -d --no-deps lbank-live lbank-dashboard
 ```
 
 بعد در داشبورد به Settings › Live execution بروید: TheTrueTrade را انتخاب کنید، Test connection و Read-only readiness audit را اجرا کنید و در صورت نیاز Dry run را بررسی کنید. LIVE فقط بعد از پاس شدن `ttt_live_certify.py` در دسترس است. اول با `size_factor` کوچک (مثلاً ۰٫۱) و `max_position_usd` پایین شروع کنید.
+## گزارش معاملات در تلگرام
+
+[راهنمای راه‌اندازی ربات تلگرام](TELEGRAM_FA.md) شامل گزارش معاملات باز، تاریخچهٔ خروج‌ها و خلاصهٔ هر سه ربات است.
