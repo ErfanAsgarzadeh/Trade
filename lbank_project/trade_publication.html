@@ -1,0 +1,226 @@
+<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AVINA · استودیوی انتشار معاملات</title>
+<style>
+@font-face{font-family:Vazir;src:url('/publication/assets/vazirmatn-arabic.woff2')}@font-face{font-family:Lato;src:url('/publication/assets/lato-400.woff2');font-weight:400}@font-face{font-family:Lato;src:url('/publication/assets/lato-700.woff2');font-weight:700}*{box-sizing:border-box}body{margin:0;background:#100424;color:#f8f6ff;font-family:Vazir,Arial}header{padding:24px 5%;border-bottom:1px solid #372349;display:flex;align-items:center;justify-content:space-between;gap:20px}header img{width:105px;height:56px;object-fit:contain}h1{font-size:23px;margin:0}p{line-height:1.9;color:#c1afd6;margin:8px 0}a{color:#ffd36b}.layout{display:grid;grid-template-columns:350px 1fr;gap:32px;max-width:1400px;padding:30px;margin:auto}aside{background:#1a0c30;border:1px solid #39234e;border-radius:18px;padding:24px;align-self:start}label{display:block;font-size:13px;color:#c1afd6;margin:16px 0 7px}input,select,button{font:inherit;border:1px solid #57416d;border-radius:9px;padding:11px;background:#150927;color:#f8f6ff;width:100%}button{cursor:pointer;margin-top:12px;background:#5b16c7;border-color:#a767ff}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:transparent}.fieldrow{display:flex;gap:8px}.fieldrow>*{min-width:0}.checks label{display:flex;gap:10px;align-items:center}.checks input{width:auto}#message{white-space:pre-line;font-size:13px;color:#ffd36b;margin-top:16px}#preview{width:auto;max-width:100%;max-height:calc(100svh - 140px);height:auto;display:block;margin:auto;border:1px solid #39234e;border-radius:8px}.preview-wrap{min-width:0;position:sticky;top:18px;align-self:start}.note{max-width:670px;margin:16px auto;font-size:13px}#counter{font-size:12px}summary{cursor:pointer;color:#ffd36b}#evidence{white-space:pre-wrap;direction:ltr;text-align:left;font:12px monospace;overflow:auto;max-height:260px}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #ffd36b;outline-offset:3px}@media(max-width:850px){.layout{grid-template-columns:1fr;padding:16px;gap:20px}header{padding:16px}h1{font-size:18px}aside{padding:18px}.preview-wrap{position:static}#preview{max-height:none}}
+</style>
+<header><div><h1>استودیوی انتشار معاملات</h1><p>کندل، پوزیشن و نتیجهٔ حساب در یک کارت قابل انتشار</p></div><img id="brand-preview" src="/publication/assets/avina-mark.png" alt="AVINA"><a href="/broadcast">پخش زنده ↗</a><a href="/">بازگشت به پنل</a></header>
+<main class="layout"><aside><form id="login"><label for="pin">PIN پنل مدیریت</label><input id="pin" type="password" autocomplete="off" required><button>خواندن معاملات</button></form>
+<label for="mode">منبع حساب</label><select id="mode"><option value="paper">معاملهٔ شبیه‌سازی‌شده</option><option value="real">Real · TheTrueTrade</option></select>
+<label for="search">جست‌وجو در همهٔ معاملات</label><input id="search" placeholder="نماد، موتور یا جهت معامله">
+<label for="trade">معامله / خروج ثبت‌شده</label><select id="trade" disabled><option>ابتدا وارد شوید</option></select><p id="counter"></p><div class="fieldrow"><button id="prev" class="secondary" disabled>قبلی</button><button id="next" class="secondary" disabled>بعدی</button></div>
+<label for="format">اندازهٔ خروجی</label><select id="format"><option value="1350">پست اینستاگرام · ۴:۵</option><option value="1920">استوری اینستاگرام · ۹:۱۶</option><option value="675">پست X · ۱۶:۹</option></select>
+<label for="card-type">محتوای خروجی</label><select id="card-type"><option value="performance">عملکرد معامله و حساب</option><option value="market">نمودار بازار و سطوح قیمت</option></select>
+<div class="checks"><label><input type="checkbox" id="amounts" checked>نمایش مبلغ سود و موجودی حساب</label></div>
+<label for="logo">فایل لوگو</label><input id="logo" type="file" accept="image/png,image/jpeg,image/webp">
+<button id="save-shared-logo" type="button" class="secondary">استفاده از این لوگو در همهٔ نماها</button>
+<button id="download" disabled>دانلود تصویر PNG</button><button id="refresh" class="secondary" disabled>به‌روزرسانی از منبع</button><div id="message" role="status" aria-live="polite"></div>
+<details style="margin-top:20px"><summary>داده و مبنای محاسبه</summary><pre id="evidence"></pre></details>
+</aside><div class="preview-wrap"><canvas id="preview" width="1080" height="1350" aria-label="پیش‌نمایش کارت معامله"></canvas><p class="note">درصد معامله، تغییر قیمت در جهت پوزیشن و بدون اهرم است. سود دلاری شبیه‌سازی شامل هزینه‌های مدل است. بازده حساب مربوط به زمان تهیهٔ کارت و کل حساب است. خروج جزئی به‌عنوان معاملهٔ کامل معرفی نمی‌شود.</p><p class="note">این بخش لینک عمومی نمی‌سازد. فقط فایل تصویری انتخاب‌شده برای انتشار از مرورگر دانلود می‌شود.</p></div></main>
+<script src="/publication/assets/trade_brand.js"></script>
+<script>
+'use strict';
+const $=s=>document.getElementById(s),canvas=$('preview'),ctx=canvas.getContext('2d');let rows=[],current=null,busy=false,logo=new Image(),customLogo=false,generation=0;logo.src='/publication/assets/avina-mark.png';
+const palette = {white:'#f8f6ff', muted:'#c9bcdb', gold:'#ffd36b', mint:'#68e3bc', red:'#ff92b4', bg:'#100424', line:'#3e2a58'};
+const number = value => value == null ? '—' : Number(value).toLocaleString('en-US',{maximumFractionDigits:2,minimumFractionDigits:2});
+const signed = (value,suffix='') => value == null ? '—' : (value>0?'+':'')+number(value)+suffix;
+const price = value => {
+ const n = Number(value);
+ if (value == null || !Number.isFinite(n)) return '—';
+ const digits = Math.abs(n) >= 1 ? 2 : Math.min(12,Math.max(4,3-Math.floor(Math.log10(Math.abs(n)||1))));
+ return n.toLocaleString('en-US',{maximumFractionDigits:digits});
+};
+const date = stamp => stamp ? new Date(stamp*1000).toISOString().replace('T',' ').slice(0,16)+' UTC' : '';
+const shortDate = stamp => new Date(stamp).toISOString().slice(5,10).replace('-','/');
+const marketOnly = () => $('card-type').value === 'market';
+const leverage = r => r.leverage == null ? '' : r.leverage+'×';
+const ticker = symbol => symbol.replace(/:USDT$/i,'');
+const color = value => value == null ? palette.muted : value < 0 ? palette.red : palette.mint;
+
+function text(value,x,y,size=24,fill=palette.white,{align='left',weight=400,maxWidth}={}) {
+ ctx.direction='ltr';
+ ctx.font=weight+' '+size+'px Lato, Arial';
+ ctx.textAlign=align;
+ ctx.fillStyle=fill;
+ if(maxWidth) ctx.fillText(String(value),x,y,maxWidth);
+ else ctx.fillText(String(value),x,y);
+}
+function box(x,y,w,h,fill,radius=14) {
+ ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,radius);ctx.fill();
+}
+function line(x,y,x2,y2,stroke=palette.line,width=1,dash=[]) {
+ ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();
+ ctx.moveTo(x,y);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+}
+function brand(x,y,height=88) {
+ if(logo.complete && logo.naturalWidth) {
+   const scale=Math.min((customLogo?275:112)/logo.width,height/logo.height);
+   ctx.drawImage(logo,x,y,logo.width*scale,logo.height*scale);
+ }
+ if(!customLogo) {
+   text('AVINA',x+128,y+38,34,palette.gold,{weight:700});
+   text('by ARTAX',x+129,y+64,18,palette.muted);
+ }
+}
+function tradeStats(r,x,y,w,wide=false) {
+ text(ticker(r.symbol),x,y,wide?36:48,palette.white,{weight:700,maxWidth:w});
+ const status=r.status==='open'?'OPEN POSITION':'RECORDED EXIT';
+ const detail = [r.side.toUpperCase(), status, r.strategy];
+ if(leverage(r)) detail.push(leverage(r)+' LEVERAGE');
+ text(detail.join('  ·  '),x,y+(wide?28:33),wide?18:24,palette.muted,{maxWidth:w});
+ const metricY=y+(wide?93:123);
+ text(signed(r.price_move_pct,'%'),x,metricY,wide?51:74,color(r.price_move_pct),{weight:700,maxWidth:wide?w:w*.56});
+ text('PRICE MOVE · UNLEVERAGED',x,metricY+(wide?25:32),wide?16:23,palette.muted,{maxWidth:wide?w:w*.61});
+ if($('amounts').checked && r.pnl_usd!=null) {
+   const pnlY=wide?metricY+77:metricY;
+   const pnlX=wide?x:x+w;
+   const align=wide?'left':'right';
+   text(signed(r.pnl_usd)+' USDT',pnlX,pnlY,wide?32:40,color(r.pnl_usd),{align,weight:700,maxWidth:wide?w:w*.4});
+   const label=r.status==='open'?'UNREALIZED TRADE P&L':'RECORDED EXIT P&L';
+   text(label,pnlX,pnlY+(wide?24:32),wide?16:21,palette.muted,{align,maxWidth:wide?w:w*.45});
+ }
+}
+function accountStats(a,x,y,w,h,wide=false) {
+ box(x,y,w,h,'#211238');
+ const left=x+22,right=x+w-22;
+ text('ACCOUNT SUMMARY',left,y+(wide?27:37),wide?16:22,palette.muted,{weight:700,maxWidth:w-44});
+ if(!$('amounts').checked && a.return_pct==null){text('Account return unavailable',left,y+72,wide?17:23,palette.muted,{maxWidth:w-44});return}
+ if(a.return_pct!=null) {
+   const align=wide?'left':'right';
+   const returnX=wide?left:right;
+   const returnY=y+(wide?63:83);
+   text(signed(a.return_pct,'%'),returnX,returnY,wide?34:45,color(a.return_pct),{align,weight:700,maxWidth:wide?w-44:w*.42});
+   text('ACCOUNT RETURN',returnX,returnY+(wide?21:27),wide?15:20,palette.muted,{align,maxWidth:w-44});
+ }
+ if($('amounts').checked) {
+   const lineY=y+(wide?(a.return_pct!=null?110:66):83);
+   if(a.pnl_usd!=null) text('P&L  '+signed(a.pnl_usd)+' USDT',left,lineY,wide?19:29,color(a.pnl_usd),{weight:700,maxWidth:wide?w-44:w*.55});
+   if(a.equity_usd!=null) text('Equity  '+number(a.equity_usd)+' USDT',left,lineY+(wide?25:36),wide?16:22,palette.muted,{maxWidth:wide?w-44:w*.55});
+   if(a.pnl_usd==null && a.equity_usd==null && a.return_pct==null)text('Account metrics unavailable',left,lineY,wide?17:23,palette.muted,{maxWidth:w-44});
+ }
+}
+function chart(r,bars,x,y,w,h,wide=false,reference=false) {
+ box(x,y,w,h,'#180a31');
+ const subtitle = 'USDT FUTURES  /  '+r.timeframe.toUpperCase()+'  /  CLOSED CANDLES';
+ text(subtitle,x+18,y+31,wide?17:21,palette.muted);
+ if(!bars.length) {
+   text('Candles unavailable',x+w/2,y+h/2,wide?24:30,palette.muted,{align:'center'});
+   return;
+ }
+ const axisWidth=wide?101:117, tagWidth=wide?178:200;
+ const left=x+axisWidth,right=x+w-tagWidth-12,top=y+57,bottom=y+h-55;
+ // Draw recorded levels and skip unavailable prices.
+ const levels=[
+   {label:reference?'REFERENCE':'ENTRY',value:r.entry,fill:palette.gold},
+   {label:'INITIAL STOP',value:r.initial_stop,fill:'#c7afff'},
+   {label:r.status==='closed'?'LAST STOP':'CURRENT STOP',value:r.stop,fill:palette.red},
+   {label:r.status==='open'?'CURRENT':'EXIT',value:reference?null:r.exit??r.current_price,fill:palette.white},
+ ].filter(level=>Number.isFinite(level.value)&&level.value>0);
+ let lo=Math.min(...bars.map(b=>b[3]),...levels.map(level=>level.value));
+ let hi=Math.max(...bars.map(b=>b[2]),...levels.map(level=>level.value));
+ const padding=(hi-lo)*.10||hi*.01;lo-=padding;hi+=padding;
+ const py=v=>bottom-(v-lo)/(hi-lo)*(bottom-top);
+ const step=(right-left)/bars.length,px=i=>left+(i+.5)*step;
+ for(let i=0;i<=4;i++) {
+   const n=lo+(hi-lo)*i/4, yy=py(n);
+   line(left,yy,right,yy,'#382548');
+   text(price(n),left-10,yy+6,wide?15:17,palette.muted,{align:'right',maxWidth:axisWidth-19});
+ }
+ bars.forEach((b,i)=>{
+   const fill=b[4]>=b[1]?palette.mint:palette.red,xx=px(i);
+   line(xx,py(b[2]),xx,py(b[3]),fill,1.3);
+   ctx.fillStyle=fill;ctx.fillRect(xx-step*.31,Math.min(py(b[1]),py(b[4])),step*.62,Math.max(2,Math.abs(py(b[1])-py(b[4]))));
+ });
+ levels.sort((a,b)=>py(a.value)-py(b.value));
+ let last=top-40;
+ levels.forEach(({label,value,fill},index)=>{
+   const valueY=py(value), gap=36;
+   const tagY=Math.min(bottom-14-gap*(levels.length-1-index),Math.max(top+14,valueY,last+gap));
+   last=tagY;
+   const isReference=label==='ENTRY'||label==='REFERENCE';
+   const isStop=label.endsWith('STOP');
+   const dash=label==='INITIAL STOP'?[3,6]:isStop?[12,5]:isReference?[]:[2,6];
+   line(left,valueY,right,valueY,fill,isReference?2.6:1.8,dash);
+   line(right,valueY,right+12,tagY,fill,1.6);
+   const primary=isReference||isStop;
+   box(right+12,tagY-15,tagWidth-12,30,primary?fill:'#342449',6);
+   text(label+'  '+price(value),right+20,tagY+6,wide?16:18,primary?palette.bg:palette.white,{weight:700,maxWidth:tagWidth-28});
+ });
+ text(shortDate(bars[0][0]),left,y+h-20,wide?15:18,palette.muted);
+ text(shortDate(bars.at(-1)[0])+' UTC',right,y+h-20,wide?15:18,palette.muted,{align:'right'});
+}
+function marketCard(r,bars,x,top,w,h,wide,story) {
+ const inner=w-2*x;
+ text(ticker(r.symbol),x,top+(wide?105:211),wide?38:54,palette.white,{weight:700,maxWidth:inner*.6});
+ if(leverage(r)) text('LEVERAGE SETTING  '+leverage(r),w-x,top+(wide?105:211),wide?18:23,palette.gold,{align:'right',weight:700,maxWidth:inner*.4});
+ const chartY=top+(wide?126:247);
+ const footerY=h-(story?190:wide?42:58);
+ chart(r,bars,x,chartY,inner,footerY-chartY-51,wide,true);
+ text('MARKET CHART  ·  REFERENCE LEVELS',x,footerY,wide?17:22,palette.muted,{maxWidth:inner*.7});
+ text('@avina_trade',w-x,footerY,wide?18:22,palette.gold,{weight:700,align:'right'});
+ if(/STALE|GAPS/i.test(current.candle_note||'')) text('MARKET DATA COVERAGE GAP',x,footerY+25,wide?15:18,palette.gold);
+}
+
+function draw(){
+ const h=Number($('format').value),wide=h===675,story=h===1920,w=wide?1200:1080;
+ canvas.width=w;canvas.height=h;
+ ctx.fillStyle=palette.bg;ctx.fillRect(0,0,w,h);
+ const gradient=ctx.createRadialGradient(w*.78,80,0,w*.78,80,w*.86);
+ gradient.addColorStop(0,'#2b124c');gradient.addColorStop(1,palette.bg);
+ ctx.fillStyle=gradient;ctx.fillRect(0,0,w,h);
+ const x=wide?40:64, top=story?150:wide?26:42, inner=w-x*2;
+ brand(x,top,wide?64:story?114:100);
+ if(!current){
+   text('Select a trade to preview',x,top+(wide?150:245),wide?32:43,palette.white,{weight:700});
+   return;
+ }
+ const {trade:r,account:a}=current;
+ if(marketOnly() && current.publishable){marketCard(r,current.candles,x,top,w,h,wide,story);return}
+ if(!current.publishable || r.mode==='real') {
+   const label = current.publishable ? 'REAL ACCOUNT' : 'TEST DATA  ·  INTERNAL PREVIEW';
+   text(label,w-x,top+(wide?37:52),wide?19:24,palette.gold,{align:'right',weight:700});
+ }
+ const bars=current.candles;
+ if(wide) {
+   const chartW=766,sideX=x+chartW+26,sideW=inner-chartW-26;
+   chart(r,bars,x,115,chartW,450,true);
+   tradeStats(r,sideX,149,sideW,true);
+   accountStats(a,sideX,382,sideW,183,true);
+ }else{
+   tradeStats(r,x,top+(story?220:177),inner);
+   const chartY=top+(story?422:365), chartH=story?810:610;
+   chart(r,bars,x,chartY,inner,chartH);
+   accountStats(a,x,chartY+chartH+31,inner,story?185:155);
+ }
+ const footerY=story?h-190:h-(wide?48:55);
+ const hasCoverageGap=/STALE|GAPS/i.test(current.candle_note||'');
+ if(hasCoverageGap) text('MARKET DATA COVERAGE GAP',x,footerY-52,wide?15:19,palette.gold,{weight:700});
+ line(x,footerY-34,w-x,footerY-34);
+ text(date(current.generated_at),x,footerY,wide?16:20,palette.muted);
+ const signature = r.mode==='paper' ? 'Practice account (no real funds)  ·  @avina_trade' : '@avina_trade';
+ text(signature,w-x,footerY,wide?17:23,palette.gold,{weight:700,align:'right',maxWidth:inner*.65});
+ text('Past results do not predict future returns.',w-x,footerY+27,wide?15:18,palette.muted,{align:'right',maxWidth:inner*.43});
+}
+async function api(path){const res=await fetch(path,{headers:{'X-Bot-Pin':$('pin').value}});if(!res.ok)throw new Error(res.status===401?'PIN نادرست است.':'خواندن داده ممکن نشد؛ دوباره تلاش کنید.');return res.json()}
+function lock(on){busy=on;$('mode').disabled=on;$('search').disabled=on;for(const id of ['download','refresh','prev','next','trade'])$(id).disabled=on||!rows.length;}
+function filtered(){const q=$('search').value.toLowerCase();return rows.filter(r=>[r.symbol,r.strategy,r.side,r.status].join(' ').toLowerCase().includes(q))}
+function choices(){const list=filtered();$('trade').replaceChildren();for(const r of list){const op=document.createElement('option');op.value=r.id;op.textContent=[ticker(r.symbol),r.strategy,r.side,r.status,date(r.closed_at||r.opened_at)].filter(Boolean).join(' · ');$('trade').append(op)}$('counter').textContent=list.length+' مورد از '+rows.length+' رکورد';lock(false);if(list.length)select();else{current=null;draw();$('download').disabled=true;$('message').textContent='رکوردی در این منبع یا جست‌وجو موجود نیست.'}}
+async function load(){generation++;rows=[];$('evidence').textContent='';current=null;draw();$('message').textContent='در حال خواندن منبع…';lock(true);try{const data=await api('/api/publication/trades?mode='+$('mode').value);rows=data.records;$('message').textContent=[data.notice,...data.warnings].join('\n');choices()}catch(e){rows=[];current=null;draw();$('trade').replaceChildren();$('message').textContent=e.message;lock(false)}}
+function canExport(){return Boolean(current?.publishable && (!marketOnly() || current.candles.length));}
+async function select(){$('evidence').textContent='';const id=$('trade').value,seq=++generation;current=null;draw();lock(true);try{const d=await api('/api/publication/trade?mode='+$('mode').value+'&trade_id='+encodeURIComponent(id));if(seq!==generation)return;current=d;draw();$('evidence').textContent=JSON.stringify(d,null,2);$('message').textContent=[d.notice,...d.warnings,d.candle_note].join('\n');lock(false);$('download').disabled=!canExport()}catch(e){if(seq!==generation)return;$('message').textContent=e.message;lock(false);$('download').disabled=true}}
+$('login').onsubmit=e=>{e.preventDefault();load()};$('refresh').onclick=load;$('mode').onchange=load;$('search').oninput=()=>{if(!busy)choices()};$('trade').onchange=select;$('format').onchange=draw;$('amounts').onchange=draw;
+$('card-type').onchange=()=>{$('amounts').disabled=marketOnly();draw();$('download').disabled=!canExport()||busy};
+for(const [id,offset] of [['prev',-1],['next',1]])$(id).onclick=()=>{const sel=$('trade');sel.selectedIndex=(sel.selectedIndex+offset+sel.options.length)%sel.options.length;select()};
+const brandControl=window.AvinaTradeBrand?.bind($('logo'),$('brand-preview'),(image,isCustom)=>{
+ logo=image;customLogo=isCustom;draw();
+},message=>{$('message').textContent=message});
+$('save-shared-logo').onclick=async()=>{
+ const button=$('save-shared-logo');
+ button.disabled=true;
+ try{
+   await brandControl.saveShared($('pin').value);
+   $('message').textContent='لوگوی مشترک پنل، کارت‌ها و لایو به‌روز شد.';
+ }catch(error){$('message').textContent=error.message}
+ finally{button.disabled=false}
+};
+$('download').onclick=async()=>{if(!canExport()||busy)return;await Promise.all([document.fonts.load('400 24px Lato'),document.fonts.load('700 40px Lato')]);if(!canExport()||busy)return;draw();const kind=marketOnly()?'market':current.trade.mode==='paper'?'practice':'real';const symbol=ticker(current.trade.symbol).replace(/[^a-zA-Z0-9_-]/g,'-');canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='AVINA-'+symbol+'-'+kind+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)},'image/png')};
+logo.onload=draw;document.fonts.ready.then(draw);draw();
+</script></html>

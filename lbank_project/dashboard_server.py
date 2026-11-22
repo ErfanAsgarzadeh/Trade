@@ -7,7 +7,9 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Literal
 import secrets
+import tempfile
 import time
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Response, Request
@@ -23,6 +25,18 @@ from lbank_bot import (ConfigError, ConfigStore, Database, Engine, INITIAL,
                        file_lock, net_pnl, position_margin, position_leverage)
 
 LOG = logging.getLogger("dashboard")
+
+MAX_BRAND_IMAGE = 8 * 1024 * 1024
+
+
+def brand_image_type(data: bytes) -> str | None:
+    if data.startswith(b"\x89PNG\r\n\x1a\n") and data[12:16] == b"IHDR":
+        return "image/png"
+    if data.startswith(b"\xff\xd8\xff") and data.endswith(b"\xff\xd9"):
+        return "image/jpeg"
+    if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 class CloseRequest(BaseModel):
@@ -64,8 +78,11 @@ def create_app(engine: Engine | None = None) -> FastAPI:
             application.state.engine = engine
         yield
 
-    application = FastAPI(title="LBank Ichimoku Paper Dashboard", lifespan=lifespan)
+    application = FastAPI(title="AVINA Trading Dashboard", lifespan=lifespan)
     throttle = LoginThrottle()
+    import trade_publication
+    broadcast_feed = trade_publication.BroadcastFeed(lambda: application.state.engine)
+    application.state.broadcast_feed = broadcast_feed
 
     async def authorized(request: Request, x_bot_pin: str = Header(default="")):
         client = request.client.host if request.client else 'unknown'
@@ -100,6 +117,96 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     @application.get("/", response_class=HTMLResponse)
     def home():
         return HTML
+
+    # Private publication studio: GET-only source reads; no order or configuration changes.
+    @application.get('/publication', response_class=HTMLResponse)
+    def publication_page():
+        return (Path(__file__).parent / 'trade_publication.html').read_text()
+
+    @application.get('/broadcast', response_class=HTMLResponse)
+    def broadcast_page():
+        return (Path(__file__).parent / 'trade_broadcast.html').read_text()
+
+    @application.get('/api/publication/broadcast', dependencies=[Depends(authorized)])
+    def publication_broadcast(mode: Literal['paper', 'real'] = 'paper',
+                              trade_id: str | None = None,
+                              bot: Literal['all', 'main', 'c3', 'pa'] = 'all',
+                              scope: Literal['open', 'closed', 'all'] = 'open'):
+        return broadcast_feed.get(mode=mode, trade_id=trade_id, bot_filter=bot, scope=scope)
+
+    def brand_file():
+        runtime = os.environ.get('RISK_DIR')
+        folder = Path(runtime) if runtime else runtime_folder()
+        return folder / 'avina-brand-image'
+
+    @application.get('/publication/brand-image')
+    def publication_brand_image():
+        try:
+            with brand_file().open('rb') as handle:
+                data = handle.read(MAX_BRAND_IMAGE + 1)
+        except OSError:
+            raise HTTPException(404, 'Brand image unavailable') from None
+        image_type = brand_image_type(data)
+        if image_type is None or len(data) > MAX_BRAND_IMAGE:
+            raise HTTPException(404, 'Brand image unavailable')
+        return Response(content=data, media_type=image_type)
+
+    @application.put('/api/publication/brand-image', dependencies=[Depends(authorized)])
+    async def replace_publication_brand_image(request: Request):
+        data = bytearray()
+        async for chunk in request.stream():
+            if len(data) + len(chunk) > MAX_BRAND_IMAGE:
+                raise HTTPException(413, 'Image exceeds 8 MB')
+            data.extend(chunk)
+        image_type = brand_image_type(data)
+        if image_type is None or image_type != request.headers.get('content-type'):
+            raise HTTPException(415, 'Expected a PNG, JPEG, or WebP image')
+
+        target = brand_file()
+        temporary = None
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(dir=target.parent, delete=False) as handle:
+                temporary = Path(handle.name)
+                handle.write(data)
+            temporary.replace(target)
+        except OSError:
+            raise HTTPException(503, 'Brand image could not be saved') from None
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+        return {'updated': True}
+
+    @application.get('/publication/assets/{name}')
+    def publication_asset(name: str):
+        from fastapi.responses import FileResponse
+        if name in {'trade_broadcast_svg.js', 'trade_brand.js'}:
+            return FileResponse(Path(__file__).parent / name, media_type='text/javascript')
+        if name not in {'avina-mark.png', 'vazirmatn-arabic.woff2', 'lato-400.woff2', 'lato-700.woff2'}:
+            raise HTTPException(404, 'Asset not found')
+        return FileResponse(Path(__file__).parent / 'frontend' / 'public' / 'portal-assets' / name)
+
+    def publication_snapshot(mode):
+        import trade_publication as pub
+        if mode == 'paper':
+            return pub.paper_snapshot(bot())
+        if mode == 'real':
+            return pub.real_snapshot()
+        raise HTTPException(422, 'mode must be paper or real')
+
+    @application.get('/api/publication/trades', dependencies=[Depends(authorized)])
+    def publication_trades(mode: str = 'paper'):
+        return publication_snapshot(mode)
+
+    @application.get('/api/publication/trade', dependencies=[Depends(authorized)])
+    def publication_trade(trade_id: str, mode: str = 'paper'):
+        import trade_publication as pub
+        snapshot = publication_snapshot(mode)
+        trade = next((r for r in snapshot.pop('records') if r['id'] == trade_id), None)
+        if trade is None:
+            raise HTTPException(404, 'Recorded trade not found')
+        candles, note = pub.candles_for(bot(), trade)
+        return dict(snapshot, trade=trade, candles=candles, candle_note=note)
 
     @application.get('/healthz')
     def health():
@@ -343,14 +450,18 @@ def create_app(engine: Engine | None = None) -> FastAPI:
     def account_view():
         import lbank_account
         return {"mode": "paper", "live_available": False, "keys": lbank_account.key_status(),
-                "live_reason": "Live LBank futures execution is not built yet: LBank's published contract API documents no "
+                "live_reason": "Direct futures execution is unavailable: the provider's published contract API documents no "
                                "order, leverage or position endpoints, and the pinned CCXT adapter only trades spot. "
                                "The bots stay on the paper account."}
 
     @application.post("/api/account/test", dependencies=[Depends(authorized)])
     def account_test():
         import lbank_account
-        return lbank_account.account_check()
+        result = lbank_account.account_check()
+        message = result.get("message", "")
+        result["message"] = (message.replace("LBANK_API_KEY / LBANK_SECRET_KEY", "Exchange credentials")
+                             .replace("LBank", "The exchange"))
+        return result
 
     # ---- live execution through the mirror service (live_mirror.py, docker service lbank-live) ----
     @application.get("/api/live", dependencies=[Depends(authorized)])
@@ -515,7 +626,7 @@ def create_app(engine: Engine | None = None) -> FastAPI:
 HTML = r'''<!doctype html>
 <html lang="en" dir="ltr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LBank Trading Control Center</title>
+<title>AVINA Trading Control Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -585,10 +696,10 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 @media(max-width:450px){.fields,.kpis{grid-template-columns:minmax(0,1fr);}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 </style></head><body><main>
-<header><div class="brand"><div class="logo">L</div><div><h1>LBank Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
+<header><div class="brand"><img class="logo" src="/publication/brand-image" alt="AVINA" onerror="this.onerror=null;this.src='/publication/assets/avina-mark.png'" style="width:105px;height:70px;object-fit:contain;background:none;box-shadow:none"><div><h1>AVINA Trading Control Center</h1><p class="small">Shahin · Mojsavar · Ghoghnous on one paper account · momentum-rank sizing</p></div></div>
 <div class="gap"><div class="theme-switcher"><label for="terminal-appearance">Appearance</label><select id="terminal-appearance" data-legacy-theme-switch><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></div><span id="mode" class="badge">—</span><span id="active" class="badge">Offline</span>
 <input id="pin" type="password" placeholder="PIN" aria-label="PIN" autocomplete="off" size="8"><button id="connect">Connect</button></div></header>
-<nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
+<a href="/broadcast" target="_blank" rel="noopener" style="display:inline-block;margin:12px;color:var(--primary)">AVINA · پخش زنده / Broadcast ↗</a><a href="/publication" target="_blank" rel="noopener" style="display:inline-block;margin:12px 0;color:var(--primary)">AVINA · انتشار معاملات / Publication studio ↗</a><nav class="tabs" role="tablist"><button class="tab" data-tab="overview">Overview</button><button class="tab" data-tab="positions">Positions</button><button class="tab" data-tab="performance">Performance</button><button class="tab" data-tab="settings">Settings</button></nav>
 <div id="message" role="status" aria-live="polite"></div>
 
 <section class="pane" data-pane="overview">
@@ -601,7 +712,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <section class="panel kpi"><p>Margin in use / allowed ($)</p><strong id="margin">—</strong><p id="margin_pct" class="small">—</p><p id="pending_margin" class="small">—</p><div class="bar"><i id="margin_bar" style="width:0"></i></div></section>
 <section class="panel kpi"><p>Win rate (all closed trades)</p><strong id="winrate">—</strong><p id="pf" class="small">—</p></section>
 <section class="panel kpi"><p>Momentum sizing</p><strong id="mom_state">—</strong><p class="small">New entries: risk x0.5 to x1.5 by 30-day momentum rank</p></section>
-<section class="panel kpi"><p>Slippage vs LBank book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail" class="small">—</p></section>
+<section class="panel kpi"><p>Slippage vs futures order book (bps, median / P90)</p><strong id="fq_main">—</strong><p id="fq_detail" class="small">—</p></section>
 </div>
 <div class="grid2" style="margin-top:18px"><section class="panel"><div class="row"><h2>Equity and drawdown</h2><span class="small muted" id="eq_src">—</span></div><div class="chart"><canvas id="eq_chart"></canvas></div><div class="chart sm"><canvas id="dd_chart"></canvas></div></section>
 <section class="panel"><div class="row"><h2>Daily P&amp;L, last 30 days</h2></div><div class="chart" style="height:520px"><canvas id="daily_chart"></canvas></div></section></div>
@@ -619,7 +730,7 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <section class="pane" data-pane="positions">
 <section class="panel"><div class="row"><h2>Open positions (all three bots)</h2><button class="danger" id="panic" disabled>🚨 Emergency close all + stop entries</button></div>
 <div class="scroll"><table><thead><tr><th>Strategy</th><th>Symbol</th><th>Side</th><th>Entry / trigger</th><th>Live price</th><th>Stop loss</th><th>Target 1</th><th>Status</th><th>R</th><th>P&amp;L ($)</th><th>Action</th></tr></thead><tbody id="positions"><tr><td colspan="10">Enter the PIN first.</td></tr></tbody></table></div></section>
-<section class="panel note">Paper trading only. DEMO mode uses synthetic prices. Live LBank order placement is not supported by the pinned CCXT adapter. P&amp;L uses estimated fees.</section>
+<section class="panel note">Paper trading only. DEMO mode uses synthetic prices. Direct futures order placement is not supported by the pinned CCXT adapter. P&amp;L uses estimated fees.</section>
 </section>
 
 <section class="pane" data-pane="performance">
@@ -632,15 +743,15 @@ button:disabled{background:var(--disabled-background);color:var(--disabled-foreg
 <section class="pane" data-pane="settings">
 <section class="panel"><div class="row"><h2>Trading account</h2><span class="badge ok" id="acct_mode"><span class="dot"></span>PAPER</span></div>
 <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
-<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Simulated fills at live LBank prices with estimated fees. No real money is used.</p></section>
-<section class="panel"><div class="row"><h3>🔒 Live LBank futures</h3><span class="pill bad">Locked</span></div>
-<p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (set LBANK_API_KEY and LBANK_SECRET_KEY in the server's .env; keys are never entered in this page)</p>
-<div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test LBank connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
+<section class="panel" style="border-color:var(--success-border)"><div class="row"><h3>Paper account</h3><span class="pill good">Active</span></div><p class="small">Modeled fills at live futures prices with estimated fees. No real money is used.</p></section>
+<section class="panel"><div class="row"><h3>🔒 Direct live futures</h3><span class="pill bad">Locked</span></div>
+<p class="small" id="acct_reason">—</p><p class="small">API key on the server: <b id="acct_keys">—</b> (configured through the server environment)</p>
+<div class="gap" style="margin-top:10px"><button class="subtle" id="acct_test" disabled>Test market connection (read-only)</button><label class="switch"><input id="acct_live" type="checkbox" disabled>Use the live account</label></div>
 <p class="small" id="acct_result"></p></section></div></section>
 <section class="panel" id="live_panel"><div class="row"><div><h2>Live execution (exchange mirror)</h2><p class="small">The bots keep trading on paper; the mirror copies their NEW positions, stops, partial exits and exits to a real exchange account, sized by account equity. Positions open before switching on are not copied. Only positions opened by the mirror are ever touched.</p></div><span class="badge" id="lv_badge">—</span></div>
 <div class="fields" style="margin-top:14px">
 <label class="field">Exchange<select id="lv_exchange"><option value="thetruetrade">TheTrueTrade</option><option value="binance">Binance USDT-M</option></select></label>
-<label class="field">Mode<select id="lv_mode"><option value="off">Off</option><option value="dry">Dry run (simulated orders, real prices)</option><option value="live">LIVE (real orders)</option></select></label>
+<label class="field">Mode<select id="lv_mode"><option value="off">Off</option><option value="dry">Dry run (test orders, real prices)</option><option value="live">LIVE (real orders)</option></select></label>
 <label class="field">Size factor (1 = same % risk as paper)<input id="lv_size" type="number" min="0.01" max="3" step="0.01"></label>
 <label class="field">Leverage<input id="lv_lev" type="number" min="1" max="20" step="1"></label>
 <label class="field">Max position size (USD notional)<input id="lv_cap" type="number" min="1" step="1"></label>
@@ -753,7 +864,7 @@ function controlsChanged(){if(!cfg)return;try{cfg=JSON.parse($('editor').value);
 for(const id of ['margin_allocation','shared_account','auto','strategy','risk','breakout','barb','h2','engaged','max_positions','leverage','exit_tp','hybrid_trail','hard_tp','breakeven','preset','donchian_period','initial_stop','pyramid','stop_anchor','pyramid_fraction','safe_pyramid','profit_floor','floor_trigger','floor_lock','width_filter','width_skip','width_mid','width_fraction','stop_atr_mult','btc_gate','funding_short','atr_regime','late_entry','momentum','atr_trail'])$(id).addEventListener('change',controlsChanged);
 $('editor').addEventListener('input',()=>{$('dirty').textContent='Changes were not saved.';});
 $('editor').addEventListener('blur',()=>{try{cfg=JSON.parse($('editor').value);fillControls();}catch(e){message('Invalid JSON.',true);}});
-function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='No fills recorded yet (only with PAPER_DATA_MODE=csv-lbank and the live order book)'+(fq&&fq.last_error?' | Error: '+fq.last_error:'');return;}
+function renderFillQuality(fq){const main=$('fq_main'),detail=$('fq_detail');if(!fq||!fq.total){main.textContent='—';main.className='';detail.textContent='No fills recorded yet. Fill quality requires public futures prices and an order book.'+(fq&&fq.last_error?' | Error: '+fq.last_error:'');return;}
  const f=x=>x?Number(x.median_bps).toFixed(1)+' / '+Number(x.p90_bps).toFixed(1):'—';main.textContent='Entry '+f(fq.entry)+' | Exit '+f(fq.exit);
  const worst=Math.max(fq.entry?fq.entry.median_bps:0,fq.exit?fq.exit.median_bps:0);main.className=worst>fq.assumed_bps_per_fill*2.5?'bad':'';
  detail.textContent='Backtest assumed '+fq.assumed_bps_per_fill+' bps; '+fq.total+' fill'+(fq.last_error?' | Error: '+fq.last_error:'');}
@@ -802,7 +913,7 @@ function drawPositions(){const rows=$('positions');rows.replaceChildren();const 
   const td=document.createElement('td'),button=document.createElement('button');button.className='danger';const pending=kind==='bot'&&p.state==='STATE_PENDING_TRIGGER';button.textContent=pending?'Cancel':'Close now';
   button.onclick=async()=>{if(!confirm('Close / cancel '+p.symbol+' ('+BOTNAME[kind]+')'+'?'))return;button.disabled=true;try{await api(kind==='c3'?'/api/c3/close':kind==='pa'?'/api/pa/close':'/api/positions/close','POST',{symbol:p.symbol});await refresh();await refreshC3();await refreshPA();}catch(e){message(e.message,true);}finally{button.disabled=false;}};td.append(button);tr.append(td);rows.append(tr);}}
 function draw(){drawSummary();drawPositions();}
-function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+s.data_mode;$('active').textContent=s.license&&!s.license.entries_allowed?'License '+s.license.state+' · entries blocked':s.auto_trade_enabled?'Entries on':'Entries off';
+function render(s){lastBot=s;$('mode').textContent=s.strategy_mode+' / '+(s.dry_run_mode?'DRY-RUN':'LIVE')+' / '+(s.data_mode==='csv-lbank'?'FUTURES MARKET DATA':s.data_mode);$('active').textContent=s.license&&!s.license.entries_allowed?'License '+s.license.state+' · entries blocked':s.auto_trade_enabled?'Entries on':'Entries off';
  renderFillQuality(s.fill_quality);$('updated').textContent='Last update: '+new Date().toLocaleTimeString('en-GB');draw();
  const stamp=s.runtime.watchdog_at;$('health').textContent=stamp?'Last bot check: '+new Date(stamp*1000).toLocaleTimeString('en-GB'):'The bot has not logged a check yet';
  if(stamp&&Date.now()/1000-stamp>60)$('health').textContent+=' — the bot check is lagging';
@@ -922,7 +1033,7 @@ const _connect=$('connect').onclick;$('connect').onclick=async()=>{await _connec
 setInterval(loadPerf,60000);
 async function loadAccount(){if(!connected)return;try{const a=(await api('/api/account')).data;$('acct_reason').textContent=a.live_reason;
  $('acct_keys').textContent=a.keys.configured?'configured '+(a.keys.api_key_hint||''):'not configured';$('acct_test').disabled=!a.keys.configured;$('acct_live').disabled=!a.live_available;}catch(e){message('Account: '+e.message,true);}}
-$('acct_test').onclick=async()=>{const b=$('acct_test');b.disabled=true;$('acct_result').textContent='Asking LBank…';
+$('acct_test').onclick=async()=>{const b=$('acct_test');b.disabled=true;$('acct_result').textContent='Checking connection…';
  try{const r=(await api('/api/account/test','POST',{})).data;$('acct_result').textContent=r.message+(r.balances&&r.balances.length?' · '+r.balances.map(x=>Object.entries(x).map(([k,v])=>k+': '+v).join(', ')).join(' | '):'');$('acct_result').className='small '+(r.ok?'good':'bad');}
  catch(e){$('acct_result').textContent=e.message;$('acct_result').className='small bad';}finally{b.disabled=false;}};
 const _connect2=$('connect').onclick;$('connect').onclick=async()=>{await _connect2();await loadAccount();};
